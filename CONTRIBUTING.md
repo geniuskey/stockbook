@@ -141,6 +141,7 @@ MoneyBook에서 첫 월급을 받고 예산·비상금·연금까지 정리한 �
 ## JS 헬퍼 (`MB`, `js/common.js`)
 - `MB.canvas(el|선택자, draw(ctx, w, h), {aspect, minHeight, maxHeight})` → `{redraw(), ctx, w, h, canvas}`. 리사이즈·테마 변경 시 자동으로 다시 그린다. draw 안에서 `MB.palette()`를 매번 다시 읽는다. w, h는 CSS px. 문자열은 `querySelector` 선택자이므로 `"#id"`로 넘긴다. **만들자마자 draw를 한 번 부르므로** draw가 읽는 상태와 컨트롤(`MB.range`, `MB.seg`)을 먼저 만든다. draw 안에서 자기 반환값을 참조하지 않는다(초기화 전 접근 오류). 폭에 따라 높이가 달라져야 하면 옵션 객체에 `get height() { … }` getter를 넘긴다.
 - `MB.drag(canvas|선택자, {start(x, y, e), move(x, y, e), end(), hover(x, y, e)})` 캔버스 위 끌기(마우스·터치, CSS px). draw에서 계산한 배치(상자, 축 변환)를 바깥 변수에 저장해 두고 move에서 역변환한다.
+- `MB.chart`의 축 눈금은 숫자면 고정폭, 한글이 섞이면 일반 글꼴로 그린다. 로그 축은 범위가 좁으면 1·2·5배 눈금을 자동으로 넣는다. 세로선 라벨은 오른쪽 끝에서 왼쪽으로 붙는다.
 - `MB.chart(ctx, box|null, {x:[min,max], y:[min,max], logX, logY, xLabel, yLabel, xFmt, yFmt, xTicks, yTicks, series:[{data:[[x,y]], color, width, dash, fill}], vlines:[{x,color,label}], hlines:[{y,color,label}], points:[{x,y,color,r,label}], bands:[{x0,x1,color}]})` → `{X, Y, box}`. 금액 축은 `yFmt: MB.wonAxis`. box를 생략하면 왼쪽 여백 58px. 축 글자가 길면 box를 직접 준다.
 - **`MB.candles(ctx, box|null, data:[{o,h,l,c,v}], {y, logY, volume(기본 true), volFrac, yFmt, xLabel(i)→문자열|null, overlays:[{data:[값|null], color, width, dash}], markers:[{i, price, shape:"up"|"down"|"dot", label, color}], hlines, bands:[{i0,i1,color}], highlight, hollow})`** → `{X(i), Y(price), box, vbox, cw, idx(px)}`. 양봉 빨강, 음봉 파랑, 아래에 거래량. 이동평균 등은 overlays로. `idx(px)`로 마우스 위치의 캔들을 찾는다.
 - `MB.bars(ctx, box|null, {labels, stacks:[{label, color, data}], y, yFmt, yLabel, gap, hlines, highlight, valueFmt})` → `{X(i), Y, box, bw}` 누적 막대(음수는 아래로).
@@ -165,7 +166,8 @@ MoneyBook에서 첫 월급을 받고 예산·비상금·연금까지 정리한 �
 - 난수: `ST.rng(seed)` 0~1, `ST.gauss(seed)` 정규, `ST.fat(seed, df)` 두꺼운 꼬리. **시뮬레이터는 시드를 고정**해 새로고침해도 같은 그림이 나오게 하고, "다시 뽑기" 버튼에서만 시드를 바꾼다.
 - 가격 경로: `ST.gbm({s0, mu, sigma, days, seed, n, jump:{lambda, mean, sd}, fat})` → 가격 배열(n을 주면 배열의 배열), `ST.garch({s0, mu, sigma, days, seed, alpha, beta})` → `{prices, vols}`, `ST.ohlc(closes, {seed, tick, vol0, sigma})` → 캔들, `ST.resample(candles, k)` 주봉(5)·월봉(21), `ST.tradingDays(start, n)`.
 - **가상 시장 `ST.market()`**: 2016-01-04부터 2,601거래일(약 10년). `{days, dates, index(SB 종합지수 종가), indexCandles, stocks:{hanbit:[{o,h,l,c,v}],…}, closes:{hanbit:[…],…}, regimes:[{from, to, name, ret}], events:[{i, key, text, move}]}`. 국면: 완만한 상승 → 조정 → 강세장 → 급락(−34%, 40일) → 급반등 → 상승 → 약세장(−25%) → 횡보 → 회복과 상승. 지수 10년 +79%(연 5.8%), 최대 낙폭 −42%. 각 종목 마지막 종가는 `ST.CO`의 주가와 같다. 한 번 만들어 캐시하므로 여러 번 불러도 된다.
-- **가상 유니버스 `ST.universe({n:300, months:120, seed:11})`**: 월간 300종목. `{months, market:[월 수익률], stocks:[{id, name, size, value, quality, lowvol, beta, rets:[…|null], price:[…|null], delistedAt}], factors:{value, size, quality, lowvol, mom}}`. 팩터·생존 편향(상장폐지 종목 포함)·백테스트 실험용.
+  - 데이터의 한계: 종가에는 **배당락 하락이 없다**(가격 수익률). 배당을 따로 더하면 총수익의 근사가 되지만, 배당수익률이 높은 누리식품·다온은행은 실제보다 조금 좋게 나온다. 날짜는 **주말만 뺀 평일**이라 1년이 약 260일이고, `ST.cagr`·`ST.annVol`의 기본 연환산은 252일이다. 날짜는 눈금용 표시로만 쓰고 기간은 거래일 수로 센다.
+- **가상 유니버스 `ST.universe({n:300, months:120, seed:11})`**: 월간 300종목. `{months, market:[월 수익률, 살아 있는 종목의 동일가중 평균], stocks:[{id, name, size, value, quality, lowvol, beta, rets:[…|null], price:[…|null], delistedAt}], factors:{value, size, quality, lowvol, mom}}`. 팩터·생존 편향(상장폐지 종목 포함)·백테스트 실험용.
 - 지표(앞부분 null): `ST.sma(a, n)`, `ST.ema`, `ST.rollStd`, `ST.rsi(a, 14)`, `ST.macd(a, 12, 26, 9)` → `{macd, signal, hist}`, `ST.bollinger(a, 20, 2)` → `{mid, up, lo, pctB}`, `ST.atr(candles, 14)`, `ST.obv(candles)`, `ST.highest/lowest(a, n)`.
 - 호가창: `new ST.Book({ref})`, `.seed({levels, seed, size})` 기준가 주변 호가 깔기, `.limit(side, price, qty, owner)` → 체결 배열(`.rest`: 남은 주문), `.market(side, qty, owner)`, `.cancel(id)`, `.depth(levels)` → `{asks, bids}`(각 `{price, qty, n}`), `.best()` → `{bid, ask, spread, mid}`, `.impact(side, qty)` → `{filled, avg, worst, slip}`(실행 안 함), `.trades`, `.last`. 동시호가 `ST.auction(orders, ref)` → `{price, volume, curve}`.
 - 기업: `ST.CO`(위 표), `ST.COKEYS`, `ST.ratios(co)` → `{mcap, eps, bps, sps, dps, per, pbr, psr, roe, roa, opm, npm, dy, payout, debtRatio, ev, ebitda, evEbitda, fcfYield}`, `ST.dupont({net, sales, assets, equity})`, `ST.capm(rf, beta, mrp)`, `ST.wacc({E, D, re, rd, tax})`, `ST.gordon(d1, r, g)`, `ST.ddm2({d0, g1, n, g2, r})`, `ST.dcf({fcf0, growth(숫자|배열), years, wacc, tg, netDebt, shares})` → `{flows, pvSum, tv, pvTv, ev, equity, perShare, tvShare}`, `ST.reverseDcf({price, fcf0, years, wacc, tg, netDebt, shares})` → 성장률.
@@ -175,6 +177,10 @@ MoneyBook에서 첫 월급을 받고 예산·비상금·연금까지 정리한 �
 - 옵션: `ST.bs({S, K, T, r, sigma, q, type})` → `{price, delta, gamma, vega, theta(하루), rho, d1, d2}`, `ST.impliedVol(price, opts)`, `ST.binomial({…, n, american})`, `ST.payoff(legs, S)` (legs: `{type:"call"|"put"|"stock"|"future", K, qty, premium, price}`).
 - 환율: `ST.fxReturn(rLocal, rFx)`.
 - 케이스: `ST.HG` (`seed` 1,000만, `monthly` 70만, `horizon` 33년, `maxDrawdown` −0.3, `core` 0.8, `satellite` 0.2).
+
+## 작업 규칙
+- 여러 사람(또는 에이전트)이 동시에 작업할 때 임시 파일은 각자 이름 붙은 하위 폴더(`scratch/<slug>/`)에 둔다. 같은 이름의 임시 파일을 공유하면 서로의 장을 덮어쓴다.
+- 장 파일은 150KB 안팎을 목표로 한다. 내용상 필요하면 조금 넘어도 된다(전송 시 gzip으로 약 3분의 1이 된다).
 
 ## 점검
 - `python tools/check.py <slug>` (playwright 필요). 넓은 화면·라이트와 360px·다크로 열어 콘솔 오류, 가로 넘침, 조작 중 예외를 보고한다. `--shots 폴더`로 스크린샷을 남겨 눈으로도 본다.

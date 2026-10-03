@@ -262,7 +262,12 @@
     const X = (v) => box.x + ((lx(v) - lx(x0)) / (lx(x1) - lx(x0))) * box.w;
     const Y = (v) => box.y + box.h - ((ly(v) - ly(y0)) / (ly(y1) - ly(y0))) * box.h;
     const ticks = (a, b, log, n) => {
-      if (log) { const out = []; for (let e = Math.ceil(Math.log10(a) - 1e-9); e <= Math.log10(b) + 1e-9; e++) out.push(Math.pow(10, e)); return out; }
+      if (log) {
+        // 범위가 좁으면 10의 거듭제곱 사이에 2·5배 눈금을 더한다
+        const span = Math.log10(b / a), mult = span < 1 ? [1, 1.5, 2, 3, 5, 7] : span < 3 ? [1, 2, 5] : [1], out = [];
+        for (let e = Math.floor(Math.log10(a)) - 1; e <= Math.log10(b) + 1; e++) mult.forEach((m) => { const v = m * Math.pow(10, e); if (v >= a * (1 - 1e-9) && v <= b * (1 + 1e-9)) out.push(v); });
+        return out;
+      }
       const span = b - a, raw = span / (n || 5), mag = Math.pow(10, Math.floor(Math.log10(raw)));
       const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => span / s <= (n || 5) + 0.5) || raw;
       const out = []; for (let v = Math.ceil(a / step - 1e-9) * step; v <= b + step * 1e-6; v += step) out.push(Math.abs(v) < step * 1e-9 ? 0 : v);

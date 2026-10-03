@@ -699,7 +699,7 @@
   /**
    * 가상의 종목 유니버스(월간). 팩터·생존 편향·백테스트 실험용.
    * ST.universe({n:300, months:120, seed:11}) → {
-   *   months, market:[월 수익률], stocks:[{id, name, size, value, quality, lowvol, rets:[월 수익률|null(상장폐지 뒤)], price:[], delistedAt(-1|월)}],
+   *   months, market:[월 수익률(살아 있는 종목 동일가중)], stocks:[{id, name, size, value, quality, lowvol, rets:[월 수익률|null(상장폐지 뒤)], price:[], delistedAt(-1|월)}],
    *   factors:{value:[], size:[], mom:[], quality:[], lowvol:[]}(팩터 월 수익률)
    * }
    * 팩터 프리미엄(교육용 가정, 연): 가치 3%, 소형 2%, 퀄리티 2.5%, 저변동 1.5%, 모멘텀은 지난 수익의 지속성으로 생긴다.
@@ -741,7 +741,10 @@
       const ranked = live.map((s) => ({ s, p: past(s) })).sort((a, b) => b.p - a.p), q = Math.floor(ranked.length * 0.3);
       F.mom.push(ST.mean(ranked.slice(0, q).map((x) => x.s.rets[t])) - ST.mean(ranked.slice(-q).map((x) => x.s.rets[t])));
     }
-    return (UNI[key] = { months, market: mkt, stocks, factors: F });
+    // 시장 수익률은 살아 있는 종목의 동일가중 평균(생성에 쓴 공통 요인 mkt과 다르다)
+    const market = [];
+    for (let t = 0; t < months; t++) market.push(ST.mean(stocks.filter((s) => s.rets[t] != null).map((s) => s.rets[t])));
+    return (UNI[key] = { months, market, stocks, factors: F });
   };
 
   /* ------------------------------------------------------------ 이어지는 케이스: 한결의 투자 노트 */

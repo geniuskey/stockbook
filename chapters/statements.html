@@ -1,0 +1,1623 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "손익계산서·재무상태표·현금흐름표를 거래를 일으켜 가며 읽는다. 매출에서 순이익까지의 폭포, 영업레버리지, 자산=부채+자본의 저울, 감가상각과 운전자본이 이익과 현금을 가르는 방식, 적자 기업의 현금 런웨이, 분식의 신호, 분기 실적과 컨센서스, 연결 재무제표와 DART."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>재무제표 읽기 · StockBook</title>
+<meta name="description" content="손익계산서·재무상태표·현금흐름표를 거래를 일으켜 가며 읽는다. 매출에서 순이익까지의 폭포, 영업레버리지, 자산=부채+자본의 저울, 감가상각과 운전자본이 이익과 현금을 가르는 방식, 적자 기업의 현금 런웨이, 분식의 신호, 분기 실적과 컨센서스, 연결 재무제표와 DART.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/statements.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="재무제표 읽기 · StockBook">
+<meta property="og:description" content="손익계산서·재무상태표·현금흐름표를 거래를 일으켜 가며 읽는다. 매출에서 순이익까지의 폭포, 영업레버리지, 자산=부채+자본의 저울, 감가상각과 운전자본이 이익과 현금을 가르는 방식, 적자 기업의 현금 런웨이, 분식의 신호, 분기 실적과 컨센서스, 연결 재무제표와 DART.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/statements.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/statements.html#chapter","name":"재무제표 읽기","headline":"재무제표 읽기 · StockBook","description":"손익계산서·재무상태표·현금흐름표를 거래를 일으켜 가며 읽는다. 매출에서 순이익까지의 폭포, 영업레버리지, 자산=부채+자본의 저울, 감가상각과 운전자본이 이익과 현금을 가르는 방식, 적자 기업의 현금 런웨이, 분식의 신호, 분기 실적과 컨센서스, 연결 재무제표와 DART.","url":"https://stockbook.euiyun.com/chapters/statements.html","position":5,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"5. 재무제표 읽기","item":"https://stockbook.euiyun.com/chapters/statements.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  .fs-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin: 18px 0; }
+  .fs-grid > div { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 15px; }
+  .fs-grid b { display: block; color: var(--accent); margin-bottom: 4px; }
+</style>
+</head>
+<body data-chapter="statements">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 05</div>
+    <h1>재무제표 읽기</h1>
+    <p class="lead">회사는 해마다, 그리고 분기마다 성적표를 낸다. 얼마를 팔아 얼마를 남겼는지, 지금 무엇을 가졌고 누구에게 빚졌는지, 실제로 돈이 어디서 들어와 어디로 나갔는지. 세 장의 표는 따로 노는 것이 아니다. 거래 하나가 세 표에 동시에 흔적을 남긴다. 이 장에서는 표를 외우지 않고, 거래를 일으켜 숫자가 움직이는 모습을 본다.</p>
+    <ul class="objectives">
+      <li>매출에서 순이익까지 내려가는 손익계산서의 폭포를 읽고, 고정비가 이익을 얼마나 출렁이게 하는지 안다.</li>
+      <li>자산 = 부채 + 자본이 왜 늘 맞는지, 거래 하나가 세 표에 어떻게 기록되는지 안다.</li>
+      <li>이익과 현금이 갈라지는 이유(감가상각, 운전자본)를 설명하고, 적자 기업의 현금 런웨이를 계산한다.</li>
+      <li>이익의 질과 분식의 신호를 읽고, 분기 실적·컨센서스·공시(DART)를 찾아보는 법을 안다.</li>
+    </ul>
+  </header>
+
+  <section id="three">
+    <h2>세 장의 성적표</h2>
+    <p>주식 한 주는 회사의 한 조각이다(<a href="overview.html">1장</a>). 조각의 값을 따지려면 회사가 어떤 상태인지 알아야 하고, 상장 회사는 그 상태를 정해진 형식으로 공개해야 한다. 그 형식이 <span class="term">재무제표</span><span class="en">(Financial statements)</span>다. 한국 상장 회사는 국제회계기준을 한국에 맞게 들여온 <span class="term">K-IFRS</span>로 작성한다. 핵심은 세 장이다.</p>
+    <div class="fs-grid">
+      <div><b>손익계산서</b>일정 기간(1년, 한 분기) 동안 얼마를 팔고 얼마를 써서 얼마가 남았나. 동영상에 가깝다.</div>
+      <div><b>재무상태표</b>기말 어느 한 순간에 무엇을 가졌고(자산), 누구에게 빚졌고(부채), 주주 몫은 얼마인가(자본). 사진이다.</div>
+      <div><b>현금흐름표</b>같은 기간 동안 현금이 실제로 어디서 들어와 어디로 나갔나. 통장 내역을 세 갈래로 정리한 것이다.</div>
+    </div>
+    <p>왜 세 장이나 필요할까. 손익계산서의 이익은 "벌었다고 인정한" 금액이지 통장에 들어온 돈이 아니기 때문이다. 외상으로 팔아도 매출이고, 10년 쓸 기계를 사면 그해 비용은 10분의 1만 잡힌다. 그래서 이익이 많은데 현금이 마르는 회사가 있고, 적자인데 현금이 쌓이는 회사도 있다. 세 표를 함께 보면 이 차이가 드러난다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 300" role="img" aria-label="세 재무제표가 연결되는 방식: 순이익은 이익잉여금과 현금흐름표의 출발점이 되고, 현금 증감은 재무상태표의 현금이 된다">
+        <defs><marker id="st-ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-elev" x="14" y="12" width="180" height="126" rx="10"/>
+        <text class="lbl-b" x="28" y="38">손익계산서</text>
+        <text class="lbl-dim" x="28" y="58">1년 동안 번 것</text>
+        <text class="lbl" x="28" y="84">매출 − 비용</text>
+        <rect class="f-up-soft" x="22" y="96" width="164" height="30" rx="6"/>
+        <text class="lbl-up" x="32" y="116">= 순이익</text>
+        <rect class="f-elev" x="14" y="162" width="180" height="126" rx="10"/>
+        <text class="lbl-b" x="28" y="186">현금흐름표</text>
+        <text class="lbl" x="28" y="208">영업 활동</text>
+        <text class="lbl" x="28" y="228">+ 투자 활동</text>
+        <text class="lbl" x="28" y="248">+ 재무 활동</text>
+        <rect class="f-acc-soft" x="22" y="256" width="164" height="26" rx="6"/>
+        <text class="lbl-acc" x="32" y="274">= 현금 증감</text>
+        <path class="s-up" d="M110 127 L110 194" marker-end="url(#st-ar1)"/>
+        <text class="lbl-dim" x="116" y="152">출발점</text>
+        <rect class="f-elev" x="266" y="12" width="180" height="276" rx="10"/>
+        <text class="lbl-b" x="280" y="38">재무상태표</text>
+        <text class="lbl-dim" x="280" y="58">기말 한 순간의 사진</text>
+        <rect class="f-acc-soft" x="276" y="72" width="76" height="38"/>
+        <text class="lbl-dim" x="284" y="96">현금</text>
+        <rect class="f-surface" x="276" y="110" width="76" height="60"/>
+        <text class="lbl-dim" x="284" y="145">채권·재고</text>
+        <rect class="f-surface" x="276" y="170" width="76" height="106"/>
+        <text class="lbl-dim" x="284" y="200">설비</text>
+        <rect class="f-surface" x="358" y="72" width="80" height="84"/>
+        <text class="lbl-dim" x="366" y="118">부채</text>
+        <rect class="f-surface" x="358" y="156" width="80" height="58"/>
+        <text class="lbl-dim" x="366" y="190">자본금</text>
+        <rect class="f-up-soft" x="358" y="214" width="80" height="62"/>
+        <text class="lbl-dim" x="364" y="250">이익잉여금</text>
+        <path class="s-up" d="M186 111 C 236 111, 236 244, 354 244" marker-end="url(#st-ar1)"/>
+        <path class="s-acc" d="M186 269 C 246 269, 232 91, 272 91" marker-end="url(#st-ar1)"/>
+      </svg>
+      <figcaption><b>그림 1. 세 표는 하나로 묶여 있다.</b> 손익계산서의 순이익은 배당으로 나간 몫을 빼고 재무상태표의 이익잉여금에 쌓이며, 현금흐름표(간접법)의 출발점이 된다. 현금흐름표가 설명하는 현금 증감은 재무상태표에서 현금 잔액이 바뀐 만큼과 정확히 같다.</figcaption>
+    </figure>
+    <p>이 장의 예시는 대부분 이 책의 가상 회사 다섯 곳(한빛반도체, 누리식품, 별빛바이오, 다온은행, 모아플랫폼)이다. 모든 숫자는 교육용으로 만든 가상의 숫자이고, 단위는 주로 억원이다.</p>
+  </section>
+
+  <section id="income">
+    <h2>손익계산서: 매출에서 순이익까지</h2>
+    <p>손익계산서는 위에서 아래로 내려가며 빼는 표다. 맨 위 <span class="term">매출</span><span class="en">(Revenue)</span>은 물건과 서비스를 팔고 받기로 한 금액이다. 여기서 판 물건을 만드는 데 직접 든 돈, <span class="term">매출원가</span><span class="en">(Cost of goods sold)</span>를 빼면 <span class="term">매출총이익</span><span class="en">(Gross profit)</span>이 남는다. 다시 영업 조직을 굴리는 비용(인건비, 광고비, 연구개발비, 임차료 등) <span class="term">판매비와관리비</span><span class="en">(SG&amp;A)</span>, 줄여서 판관비를 빼면 본업으로 번 <span class="term">영업이익</span><span class="en">(Operating income)</span>이다.</p>
+    <p>그 아래는 본업 밖의 일이다. 예금 이자, 빌린 돈의 이자, 환율 차이, 투자한 회사의 손익 같은 <span class="term">영업외손익</span><span class="en">(Non-operating items)</span>을 더하고 빼면 법인세를 내기 전 이익이 되고, <span class="term">법인세</span>를 빼면 마침내 주주의 몫인 <span class="term">순이익</span><span class="en">(Net income)</span>이다. 이 줄을 매출로 나누면 이익률이 된다. 매출총이익률은 제품의 힘, 영업이익률은 사업 전체의 힘, 순이익률은 주주에게 남는 몫을 보여 준다.</p>
+    <p>아래는 한빛반도체의 한 해(가상)를 폭포 모양으로 그린 것이다. 기본값은 매출 6조원, 영업이익 9,000억원, 순이익 7,200억원이다. 매출을 줄이고 늘려 보고, 원가율을 올려 보자. 판관비는 고정 부분(6,000억)과 매출에 비례하는 부분(매출의 10%)으로 나뉜다고 가정했다.</p>
+
+    <div class="sim" id="sim-wf">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>손익 폭포: 매출이 순이익이 되기까지</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="wf-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>매출 <output id="wf-s-out"></output></span><input type="range" id="wf-s" min="30000" max="90000" step="1000" value="60000"></label>
+          <label class="ctrl"><span>원가율(매출원가 ÷ 매출) <output id="wf-c-out"></output></span><input type="range" id="wf-c" min="0.5" max="0.85" step="0.01" value="0.65"></label>
+          <div class="btn-row"><button class="btn primary" id="wf-play">위에서부터 쌓기</button><button class="btn" id="wf-re">기본값</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">매출총이익률</span><span class="v" id="wf-o-g">—</span></div>
+        <div class="stat"><span class="k">영업이익률</span><span class="v" id="wf-o-o">—</span></div>
+        <div class="stat"><span class="k">순이익</span><span class="v" id="wf-o-n">—</span></div>
+        <div class="stat"><span class="k">순이익률</span><span class="v" id="wf-o-m">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 매출을 6조에서 4조로 줄이면 매출은 33% 줄었는데 순이익은 몇 % 줄어드는지 본다. ② 원가율을 올리며 영업이익이 0이 되는 지점을 찾는다(기본 매출에서는 80%). ③ 적자가 나면 법인세 막대가 사라진다(이 모형은 적자 해에 세금을 0으로 둔다). (영업외손익은 +600억 고정, 세율 25%의 단순 모형)</div>
+    </div>
+    <p>매출이 3분의 1 줄 때 순이익은 그보다 훨씬 크게 줄었다. 매출원가와 비례 판관비는 매출을 따라 줄지만, 판관비의 고정 부분 6,000억원은 매출이 얼마든 그대로 나가기 때문이다. 이익은 매출에서 비용을 뺀 "차이"라서, 매출이 조금 흔들리면 차이는 크게 흔들린다. 다음 절에서 이 효과를 따로 떼어 본다.</p>
+    <div class="callout tip"><strong>표를 읽는 순서</strong><p>손익계산서를 처음 펴면 순이익부터 보고 싶어진다. 순이익에는 자산을 판 차익, 환율, 일회성 비용 같은 본업 밖의 일이 섞인다. 사업의 실력은 매출 성장과 영업이익률에서 먼저 보고, 순이익이 영업이익과 크게 다르면 그 차이(영업외손익)가 무엇인지 주석에서 확인한다.</p></div>
+  </section>
+
+  <section id="leverage">
+    <h2>고정비와 영업레버리지</h2>
+    <p>비용은 두 종류다. 매출을 따라 움직이는 <span class="term">변동비</span><span class="en">(Variable cost)</span>(원재료, 판매 수수료, 배송비)와 매출과 상관없이 나가는 <span class="term">고정비</span><span class="en">(Fixed cost)</span>(공장 감가상각, 정규직 인건비, 임차료). 고정비 비중이 클수록 매출이 늘 때 이익이 빨리 늘고, 매출이 줄 때 빨리 사라진다. 이 증폭을 <span class="term">영업레버리지</span><span class="en">(Operating leverage)</span>라고 한다.</p>
+    <div class="formula">$$\text{영업레버리지(DOL)} = \frac{\text{영업이익 변화율}}{\text{매출 변화율}} = \frac{\text{매출} - \text{변동비}}{\text{영업이익}}$$<div class="where">매출 − 변동비를 공헌이익이라고 한다. 고정비를 다 덮고 남은 공헌이익이 영업이익이다.</div></div>
+    <p>한빛반도체의 총비용은 5조 1,000억원이다. 그중 고정비가 몇 %인지에 따라 같은 매출 변화가 전혀 다른 이익 변화를 만든다. 위쪽 비용 막대의 경계 손잡이를 좌우로 끌어 고정비 비중을 바꿔 보자. 아래 그래프는 매출이 −30%에서 +30%까지 바뀔 때 영업이익이 몇 % 바뀌는지다.</p>
+
+    <div class="sim" id="sim-ol">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>영업레버리지: 고정비 비중을 끌어 보기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ol-cv"></canvas><span class="hint">비용 막대의 경계를 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>매출 변화 <output id="ol-d-out"></output></span><input type="range" id="ol-d" min="-0.3" max="0.3" step="0.01" value="0.1"></label>
+          <div class="ctrl"><span>업종 예시</span>
+            <div class="seg" id="ol-pre"><button data-value="0.2">유통형 20%</button><button data-value="0.5" class="on">제조 50%</button><button data-value="0.85">설비·플랫폼 85%</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">고정비 비중</span><span class="v" id="ol-o-f">—</span></div>
+        <div class="stat"><span class="k">영업레버리지</span><span class="v" id="ol-o-l">—</span></div>
+        <div class="stat"><span class="k">영업이익 변화</span><span class="v" id="ol-o-c">—</span></div>
+        <div class="stat"><span class="k">적자로 바뀌는 매출 감소</span><span class="v" id="ol-o-b">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 고정비 0%로 끌면 선이 기울기 1인 대각선이 된다(매출 10% ↔ 이익 10%). ② 고정비 85%에서 매출 −10%를 넣으면 이익이 절반 넘게 사라진다. ③ 고정비를 끝까지 끌면 매출이 15%만 줄어도 적자다. (총비용 5조 1,000억원은 그대로 두고 나누는 비율만 바꾼다)</div>
+    </div>
+    <p>고정비 비중이 50%일 때 영업레버리지는 약 3.8배다. 매출이 10% 늘면 영업이익은 약 38% 늘고, 10% 줄면 38% 준다. 반도체·항공·통신처럼 설비가 큰 산업이 업황에 따라 이익이 크게 출렁이는 까닭이고, 이런 회사를 <span class="term">경기 민감주</span><span class="en">(Cyclical)</span>라고 부르는 이유다. 반대로 고정비가 작은 유통·식품은 이익이 덜 출렁이는 대신 매출이 늘어도 이익이 크게 뛰지 않는다.</p>
+    <p>다섯 회사를 나란히 놓아 보자. 각 줄은 매출 100을 원가, 판관비, 영업이익으로 나눈 것이다. 회사마다 고정비 비중을 가정해 두었다. 매출 변화 슬라이더를 움직여 같은 충격이 각 회사의 영업이익을 얼마나 흔드는지 오른쪽 숫자로 보자. 줄을 누르면 그 회사의 자세한 숫자가 나온다.</p>
+
+    <div class="sim" id="sim-five">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>다섯 회사의 손익 구조와 같은 충격</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="fv-cv"></canvas><span class="hint">줄을 누른다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>모든 회사의 매출 변화 <output id="fv-d-out"></output></span><input type="range" id="fv-d" min="-0.2" max="0.2" step="0.01" value="-0.1"></label>
+          <div class="legend"><span><i style="background:var(--text-faint)"></i>매출원가</span><span><i style="background:var(--accent-2)"></i>판관비</span><span><i style="background:var(--up)"></i>영업이익</span><span><i style="background:var(--down)"></i>영업손실</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">회사</span><span class="v" id="fv-o-n">—</span></div>
+        <div class="stat"><span class="k">매출총이익률</span><span class="v" id="fv-o-g">—</span></div>
+        <div class="stat"><span class="k">영업이익률</span><span class="v" id="fv-o-o">—</span></div>
+        <div class="stat"><span class="k">가정한 고정비 비중</span><span class="v" id="fv-o-f">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 매출 −10%에서 한빛반도체, 누리식품, 모아플랫폼의 영업이익 변화를 비교한다. ② 별빛바이오는 비용이 매출의 2배가 넘는다. 매출이 20% 늘어도 적자가 얼마나 줄어드는지 본다. ③ 다온은행은 매출 자리에 이자수익 등 영업수익이, 원가 자리에 이자비용이 들어간다. (고정비 비중은 업종 특성을 반영한 교육용 가정)</div>
+    </div>
+    <p>매출 −10%에서 한빛반도체와 누리식품의 영업이익은 똑같이 약 40% 준다. 누리식품은 고정비 비중이 작은데도 그렇다. 매출 100원에 6원만 남기는 얇은 이익률이라, 매출이 조금만 줄어도 남는 몫이 크게 줄기 때문이다. 고정비가 큰 모아플랫폼은 70% 넘게 줄고, 은행인 다온은행은 20% 정도다. 그렇다면 누리식품은 왜 방어주라 불릴까. 비용 구조 덕이 아니라 경기가 나빠도 사람들이 라면과 우유는 사서 <b>매출 자체가 잘 줄지 않기</b> 때문이다. 이익의 안정성은 비용 구조와 매출의 안정성, 두 가지를 함께 봐야 한다.</p>
+  </section>
+
+  <section id="balance">
+    <h2>재무상태표: 자산 = 부채 + 자본</h2>
+    <p>재무상태표의 왼쪽은 회사가 가진 것, <span class="term">자산</span><span class="en">(Assets)</span>이다. 오른쪽은 그 자산을 마련한 돈이 어디서 왔는지를 적는다. 남에게 빌린 돈이 <span class="term">부채</span><span class="en">(Liabilities)</span>, 주주가 넣은 돈과 그동안 벌어서 쌓아 둔 돈이 <span class="term">자본</span><span class="en">(Equity)</span>이다. 모든 자산은 누군가의 돈으로 산 것이므로 양쪽은 언제나 같다.</p>
+    <div class="formula">$$\text{자산} = \text{부채} + \text{자본}$$<div class="where">자본 = 자산 − 부채. 회사를 오늘 정리해 빚을 다 갚고 주주에게 남는 장부상 몫이다(순자산).</div></div>
+    <p>자산과 부채는 1년 안에 현금이 되거나 갚아야 하는지에 따라 <span class="term">유동</span>과 <span class="term">비유동</span>으로 나눈다. 현금·매출채권·재고는 유동자산, 공장과 기계는 비유동자산이다. 유동자산이 유동부채보다 넉넉하면 1년 안에 돌아올 빚을 갚을 힘이 있다는 뜻이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 320" role="img" aria-label="한빛반도체 재무상태표의 구조: 자산 9조원은 유동자산 3조원과 비유동자산 6조원, 부채 3조원과 자본 6조원">
+        <text class="lbl-b" x="70" y="26">자산 9조</text>
+        <text class="lbl-b" x="282" y="26">부채 + 자본 9조</text>
+        <rect class="f-acc-soft" x="40" y="40" width="170" height="27"/>
+        <text class="lbl-dim" x="50" y="58">현금 1조</text>
+        <rect class="f-acc-soft" x="40" y="67" width="170" height="21"/>
+        <text class="lbl-dim" x="50" y="82">매출채권 0.8조</text>
+        <rect class="f-acc-soft" x="40" y="88" width="170" height="32"/>
+        <text class="lbl-dim" x="50" y="109">재고 1.2조</text>
+        <rect class="f-surface" x="40" y="120" width="170" height="147"/>
+        <text class="lbl-dim" x="50" y="196">설비(유형자산) 5.5조</text>
+        <rect class="f-surface" x="40" y="267" width="170" height="13"/>
+        <text class="lbl-dim" x="50" y="278" style="font-size:11px">기타 0.5조</text>
+        <rect class="f-surface" x="256" y="40" width="170" height="40"/>
+        <text class="lbl-dim" x="266" y="56">매입채무 0.6조</text>
+        <text class="lbl-dim" x="266" y="74">단기차입금 0.5조 등</text>
+        <rect class="f-surface" x="256" y="80" width="170" height="40"/>
+        <text class="lbl-dim" x="266" y="105">장기차입금 1.5조</text>
+        <rect class="f-up-soft" x="256" y="120" width="170" height="160"/>
+        <text class="lbl" x="266" y="190">자본 6조</text>
+        <text class="lbl-dim" x="266" y="212">자본금 + 이익잉여금 등</text>
+        <path class="s-dash" d="M30 120 H426"/>
+        <text class="lbl-dim" x="228" y="84" text-anchor="middle">유동</text>
+        <text class="lbl-dim" x="228" y="200" text-anchor="middle">비유동</text>
+        <text class="lbl-acc" x="40" y="304">유동자산 3조</text>
+        <text class="lbl-dim" x="256" y="304">유동부채 1.5조 · 부채비율 50%</text>
+      </svg>
+      <figcaption><b>그림 2. 한빛반도체(가상)의 재무상태표.</b> 막대의 높이가 금액이다. 점선 위가 1년 안에 현금이 되거나 갚아야 할 유동 항목이다. 유동자산 3조원이 유동부채 1.5조원의 두 배라 단기 지급 능력은 넉넉하다. 부채비율(부채 ÷ 자본)은 3조 ÷ 6조 = 50%다.</figcaption>
+    </figure>
+
+    <p>이 등식이 왜 절대 깨지지 않는지 손으로 확인해 보자. 아래는 작은 회사의 재무상태표를 저울로 그린 것이다. 버튼을 누를 때마다 거래 하나가 일어나고, 거래는 늘 두 곳 이상을 바꾼다. 이것이 <span class="term">복식부기</span><span class="en">(Double-entry bookkeeping)</span>다.</p>
+
+    <div class="sim" id="sim-scale">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>재무상태표 저울: 무엇을 해도 기울지 않는다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sc-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn" id="sc-loan">대출 받기 500</button><button class="btn" id="sc-pay">대출 갚기 500</button></div>
+          <div class="btn-row"><button class="btn" id="sc-capex">설비 사기 500</button><button class="btn" id="sc-eq">유상증자 500</button></div>
+          <div class="btn-row"><button class="btn" id="sc-prof">이익 300</button><button class="btn" id="sc-loss">손실 400</button><button class="btn" id="sc-div">배당 200</button></div>
+          <div class="btn-row"><button class="btn primary" id="sc-re">처음으로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">자산 총계</span><span class="v" id="sc-o-a">—</span></div>
+        <div class="stat"><span class="k">자본</span><span class="v" id="sc-o-e">—</span></div>
+        <div class="stat"><span class="k">부채비율</span><span class="v" id="sc-o-r">—</span></div>
+        <div class="stat"><span class="k">상태</span><span class="v" id="sc-o-s">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 대출을 받으면 자산과 부채가 함께 커지고 자본은 그대로다. 부채비율만 오른다. ② 설비를 사면 저울의 높이는 그대로이고 왼쪽 안에서 현금이 설비로 바뀐다. ③ 손실을 여러 번 내면 자본이 자본금 아래로 내려가고(부분 자본잠식), 끝내 0보다 작아진다(완전 자본잠식). (단위 억원. 현금이 모자라면 손실은 설비 가치를 깎는 손상으로 처리한다)</div>
+    </div>
+    <p>어떤 버튼을 눌러도 두 막대의 높이는 같았다. 대출은 자산과 부채를 같이 늘리고, 이익은 자산과 자본을 같이 늘린다. 손실을 거듭하면 부채는 그대로인데 자산만 줄어 자본이 녹는다. 자본이 납입 자본금보다 작아지면 <span class="term">자본잠식</span><span class="en">(Capital impairment)</span>이고, 자본이 0 아래로 내려가면 자산을 다 팔아도 빚을 못 갚는 상태다. 한국 거래소는 자본잠식이 심한 회사를 관리종목으로 지정하거나 상장폐지 심사에 올린다(<a href="corporate.html">9장</a>).</p>
+    <div class="callout"><strong>은행의 재무상태표는 다르게 생겼다</strong><p>다온은행(가상)의 자산은 380조원인데 자본은 18조원뿐이다. 부채비율이 2,000%를 넘는다. 제조업이라면 위험 신호지만 은행은 예금(부채)을 받아 대출(자산)로 내주는 것이 사업이라 원래 이렇다. 업종마다 "정상"의 모양이 다르므로 지표는 같은 업종 안에서 비교한다(<a href="ratios.html">6장</a>).</p></div>
+  </section>
+
+  <section id="cashflow">
+    <h2>현금흐름표: 돈은 실제로 어디로 갔나</h2>
+    <p>현금흐름표는 한 해 동안의 현금 변화를 세 갈래로 나눈다.</p>
+    <div class="fs-grid">
+      <div><b>영업활동 현금흐름</b>본업에서 실제로 들어오고 나간 현금. 물건값을 받고, 원재료값과 월급을 낸 결과.</div>
+      <div><b>투자활동 현금흐름</b>설비를 사고 팔거나 다른 회사 지분을 사는 데 쓴 현금. 성장하는 회사는 보통 마이너스다.</div>
+      <div><b>재무활동 현금흐름</b>돈을 빌리고 갚고, 증자를 하고, 배당을 준 현금. 주주와 채권자와의 거래다.</div>
+    </div>
+    <p>대부분의 회사는 영업활동 현금흐름을 <span class="term">간접법</span>으로 적는다. 순이익에서 출발해, 현금이 나가지 않은 비용(감가상각비)은 다시 더하고, 현금이 묶인 만큼(매출채권·재고 증가)은 빼고, 아직 내지 않은 돈(매입채무 증가)은 더한다. 순이익을 현금으로 "번역"하는 과정이다. 영업활동 현금흐름에서 설비 투자(<span class="term">CAPEX</span>)를 뺀 것이 <span class="term">잉여현금흐름</span><span class="en">(Free cash flow, FCF)</span>이다. 회사가 빚을 갚거나 배당을 줄 수 있는 진짜 여윳돈이고, <a href="valuation.html">7장</a>의 가치평가가 이 숫자에서 시작한다.</p>
+    <p>세 표가 정말 하나로 묶여 있는지 거래를 직접 일으켜 확인해 보자. 아래 회사는 기초에 현금 1,000, 재고 300, 설비 1,200을 가지고 있다. 거래 버튼을 누르면 세 표에서 바뀐 칸이 반짝인다. 순서를 바꿔 가며 눌러 보자.</p>
+
+    <div class="sim" id="sim-link">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>거래 하나, 세 표의 변화</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="lk-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn" id="lk-buy">재고 외상 매입 200</button><button class="btn" id="lk-sell">외상 판매 500 (원가 200)</button><button class="btn" id="lk-col">외상값 회수 500</button></div>
+          <div class="btn-row"><button class="btn" id="lk-capex">설비 구입 600</button><button class="btn" id="lk-dep">감가상각 100</button><button class="btn" id="lk-wage">월급 지급 150</button></div>
+          <div class="btn-row"><button class="btn" id="lk-loan">대출 400</button><button class="btn" id="lk-div">배당 100</button><button class="btn primary" id="lk-re">기초로 되돌리기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">마지막 거래</span><span class="v" id="lk-o-t">—</span></div>
+        <div class="stat"><span class="k">순이익</span><span class="v" id="lk-o-n">—</span></div>
+        <div class="stat"><span class="k">현금 증감</span><span class="v" id="lk-o-c">—</span></div>
+        <div class="stat"><span class="k">자산 − (부채+자본)</span><span class="v" id="lk-o-b">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① "외상 판매"만 누르면 순이익은 +300인데 현금은 그대로다. 현금흐름표에서 매출채권 증가 −500이 이익을 지운다. ② 이어서 "외상값 회수"를 누르면 이익은 그대로이고 그제야 현금이 들어온다. ③ "감가상각"은 이익을 줄이지만 현금은 건드리지 않는다. ④ 무엇을 누르든 현금흐름표의 현금 증감과 재무상태표의 현금 변화가 같다. (단위 억원, 법인세 생략)</div>
+    </div>
+    <p>이 실험에서 이 장의 거의 모든 이야기가 나온다. 이익은 "팔았다"는 사실에 기록되고, 현금은 "받았다"는 사실에 기록된다. 둘 사이의 틈을 메우는 것이 매출채권·재고·매입채무 같은 <span class="term">운전자본</span>과 감가상각이다. 그리고 그 틈은 사라지지 않고 재무상태표 어딘가에 쌓인다. 외상을 회수하지 못하면 언젠가 매출채권을 지우면서 이익도 함께 지워야 한다.</p>
+  </section>
+
+  <section id="depreciation">
+    <h2>감가상각: 이익과 현금이 갈라지는 첫 번째 이유</h2>
+    <p>1,200억원짜리 설비를 사서 6년 쓴다면, 현금은 첫해에 1,200억원이 한꺼번에 나간다. 그러나 손익계산서는 설비가 6년 동안 매출을 만드는 데 쓰인다고 보고 해마다 200억원씩 비용으로 나눠 잡는다. 이것이 <span class="term">감가상각</span><span class="en">(Depreciation)</span>이다. 특허나 소프트웨어 같은 무형자산을 나눠 비용으로 잡는 것은 상각(Amortization)이라 하고, 둘을 영업이익에 더한 것을 <span class="term">EBITDA</span>라고 부른다.</p>
+    <p>내용연수(몇 년에 나눌지)는 회사가 추정해서 정한다. 같은 설비, 같은 현금인데 내용연수만 바꾸면 해마다의 이익이 달라진다. 아래에서 설비가 해마다 감가상각 전 이익(EBITDA) 300억원을 만든다고 하고, 내용연수를 바꿔 보자.</p>
+
+    <div class="sim" id="sim-dep">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>내용연수를 바꾸면 이익은 바뀌고 현금은 그대로다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dp-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>내용연수 <output id="dp-l-out"></output></span><input type="range" id="dp-l" min="2" max="10" step="1" value="6"></label>
+          <label class="check"><input type="checkbox" id="dp-cum"> 누적으로 보기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">1년 차 이익</span><span class="v" id="dp-o-1">—</span></div>
+        <div class="stat"><span class="k">1년 차 잉여현금</span><span class="v" id="dp-o-c">—</span></div>
+        <div class="stat"><span class="k">10년 누적 이익</span><span class="v" id="dp-o-n">—</span></div>
+        <div class="stat"><span class="k">10년 누적 잉여현금</span><span class="v" id="dp-o-f">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 내용연수를 2년으로 줄이면 처음 2년은 적자, 이후는 큰 흑자다. ② 10년으로 늘리면 해마다 이익이 고르게 커 보인다. ③ "누적으로 보기"를 켜면 10년 뒤 누적 이익과 누적 현금이 정확히 만난다. (설비 1,200억원을 1년 차 초에 현금으로 사고, 10년 동안 EBITDA 300억원, 세금은 생략)</div>
+    </div>
+    <p>내용연수를 길게 잡으면 초반 이익이 커 보인다. 회계 기준이 허용하는 범위 안이라도, 동종 업체보다 유난히 긴 내용연수는 이익을 좋아 보이게 만드는 손쉬운 방법이다. 그러나 현금은 속지 않는다. 막대(현금)는 내용연수와 상관없이 같고, 10년을 합치면 이익과 현금은 같은 곳에 도착한다. 이익과 현금의 차이는 대부분 <b>시점</b>의 차이다. 그래서 한두 해의 이익보다 여러 해에 걸친 현금흐름이 더 정직하다.</p>
+  </section>
+
+  <section id="working">
+    <h2>운전자본: 현금을 묶어 두는 창고</h2>
+    <p>물건을 파는 회사는 원재료를 사서 재고로 쌓아 두고, 팔고 나서도 외상값을 받을 때까지 기다린다. 그동안 현금은 재고와 매출채권의 모습으로 묶여 있다. 반대로 원재료값을 외상으로 사면(매입채무) 그만큼 남의 돈으로 버틴다. 이 묶인 돈을 <span class="term">운전자본</span><span class="en">(Working capital)</span>이라 하고, 현금이 나갔다가 돌아오기까지 걸리는 날수를 <span class="term">현금전환주기</span><span class="en">(Cash conversion cycle, CCC)</span>라고 한다.</p>
+    <div class="formula">$$\text{CCC} = \underbrace{\text{재고 일수}}_{\text{DIO}} + \underbrace{\text{매출채권 일수}}_{\text{DSO}} - \underbrace{\text{매입채무 일수}}_{\text{DPO}}$$<div class="where">재고 일수 = 재고 ÷ 매출원가 × 365, 매출채권 일수 = 매출채권 ÷ 매출 × 365, 매입채무 일수 = 매입채무 ÷ 매출원가 × 365.</div></div>
+    <p>누리식품(가상, 매출 1조 8,000억원, 매출원가 1조 3,500억원)의 일수를 바꿔 보자. 동전 하나가 원재료를 사는 날 나가서 외상값을 받는 날 돌아온다. 동전이 밖에 있는 기간이 길수록 회사는 더 많은 현금을 묶어 둔다.</p>
+
+    <div class="sim" id="sim-ccc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>현금전환주기: 동전이 돌아오기까지</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>재고 일수 DIO <output id="cc-i-out"></output></span><input type="range" id="cc-i" min="0" max="150" step="5" value="45"></label>
+          <label class="ctrl"><span>매출채권 일수 DSO <output id="cc-r-out"></output></span><input type="range" id="cc-r" min="0" max="150" step="5" value="40"></label>
+          <label class="ctrl"><span>매입채무 일수 DPO <output id="cc-p-out"></output></span><input type="range" id="cc-p" min="0" max="120" step="5" value="35"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">현금전환주기</span><span class="v" id="cc-o-c">—</span></div>
+        <div class="stat"><span class="k">묶인 운전자본</span><span class="v" id="cc-o-w">—</span></div>
+        <div class="stat"><span class="k">기본값 대비</span><span class="v" id="cc-o-d">—</span></div>
+        <div class="stat"><span class="k">연 순이익(800억) 대비</span><span class="v" id="cc-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 매출채권 일수를 40일에서 50일로 늘리면 약 490억원이 더 묶인다. 누리식품 한 해 순이익의 60%다. ② 매입채무 일수를 늘려 CCC를 0 아래로 만들어 본다. 손님에게 먼저 받고 납품업체에 나중에 주는 구조다. ③ 세 일수를 모두 끝까지 밀어 묶인 돈이 순이익의 몇 배가 되는지 본다. (일수 계산은 연간 금액을 365일로 나눈 단순 평균)</div>
+    </div>
+    <p>매출채권 일수가 열흘 늘었을 뿐인데, 한 해 순이익의 절반이 넘는 현금이 사라졌다. 손익계산서에는 아무 변화가 없다. 그래서 매출이 빠르게 크는 회사는 이익이 나도 현금이 부족해지기 쉽다. 매출이 늘면 재고와 매출채권도 같은 비율로 늘어야 하기 때문이다. 반대로 CCC가 마이너스인 회사(선결제 구독, 대형 유통)는 성장할수록 오히려 현금이 쌓인다. 이 차이가 마지막 절의 종합 실험에서 회사의 생사를 가른다.</p>
+  </section>
+
+  <section id="runway">
+    <h2>적자 기업의 시계: 현금 런웨이</h2>
+    <p>적자 기업에는 다른 질문이 먼저다. 이익이 언제 나느냐보다 <b>돈이 언제 떨어지느냐</b>. 지금 가진 현금을 한 해 동안 태우는 현금(<span class="term">현금 소진 속도</span><span class="en">(Burn rate)</span>)으로 나누면 버틸 수 있는 기간, <span class="term">런웨이</span><span class="en">(Runway)</span>가 나온다. 런웨이가 다하기 전에 이익을 내거나, 기술을 팔거나, 새 돈을 구해야 한다. 상장사가 새 돈을 구하는 가장 흔한 방법은 새 주식을 찍어 파는 <span class="term">유상증자</span>이고, 그러면 기존 주주의 몫이 묽어진다(<a href="corporate.html">9장</a>).</p>
+    <p>별빛바이오(가상)는 매출 300억원에 영업손실 400억원을 냈고, 현금 1,200억원을 갖고 있다. 연구개발과 임상에 한 해 약 450억원의 현금이 나간다. 소진 속도와 시나리오를 바꿔 현금이 0에 닿는 날을 찾아보자. "재생"을 누르면 한 달씩 시계가 간다.</p>
+
+    <div class="sim" id="sim-run">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>별빛바이오의 현금 런웨이</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="rn-cv"></canvas><span class="hint">1년 차 손잡이를 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>연 현금 소진 <output id="rn-b-out"></output></span><input type="range" id="rn-b" min="100" max="900" step="10" value="450"></label>
+          <div class="ctrl"><span>시나리오</span>
+            <div class="seg" id="rn-sc"><button data-value="base" class="on">계획대로</button><button data-value="delay">임상 지연</button><button data-value="deal">기술 수출</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="rn-play">재생</button><button class="btn" id="rn-re">처음으로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">런웨이</span><span class="v" id="rn-o-y">—</span></div>
+        <div class="stat"><span class="k">현금이 바닥나는 때</span><span class="v" id="rn-o-d">—</span></div>
+        <div class="stat"><span class="k">지금 시계</span><span class="v" id="rn-o-t">—</span></div>
+        <div class="stat"><span class="k">남은 현금</span><span class="v" id="rn-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값 450억원이면 런웨이는 약 2.7년, 2029년 중반에 바닥난다. ② "임상 지연"은 2년 차부터 소진이 30% 늘어난다. 몇 달이 당겨지는지 본다. ③ "기술 수출"은 1년 차 말에 계약금 300억원이 들어온다. ④ 손잡이로 소진을 900억원까지 올리면 1년 남짓이다. (2026년 10월 출발, 이자수익과 매출 변화는 생략한 단순 모형)</div>
+    </div>
+    <p>적자 기업의 주가는 현금이 줄어들수록 압박을 받는다. 시장은 증자가 다가온다는 것을 알고, 증자가 발표되면 주식 수가 늘어 주당 가치가 묽어지기 때문이다. 그래서 적자 기업의 재무제표에서 가장 먼저 볼 숫자는 손익계산서의 손실보다 현금흐름표의 영업활동 현금흐름과 재무상태표의 현금(및 단기 금융상품)이다. 둘을 나누면 시계가 나온다.</p>
+  </section>
+
+  <section id="quality">
+    <h2>이익의 질과 분식의 신호</h2>
+    <p>같은 순이익 100억원이라도 현금으로 100억원이 들어온 회사와, 매출채권만 100억원 늘어난 회사는 다르다. 순이익이 얼마나 현금으로 뒷받침되는지를 <span class="term">이익의 질</span><span class="en">(Earnings quality)</span>이라고 한다. 순이익에서 영업활동 현금흐름을 뺀 것을 <span class="term">발생액</span><span class="en">(Accruals)</span>이라 하는데, 이것이 자산에 비해 크게 쌓이는 회사는 이익이 나중에 실망스러운 경우가 많다는 연구가 많다.</p>
+    <p>아래 점 하나하나는 가상의 회사 마흔 곳이다. 가로축은 순이익, 세로축은 영업활동 현금흐름(둘 다 총자산 대비 %)이다. 대부분의 정상적인 회사는 감가상각을 더하므로 대각선보다 위에 있다. 감시선을 위아래로 끌어 "발생액이 이만큼 크면 의심한다"는 기준을 정하고, 나중에 회계 문제가 드러난 회사를 얼마나 잡는지 보자.</p>
+
+    <div class="sim" id="sim-acc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>이익의 질 지도: 감시선 긋기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ac-cv"></canvas><span class="hint">감시선 손잡이를 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="check"><input type="checkbox" id="ac-show"> 나중에 드러난 결과 보기</label>
+          <div class="btn-row"><button class="btn" id="ac-new">다른 회사들 뽑기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">감시선(발생액 ÷ 자산)</span><span class="v" id="ac-o-t">—</span></div>
+        <div class="stat"><span class="k">걸린 회사</span><span class="v" id="ac-o-f">—</span></div>
+        <div class="stat"><span class="k">잡아낸 문제 회사</span><span class="v" id="ac-o-h">—</span></div>
+        <div class="stat"><span class="k">억울하게 걸린 회사</span><span class="v" id="ac-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 결과를 켠 채 감시선을 내리면 문제 회사가 대부분 선 아래에 몰려 있음을 본다. ② 감시선을 올려 문제 회사를 모두 잡으려 하면 멀쩡한 회사도 많이 걸린다. ③ 억울하게 걸린 회사 가운데는 빠르게 성장해 재고·매출채권이 정직하게 늘어난 회사도 있다. (교육용으로 만든 가상 데이터. 실제 감리·적발 통계가 아니다)</div>
+    </div>
+    <p>발생액은 경보기이지 판결이 아니다. 빠르게 크는 회사는 정직하게도 매출채권과 재고가 늘어 대각선 아래로 내려간다. 반대로 노련한 분식은 현금흐름까지 꾸민다. 그래도 순이익이 몇 년째 영업활동 현금흐름을 크게 웃돈다면 왜 그런지 주석에서 이유를 찾아야 한다.</p>
+    <p>가장 흔한 수법 하나를 시간 순서로 보자. 실적 목표를 맞추려고 분기 말에 대리점에 물건을 떠넘기고 매출로 잡는 <span class="term">밀어내기</span>다. 장부에는 매출이 찍히지만 대금은 들어오지 않는다. "다음 분기"를 눌러 3년을 진행해 보자.</p>
+
+    <div class="sim" id="sim-stuff">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>밀어내기 매출: 분기마다 쌓이는 매출채권</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sf-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>분기마다 밀어 넣는 매출 <output id="sf-k-out"></output></span><input type="range" id="sf-k" min="0" max="0.2" step="0.01" value="0.08"></label>
+          <div class="btn-row"><button class="btn primary" id="sf-next">다음 분기</button><button class="btn" id="sf-all">끝까지</button><button class="btn" id="sf-re">처음으로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">분기</span><span class="v" id="sf-o-q">—</span></div>
+        <div class="stat"><span class="k">보고된 누적 순이익</span><span class="v" id="sf-o-n">—</span></div>
+        <div class="stat"><span class="k">누적 영업현금흐름</span><span class="v" id="sf-o-c">—</span></div>
+        <div class="stat"><span class="k">매출채권 일수</span><span class="v" id="sf-o-d">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 밀어내기 0%로 12분기를 진행해 순이익과 현금이 나란히 가는 모습을 먼저 본다. ② 8%로 다시 진행하면 순이익 막대는 매끈하게 크는데 매출채권 일수 선이 치솟는다. ③ 12분기 끝에 감사인이 회수 불가능한 매출채권을 지우게 하면 한 분기에 몇 년 치 이익이 사라진다. (정상 매출 분기 1,000억원, 분기 2% 성장, 순이익률 8%, 정상 매출채권 일수 60일의 가상 회사)</div>
+    </div>
+    <p>밀어내기를 하는 동안 손익계산서는 아름다웠다. 진실은 현금흐름표(영업활동 현금흐름이 이익을 따라오지 않는다)와 재무상태표(매출채권이 매출보다 빨리 는다)에 있었다. 재무제표를 읽는 습관 하나가 여기서 나온다. <b>순이익과 영업활동 현금흐름을 여러 해 나란히 놓고, 매출 증가율과 매출채권·재고 증가율을 비교한다.</b></p>
+    <div class="callout warn"><strong>재무제표에서 자주 보이는 경고 신호</strong><p>① 순이익은 흑자인데 영업활동 현금흐름이 몇 년째 마이너스다. ② 매출채권이나 재고가 매출보다 훨씬 빠르게 는다. ③ 개발비 같은 비용을 자산으로 잡아(자산화) 무형자산이 갑자기 불어난다. ④ 감가상각 내용연수나 회계 정책을 이익이 커지는 쪽으로 바꾼다. ⑤ 감사인이 자주 바뀌거나 감사의견이 "적정"이 아니다(한정·부적정·의견거절은 상장폐지 사유가 될 수 있다). 하나만으로 분식이라 단정할 수 없지만, 여럿이 겹치면 이유를 찾을 때까지 투자를 미룬다.</p></div>
+    <p>이제 직접 찾아보자. 가상 회사 세 곳의 3년 치 요약 재무제표가 나온다. 이 가운데 회계가 가장 수상한 회사 하나를 고른다. 모두 다섯 판이다.</p>
+
+    <div class="sim" id="sim-game">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>수상한 회사 찾기</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="gm-cv"></canvas><span class="hint">수상한 회사의 카드를 누른다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="gm-next">다음 판</button><button class="btn" id="gm-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">판</span><span class="v" id="gm-o-r">—</span></div>
+        <div class="stat"><span class="k">맞힌 수</span><span class="v" id="gm-o-s">—</span></div>
+        <div class="stat"><span class="k">해설</span><span class="v" id="gm-o-x" style="font-size:14px;font-weight:500;font-family:var(--font);line-height:1.5">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 순이익만 보지 말고 영업활동 현금흐름과 나란히 본다. ② 매출이 는 비율과 매출채권·재고가 는 비율을 비교한다. ③ 실적이 나빠진 회사가 꼭 수상한 회사는 아니다. 정직한 실패와 꾸민 성공을 구분한다. (단위 억원, 모두 가상의 회사)</div>
+    </div>
+  </section>
+
+  <section id="earnings">
+    <h2>분기 실적과 컨센서스</h2>
+    <p>상장 회사는 1년에 네 번 실적을 낸다. 시장은 실적이 나오기 전에 이미 기대를 갖고 있다. 회사를 분석하는 증권사 애널리스트들의 실적 예상치 평균을 <span class="term">컨센서스</span><span class="en">(Consensus)</span>라 하고, 실제 실적이 컨센서스를 넘으면 <span class="term">어닝 서프라이즈</span>, 못 미치면 <span class="term">어닝 쇼크</span>라고 부른다. 많은 회사가 정식 보고서보다 먼저 <span class="term">잠정 실적</span>을 공시한다.</p>
+    <p>중요한 것은 실적이 좋았느냐가 아니라 <b>기대보다</b> 좋았느냐다. 주가에는 이미 기대가 들어 있기 때문이다(<a href="price.html">4장</a>). 회사가 함께 내놓는 앞으로의 전망(<span class="term">가이던스</span>)이 지난 분기 숫자보다 더 크게 주가를 움직이기도 한다. 모아플랫폼(가상)의 여덟 분기를 하나씩 넘기며 발표 직후 주가가 오를지 내릴지 맞혀 보자.</p>
+
+    <div class="sim" id="sim-cons">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>실적 발표, 주가는 어느 쪽으로?</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cs-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn" id="cs-up">오른다</button><button class="btn" id="cs-dn">내린다</button></div>
+          <div class="btn-row"><button class="btn primary" id="cs-next">다음 분기</button><button class="btn" id="cs-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">분기</span><span class="v" id="cs-o-q">—</span></div>
+        <div class="stat"><span class="k">서프라이즈</span><span class="v" id="cs-o-s">—</span></div>
+        <div class="stat"><span class="k">다음 날 주가</span><span class="v" id="cs-o-r">—</span></div>
+        <div class="stat"><span class="k">맞힌 수</span><span class="v" id="cs-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 컨센서스를 넘었는데 주가가 내린 분기를 찾아 그 이유(가이던스, 이미 오른 주가)를 읽는다. ② 컨센서스에 못 미쳤는데 오른 분기도 있다. ③ 큰 서프라이즈인데 반응이 작은 분기는 이익의 질을 의심한다. (영업이익 기준, 가상의 분기와 가상의 주가 반응)</div>
+    </div>
+    <p>실적 발표는 숫자 하나의 시험이 아니다. 시장은 서프라이즈의 크기, 그 이익이 반복될 수 있는지(일회성인지), 다음 분기 전망, 발표 전에 주가가 이미 얼마나 올랐는지를 한꺼번에 따진다. "좋은 실적에도 주가 하락"이라는 기사 제목은 모순이 아니다. 실적 시즌에 주가가 어떻게 움직이는지는 <a href="macro.html">21장</a>에서 다시 본다.</p>
+  </section>
+
+  <section id="consolidated">
+    <h2>연결과 별도, 그리고 DART</h2>
+    <p>큰 회사는 대개 여러 자회사를 거느린다. 모회사 혼자의 장부를 <span class="term">별도 재무제표</span>, 모회사가 지배하는 자회사까지 한 회사처럼 합친 장부를 <span class="term">연결 재무제표</span><span class="en">(Consolidated)</span>라고 한다. 한국 상장사는 연결 재무제표가 주된 재무제표다. 지분이 얼마냐에 따라 합치는 방식이 달라진다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="지분율에 따른 회계 처리: 지배하는 자회사는 연결, 유의적 영향력이 있는 관계기업은 지분법, 단순 투자는 금융자산">
+        <defs><marker id="st-ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-acc-soft" x="170" y="12" width="120" height="40" rx="8"/>
+        <text class="lbl-acc" x="230" y="37" text-anchor="middle">모회사</text>
+        <path class="s-line" d="M210 52 L80 100" marker-end="url(#st-ar3)"/>
+        <path class="s-line" d="M230 52 L230 100" marker-end="url(#st-ar3)"/>
+        <path class="s-line" d="M250 52 L380 100" marker-end="url(#st-ar3)"/>
+        <text class="t-mono" x="122" y="72">60%</text>
+        <text class="t-mono" x="236" y="80">30%</text>
+        <text class="t-mono" x="320" y="72">5%</text>
+        <rect class="f-elev" x="16" y="104" width="134" height="132" rx="8"/>
+        <text class="lbl-b" x="83" y="128" text-anchor="middle">자회사</text>
+        <text class="lbl-dim" x="83" y="150" text-anchor="middle">지배력 있음</text>
+        <text class="lbl-acc" x="83" y="178" text-anchor="middle">연결</text>
+        <text class="lbl-dim" x="83" y="200" text-anchor="middle">매출·자산 100%</text>
+        <text class="lbl-dim" x="83" y="220" text-anchor="middle">남의 몫은 비지배</text>
+        <rect class="f-elev" x="163" y="104" width="134" height="132" rx="8"/>
+        <text class="lbl-b" x="230" y="128" text-anchor="middle">관계기업</text>
+        <text class="lbl-dim" x="230" y="150" text-anchor="middle">영향력 있음</text>
+        <text class="lbl-acc2" x="230" y="178" text-anchor="middle">지분법</text>
+        <text class="lbl-dim" x="230" y="200" text-anchor="middle">순이익의 30%만</text>
+        <text class="lbl-dim" x="230" y="220" text-anchor="middle">한 줄로 반영</text>
+        <rect class="f-elev" x="310" y="104" width="134" height="132" rx="8"/>
+        <text class="lbl-b" x="377" y="128" text-anchor="middle">투자 지분</text>
+        <text class="lbl-dim" x="377" y="150" text-anchor="middle">영향력 없음</text>
+        <text class="lbl" x="377" y="178" text-anchor="middle">금융자산</text>
+        <text class="lbl-dim" x="377" y="200" text-anchor="middle">시가로 평가,</text>
+        <text class="lbl-dim" x="377" y="220" text-anchor="middle">배당만 수익</text>
+      </svg>
+      <figcaption><b>그림 3. 지분율에 따라 장부에 들어오는 방식.</b> 보통 50%를 넘거나 사실상 지배하면 연결, 20% 안팎 이상으로 경영에 영향을 주면 지분법, 그보다 작으면 금융자산으로 처리한다. 실제 판단은 지분율만이 아니라 이사회 구성 같은 실질적 지배력으로 한다.</figcaption>
+    </figure>
+    <p>연결에는 함정이 하나 있다. 자회사를 지배하면 지분이 51%든 100%든 자회사 매출을 <b>전부</b> 더한다. 대신 순이익 가운데 다른 주주의 몫은 <span class="term">비지배지분</span><span class="en">(Non-controlling interest)</span>으로 따로 떼어 낸다. 그래서 주당순이익(EPS)이나 PER을 계산할 때는 연결 순이익 전체가 아니라 <span class="term">지배기업 소유주 지분 순이익</span>을 써야 한다(<a href="ratios.html">6장</a>). 모회사의 지분율을 바꿔 보자.</p>
+
+    <div class="sim" id="sim-cons2">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>지분율 50%를 넘는 순간</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cn-cv"></canvas><span class="hint">아래 그래프를 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>자회사 지분율 <output id="cn-s-out"></output></span><input type="range" id="cn-s" min="0" max="1" step="0.01" value="0.45"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">회계 처리</span><span class="v" id="cn-o-m">—</span></div>
+        <div class="stat"><span class="k">장부상 매출</span><span class="v" id="cn-o-s">—</span></div>
+        <div class="stat"><span class="k">지배주주 순이익</span><span class="v" id="cn-o-n">—</span></div>
+        <div class="stat"><span class="k">비지배지분 순이익</span><span class="v" id="cn-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 지분율을 49%에서 51%로 넘기면 매출이 3,000억원 뛰어오른다. ② 그런데 지배주주 순이익은 거의 그대로다. 주주에게 중요한 숫자는 이쪽이다. ③ 20% 아래로 내리면 자회사 이익이 장부에서 사라진다(배당만 들어온다고 보고 배당은 생략). (모회사 매출 5,000억·순이익 500억, 자회사 매출 3,000억·순이익 300억. 50% 초과 = 지배, 20% 이상 = 지분법으로 단순화)</div>
+    </div>
+    <p>자회사를 51%만 사들여도 연결 매출은 크게 뛴다. "매출 60% 성장" 같은 숫자를 보면, 그것이 본업의 성장인지 인수로 합친 매출인지 확인해야 한다. 반대로 지주회사의 별도 재무제표는 자회사 배당 말고는 매출이 거의 없어 보일 수 있다.</p>
+
+    <h3>DART에서 재무제표 찾기</h3>
+    <p>한국의 모든 공시는 금융감독원 전자공시시스템 <span class="term">DART</span>(dart.fss.or.kr)에 올라온다. 회사 이름을 검색하면 보고서 목록이 나온다. 2026년 기준 주요 공시는 다음과 같다(기한은 대표적인 경우).</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>공시</th><th>언제</th><th>무엇을 보나</th></tr></thead>
+      <tbody>
+        <tr><td>사업보고서</td><td>사업연도 끝난 뒤 90일 안</td><td>1년 치 감사받은 재무제표, 사업 내용, 주석, 감사의견</td></tr>
+        <tr><td>반기·분기보고서</td><td>반기·분기 끝난 뒤 45일 안</td><td>분기 재무제표(반기는 검토), 사업 변화</td></tr>
+        <tr><td>영업(잠정)실적</td><td>보고서보다 먼저, 회사 재량</td><td>매출·영업이익·순이익 요약. 실적 시즌 주가를 움직이는 숫자</td></tr>
+        <tr><td>주요사항보고서</td><td>사건이 생기면 바로</td><td>유상증자, 전환사채, 합병, 영업 정지 같은 큰 일</td></tr>
+        <tr><td>감사보고서</td><td>사업보고서와 함께</td><td>감사의견(적정·한정·부적정·의견거절)과 핵심 감사 사항</td></tr>
+      </tbody>
+    </table></div>
+    <p>사업보고서를 열면 목차가 길다. 처음에는 세 곳만 본다. ① "II. 사업의 내용"에서 회사가 무엇으로 돈을 버는지, ② "III. 재무에 관한 사항"에서 요약 재무정보와 연결 재무제표 세 장, ③ 같은 장의 주석에서 매출채권·재고·차입금·특수관계자 거래. 그리고 감사보고서의 감사의견을 확인한다. 숫자는 여러 해를 나란히 놓고 보는 것이 핵심이고, 대부분의 증권사 앱과 포털도 DART 숫자를 정리해 보여 준다.</p>
+    <div class="callout warn"><strong>제도와 양식은 바뀐다</strong><p>공시 기한, 감사 제도, 회계 기준은 개정된다. 이 장의 기한과 분류는 2026년 기준의 대표값이며, 실제 판단은 DART 공시와 금융감독원·한국거래소의 최신 규정으로 확인한다. 이 장의 모든 회사와 숫자는 가상이다.</p></div>
+  </section>
+
+  <section id="lab">
+    <h2>종합: 이익이 나는데 망하는 회사</h2>
+    <p>지금까지 본 것을 하나로 묶자. 영업이익률 10%로 꾸준히 이익을 내는 회사가 있다. 매출 1,000억원, 현금 200억원에서 출발한다. 매출이 빨리 클수록 좋아 보이지만, 매출이 늘면 운전자본(매출채권·재고)과 설비도 같이 늘어야 한다. 성장률, 운전자본 일수, 설비투자 비율을 바꿔 8년을 돌려 보자. 현금이 0 아래로 내려가는 해는 돈을 빌리거나 증자하지 못하면 부도가 나는 해다. 장부에 이익이 찍혀 있어도 그렇다. 이것을 <span class="term">흑자 도산</span>이라고 한다.</p>
+
+    <div class="sim" id="sim-grand">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>흑자 도산 실험실: 8년 재무 모형</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gd-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>매출 성장률(연) <output id="gd-g-out"></output></span><input type="range" id="gd-g" min="0" max="0.8" step="0.02" value="0.2"></label>
+          <label class="ctrl"><span>운전자본 일수(채권+재고−채무) <output id="gd-w-out"></output></span><input type="range" id="gd-w" min="-30" max="180" step="5" value="60"></label>
+          <label class="ctrl"><span>설비투자 ÷ 매출 <output id="gd-c-out"></output></span><input type="range" id="gd-c" min="0.02" max="0.2" step="0.01" value="0.06"></label>
+          <div class="ctrl"><span>보기</span>
+            <div class="seg" id="gd-view"><button data-value="cf" class="on">이익과 현금</button><button data-value="bs">재무상태표</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">8년 누적 순이익</span><span class="v" id="gd-o-n">—</span></div>
+        <div class="stat"><span class="k">8년 누적 잉여현금</span><span class="v" id="gd-o-f">—</span></div>
+        <div class="stat"><span class="k">최저 현금</span><span class="v" id="gd-o-m">—</span></div>
+        <div class="stat"><span class="k">판정</span><span class="v" id="gd-o-v">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 성장률 20%, 운전자본 60일에서는 버틴다. 성장률만 50%로 올리면 언제 현금이 바닥나는지 본다. ② 같은 50% 성장이라도 운전자본 일수를 −30일(선결제 구조)로 바꾸면 현금이 쌓인다. ③ 성장률 0%로 두면 이익과 현금이 거의 같아진다. ④ "재무상태표" 보기로 바꿔 늘어난 자산이 무엇으로 채워졌는지 본다. (영업이익률 10%, 세율 25%, 설비 내용연수 8년, 배당·이자 없음, 모자란 현금은 그대로 마이너스로 표시하는 단순 모형)</div>
+    </div>
+    <p>이 실험이 보여 주는 것은 하나다. <b>이익은 의견이고 현금은 사실이다.</b> 이익률이 같아도 성장 속도와 운전자본 구조에 따라 회사는 현금을 쌓기도, 태우기도 한다. 빠르게 크는 회사를 볼 때는 손익계산서의 성장률 옆에 현금흐름표의 영업활동 현금흐름과 투자활동 현금흐름을 함께 놓고, 그 차이를 무엇으로 메우는지(차입, 증자) 재무활동 현금흐름에서 확인한다.</p>
+
+    <div class="casefile">
+      <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 5장</span></div>
+      <h4>동료가 권한 별빛바이오, 재무제표부터 열어 보다</h4>
+      <p>점심시간에 옆자리 동료가 말했다. "별빛바이오 신약 임상 곧 결과 나온대. 지금 들어가면 두 배야." 한결은 앱 대신 DART를 열었다. 가장 최근 사업보고서(가상)의 연결 재무제표에서 숫자 네 개를 적었다. 매출 300억원, 영업손실 400억원, 현금 1,200억원, 영업활동과 설비투자를 합친 연간 현금 소진 약 450억원.</p>
+      <p>1,200 ÷ 450 ≈ 2.7년. 지금(2026년 10월)부터 약 32개월, 2029년 중반이면 현금이 바닥난다. 그 전에 신약이 팔리거나 기술 수출 계약금이 들어오지 않으면 회사는 새 돈을 구해야 한다. 임상이 늦어져 소진이 30% 늘면 시계는 더 빨리 간다. 한결은 "두 배"라는 말 옆에 "런웨이 2.7년, 증자 가능성"이라고 적었다. 손익계산서만 봤다면 "적자 회사"에서 생각이 멈췄을 것이다. 현금흐름표와 재무상태표를 같이 보니 이 회사에 걸린 시간이 보였다.</p>
+      <div class="clue">
+        <div><b>이 장에서 정한 것</b>적자 기업은 손실의 크기보다 현금과 소진 속도부터 본다. 별빛바이오의 런웨이는 약 2.7년이다.</div>
+        <div><b>아직 남은 문제</b>시가총액 7,500억원은 이 회사에 비싼가, 싼가. 이익이 없는 회사의 값은 무엇으로 재는가.</div>
+        <div><b>다음 단계</b>재무제표 숫자를 주가와 묶어 다섯 회사를 비교하는 지표를 만든다(<a href="ratios.html">6장</a>).</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>손익계산서는 기간 동안의 성적(매출 → 매출총이익 → 영업이익 → 순이익), 재무상태표는 기말의 사진(자산 = 부채 + 자본), 현금흐름표는 현금의 실제 이동(영업·투자·재무)이다. 순이익은 이익잉여금과 현금흐름표의 출발점으로 이어진다.</li>
+      <li>고정비 비중이 클수록 영업레버리지가 커서 매출의 작은 변화가 이익을 크게 흔든다. 이익률이 낮은 회사는 비용 변화에 특히 약하다.</li>
+      <li>거래는 언제나 두 곳 이상을 바꾸므로 자산 = 부채 + 자본은 깨지지 않는다. 손실이 쌓이면 자본이 녹아 자본잠식에 이른다.</li>
+      <li>이익과 현금이 갈라지는 주된 이유는 감가상각(현금은 미리, 비용은 나눠서)과 운전자본(재고·매출채권에 묶인 현금)이다. 길게 보면 둘은 만나지만, 빠르게 크는 회사는 이익이 나도 현금이 마를 수 있다(흑자 도산).</li>
+      <li>적자 기업은 현금 ÷ 연간 소진 = 런웨이부터 본다. 분식의 신호는 이익과 영업활동 현금흐름의 오랜 괴리, 매출보다 빠른 매출채권·재고 증가다. 실적은 컨센서스 대비로 평가되고, 지배주주 순이익과 DART 원문을 확인한다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 어떤 회사가 3년 연속 순이익이 늘었는데 영업활동 현금흐름은 3년 내내 마이너스이고, 매출채권은 매출보다 훨씬 빠르게 늘었다. 가장 먼저 확인할 것은?</p>
+        <div class="opts">
+          <button class="opt">배당을 늘릴 여력이 생겼는지</button>
+          <button class="opt" data-correct>매출을 앞당겨 잡았거나 회수되지 않는 매출이 쌓이는지</button>
+          <button class="opt">감가상각비를 너무 많이 잡았는지</button>
+          <button class="opt">유상증자로 현금을 모았는지</button>
+        </div>
+        <div class="quiz-exp">이익이 현금으로 들어오지 않고 매출채권으로만 쌓이는 것은 밀어내기나 회수 불가능한 매출의 전형적인 신호다. 단정할 수는 없지만, 주석에서 매출채권의 상대방과 연령(얼마나 오래된 채권인지)을 확인해야 한다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 간접법 현금흐름표에서 감가상각비를 순이익에 다시 더하는 이유는?</p>
+        <div class="opts">
+          <button class="opt">감가상각비는 세금을 줄여 주기 때문에</button>
+          <button class="opt">감가상각비는 영업외비용이기 때문에</button>
+          <button class="opt" data-correct>비용으로 잡혔지만 그해에 현금이 나가지 않았기 때문에</button>
+          <button class="opt">설비를 다시 팔 수 있기 때문에</button>
+        </div>
+        <div class="quiz-exp">설비를 살 때 현금은 이미 투자활동으로 나갔다. 감가상각비는 그 금액을 여러 해에 나눠 비용으로 잡는 장부상 배분이라, 순이익을 현금으로 번역할 때는 되돌려 더한다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 총비용 중 고정비 비중이 매우 큰 회사의 매출이 10% 줄었다. 영업이익은 대체로 어떻게 되나?</p>
+        <div class="opts">
+          <button class="opt" data-correct>10%보다 훨씬 크게 줄어든다</button>
+          <button class="opt">정확히 10% 줄어든다</button>
+          <button class="opt">10%보다 적게 줄어든다</button>
+          <button class="opt">고정비라 영업이익은 변하지 않는다</button>
+        </div>
+        <div class="quiz-exp">고정비는 매출이 줄어도 그대로 나가므로 줄어든 매출이 거의 그대로 이익에서 빠진다. 영업레버리지(공헌이익 ÷ 영업이익)가 4배라면 매출 −10%에 영업이익은 약 −40%다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 회사가 은행에서 1,000억원을 빌려 현금으로 받았다. 재무상태표는 어떻게 바뀌나?</p>
+        <div class="opts">
+          <button class="opt">자산 +1,000억, 자본 +1,000억</button>
+          <button class="opt">자산은 그대로, 부채 +1,000억, 자본 −1,000억</button>
+          <button class="opt">손익계산서에 이익 1,000억이 생긴다</button>
+          <button class="opt" data-correct>자산(현금) +1,000억, 부채 +1,000억, 자본은 그대로</button>
+        </div>
+        <div class="quiz-exp">빌린 돈은 자산(현금)과 부채(차입금)를 함께 늘린다. 주주의 몫인 자본은 변하지 않고 부채비율만 오른다. 현금흐름표에는 재무활동 +1,000억으로 적힌다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 적자 바이오 회사의 현금이 600억원이고, 영업과 연구개발로 한 해 약 240억원의 현금이 나간다. 다른 변화가 없다면 런웨이는?</p>
+        <div class="opts">
+          <button class="opt">약 0.4년</button>
+          <button class="opt">약 4년</button>
+          <button class="opt" data-correct>약 2.5년</button>
+          <button class="opt">이익이 날 때까지 무한하다</button>
+        </div>
+        <div class="quiz-exp">런웨이 = 현금 ÷ 연간 소진 = 600 ÷ 240 = 2.5년이다. 그 전에 이익을 내거나 기술 수출·차입·증자로 돈을 구해야 하고, 증자는 기존 주주의 지분을 희석한다(9장).</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const narrow = (id) => document.getElementById(id).parentElement.clientWidth < 560;
+  const E = (x) => MB.won(Math.round(x) * 1e8);
+  const Es = (x) => MB.won(Math.round(x) * 1e8, { short: true });
+  const ax = (v) => MB.wonAxis(v * 1e8);
+  const num = (x) => (x < 0 ? "−" : "") + Math.round(Math.abs(x)).toLocaleString("ko-KR");
+  const sgn = (x) => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.round(Math.abs(x)).toLocaleString("ko-KR");
+  const pc = (x, d) => (x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%";
+  const tone = (x, s) => '<span class="' + MB.tone(x) + '">' + s + "</span>";
+  const ease = (t) => 1 - Math.pow(1 - MB.clamp(t, 0, 1), 3);
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "middle";
+    ctx.fillText(s, x, y);
+  }
+  function knob(ctx, x, y, P, r) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke();
+    ctx.restore();
+  }
+  function wrap(ctx, s, x, y, maxW, lh, o) {
+    ctx.font = MB.font(o.size || 12, false, o.weight);
+    const words = s.split(" "); let line = "", yy = y;
+    words.forEach((w) => {
+      const t = line ? line + " " + w : w;
+      if (ctx.measureText(t).width > maxW && line) { text(ctx, line, x, yy, o); line = w; yy += lh; }
+      else line = t;
+    });
+    if (line) text(ctx, line, x, yy, o);
+    return yy + lh;
+  }
+  function rrect(ctx, x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function soft(ctx, color, a, fn) { ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = color; fn(); ctx.restore(); }
+  function approach(cur, tgt, k) {
+    let moving = false;
+    for (const key in tgt) {
+      const d = tgt[key] - (cur[key] == null ? tgt[key] : cur[key]);
+      if (Math.abs(d) > Math.max(0.5, Math.abs(tgt[key]) * 1e-4)) { cur[key] = (cur[key] == null ? tgt[key] : cur[key]) + d * k; moving = true; }
+      else cur[key] = tgt[key];
+    }
+    return moving;
+  }
+
+  /* ---------------------------------------------------------- 1. 손익 폭포 */
+  (function () {
+    const NONOP = 600, TAX = 0.25;
+    let reveal = 9;
+    function calc() {
+      const S = SL(), c = CR();
+      const cogs = S * c, gp = S - cogs, sga = 6000 + 0.1 * S, op = gp - sga, pre = op + NONOP, tax = pre > 0 ? pre * TAX : 0, ni = pre - tax;
+      return { S, cogs, gp, sga, op, pre, tax, ni };
+    }
+    const SL = MB.range("wf-s", (v) => Es(v), () => cv.redraw());
+    const CR = MB.range("wf-c", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    const cv = MB.canvas("#wf-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("wf-cv"), t = calc();
+      const v = t;
+      const rows = [
+        { k: "매출", a: 0, b: v.S, tot: true, col: P.accent },
+        { k: "매출원가", a: v.S, b: v.gp, col: P.accent2 },
+        { k: "매출총이익", a: 0, b: v.gp, tot: true },
+        { k: "판관비", a: v.gp, b: v.op, col: P.accent2 },
+        { k: "영업이익", a: 0, b: v.op, tot: true },
+        { k: "영업외손익", a: v.op, b: v.pre, col: MB.toneColor(NONOP) },
+        { k: "세전이익", a: 0, b: v.pre, tot: true },
+        { k: "법인세", a: v.pre, b: v.ni, col: P.accent2 },
+        { k: "순이익", a: 0, b: v.ni, tot: true },
+      ];
+      const lw = nar ? 70 : 86, rw = nar ? 74 : 96, top = 12, bot = 26;
+      const B = { x: lw, y: top, w: w - lw - rw, h: h - top - bot };
+      let lo = 0; rows.forEach((r) => { lo = Math.min(lo, r.a, r.b); });
+      const x0 = Math.min(0, lo * 1.15), x1 = 92000;
+      const X = (val) => B.x + ((val - x0) / (x1 - x0)) * B.w;
+      const rh = B.h / rows.length, bh = Math.min(22, rh * 0.62);
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+      const tk = [0, 20000, 40000, 60000, 80000];
+      tk.forEach((tv) => { const px = X(tv); ctx.beginPath(); ctx.moveTo(px, B.y); ctx.lineTo(px, B.y + B.h); ctx.stroke(); text(ctx, ax(tv), px, B.y + B.h + 13, { color: P.faint, size: 10.5, mono: true, align: "center" }); });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(X(0), B.y); ctx.lineTo(X(0), B.y + B.h); ctx.stroke();
+      rows.forEach((r, i) => {
+        const cy = B.y + rh * (i + 0.5);
+        const vis = MB.clamp(reveal - i, 0, 1);
+        text(ctx, r.k, lw - 8, cy, { color: r.tot ? P.text : P.dim, size: nar ? 11.5 : 12.5, weight: r.tot ? 700 : 400, align: "right" });
+        if (vis <= 0) return;
+        const e = ease(vis), a = r.a, b = MB.lerp(r.a, r.b, e);
+        const col = r.tot ? (r.k === "매출" ? P.accent : MB.toneColor(r.b)) : r.col;
+        ctx.fillStyle = col; ctx.globalAlpha = r.tot ? 0.9 : 0.6;
+        const xa = X(Math.min(a, b)), xb = X(Math.max(a, b));
+        ctx.fillRect(xa, cy - bh / 2, Math.max(1.5, xb - xa), bh); ctx.globalAlpha = 1;
+        if (i < rows.length - 1 && reveal > i + 1) {
+          ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath();
+          ctx.moveTo(X(r.b), cy + bh / 2); ctx.lineTo(X(r.b), cy + rh - bh / 2); ctx.stroke(); ctx.setLineDash([]);
+        }
+        const val = r.tot ? r.b : r.b - r.a;
+        text(ctx, (r.tot ? num(val) : sgn(val)), w - 8, cy, { color: r.tot ? (r.k === "매출" ? P.accent : MB.toneColor(val)) : P.dim, size: nar ? 11 : 12, mono: true, weight: r.tot ? 600 : 400, align: "right" });
+      });
+      text(ctx, "단위 억원", w - 8, h - 9, { color: P.faint, size: 10.5, align: "right" });
+      MB.stat("wf-o-g", pc(t.gp / t.S));
+      MB.stat("wf-o-o", tone(t.op, pc(t.op / t.S)));
+      MB.stat("wf-o-n", tone(t.ni, E(t.ni)));
+      MB.stat("wf-o-m", tone(t.ni, pc(t.ni / t.S)));
+    }, { get height() { return narrow("wf-cv") ? 330 : 340; } });
+    document.getElementById("wf-play").addEventListener("click", () => { reveal = 0; });
+    document.getElementById("wf-re").addEventListener("click", () => { SL.set(60000); CR.set(0.65); });
+    MB.loop(cv.canvas, (dt) => {
+      if (reveal < 9) { reveal = Math.min(9, reveal + dt * 2.6); cv.redraw(); }
+    });
+  })();
+
+  /* ---------------------------------------------------------- 2. 영업레버리지 */
+  (function () {
+    const S = 60000, TC = 51000, OP = S - TC;
+    let f = 0.5, L = null, dragging = false;
+    const model = (fx) => { const F = TC * fx, v = (TC - F) / S; return { F, v, cm: S * (1 - v), dol: (S * (1 - v)) / OP }; };
+    const chg = (fx, d) => { const m = model(fx); return (S * (1 + d) * (1 - m.v) - m.F) / OP - 1; };
+    const D = MB.range("ol-d", (v) => MB.chg(v, 0), () => cv.redraw());
+    const pre = MB.seg("ol-pre", (v) => { f = Number(v); cv.redraw(); });
+    const cv = MB.canvas("#ol-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ol-cv"), m = model(f), d = D();
+      const bx = nar ? 14 : 58, bw = w - bx - 18, by = 26, bH = 30;
+      L = { bx, bw, by, bH };
+      text(ctx, "총비용 5조 1,000억원", bx, 12, { color: P.dim, size: 11.5 });
+      const sx = bx + bw * f;
+      ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.75; ctx.fillRect(bx, by, sx - bx, bH);
+      ctx.fillStyle = P.faint; ctx.globalAlpha = 0.45; ctx.fillRect(sx, by, bx + bw - sx, bH); ctx.globalAlpha = 1;
+      if (sx - bx > 64) text(ctx, "고정비 " + Math.round(f * 100) + "%", bx + 8, by + bH / 2, { color: P.text, size: 12, weight: 700 });
+      if (bx + bw - sx > 64) text(ctx, "변동비 " + Math.round((1 - f) * 100) + "%", bx + bw - 8, by + bH / 2, { color: P.text, size: 12, align: "right" });
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(sx, by - 4); ctx.lineTo(sx, by + bH + 4); ctx.stroke();
+      knob(ctx, sx, by + bH / 2, P);
+      const cb = { x: nar ? 46 : 58, y: by + bH + 24, w: w - (nar ? 46 : 58) - 18, h: h - (by + bH + 24) - 74 };
+      const xs = []; for (let k = -30; k <= 30; k++) xs.push(k / 100);
+      const c = MB.chart(ctx, cb, {
+        x: [-0.3, 0.3], y: [-2, 2], xTicks: [-0.3, -0.2, -0.1, 0, 0.1, 0.2, 0.3], yTicks: [-2, -1, 0, 1, 2],
+        xFmt: (v) => MB.chg(v, 0), yFmt: (v) => MB.chg(v, 0), xLabel: "매출 변화",
+        series: [
+          { data: xs.map((x) => [x, x]), color: P.faint, width: 1.4, dash: [5, 4] },
+          { data: xs.map((x) => [x, chg(f, x)]), color: P.accent, width: 2.6 },
+        ],
+        hlines: [{ y: -1, color: P.down, label: "영업이익 0 (이 아래는 적자)" }],
+      });
+      const y = chg(f, d);
+      ctx.save(); ctx.beginPath(); ctx.rect(cb.x, cb.y - 4, cb.w + 4, cb.h + 8); ctx.clip();
+      ctx.strokeStyle = MB.toneColor(y); ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(c.X(d), c.Y(0)); ctx.lineTo(c.X(d), c.Y(MB.clamp(y, -2, 2))); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = MB.toneColor(y); ctx.beginPath(); ctx.arc(c.X(d), c.Y(MB.clamp(y, -2, 2)), 5, 0, TAU); ctx.fill();
+      ctx.restore();
+      const lx = c.X(d) + (d > 0.1 ? -8 : 8);
+      text(ctx, "영업이익 " + MB.chg(y, 0), lx, MB.clamp(c.Y(MB.clamp(y, -2, 2)) - 14, cb.y + 8, cb.y + cb.h - 8), { color: MB.toneColor(y), size: 12, weight: 700, align: d > 0.1 ? "right" : "left" });
+      text(ctx, "점선: 고정비 0%", cb.x + 6, cb.y + 8, { color: P.faint, size: 11 });
+      MB.stat("ol-o-f", Math.round(f * 100) + "%");
+      MB.stat("ol-o-l", m.dol.toFixed(2) + "<small>배</small>");
+      MB.stat("ol-o-c", tone(y, MB.chg(y, 1)));
+      MB.stat("ol-o-b", "−" + pc(OP / m.cm));
+    }, { get height() { return narrow("ol-cv") ? 350 : 360; } });
+    MB.drag(cv.canvas, {
+      start(x, y) { dragging = !!L && y < L.by + L.bH + 14; },
+      move(x) { if (!dragging) return; f = MB.clamp((x - L.bx) / L.bw, 0, 1); cv.redraw(); },
+      end() { dragging = false; },
+    });
+  })();
+
+  /* ---------------------------------------------------------- 3. 다섯 회사 */
+  (function () {
+    const COST = { hanbit: [39000, 12000, 0.55], nuri: [13500, 3400, 0.2], byeol: [120, 580, 0.85], daon: [20000, 8000, 0.4], moa: [14000, 22000, 0.7] };
+    const rows = ST.COKEYS.map((k) => { const c = ST.CO[k], [cg, sg, f] = COST[k]; return { k, name: c.name, S: c.sales / 1e8, op: c.op / 1e8, net: c.net / 1e8, cg, sg, f }; });
+    let sel = 0, L = null;
+    function shock(r, d) {
+      const TC = r.cg + r.sg, F = TC * r.f, k = 1 + d;
+      const S = r.S * k, cg = r.cg * (1 - r.f) * k + r.cg * r.f, sg = r.sg * (1 - r.f) * k + r.sg * r.f;
+      const op = S - cg - sg; return { S, cg, sg, op, chg: (op - r.op) / Math.abs(r.op), F };
+    }
+    const D = MB.range("fv-d", (v) => MB.chg(v, 0), () => cv.redraw());
+    const cv = MB.canvas("#fv-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("fv-cv"), d = D();
+      const lw = nar ? 66 : 84, rw = nar ? 84 : 116, top = 30, bot = 20;
+      const bx = lw, bw = w - lw - rw - 6, rh = (h - top - bot) / rows.length, bh = Math.min(26, rh * 0.55);
+      const full = 1.18, X = (p) => bx + (p / full) * bw;
+      L = { top, rh };
+      text(ctx, "매출 = 100", X(1), 12, { color: P.dim, size: 11, align: "center" });
+      text(ctx, "영업이익 변화", w - 8, 12, { color: P.dim, size: 11, align: "right" });
+      rows.forEach((r, i) => {
+        const s = shock(r, d), cy = top + rh * (i + 0.5), y0 = cy - bh / 2;
+        if (i === sel) soft(ctx, P.accent, 0.08, () => ctx.fillRect(0, cy - rh / 2 + 2, w, rh - 4));
+        text(ctx, r.name, lw - 8, cy, { color: i === sel ? P.accent : P.text, size: nar ? 11.5 : 12.5, weight: i === sel ? 700 : 500, align: "right" });
+        const pc1 = s.cg / s.S, pc2 = s.sg / s.S;
+        ctx.fillStyle = P.faint; ctx.globalAlpha = 0.55; ctx.fillRect(X(0), y0, X(Math.min(pc1, full)) - X(0), bh);
+        ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.75;
+        const e2 = Math.min(pc1 + pc2, full); ctx.fillRect(X(pc1), y0, X(e2) - X(pc1), bh); ctx.globalAlpha = 1;
+        if (s.op >= 0) { ctx.fillStyle = P.up; ctx.globalAlpha = 0.85; ctx.fillRect(X(pc1 + pc2), y0, X(1) - X(pc1 + pc2), bh); ctx.globalAlpha = 1; }
+        else {
+          ctx.fillStyle = P.down; ctx.globalAlpha = 0.3; ctx.fillRect(X(1), y0, X(e2) - X(1), bh); ctx.globalAlpha = 1;
+          if (pc1 + pc2 > full) {
+            const zx = X(full) - 6; ctx.fillStyle = P.bg; ctx.beginPath();
+            ctx.moveTo(zx, y0 - 2); ctx.lineTo(zx + 6, y0 + bh * 0.33); ctx.lineTo(zx, y0 + bh * 0.66); ctx.lineTo(zx + 6, y0 + bh + 2); ctx.lineTo(zx + 12, y0 + bh + 2); ctx.lineTo(zx + 12, y0 - 2); ctx.closePath(); ctx.fill();
+            text(ctx, "비용 = 매출의 " + (pc1 + pc2).toFixed(1) + "배", X(0.42), y0 + bh + 9, { color: P.down, size: 10.5 });
+          }
+        }
+        ctx.strokeStyle = P.axis; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(X(1), cy - rh / 2 + 4); ctx.lineTo(X(1), cy + rh / 2 - 4); ctx.stroke(); ctx.setLineDash([]);
+        const opm = s.op / s.S;
+        if (s.op >= 0 && X(1) - X(pc1 + pc2) > 26) text(ctx, Math.round(opm * 100) + "", (X(pc1 + pc2) + X(1)) / 2, cy, { color: "#fff", size: 10.5, mono: true, weight: 600, align: "center" });
+        text(ctx, Es(s.op), w - 8, cy - 8, { color: MB.toneColor(s.op), size: nar ? 10.5 : 11.5, mono: true, align: "right" });
+        text(ctx, d === 0 ? "기준" : MB.chg(s.chg, 0), w - 8, cy + 8, { color: d === 0 ? P.faint : MB.toneColor(s.chg), size: nar ? 10.5 : 11.5, mono: true, weight: 700, align: "right" });
+      });
+      const r = rows[sel];
+      MB.stat("fv-o-n", r.name);
+      MB.stat("fv-o-g", pc((r.S - r.cg) / r.S));
+      MB.stat("fv-o-o", tone(r.op, pc(r.op / r.S)));
+      MB.stat("fv-o-f", Math.round(r.f * 100) + "%");
+    }, { get height() { return narrow("fv-cv") ? 330 : 320; } });
+    MB.drag(cv.canvas, { start(x, y) { if (!L) return; const i = Math.floor((y - L.top) / L.rh); if (i >= 0 && i < rows.length) { sel = i; cv.redraw(); } } });
+  })();
+
+  /* ---------------------------------------------------------- 4. 재무상태표 저울 */
+  (function () {
+    const INIT = { cash: 800, inv: 400, ppe: 1800, debt: 1200, cap: 1000, re: 800 };
+    let s, cur, msg, wob = 0;
+    function reset() { s = Object.assign({}, INIT); cur = Object.assign({}, INIT); msg = "기초: 현금 800 · 재고 400 · 설비 1,800 / 차입금 1,200 · 자본금 1,000 · 이익잉여금 800"; wob = 0; }
+    reset();
+    const act = (fn) => () => { const m = fn(); if (m) { msg = m; wob = 1; } update(); };
+    function loss(x) {
+      let left = x; const parts = [];
+      for (const k of ["cash", "inv", "ppe"]) { const t = Math.min(s[k], left); if (t > 0) { s[k] -= t; left -= t; parts.push({ cash: "현금", inv: "재고", ppe: "설비(손상)" }[k] + " −" + t); } }
+      s.re -= x - left;
+      return parts.join(" · ");
+    }
+    const A = {
+      loan: () => { s.cash += 500; s.debt += 500; return "대출 500: 현금 +500 / 차입금 +500"; },
+      pay: () => { if (s.debt < 500) return "갚을 차입금이 500보다 적다"; if (s.cash < 500) return "현금이 모자라 갚을 수 없다"; s.cash -= 500; s.debt -= 500; return "상환 500: 현금 −500 / 차입금 −500"; },
+      capex: () => { if (s.cash < 500) return "현금이 모자라 설비를 살 수 없다"; s.cash -= 500; s.ppe += 500; return "설비 500: 현금 −500 → 설비 +500 (총계 그대로)"; },
+      eq: () => { s.cash += 500; s.cap += 500; return "유상증자 500: 현금 +500 / 자본금 +500"; },
+      prof: () => { s.cash += 300; s.re += 300; return "이익 300: 현금 +300 / 이익잉여금 +300"; },
+      loss: () => { const p = loss(400); return "손실 400: " + p + " / 이익잉여금 −400"; },
+      div: () => { if (s.re < 200) return "배당할 이익잉여금이 없다"; if (s.cash < 200) return "현금이 모자라 배당할 수 없다"; s.cash -= 200; s.re -= 200; return "배당 200: 현금 −200 / 이익잉여금 −200"; },
+    };
+    const cv = MB.canvas("#sc-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("sc-cv"), v = cur;
+      const assets = v.cash + v.inv + v.ppe, eq = v.cap + v.re;
+      const scaleMax = Math.max(3600, assets * 1.12, v.debt * 1.12);
+      const baseY = h - 46, topY = 44, Hh = baseY - topY, k = Hh / scaleMax;
+      const colW = Math.min(nar ? 104 : 130, w * 0.32), lx = w * 0.29 - colW / 2, rx = w * 0.71 - colW / 2;
+      const ang = Math.sin(wob * 14) * wob * 0.06;
+      const dyL = Math.tan(ang) * (w * 0.21), dyR = -dyL;
+      wrap(ctx, msg, 12, 14, w - 24, 15, { color: P.dim, size: nar ? 11 : 12 });
+      // 받침과 저울대
+      ctx.fillStyle = P.faint; ctx.beginPath(); ctx.moveTo(w / 2, baseY + 4); ctx.lineTo(w / 2 - 16, baseY + 34); ctx.lineTo(w / 2 + 16, baseY + 34); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = P.axis; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(w * 0.06, baseY - dyL * 1.3); ctx.lineTo(w * 0.94, baseY - dyR * 1.3); ctx.stroke(); ctx.lineWidth = 1;
+      function block(x, y0, hgt, col, a, label, val) {
+        if (hgt <= 0.5) return y0;
+        ctx.fillStyle = col; ctx.globalAlpha = a; ctx.fillRect(x, y0 - hgt, colW, hgt); ctx.globalAlpha = 1;
+        ctx.strokeStyle = P.bg; ctx.lineWidth = 1.5; ctx.strokeRect(x, y0 - hgt, colW, hgt); ctx.lineWidth = 1;
+        if (hgt > 17) {
+          text(ctx, label, x + 7, y0 - hgt / 2, { color: P.text, size: nar ? 11 : 12, weight: 600 });
+          text(ctx, num(val), x + colW - 6, y0 - hgt / 2, { color: P.text, size: 11, mono: true, align: "right" });
+        }
+        return y0 - hgt;
+      }
+      let y = baseY - 3 + dyL;
+      y = block(lx, y, v.ppe * k, P.faint, 0.45, "설비", v.ppe);
+      y = block(lx, y, v.inv * k, P.accent2, 0.45, "재고", v.inv);
+      y = block(lx, y, v.cash * k, P.accent, 0.55, "현금", v.cash);
+      text(ctx, "자산 " + num(assets), lx + colW / 2, y - 10, { color: P.text, size: 12, weight: 700, align: "center" });
+      let yr = baseY - 3 + dyR;
+      const yDebtTop = block(rx, yr, v.debt * k, P.dim, 0.35, "차입금", v.debt);
+      if (eq >= 0) {
+        if (v.re >= 0) { yr = block(rx, yDebtTop, v.cap * k, P.accent2, 0.6, "자본금", v.cap); yr = block(rx, yr, v.re * k, P.up, 0.55, "이익잉여금", v.re); }
+        else yr = block(rx, yDebtTop, eq * k, P.accent2, 0.6, "자본(잠식)", eq);
+      } else {
+        const hh = -eq * k; yr = yDebtTop + hh;
+        ctx.save(); ctx.beginPath(); ctx.rect(rx, yDebtTop, colW, hh); ctx.clip();
+        ctx.strokeStyle = P.bad; ctx.lineWidth = 1.5;
+        for (let q = -hh; q < colW + hh; q += 8) { ctx.beginPath(); ctx.moveTo(rx + q, yDebtTop); ctx.lineTo(rx + q + hh, yDebtTop + hh); ctx.stroke(); }
+        ctx.restore();
+        ctx.strokeStyle = P.bad; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(rx - 4, yr); ctx.lineTo(rx + colW + 4, yr); ctx.stroke(); ctx.lineWidth = 1;
+        if (hh > 14) text(ctx, "자본 " + num(eq), rx + colW / 2, yDebtTop + hh / 2, { color: P.bad, size: 12, weight: 700, align: "center" });
+      }
+      text(ctx, "부채+자본 " + num(v.debt + eq), rx + colW / 2, Math.min(yr, yDebtTop) - 10, { color: P.text, size: 12, weight: 700, align: "center" });
+      text(ctx, "자산", lx + colW / 2, baseY + 22, { color: P.dim, size: 12, align: "center" });
+      text(ctx, "부채 + 자본", rx + colW / 2, baseY + 22, { color: P.dim, size: 12, align: "center" });
+    }, { get height() { return narrow("sc-cv") ? 380 : 360; } });
+    function update() {
+      const assets = s.cash + s.inv + s.ppe, eq = s.cap + s.re;
+      MB.stat("sc-o-a", E(assets));
+      MB.stat("sc-o-e", tone(eq, E(eq)));
+      MB.stat("sc-o-r", eq > 0 ? pc(s.debt / eq, 0) : '<span class="bad-t">계산 불가</span>');
+      MB.stat("sc-o-s", eq <= 0 ? '<span class="bad-t">완전 자본잠식</span>' : eq < s.cap ? '<span class="bad-t">부분 자본잠식</span>' : '<span class="ok-t">정상</span>');
+    }
+    Object.keys(A).forEach((k) => document.getElementById("sc-" + k).addEventListener("click", act(A[k])));
+    document.getElementById("sc-re").addEventListener("click", () => { reset(); update(); cv.redraw(); });
+    update();
+    MB.loop(cv.canvas, (dt) => {
+      const moving = approach(cur, s, Math.min(1, dt * 7));
+      if (wob > 0) wob = Math.max(0, wob - dt * 1.1);
+      if (moving || wob > 0) cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 5. 거래 하나, 세 표 */
+  (function () {
+    const INIT = { cash: 1000, ar: 0, inv: 300, ppe: 1200, ap: 0, loan: 500, capital: 1500, re: 500, sales: 0, cogs: 0, sga: 0, dep: 0, capex: 0, borrow: 0, div: 0 };
+    let s, prev, flash = 0, last = "—", note = "";
+    function reset() { s = Object.assign({}, INIT); prev = Object.assign({}, INIT); flash = 0; last = "—"; note = "거래 버튼을 눌러 보자. 바뀐 칸이 반짝인다."; }
+    reset();
+    const T = {
+      buy: ["재고 외상 매입", () => { s.inv += 200; s.ap += 200; return "재고 +200 / 매입채무 +200. 손익도 현금도 그대로다."; }],
+      sell: ["외상 판매", () => { if (s.inv < 200) return null; s.sales += 500; s.cogs += 200; s.ar += 500; s.inv -= 200; s.re += 300; return "매출 +500, 원가 +200 → 이익 +300. 그러나 현금은 0. 매출채권 +500."; }],
+      col: ["외상값 회수", () => { const x = Math.min(500, s.ar); if (!x) return null; s.ar -= x; s.cash += x; return "매출채권 −" + x + " → 현금 +" + x + ". 이익은 그대로, 영업현금흐름만 늘었다."; }],
+      capex: ["설비 구입", () => { if (s.cash < 600) return null; s.cash -= 600; s.ppe += 600; s.capex += 600; return "현금 −600 → 설비 +600. 손익은 그대로, 투자활동 −600."; }],
+      dep: ["감가상각", () => { if (s.ppe < 100) return null; s.ppe -= 100; s.dep += 100; s.re -= 100; return "감가상각비 +100 → 이익 −100. 현금은 그대로(현금흐름표에서 되돌려 더한다)."; }],
+      wage: ["월급 지급", () => { if (s.cash < 150) return null; s.cash -= 150; s.sga += 150; s.re -= 150; return "판관비 +150 → 이익 −150, 현금 −150. 이익과 현금이 같이 움직인다."; }],
+      loan: ["대출", () => { s.cash += 400; s.loan += 400; s.borrow += 400; return "현금 +400 / 차입금 +400. 이익은 그대로, 재무활동 +400."; }],
+      div: ["배당", () => { if (s.cash < 100 || s.re < 100) return null; s.cash -= 100; s.re -= 100; s.div += 100; return "현금 −100 / 이익잉여금 −100. 배당은 비용이 아니라 손익엔 없다. 재무활동 −100."; }],
+    };
+    function derived(x) {
+      const ni = x.sales - x.cogs - x.sga - x.dep;
+      const dAR = x.ar - INIT.ar, dInv = x.inv - INIT.inv, dAP = x.ap - INIT.ap;
+      const cfo = ni + x.dep - dAR - dInv + dAP, cfi = -x.capex, cff = x.borrow - x.div;
+      return { ni, dAR: -dAR, dInv: -dInv, dAP, cfo, cfi, cff, dc: cfo + cfi + cff, ta: x.cash + x.ar + x.inv + x.ppe, tle: x.ap + x.loan + x.capital + x.re };
+    }
+    function panel(ctx, P, x, y, w, title, rows, nar) {
+      rrect(ctx, x, y, w, 26 + rows.length * (nar ? 19 : 25) + 8, 8); ctx.fillStyle = P.surface; ctx.globalAlpha = 0.6; ctx.fill(); ctx.globalAlpha = 1;
+      text(ctx, title, x + 10, y + 14, { color: P.accent, size: 13, weight: 700 });
+      const rh = nar ? 19 : 25;
+      rows.forEach((r, i) => {
+        const cy = y + 32 + i * rh + rh / 2 - 4;
+        if (r.ch && flash > 0) soft(ctx, P.accent2, 0.28 * flash, () => ctx.fillRect(x + 4, cy - rh / 2 + 1, w - 8, rh - 2));
+        if (r.line) { ctx.strokeStyle = P.border; ctx.beginPath(); ctx.moveTo(x + 8, cy - rh / 2 + 1); ctx.lineTo(x + w - 8, cy - rh / 2 + 1); ctx.stroke(); }
+        text(ctx, r.k, x + 10 + (r.ind ? 8 : 0), cy, { color: r.b ? P.text : P.dim, size: nar ? 11.5 : 12, weight: r.b ? 700 : 400 });
+        text(ctx, r.sg ? sgn(r.v) : num(r.v), x + w - 10, cy, { color: r.tc ? MB.toneColor(r.v) : P.text, size: 11.5, mono: true, weight: r.b ? 700 : 400, align: "right" });
+        if (!nar && w > 200 && r.ch && flash > 0 && r.d) text(ctx, sgn(r.d), x + w - 62, cy, { color: MB.toneColor(r.d), size: 10.5, mono: true, align: "right" });
+      });
+      return y + 26 + rows.length * rh + 8;
+    }
+    const cv = MB.canvas("#lk-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 640, d = derived(s), p = derived(prev);
+      const ch = (a, b) => Math.abs(a - b) > 1e-9;
+      const IS = [
+        { k: "매출", v: s.sales, ch: ch(s.sales, prev.sales), d: s.sales - prev.sales },
+        { k: "매출원가", v: -s.cogs, ch: ch(s.cogs, prev.cogs), d: prev.cogs - s.cogs },
+        { k: "판관비(급여)", v: -s.sga, ch: ch(s.sga, prev.sga), d: prev.sga - s.sga },
+        { k: "감가상각비", v: -s.dep, ch: ch(s.dep, prev.dep), d: prev.dep - s.dep },
+        { k: "순이익", v: d.ni, b: true, tc: true, line: true, ch: ch(d.ni, p.ni), d: d.ni - p.ni },
+      ];
+      const BA = [
+        { k: "현금", v: s.cash, ch: ch(s.cash, prev.cash), d: s.cash - prev.cash },
+        { k: "매출채권", v: s.ar, ch: ch(s.ar, prev.ar), d: s.ar - prev.ar },
+        { k: "재고", v: s.inv, ch: ch(s.inv, prev.inv), d: s.inv - prev.inv },
+        { k: "설비", v: s.ppe, ch: ch(s.ppe, prev.ppe), d: s.ppe - prev.ppe },
+        { k: "자산 합계", v: d.ta, b: true, line: true, ch: ch(d.ta, p.ta), d: d.ta - p.ta },
+      ];
+      const BL = [
+        { k: "매입채무", v: s.ap, ch: ch(s.ap, prev.ap), d: s.ap - prev.ap },
+        { k: "차입금", v: s.loan, ch: ch(s.loan, prev.loan), d: s.loan - prev.loan },
+        { k: "자본금", v: s.capital },
+        { k: "이익잉여금", v: s.re, ch: ch(s.re, prev.re), d: s.re - prev.re },
+        { k: "부채+자본", v: d.tle, b: true, line: true, ch: ch(d.tle, p.tle), d: d.tle - p.tle },
+      ];
+      const CF = [
+        { k: "순이익", v: d.ni, sg: true, ch: ch(d.ni, p.ni), d: d.ni - p.ni },
+        { k: "+ 감가상각비", v: s.dep, sg: true, ind: true, ch: ch(s.dep, prev.dep), d: s.dep - prev.dep },
+        { k: "− 매출채권 증가", v: d.dAR, sg: true, ind: true, ch: ch(d.dAR, p.dAR), d: d.dAR - p.dAR },
+        { k: "− 재고 증가", v: d.dInv, sg: true, ind: true, ch: ch(d.dInv, p.dInv), d: d.dInv - p.dInv },
+        { k: "+ 매입채무 증가", v: d.dAP, sg: true, ind: true, ch: ch(d.dAP, p.dAP), d: d.dAP - p.dAP },
+        { k: "영업활동", v: d.cfo, sg: true, b: true, tc: true, line: true, ch: ch(d.cfo, p.cfo), d: d.cfo - p.cfo },
+        { k: "투자활동", v: d.cfi, sg: true, b: true, tc: true, ch: ch(d.cfi, p.cfi), d: d.cfi - p.cfi },
+        { k: "재무활동", v: d.cff, sg: true, b: true, tc: true, ch: ch(d.cff, p.cff), d: d.cff - p.cff },
+        { k: "현금 증감", v: d.dc, sg: true, b: true, tc: true, line: true, ch: ch(d.dc, p.dc), d: d.dc - p.dc },
+      ];
+      const ny = wrap(ctx, note, 12, 14, w - 24, 16, { color: P.text, size: nar ? 12 : 13, weight: 600 });
+      if (!nar) {
+        const g = 10, pw = (w - 24 - g * 2) / 3, y0 = ny + 2;
+        panel(ctx, P, 12, y0, pw, "손익계산서", IS, false);
+        const half = (pw - 6) / 2;
+        panel(ctx, P, 12 + pw + g, y0, half, "자산", BA, false);
+        panel(ctx, P, 12 + pw + g + half + 6, y0, half, "부채·자본", BL, false);
+        text(ctx, "재무상태표", 12 + pw + g + pw / 2, y0 + 26 + 5 * 25 + 22, { color: P.faint, size: 11, align: "center" });
+        panel(ctx, P, 12 + (pw + g) * 2, y0, pw, "현금흐름표(누적)", CF, false);
+      } else {
+        let y = ny + 2;
+        y = panel(ctx, P, 10, y, w - 20, "손익계산서", IS, true) + 8;
+        const half = (w - 26) / 2;
+        const y1 = panel(ctx, P, 10, y, half, "자산", BA, true);
+        panel(ctx, P, 16 + half, y, half, "부채·자본", BL, true);
+        y = y1 + 8;
+        panel(ctx, P, 10, y, w - 20, "현금흐름표(누적)", CF, true);
+      }
+      MB.stat("lk-o-t", last);
+      MB.stat("lk-o-n", tone(d.ni, sgn(d.ni)));
+      MB.stat("lk-o-c", tone(d.dc, sgn(d.dc)) + ' <small>(현금 ' + num(s.cash) + ")</small>");
+      MB.stat("lk-o-b", '<span class="ok-t">' + num(d.ta - d.tle) + "</span>");
+    }, { get height() { return document.getElementById("lk-cv").parentElement.clientWidth < 640 ? 640 : 330; } });
+    Object.keys(T).forEach((k) => document.getElementById("lk-" + k).addEventListener("click", () => {
+      const before = Object.assign({}, s), m = T[k][1]();
+      if (m === null) { note = T[k][0] + ": 지금은 할 수 없다(현금·재고·외상값이 모자람)."; prev = Object.assign({}, s); flash = 0; cv.redraw(); return; }
+      prev = before; flash = 1; last = T[k][0]; note = T[k][0] + " — " + m; cv.redraw();
+    }));
+    document.getElementById("lk-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (flash > 0) { flash = Math.max(0, flash - dt * 0.45); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 6. 감가상각 */
+  (function () {
+    const COST = 1200, EB = 300, N = 10;
+    let curNI = null;
+    const LF = MB.range("dp-l", (v) => v + "년", () => cv.redraw());
+    const cum = document.getElementById("dp-cum");
+    cum.addEventListener("change", () => cv.redraw());
+    function series() {
+      const l = LF(), ni = [], fcf = [];
+      for (let t = 1; t <= N; t++) { const dep = t <= l ? COST / l : 0; ni.push(EB - dep); fcf.push(EB - (t === 1 ? COST : 0)); }
+      return { ni, fcf };
+    }
+    const cv = MB.canvas("#dp-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("dp-cv"), sr = series(), C = cum.checked;
+      if (!curNI || curNI.length !== N) curNI = sr.ni.slice();
+      const acc = (a) => { let s = 0; return a.map((v) => (s += v)); };
+      const ni = C ? acc(curNI) : curNI, fc = C ? acc(sr.fcf) : sr.fcf;
+      const y = C ? [-1000, 2000] : [-1000, 400];
+      const box = { x: nar ? 50 : 60, y: 26, w: w - (nar ? 50 : 60) - 14, h: h - 26 - 46 };
+      const c = MB.chart(ctx, box, { x: [0.5, N + 0.5], y, xTicks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], xFmt: (v) => v + "", yFmt: ax, xLabel: "연차",
+        hlines: [{ y: 0, color: P.axis, dash: [] }] });
+      const bw = Math.min(26, (box.w / N) * 0.5);
+      fc.forEach((v, i) => {
+        const x = c.X(i + 1), y0 = c.Y(0), y1 = c.Y(MB.clamp(v, y[0], y[1]));
+        ctx.fillStyle = MB.toneColor(v); ctx.globalAlpha = 0.28; ctx.fillRect(x - bw / 2, Math.min(y0, y1), bw, Math.abs(y1 - y0)); ctx.globalAlpha = 1;
+        ctx.strokeStyle = MB.toneColor(v); ctx.strokeRect(x - bw / 2 + 0.5, Math.min(y0, y1) + 0.5, bw - 1, Math.abs(y1 - y0));
+      });
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2.4; ctx.beginPath();
+      ni.forEach((v, i) => { const px = c.X(i + 1), py = c.Y(v); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.stroke(); ctx.lineWidth = 1;
+      ni.forEach((v, i) => { ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(c.X(i + 1), c.Y(v), 4, 0, TAU); ctx.fill(); });
+      text(ctx, "막대: 잉여현금흐름", box.x + 4, 12, { color: P.dim, size: 11.5 });
+      text(ctx, "선: 순이익", box.x + (nar ? 118 : 130), 12, { color: P.accent, size: 11.5, weight: 700 });
+      text(ctx, C ? "누적" : "해마다", w - 14, 12, { color: P.faint, size: 11.5, align: "right" });
+      const tn = sr.ni.reduce((a, b) => a + b, 0), tf = sr.fcf.reduce((a, b) => a + b, 0);
+      MB.stat("dp-o-1", tone(sr.ni[0], E(sr.ni[0])));
+      MB.stat("dp-o-c", tone(sr.fcf[0], E(sr.fcf[0])));
+      MB.stat("dp-o-n", tone(tn, E(tn)));
+      MB.stat("dp-o-f", tone(tf, E(tf)));
+    }, { get height() { return narrow("dp-cv") ? 300 : 320; } });
+    MB.loop(cv.canvas, (dt) => {
+      if (!curNI) return;
+      const tg = series().ni; let mv = false;
+      for (let i = 0; i < N; i++) { const d = tg[i] - curNI[i]; if (Math.abs(d) > 0.5) { curNI[i] += d * Math.min(1, dt * 9); mv = true; } else curNI[i] = tg[i]; }
+      if (mv) cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 7. 현금전환주기 */
+  (function () {
+    const S = 18000, COGS = 13500, NI = 800;
+    const wc = (i, r, p) => (COGS / 365) * i + (S / 365) * r - (COGS / 365) * p;
+    const BASE = wc(45, 40, 35);
+    let t = 0;
+    const DI = MB.range("cc-i", (v) => v + "일", () => cv.redraw());
+    const DR = MB.range("cc-r", (v) => v + "일", () => cv.redraw());
+    const DP = MB.range("cc-p", (v) => v + "일", () => cv.redraw());
+    const cv = MB.canvas("#cc-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("cc-cv"), i = DI(), r = DR(), p = DP();
+      const ccc = i + r - p, W = wc(i, r, p), maxD = 300;
+      const x0 = nar ? 14 : 20, x1 = w - (nar ? 14 : 20), X = (d) => x0 + (d / maxD) * (x1 - x0);
+      const y1 = 44, y2 = 98, y3 = 148, bh = 22;
+      ctx.strokeStyle = P.grid;
+      for (let d = 0; d <= maxD; d += 30) { ctx.beginPath(); ctx.moveTo(X(d), 26); ctx.lineTo(X(d), y3 + 24); ctx.stroke(); }
+      for (let d = 0; d <= maxD; d += 60) text(ctx, d + "일", X(d), y3 + 34, { color: P.faint, size: 10.5, mono: true, align: d === 0 ? "left" : "center" });
+      text(ctx, "우리 물건", x0, y1 - 14, { color: P.dim, size: 11.5 });
+      ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.6; ctx.fillRect(X(0), y1, X(i) - X(0), bh);
+      ctx.fillStyle = P.accent; ctx.globalAlpha = 0.5; ctx.fillRect(X(i), y1, X(i + r) - X(i), bh); ctx.globalAlpha = 1;
+      if (X(i) - X(0) > 40) text(ctx, "재고 " + i, (X(0) + X(i)) / 2, y1 + bh / 2, { color: P.text, size: 11, align: "center", weight: 600 });
+      if (X(i + r) - X(i) > 50) text(ctx, "외상 " + r, (X(i) + X(i + r)) / 2, y1 + bh / 2, { color: P.text, size: 11, align: "center", weight: 600 });
+      text(ctx, "납품업체에 줄 돈", x0, y2 - 14, { color: P.dim, size: 11.5 });
+      ctx.fillStyle = P.faint; ctx.globalAlpha = 0.45; ctx.fillRect(X(0), y2, X(p) - X(0), bh); ctx.globalAlpha = 1;
+      if (X(p) - X(0) > 64) text(ctx, "외상 매입 " + p, (X(0) + X(p)) / 2, y2 + bh / 2, { color: P.text, size: 11, align: "center", weight: 600 });
+      const a = Math.min(p, i + r), b = Math.max(p, i + r);
+      const lbl = ccc >= 0 ? "현금이 묶인 기간 " + ccc + "일" : "남의 돈으로 굴리는 기간 " + (-ccc) + "일";
+      ctx.fillStyle = ccc >= 0 ? P.accent : P.ok; ctx.globalAlpha = 0.2; ctx.fillRect(X(a), y3 - 4, X(b) - X(a), bh + 8); ctx.globalAlpha = 1;
+      ctx.strokeStyle = ccc >= 0 ? P.accent : P.ok; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(X(a), y3 - 4); ctx.lineTo(X(a), y3 + bh + 4); ctx.moveTo(X(b), y3 - 4); ctx.lineTo(X(b), y3 + bh + 4); ctx.stroke(); ctx.lineWidth = 1;
+      ctx.font = MB.font(12, false, 700);
+      const tw = ctx.measureText(lbl).width;
+      if (X(b) - X(a) > tw + 12) text(ctx, lbl, (X(a) + X(b)) / 2, y3 + bh / 2, { color: P.text, size: 12, weight: 700, align: "center" });
+      else if (X(b) + 8 + tw < x1) text(ctx, lbl, X(b) + 8, y3 + bh / 2, { color: P.text, size: 12, weight: 700 });
+      else text(ctx, lbl, X(a) - 8, y3 + bh / 2, { color: P.text, size: 12, weight: 700, align: "right" });
+      // 동전
+      const period = Math.max(i + r, p) + 30, day = (t * 50) % period;
+      const out = ccc >= 0 && day >= p && day <= i + r;
+      ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.arc(X(Math.min(day, maxD)), out ? y3 - 12 : 12, 6, 0, TAU); ctx.fill();
+      text(ctx, "원", X(Math.min(day, maxD)), out ? y3 - 12 : 12, { color: P.bg, size: 8.5, weight: 700, align: "center" });
+      // 묶인 돈 막대
+      const gy = h - 46, gx = x0 + (nar ? 0 : 0), gw = x1 - gx, mx = Math.max(4000, Math.abs(W) * 1.1);
+      const G = (v) => gx + (v / mx) * gw;
+      text(ctx, "묶인 운전자본 " + Es(W), gx, gy - 10, { color: W >= 0 ? P.text : P.ok, size: 12, weight: 700 });
+      ctx.fillStyle = P.surface; ctx.fillRect(gx, gy, gw, 14);
+      ctx.fillStyle = W >= 0 ? P.accent : P.ok; ctx.globalAlpha = 0.7; ctx.fillRect(gx, gy, Math.max(0, G(Math.abs(W)) - gx), 14); ctx.globalAlpha = 1;
+      for (let m = 1; NI * m <= mx; m++) { const px = G(NI * m); ctx.strokeStyle = P.up; ctx.beginPath(); ctx.moveTo(px, gy - 3); ctx.lineTo(px, gy + 17); ctx.stroke(); if (m <= 4 && (!nar || m % 2 === 1)) text(ctx, "순이익 " + m + "년 치", px, gy + 27, { color: P.up, size: 10, align: "center" }); }
+      MB.stat("cc-o-c", ccc + "<small>일</small>");
+      MB.stat("cc-o-w", E(W));
+      const dd = W - BASE; MB.stat("cc-o-d", Math.abs(dd) < 1 ? "0" : '<span class="' + (dd > 0 ? "down-t" : "up-t") + '">' + (dd > 0 ? "현금 −" : "현금 +") + num(Math.abs(dd)) + "억</span>");
+      MB.stat("cc-o-r", (W / NI).toFixed(1) + "<small>배</small>");
+    }, { get height() { return narrow("cc-cv") ? 290 : 280; } });
+    MB.loop(cv.canvas, (dt) => { t += dt; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 8. 런웨이 */
+  (function () {
+    const CASH = ST.CO.byeol.cash / 1e8, M = 60;
+    let clock = 0, playing = false, L = null, drag = false;
+    const ym = (m) => { const t = 2026 * 12 + 9 + Math.floor(m); return Math.floor(t / 12) + "년 " + ((t % 12) + 1) + "월"; };
+    const B = MB.range("rn-b", (v) => E(v), () => { clock = 0; playing = false; cv.redraw(); });
+    const SC = MB.seg("rn-sc", () => { clock = 0; playing = false; cv.redraw(); });
+    function path() {
+      const b = B(), sc = SC(), pts = [[0, CASH]]; let c = CASH, zero = null;
+      for (let m = 1; m <= M; m++) {
+        const burn = (sc === "delay" && m > 12 ? b * 1.3 : b) / 12;
+        const prevC = c; c -= burn;
+        if (sc === "deal" && m === 12) c += 300;
+        if (zero == null && c <= 0) zero = m - 1 + MB.clamp(prevC / burn, 0, 1);
+        pts.push([m, c]);
+      }
+      return { pts, zero };
+    }
+    const cv = MB.canvas("#rn-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("rn-cv"), pa = path(), z = pa.zero;
+      const box = { x: nar ? 50 : 60, y: 18, w: w - (nar ? 50 : 60) - 16, h: h - 18 - 74 };
+      const c = MB.chart(ctx, box, { x: [0, M], y: [-400, 1600], xTicks: [3, 15, 27, 39, 51], xFmt: (m) => String(2026 + Math.floor((9 + m) / 12)), yFmt: ax, xLabel: "연도(1월 기준)",
+        hlines: [{ y: 0, color: P.bad, dash: [], label: "현금 0" }] });
+      ctx.fillStyle = P.bad; ctx.globalAlpha = 0.08; ctx.fillRect(box.x, c.Y(0), box.w, c.Y(-400) - c.Y(0)); ctx.globalAlpha = 1;
+      ctx.save(); ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+      const zEnd = z == null ? M : z;
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2.5; ctx.beginPath();
+      pa.pts.forEach(([m, v], i) => { if (m > zEnd + 1) return; const px = c.X(m), py = c.Y(v); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.stroke();
+      ctx.strokeStyle = P.faint; ctx.setLineDash([4, 4]); ctx.lineWidth = 1.5; ctx.beginPath();
+      pa.pts.forEach(([m, v]) => { if (m < zEnd) return; const px = c.X(m), py = c.Y(v); m <= Math.ceil(zEnd) ? ctx.moveTo(px, py) : ctx.lineTo(px, py); }); ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth = 1;
+      ctx.restore();
+      if (z != null) {
+        const zx = c.X(z);
+        ctx.strokeStyle = P.bad; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(zx, box.y); ctx.lineTo(zx, c.Y(0)); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = P.bad; ctx.beginPath(); ctx.arc(zx, c.Y(0), 5, 0, TAU); ctx.fill();
+        text(ctx, "증자 필요 " + ym(z), MB.clamp(zx, box.x + 60, box.x + box.w - 60), box.y + 10, { color: P.bad, size: 12, weight: 700, align: "center" });
+      }
+      const h12 = pa.pts[12];
+      L = { c };
+      knob(ctx, c.X(12), c.Y(h12[1]), P);
+      const cm = Math.min(clock, M), ci = Math.floor(cm), cval = pa.pts[ci][1];
+      if (clock > 0) {
+        ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.arc(c.X(cm), c.Y(cval), 6, 0, TAU); ctx.fill();
+        ctx.strokeStyle = P.accent2; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(c.X(cm), c.Y(cval)); ctx.lineTo(c.X(cm), box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+      }
+      MB.stat("rn-o-y", z == null ? "5년 이상" : (z / 12).toFixed(1) + "<small>년 (" + Math.round(z) + "개월)</small>");
+      MB.stat("rn-o-d", z == null ? "—" : '<span class="bad-t">' + ym(z) + "</span>");
+      MB.stat("rn-o-t", ym(cm));
+      MB.stat("rn-o-c", cval <= 0 ? '<span class="bad-t">' + E(cval) + "</span>" : E(cval));
+    }, { get height() { return narrow("rn-cv") ? 320 : 340; } });
+    MB.drag(cv.canvas, {
+      start(x, y) { if (!L) return; const px = L.c.X(12), py = L.c.Y(path().pts[12][1]); drag = Math.hypot(x - px, y - py) < 30 || Math.abs(x - px) < 24; },
+      move(x, y) {
+        if (!drag) return;
+        const b0 = L.c.box, v = 1600 - ((y - b0.y) / b0.h) * 2000;
+        const sc = SC(), extra = sc === "deal" ? 300 : 0;
+        B.set(MB.clamp(Math.round((CASH + extra - v) / 10) * 10, 100, 900));
+      },
+      end() { drag = false; },
+    });
+    document.getElementById("rn-play").addEventListener("click", () => { if (clock >= M) clock = 0; playing = true; });
+    document.getElementById("rn-re").addEventListener("click", () => { clock = 0; playing = false; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return;
+      const z = path().zero, stop = Math.min(M, z == null ? M : z);
+      clock = Math.min(stop, clock + dt * 6);
+      if (clock >= stop) playing = false;
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 9. 이익의 질 지도 */
+  (function () {
+    let seed = 7, firms = [], t = 0.03, L = null, drag = false;
+    function gen() {
+      const r = ST.rng(seed), g = ST.gauss(seed + 100);
+      firms = [];
+      for (let i = 0; i < 40; i++) {
+        const kind = i < 6 ? "fraud" : i < 11 ? "growth" : "normal";
+        let x, y;
+        if (kind === "fraud") { x = 0.04 + r() * 0.08; y = x - 0.035 - r() * 0.07; }
+        else if (kind === "growth") { x = 0.03 + r() * 0.08; y = x + 0.04 - 0.07 - Math.abs(g()) * 0.025; }
+        else { x = -0.05 + r() * 0.17; y = x + 0.035 + g() * 0.02; }
+        firms.push({ x, y, kind });
+      }
+    }
+    gen();
+    const show = document.getElementById("ac-show");
+    show.addEventListener("change", () => cv.redraw());
+    const cv = MB.canvas("#ac-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ac-cv"), S = show.checked;
+      const box = { x: nar ? 46 : 56, y: 16, w: w - (nar ? 46 : 56) - 18, h: h - 16 - 74 };
+      const X0 = -0.08, X1 = 0.16;
+      const c = MB.chart(ctx, box, { x: [X0, X1], y: [-0.12, 0.22], xTicks: [-0.05, 0, 0.05, 0.1, 0.15], yTicks: [-0.1, 0, 0.1, 0.2], xFmt: (v) => Math.round(v * 100) + "%", yFmt: (v) => Math.round(v * 100) + "%",
+        xLabel: "순이익 ÷ 자산", yLabel: "영업현금흐름 ÷ 자산",
+        series: [{ data: [[X0, X0], [X1, X1]], color: P.faint, width: 1.2, dash: [5, 4] }] });
+      ctx.save(); ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+      ctx.fillStyle = P.bad; ctx.globalAlpha = 0.07; ctx.beginPath();
+      ctx.moveTo(c.X(X0), c.Y(X0 - t)); ctx.lineTo(c.X(X1), c.Y(X1 - t)); ctx.lineTo(c.X(X1), box.y + box.h); ctx.lineTo(c.X(X0), box.y + box.h); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+      ctx.strokeStyle = P.bad; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(c.X(X0), c.Y(X0 - t)); ctx.lineTo(c.X(X1), c.Y(X1 - t)); ctx.stroke(); ctx.lineWidth = 1;
+      let flag = 0, hit = 0, fp = 0;
+      firms.forEach((f) => {
+        const fl = f.x - f.y > t; if (fl) { flag++; if (f.kind === "fraud") hit++; else fp++; }
+        const col = !S ? P.accent : f.kind === "fraud" ? P.bad : f.kind === "growth" ? P.accent2 : P.dim;
+        ctx.fillStyle = col; ctx.globalAlpha = 0.85; ctx.beginPath(); ctx.arc(c.X(f.x), c.Y(f.y), 4.5, 0, TAU); ctx.fill(); ctx.globalAlpha = 1;
+        if (fl) { ctx.strokeStyle = P.bad; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(c.X(f.x), c.Y(f.y), 8, 0, TAU); ctx.stroke(); ctx.lineWidth = 1; }
+      });
+      ctx.restore();
+      const hx = c.X(X1 - 0.012), hy = c.Y(X1 - 0.012 - t);
+      L = { c, hx };
+      knob(ctx, hx, hy, P);
+      text(ctx, "순이익 = 영업현금흐름", c.X(0.115), c.Y(0.13) - 12, { color: P.faint, size: 11, align: "center" });
+      if (S) {
+        const lg = [[P.bad, "나중에 문제 드러남"], [P.accent2, "빠른 성장(정직)"], [P.dim, "보통"]];
+        lg.forEach(([cl, s], i) => { const ly = box.y + 10 + i * 16; ctx.fillStyle = cl; ctx.beginPath(); ctx.arc(box.x + 12, ly, 4, 0, TAU); ctx.fill(); text(ctx, s, box.x + 22, ly, { color: P.dim, size: 11 }); });
+      }
+      MB.stat("ac-o-t", pc(t));
+      MB.stat("ac-o-f", flag + "<small>곳</small>");
+      MB.stat("ac-o-h", S ? hit + " / 6" : "<small>결과를 켠다</small>");
+      MB.stat("ac-o-x", S ? fp + "<small>곳</small>" : "—");
+    }, { get height() { return narrow("ac-cv") ? 340 : 360; } });
+    MB.drag(cv.canvas, {
+      start(x) { drag = !!L && Math.abs(x - L.hx) < 60; },
+      move(x, y) { if (!drag) return; const b = L.c.box, v = 0.22 - ((y - b.y) / b.h) * 0.34; t = MB.clamp(0.148 - v, -0.08, 0.16); cv.redraw(); },
+      end() { drag = false; },
+    });
+    document.getElementById("ac-new").addEventListener("click", () => { seed++; gen(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 10. 밀어내기 */
+  (function () {
+    const NQ = 12, DSO0 = 60;
+    let q = 0, hist = [], queue = 0, acc = 0, grow = [];
+    const K = MB.range("sf-k", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    function reset() { q = 0; hist = []; queue = 0; grow = []; }
+    reset();
+    function step() {
+      if (q > NQ) return;
+      q++;
+      const N = 1000 * Math.pow(1.02, Math.min(q, NQ) - 1), prev = hist[hist.length - 1];
+      const arN0 = prev ? prev.arN : 1000 / 1.02 * DSO0 / 91, stuff0 = prev ? prev.stuffAR : 0;
+      if (q <= NQ) {
+        const k = K(), R = N * (1 + k), arN = N * DSO0 / 91, stuffAR = stuff0 + k * N;
+        const ni = 0.08 * N + 0.25 * k * N, cfo = 0.088 * N - (arN - arN0) - 0.75 * k * N;
+        hist.push({ q, R, ni, cfo, arN, stuffAR, dso: (arN + stuffAR) / R * 91, wo: 0 });
+      } else {
+        const R = N, arN = N * DSO0 / 91;
+        const wo = stuff0, ni = 0.08 * N - wo, cfo = 0.088 * N - (arN - arN0);
+        hist.push({ q, R, ni, cfo, arN, stuffAR: 0, dso: arN / R * 91, wo });
+      }
+      grow.push(0);
+    }
+    const cv = MB.canvas("#sf-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("sf-cv");
+      const lx = nar ? 50 : 60, top = { x: lx, y: 22, w: w - lx - 14, h: (h - 22) * 0.56 - 30 };
+      const bot = { x: lx, y: top.y + top.h + 40, w: top.w, h: h - (top.y + top.h + 40) - 30 };
+      let lo = -200, hi = 200;
+      hist.forEach((r) => { lo = Math.min(lo, r.ni, r.cfo); hi = Math.max(hi, r.ni, r.cfo); });
+      lo = Math.max(lo, -1400);
+      const c1 = MB.chart(ctx, top, { x: [0.5, NQ + 1.5], y: [lo * 1.1, hi * 1.15], xTicks: [], yFmt: ax, hlines: [{ y: 0, color: P.axis, dash: [] }] });
+      const slot = top.w / (NQ + 1), bw = Math.min(14, slot * 0.34);
+      hist.forEach((r, i) => {
+        const g = ease(grow[i]), x = c1.X(r.q);
+        [[r.ni, -bw / 2 - 1, 0.85], [r.cfo, bw / 2 + 1, 0.3]].forEach(([v, off, a], j) => {
+          const vv = MB.clamp(v, lo * 1.1, hi * 1.15) * g, y0 = c1.Y(0), y1 = c1.Y(vv);
+          ctx.fillStyle = MB.toneColor(v); ctx.globalAlpha = a; ctx.fillRect(x + off - bw / 2, Math.min(y0, y1), bw, Math.abs(y1 - y0)); ctx.globalAlpha = 1;
+          if (j === 1) { ctx.strokeStyle = MB.toneColor(v); ctx.strokeRect(x + off - bw / 2 + 0.5, Math.min(y0, y1) + 0.5, bw - 1, Math.abs(y1 - y0)); }
+        });
+        if (r.wo) text(ctx, "감사: 매출채권 " + Es(r.wo) + " 상각", MB.clamp(x, top.x + 90, top.x + top.w - 90), c1.Y(0) + 14, { color: P.bad, size: 11.5, weight: 700, align: "center" });
+      });
+      for (let k = 1; k <= NQ + 1; k++) if (!nar || k % 2 === 1) text(ctx, k > NQ ? "감사" : "Q" + k, c1.X(k), top.y + top.h + 10, { color: k > NQ ? P.bad : P.faint, size: 10.5, align: "center" });
+      text(ctx, "■ 순이익", top.x + 4, 10, { color: P.up, size: 11.5, weight: 700 });
+      text(ctx, "□ 영업현금흐름", top.x + 66, 10, { color: P.dim, size: 11.5 });
+      const dmax = Math.max(120, ...hist.map((r) => r.dso)) * 1.1;
+      const c2 = MB.chart(ctx, bot, { x: [0.5, NQ + 1.5], y: [0, dmax], xTicks: [], yFmt: (v) => Math.round(v) + "일",
+        hlines: [{ y: DSO0, color: P.faint, label: "정상 60일" }],
+        series: [{ data: hist.map((r) => [r.q, r.dso]), color: P.accent, width: 2.4 }] });
+      hist.forEach((r) => { ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(c2.X(r.q), c2.Y(r.dso), 3.5, 0, TAU); ctx.fill(); });
+      text(ctx, "매출채권 일수", bot.x + 4, bot.y - 10, { color: P.accent, size: 11.5, weight: 700 });
+      if (!hist.length) text(ctx, "“다음 분기”를 눌러 시작한다", top.x + top.w / 2, top.y + top.h / 2 - 20, { color: P.dim, size: 13, align: "center" });
+      const cn = hist.reduce((a, r) => a + r.ni, 0), cc = hist.reduce((a, r) => a + r.cfo, 0), lr = hist[hist.length - 1];
+      MB.stat("sf-o-q", q ? (q > NQ ? "감사" : "Q" + q + " <small>(" + Math.ceil(q / 4) + "년 차)</small>") : "—");
+      MB.stat("sf-o-n", tone(cn, E(cn)));
+      MB.stat("sf-o-c", tone(cc, E(cc)));
+      MB.stat("sf-o-d", lr ? Math.round(lr.dso) + "<small>일</small>" : "—");
+    }, { get height() { return narrow("sf-cv") ? 380 : 360; } });
+    document.getElementById("sf-next").addEventListener("click", () => { step(); });
+    document.getElementById("sf-all").addEventListener("click", () => { queue = NQ + 1 - q; });
+    document.getElementById("sf-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      let dirty = false;
+      if (queue > 0) { acc += dt; if (acc > 0.22) { acc = 0; queue--; step(); dirty = true; } }
+      grow.forEach((g, i) => { if (g < 1) { grow[i] = Math.min(1, g + dt * 3); dirty = true; } });
+      if (dirty) cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 11. 수상한 회사 찾기 */
+  (function () {
+    const ROUNDS = 5, NAMES = ["가 회사", "나 회사", "다 회사"];
+    const BAD = ["ar", "inv", "cap", "cfo", "ar"];
+    const WHY = {
+      ar: "매출은 15%씩 느는데 매출채권은 그보다 훨씬 빨리 불었고, 영업현금흐름은 마이너스로 떨어졌다. 팔았다고 적었지만 돈을 받지 못하고 있다.",
+      inv: "매출은 제자리인데 재고가 해마다 크게 늘었다. 안 팔린 물건을 쌓아 두면 원가가 재고로 넘어가 이익이 부풀어 보인다.",
+      cap: "이익이 껑충 뛰었는데 무형자산(개발비)이 함께 불었다. 비용을 자산으로 돌리면 이익과 영업현금흐름이 모두 좋아 보인다. 이번엔 현금흐름도 속았다.",
+      cfo: "순이익은 해마다 늘었지만 영업현금흐름은 3년 내내 마이너스다. 이익이 현금으로 바뀌지 않는다.",
+    };
+    const DECOY = {
+      steady: "꾸준한 회사. 이익과 영업현금흐름이 나란히 간다.",
+      growth: "빠르게 크는 회사. 매출채권과 재고가 늘었지만 매출과 같은 속도다.",
+      decline: "실적이 나빠진 회사. 정직한 부진이다. 영업현금흐름은 이익보다 오히려 낫다.",
+    };
+    let round = 0, score = 0, cards = [], answer = -1, picked = -1, L = [];
+    function genCo(type, r) {
+      const S0 = Math.round((800 + r() * 1200) / 10) * 10;
+      const prof = { steady: [0.03, [0.08, 0.08, 0.085]], growth: [0.25, [0.07, 0.075, 0.08]], decline: [-0.12, [0.07, 0.03, -0.01]],
+        ar: [0.15, [0.07, 0.09, 0.11]], inv: [0.02, [0.07, 0.09, 0.1]], cap: [0.05, [0.04, 0.08, 0.11]], cfo: [0.08, [0.08, 0.1, 0.12]] }[type];
+      const g = prof[0] + (r() - 0.5) * 0.02, m = prof[1];
+      const dso = { ar: [55, 85, 130], cfo: [60, 75, 90] }[type] || [58, 58, 58];
+      const invR = { inv: [0.14, 0.25, 0.4], cfo: [0.14, 0.17, 0.2] }[type] || [0.14, 0.14, 0.14];
+      const intR = type === "cap" ? [0.03, 0.09, 0.17] : [0.03, 0.03, 0.03];
+      const sales = [], ni = [], cfo = [], ar = [], inv = [], intan = [];
+      let pS = S0 / (1 + g), pAR = pS * dso[0] / 365, pInv = pS * invR[0];
+      for (let t = 0; t < 3; t++) {
+        const S = S0 * Math.pow(1 + g, t), A = S * dso[t] / 365, I = S * invR[t];
+        const N = S * m[t], dep = S * 0.04;
+        let C = N + dep - (A - pAR) - (I - pInv);
+        if (type === "cfo") C = -S * (0.015 + 0.01 * t);
+        sales.push(S); ni.push(N); cfo.push(C); ar.push(A); inv.push(I); intan.push(S * intR[t]);
+        pS = S; pAR = A; pInv = I;
+      }
+      return { type, sales, ni, cfo, ar, inv, intan, key: { ar: "ar", inv: "inv", cap: "intan", cfo: "cfo" }[type] };
+    }
+    function deal() {
+      const r = ST.rng(300 + round * 17), decoys = ["steady", "growth", "decline"];
+      const d1 = decoys[Math.floor(r() * 3)], d2 = decoys.filter((x) => x !== d1)[Math.floor(r() * 2)];
+      answer = Math.floor(r() * 3);
+      const types = [d1, d2]; types.splice(answer, 0, BAD[round % BAD.length]);
+      cards = types.map((t) => genCo(t, r));
+      picked = -1;
+    }
+    function reset() { round = 0; score = 0; deal(); }
+    reset();
+    const cv = MB.canvas("#gm-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 640;
+      L = [];
+      if (round >= ROUNDS) {
+        text(ctx, "다섯 판 끝: " + score + "판 맞힘", w / 2, h / 2 - 12, { color: P.text, size: 18, weight: 800, align: "center" });
+        text(ctx, "“처음부터”를 눌러 다시 한다", w / 2, h / 2 + 16, { color: P.dim, size: 13, align: "center" });
+        return;
+      }
+      text(ctx, "판 " + (round + 1) + " / " + ROUNDS + " · 회계가 가장 수상한 회사는?", 12, 14, { color: P.text, size: 13, weight: 700 });
+      const rowsDef = [["매출", "sales"], ["순이익", "ni"], ["영업현금흐름", "cfo"], ["매출채권", "ar"], ["재고", "inv"], ["무형자산", "intan"]];
+      const cw = nar ? w - 20 : (w - 20 - 16) / 3, ch = 168;
+      cards.forEach((cd, i) => {
+        const x = nar ? 10 : 10 + i * (cw + 8), y = nar ? 30 + i * (ch + 8) : 30;
+        L.push({ x, y, w: cw, h: ch });
+        rrect(ctx, x, y, cw, ch, 10); ctx.fillStyle = P.surface; ctx.globalAlpha = 0.55; ctx.fill(); ctx.globalAlpha = 1;
+        let bc = P.border, lw = 1;
+        if (picked >= 0 && i === answer) { bc = P.ok; lw = 2.5; }
+        else if (picked === i) { bc = P.bad; lw = 2.5; }
+        ctx.strokeStyle = bc; ctx.lineWidth = lw; rrect(ctx, x, y, cw, ch, 10); ctx.stroke(); ctx.lineWidth = 1;
+        text(ctx, NAMES[i], x + 10, y + 15, { color: P.text, size: 13, weight: 700 });
+        const lab = nar ? 92 : Math.min(92, cw * 0.36), colW = (cw - lab - 14) / 3;
+        ["2024", "2025", "2026"].forEach((yy, k) => text(ctx, yy, x + lab + colW * (k + 1), y + 15, { color: P.faint, size: 10.5, mono: true, align: "right" }));
+        rowsDef.forEach(([nm, key], j) => {
+          const ry = y + 38 + j * 21;
+          if (picked >= 0 && i === answer && key === cd.key) soft(ctx, P.bad, 0.14, () => ctx.fillRect(x + 4, ry - 10, cw - 8, 20));
+          text(ctx, nm, x + 10, ry, { color: P.dim, size: 11.5 });
+          cd[key].forEach((v, k) => text(ctx, num(v), x + lab + colW * (k + 1), ry, { color: key === "ni" || key === "cfo" ? MB.toneColor(v) : P.text, size: 11, mono: true, align: "right" }));
+        });
+        if (picked >= 0) text(ctx, i === answer ? "수상한 회사" : "", x + cw - 10, y + 15, { color: P.ok, size: 11.5, weight: 700, align: "right" });
+      });
+      MB.stat("gm-o-r", round + 1 + " / " + ROUNDS);
+      MB.stat("gm-o-s", score + "");
+      if (picked < 0) MB.stat("gm-o-x", "카드를 눌러 고른다");
+      else {
+        const t = cards[answer].type, decoyTxt = picked !== answer ? " (고른 카드: " + DECOY[cards[picked].type] + ")" : "";
+        MB.stat("gm-o-x", (picked === answer ? '<span class="ok-t">맞았다.</span> ' : '<span class="bad-t">아니다.</span> ') + WHY[t] + decoyTxt);
+      }
+    }, { get height() { return document.getElementById("gm-cv").parentElement.clientWidth < 640 ? 586 : 236; } });
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        if (picked >= 0 || round >= ROUNDS) return;
+        const i = L.findIndex((b) => x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h);
+        if (i < 0) return;
+        picked = i; if (i === answer) score++; cv.redraw();
+      },
+    });
+    document.getElementById("gm-next").addEventListener("click", () => { if (round < ROUNDS) { round++; if (round < ROUNDS) deal(); } cv.redraw(); if (round >= ROUNDS) { MB.stat("gm-o-r", ROUNDS + " / " + ROUNDS); MB.stat("gm-o-s", score + ""); MB.stat("gm-o-x", "끝. 다시 하려면 처음부터."); } });
+    document.getElementById("gm-re").addEventListener("click", () => { reset(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 12. 컨센서스 게임 */
+  (function () {
+    const QS = [
+      { l: "24.3Q", cons: 1000, act: 1080, guide: "유지", pre: 0.02, r: 0.045, why: "기대보다 8% 더 벌었고 전망도 그대로다. 교과서적인 서프라이즈." },
+      { l: "24.4Q", cons: 1050, act: 1060, guide: "하향", pre: 0.01, r: -0.07, why: "기대를 살짝 넘었지만 다음 분기 전망을 낮췄다. 시장은 지난 숫자보다 앞날을 산다." },
+      { l: "25.1Q", cons: 1000, act: 900, guide: "상향", pre: -0.06, r: 0.03, why: "기대에 못 미쳤지만 발표 전에 이미 6% 빠졌고, 다음 분기 전망을 올렸다." },
+      { l: "25.2Q", cons: 980, act: 1150, guide: "상향", pre: 0.01, r: 0.09, why: "큰 서프라이즈와 전망 상향이 겹쳤다." },
+      { l: "25.3Q", cons: 1100, act: 1120, guide: "유지", pre: 0.15, r: -0.03, why: "기대는 넘었지만 발표 전 한 달 동안 15% 올라 더 좋은 숫자가 이미 가격에 들어 있었다." },
+      { l: "25.4Q", cons: 1150, act: 1000, guide: "하향", pre: 0, r: -0.12, why: "어닝 쇼크에 전망 하향까지, 나쁜 소식 두 개가 겹쳤다." },
+      { l: "26.1Q", cons: 1050, act: 1060, guide: "유지", pre: 0, r: 0.005, why: "기대와 거의 같았다. 이미 아는 소식에는 가격이 거의 움직이지 않는다." },
+      { l: "26.2Q", cons: 1080, act: 1250, guide: "유지", pre: 0.02, r: 0.01, why: "16% 서프라이즈지만 밀린 로열티를 한꺼번에 받은 일회성 수익이었다. 반복되지 않는 이익에는 값을 쳐 주지 않는다." },
+    ];
+    let q, phase, guess, hits, done;
+    function reset() { q = 0; phase = "guess"; guess = 0; hits = 0; done = []; }
+    reset();
+    const cv = MB.canvas("#cs-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("cs-cv"), Q = QS[q], sur = Q.act / Q.cons - 1;
+      let y = wrap(ctx, Q.l + " 실적 발표 · 컨센서스 " + num(Q.cons) + "억 → 실적 " + num(Q.act) + "억 (" + MB.chg(sur, 1) + ")", 12, 14, w - 24, 16, { color: P.text, size: nar ? 12 : 13, weight: 700 });
+      y = wrap(ctx, "다음 분기 가이던스: " + Q.guide + " · 발표 전 한 달 주가 " + MB.chg(Q.pre, 0), 12, y, w - 24, 16, { color: Q.guide === "하향" ? P.down : Q.guide === "상향" ? P.up : P.dim, size: 12 });
+      if (phase === "shown") y = wrap(ctx, "→ 다음 날 " + MB.chg(Q.r, 1) + ". " + Q.why, 12, y, w - 24, 16, { color: P.accent, size: 12, weight: 600 });
+      else y = wrap(ctx, guess ? "" : "오를까, 내릴까? 버튼으로 고른다.", 12, y, w - 24, 16, { color: P.faint, size: 12 });
+      const lx = nar ? 44 : 54, top = Math.max(y + 6, nar ? 96 : 76);
+      const avail = h - top - 30, b1 = { x: lx, y: top, w: w - lx - 12, h: avail * 0.55 }, b2 = { x: lx, y: top + avail * 0.55 + 36, w: w - lx - 12, h: avail * 0.45 - 36 };
+      const c1 = MB.chart(ctx, b1, { x: [0, 8], y: [0, 1400], xTicks: [], yTicks: [0, 500, 1000], yFmt: (v) => v ? v.toLocaleString("ko-KR") : "0" });
+      const slot = b1.w / 8, bw = Math.min(26, slot * 0.5);
+      const shownN = phase === "shown" ? q + 1 : q;
+      QS.forEach((d, i) => {
+        const cx = b1.x + slot * (i + 0.5);
+        ctx.strokeStyle = P.dim; ctx.setLineDash([3, 2]); ctx.strokeRect(cx - bw / 2, c1.Y(d.cons), bw, c1.Y(0) - c1.Y(d.cons)); ctx.setLineDash([]);
+        if (i <= q) { const s = d.act / d.cons - 1; ctx.fillStyle = MB.toneColor(s); ctx.globalAlpha = 0.55; ctx.fillRect(cx - bw / 2 + 4, c1.Y(d.act), bw - 8, c1.Y(0) - c1.Y(d.act)); ctx.globalAlpha = 1; }
+        if (!nar || i % 2 === 0) text(ctx, d.l, cx, b1.y + b1.h + 9, { color: i === q ? P.accent : P.faint, size: 10, mono: true, align: "center" });
+      });
+      text(ctx, "점선: 컨센서스 · 막대: 실적(억)", b1.x + 4, b1.y + 6, { color: P.faint, size: 10.5 });
+      const c2 = MB.chart(ctx, b2, { x: [0, 8], y: [-0.14, 0.12], xTicks: [], yTicks: [-0.1, 0, 0.1], yFmt: (v) => MB.chg(v, 0), hlines: [{ y: 0, color: P.axis, dash: [] }] });
+      for (let i = 0; i < shownN; i++) {
+        const d = QS[i], cx = b2.x + slot * (i + 0.5), y0 = c2.Y(0), y1 = c2.Y(d.r);
+        ctx.fillStyle = MB.toneColor(d.r); ctx.globalAlpha = 0.85; ctx.fillRect(cx - bw / 2, Math.min(y0, y1), bw, Math.max(1.5, Math.abs(y1 - y0))); ctx.globalAlpha = 1;
+        if (done[i] != null) text(ctx, done[i] ? "O" : "X", cx, b2.y + b2.h + 8, { color: done[i] ? P.ok : P.bad, size: 10.5, weight: 700, align: "center" });
+      }
+      text(ctx, "다음 날 주가", b2.x + 4, b2.y - 8, { color: P.faint, size: 10.5 });
+      MB.stat("cs-o-q", (q + 1) + " / 8 <small>" + Q.l + "</small>");
+      MB.stat("cs-o-s", tone(sur, MB.chg(sur, 1)));
+      MB.stat("cs-o-r", phase === "shown" ? tone(Q.r, MB.chg(Q.r, 1)) : "?");
+      MB.stat("cs-o-c", hits + " / " + done.filter((x) => x != null).length);
+    }, { get height() { return narrow("cs-cv") ? 420 : 370; } });
+    const pick = (g) => () => {
+      if (phase === "shown") return;
+      guess = g; done[q] = Math.sign(QS[q].r) === g; if (done[q]) hits++; phase = "shown"; cv.redraw();
+    };
+    document.getElementById("cs-up").addEventListener("click", pick(1));
+    document.getElementById("cs-dn").addEventListener("click", pick(-1));
+    document.getElementById("cs-next").addEventListener("click", () => {
+      if (phase === "guess") { phase = "shown"; }
+      else if (q < QS.length - 1) { q++; phase = "guess"; guess = 0; }
+      cv.redraw();
+    });
+    document.getElementById("cs-re").addEventListener("click", () => { reset(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 13. 연결과 별도 */
+  (function () {
+    const PS = 5000, PN = 500, SS = 3000, SN = 300;
+    let L = null, drag = false;
+    const mode = (s) => (s > 0.5 ? "con" : s >= 0.2 ? "eq" : "fin");
+    const calc = (s) => {
+      const m = mode(s);
+      return { m, sales: m === "con" ? PS + SS : PS, own: PN + (m === "fin" ? 0 : SN * s), nci: m === "con" ? SN * (1 - s) : 0 };
+    };
+    const SH = MB.range("cn-s", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    const cv = MB.canvas("#cn-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("cn-cv"), s = SH(), r = calc(s);
+      const MN = { con: "연결(지배)", eq: "지분법", fin: "금융자산" };
+      // 위: 막대 두 개
+      const top = { x: nar ? 64 : 84, y: 22, w: w - (nar ? 64 : 84) - 16, h: nar ? 120 : 110 };
+      const X = (v) => top.x + (v / 8800) * top.w;
+      const bh = 26;
+      text(ctx, "매출", top.x - 8, top.y + 18, { color: P.text, size: 12.5, weight: 700, align: "right" });
+      ctx.fillStyle = P.accent; ctx.globalAlpha = 0.6; ctx.fillRect(X(0), top.y + 5, X(PS) - X(0), bh); ctx.globalAlpha = 1;
+      text(ctx, "모회사 5,000", X(0) + 6, top.y + 18, { color: P.text, size: 11, weight: 600 });
+      if (r.m === "con") { ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.6; ctx.fillRect(X(PS), top.y + 5, X(PS + SS) - X(PS), bh); ctx.globalAlpha = 1; text(ctx, "자회사 3,000", X(PS) + 6, top.y + 18, { color: P.text, size: 11, weight: 600 }); }
+      const ny = top.y + 5 + bh + 22, NX = (v) => top.x + (v / 880) * top.w;
+      text(ctx, "순이익", top.x - 8, ny + 13, { color: P.text, size: 12.5, weight: 700, align: "right" });
+      ctx.fillStyle = P.up; ctx.globalAlpha = 0.6; ctx.fillRect(NX(0), ny, NX(PN) - NX(0), bh); ctx.globalAlpha = 1;
+      text(ctx, "모회사 500", NX(0) + 6, ny + 13, { color: P.text, size: 11, weight: 600 });
+      if (r.m !== "fin") { ctx.fillStyle = P.up; ctx.globalAlpha = 0.9; ctx.fillRect(NX(PN), ny, NX(PN + SN * s) - NX(PN), bh); ctx.globalAlpha = 1; }
+      if (r.nci > 0) {
+        const x0 = NX(PN + SN * s), x1 = NX(PN + SN);
+        ctx.save(); ctx.beginPath(); ctx.rect(x0, ny, x1 - x0, bh); ctx.clip(); ctx.strokeStyle = P.dim;
+        for (let q = -bh; q < x1 - x0 + bh; q += 6) { ctx.beginPath(); ctx.moveTo(x0 + q, ny); ctx.lineTo(x0 + q + bh, ny + bh); ctx.stroke(); }
+        ctx.restore(); ctx.strokeStyle = P.dim; ctx.strokeRect(x0 + 0.5, ny + 0.5, x1 - x0 - 1, bh - 1);
+      }
+      const tail = r.m === "con" ? "지배 +" + num(SN * s) + " · 비지배 " + num(r.nci) : r.m === "eq" ? "지분법이익 +" + num(SN * s) : "자회사 이익 반영 없음";
+      text(ctx, tail, top.x, ny + bh + 12, { color: P.dim, size: 11 });
+      // 아래: 지분율 그래프
+      const gb = { x: nar ? 50 : 60, y: ny + bh + 44, w: w - (nar ? 50 : 60) - 16, h: h - (ny + bh + 44) - 74 };
+      const xs = []; for (let k = 0; k <= 200; k++) xs.push(k / 200);
+      const c = MB.chart(ctx, gb, { x: [0, 1], y: [0, 9000], xTicks: [0, 0.2, 0.5, 1], yTicks: [0, 2500, 5000, 7500], xFmt: (v) => Math.round(v * 100) + "%", yFmt: (v) => v.toLocaleString("ko-KR"), xLabel: "자회사 지분율",
+        series: [
+          { data: xs.map((x) => [x, calc(x).sales]), color: P.accent, width: 2.2 },
+          { data: xs.map((x) => [x, calc(x).own * 8]), color: P.up, width: 2.2 },
+        ] });
+      ctx.fillStyle = P.accent; ctx.globalAlpha = 0.07; ctx.fillRect(c.X(0.5), gb.y, c.X(1) - c.X(0.5), gb.h); ctx.globalAlpha = 1;
+      text(ctx, "지배 → 연결", c.X(0.75), gb.y + 10, { color: P.accent, size: 11, align: "center" });
+      L = { c };
+      knob(ctx, c.X(s), c.Y(r.sales), P, 6);
+      ctx.fillStyle = P.up; ctx.beginPath(); ctx.arc(c.X(s), c.Y(r.own * 8), 5, 0, TAU); ctx.fill();
+      text(ctx, "매출", c.X(0.03), c.Y(5000) - 10, { color: P.accent, size: 11, weight: 700 });
+      text(ctx, "지배주주 순이익(×8 확대)", c.X(0.03), c.Y(4000) + 12, { color: P.up, size: 11, weight: 700 });
+      MB.stat("cn-o-m", MN[r.m]);
+      MB.stat("cn-o-s", E(r.sales));
+      MB.stat("cn-o-n", E(r.own));
+      MB.stat("cn-o-x", r.nci ? E(r.nci) : "0");
+    }, { get height() { return narrow("cn-cv") ? 420 : 400; } });
+    MB.drag(cv.canvas, {
+      start(x, y) { drag = !!L && y > L.c.box.y - 12; },
+      move(x) { if (!drag) return; const b = L.c.box; SH.set(MB.clamp(Math.round(((x - b.x) / b.w) * 100) / 100, 0, 1)); },
+      end() { drag = false; },
+    });
+  })();
+
+  /* ---------------------------------------------------------- 14. 흑자 도산 실험실 */
+  (function () {
+    const S0 = 1000, CASH0 = 200, PPE0 = 500, N = 8;
+    const G = MB.range("gd-g", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    const WD = MB.range("gd-w", (v) => v + "일", () => cv.redraw());
+    const CX = MB.range("gd-c", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    const V = MB.seg("gd-view", () => cv.redraw());
+    let anim = 1;
+    function run() {
+      const g = G(), days = WD(), cr = CX();
+      let S = S0, cash = CASH0, ppe = PPE0, wc = S0 * days / 365, eq = CASH0 + PPE0 + wc;
+      const ys = [{ t: 0, S, ni: 0, fcf: 0, cash, ppe, wc, eq }];
+      for (let t = 1; t <= N; t++) {
+        const S1 = S * (1 + g), op = 0.1 * S1, ni = op * 0.75, dep = ppe / 8, capex = cr * S1, wc1 = S1 * days / 365;
+        const cfo = ni + dep - (wc1 - wc), fcf = cfo - capex;
+        cash += fcf; ppe += capex - dep; wc = wc1; S = S1; eq += ni;
+        ys.push({ t, S, ni, fcf, cash, ppe, wc, eq, cfo, capex });
+      }
+      return ys;
+    }
+    const cv = MB.canvas("#gd-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("gd-cv"), ys = run(), view = V(), k = ease(anim);
+      const box = { x: nar ? 52 : 62, y: 24, w: w - (nar ? 52 : 62) - 14, h: h - 24 - 44 };
+      const slot = box.w / (N + 1), bw = Math.min(18, slot * 0.32);
+      if (view === "cf") {
+        let lo = -100, hi = 200;
+        ys.forEach((r) => { lo = Math.min(lo, r.cash, r.fcf); hi = Math.max(hi, r.cash, r.ni); });
+        const c = MB.chart(ctx, box, { x: [-0.5, N + 0.5], y: [lo * 1.12, hi * 1.12], xTicks: [0, 1, 2, 3, 4, 5, 6, 7, 8], xFmt: (v) => v + "년", yFmt: ax, hlines: [{ y: 0, color: P.axis, dash: [] }] });
+        ctx.fillStyle = P.bad; ctx.globalAlpha = 0.07; ctx.fillRect(box.x, c.Y(0), box.w, box.y + box.h - c.Y(0)); ctx.globalAlpha = 1;
+        ys.forEach((r) => {
+          if (!r.t) return;
+          const x = c.X(r.t), y0 = c.Y(0);
+          const y1 = c.Y(r.ni * k); ctx.fillStyle = MB.toneColor(r.ni); ctx.globalAlpha = 0.85; ctx.fillRect(x - bw - 1, Math.min(y0, y1), bw, Math.abs(y1 - y0)); ctx.globalAlpha = 1;
+          const y2 = c.Y(r.fcf * k); ctx.fillStyle = MB.toneColor(r.fcf); ctx.globalAlpha = 0.25; ctx.fillRect(x + 1, Math.min(y0, y2), bw, Math.abs(y2 - y0)); ctx.globalAlpha = 1;
+          ctx.strokeStyle = MB.toneColor(r.fcf); ctx.strokeRect(x + 1.5, Math.min(y0, y2) + 0.5, bw - 1, Math.abs(y2 - y0));
+        });
+        ctx.strokeStyle = P.accent; ctx.lineWidth = 2.6; ctx.beginPath();
+        ys.forEach((r, i) => { const px = c.X(r.t), py = c.Y(r.cash * k + CASH0 * (1 - k)); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.stroke(); ctx.lineWidth = 1;
+        ys.forEach((r) => { ctx.fillStyle = r.cash < 0 ? P.bad : P.accent; ctx.beginPath(); ctx.arc(c.X(r.t), c.Y(r.cash * k + CASH0 * (1 - k)), 4, 0, TAU); ctx.fill(); });
+        const fz = ys.find((r) => r.cash < 0);
+        if (fz && k > 0.95) text(ctx, fz.t + "년 차 현금 바닥", MB.clamp(c.X(fz.t), box.x + 50, box.x + box.w - 50), Math.min(c.Y(fz.cash) + 16, box.y + box.h - 8), { color: P.bad, size: 12, weight: 700, align: "center" });
+        text(ctx, "■ 순이익", box.x + 2, 10, { color: P.up, size: 11.5, weight: 700 });
+        text(ctx, "□ 잉여현금흐름", box.x + 62, 10, { color: P.dim, size: 11.5 });
+        text(ctx, "— 현금 잔액", box.x + (nar ? 160 : 170), 10, { color: P.accent, size: 11.5, weight: 700 });
+      } else {
+        let lo = 0, hi = 0;
+        ys.forEach((r) => { hi = Math.max(hi, Math.max(0, r.cash) + r.wc + r.ppe, r.eq); lo = Math.min(lo, r.cash, r.wc); });
+        const c = MB.chart(ctx, box, { x: [-0.5, N + 0.5], y: [lo * 1.12, hi * 1.1], xTicks: [0, 1, 2, 3, 4, 5, 6, 7, 8], xFmt: (v) => v + "년", yFmt: ax, hlines: [{ y: 0, color: P.axis, dash: [] }] });
+        const bw2 = Math.min(30, slot * 0.55);
+        ys.forEach((r) => {
+          const x = c.X(r.t); let base = 0, neg = 0;
+          const seg = (v, col, a) => {
+            if (!v) return;
+            const from = v >= 0 ? base : neg, to = from + v * k;
+            if (v >= 0) base = to; else neg = to;
+            ctx.fillStyle = col; ctx.globalAlpha = a; ctx.fillRect(x - bw2 / 2, Math.min(c.Y(from), c.Y(to)), bw2, Math.abs(c.Y(to) - c.Y(from))); ctx.globalAlpha = 1;
+          };
+          seg(r.ppe, P.faint, 0.6); seg(r.wc, P.accent2, 0.65); seg(r.cash, r.cash >= 0 ? P.accent : P.bad, r.cash >= 0 ? 0.6 : 0.5);
+        });
+        ctx.strokeStyle = P.up; ctx.lineWidth = 2; ctx.setLineDash([5, 3]); ctx.beginPath();
+        ys.forEach((r, i) => { const px = c.X(r.t), py = c.Y(r.eq * k); i ? ctx.lineTo(px, py) : ctx.moveTo(px, py); }); ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth = 1;
+        const lg = [[P.faint, "설비"], [P.accent2, "운전자본"], [P.accent, "현금"], [P.bad, "모자란 현금"]];
+        let lxp = box.x + 2;
+        lg.forEach(([cl, s]) => { ctx.fillStyle = cl; ctx.fillRect(lxp, 5, 9, 9); text(ctx, s, lxp + 12, 10, { color: P.dim, size: 11 }); lxp += 22 + s.length * 11.5; });
+        if (!nar) text(ctx, "--- 자본(쌓인 이익)", box.x + box.w, 10, { color: P.up, size: 11, align: "right" });
+      }
+      const cn = ys.reduce((a, r) => a + r.ni, 0), cf = ys.reduce((a, r) => a + r.fcf, 0);
+      let mn = ys[0]; ys.forEach((r) => { if (r.cash < mn.cash) mn = r; });
+      const fz = ys.find((r) => r.cash < 0);
+      MB.stat("gd-o-n", tone(cn, E(cn)));
+      MB.stat("gd-o-f", tone(cf, E(cf)));
+      MB.stat("gd-o-m", (mn.cash < 0 ? '<span class="bad-t">' + E(mn.cash) + "</span>" : E(mn.cash)) + " <small>(" + mn.t + "년)</small>");
+      MB.stat("gd-o-v", fz ? '<span class="bad-t">' + fz.t + "년 차 흑자 도산 위험</span>" : '<span class="ok-t">스스로 버틴다</span>');
+    }, { get height() { return narrow("gd-cv") ? 340 : 360; } });
+    ["gd-g", "gd-w", "gd-c"].forEach((id) => document.getElementById(id).addEventListener("input", () => { anim = 0.35; }));
+    MB.loop(cv.canvas, (dt) => { if (anim < 1) { anim = Math.min(1, anim + dt * 2.5); cv.redraw(); } });
+  })();
+})();
+</script>
+</body>
+</html>

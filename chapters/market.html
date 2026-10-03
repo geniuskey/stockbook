@@ -1,0 +1,1724 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "앱에서 매수 버튼을 누르면 무슨 일이 일어나는가. 발행시장과 유통시장, 증권사·거래소·예탁결제원, 체결에서 T+2 결제까지, 예수금과 미수, KOSPI·KOSDAQ·KONEX와 대체거래소, 거래 시간, 시가총액과 유동주식, 가격제한폭 ±30%, VI·사이드카·서킷브레이커, 상장과 상장폐지를 직접 움직여 본다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>주식시장의 구조 · StockBook</title>
+<meta name="description" content="앱에서 매수 버튼을 누르면 무슨 일이 일어나는가. 발행시장과 유통시장, 증권사·거래소·예탁결제원, 체결에서 T+2 결제까지, 예수금과 미수, KOSPI·KOSDAQ·KONEX와 대체거래소, 거래 시간, 시가총액과 유동주식, 가격제한폭 ±30%, VI·사이드카·서킷브레이커, 상장과 상장폐지를 직접 움직여 본다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/market.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="주식시장의 구조 · StockBook">
+<meta property="og:description" content="앱에서 매수 버튼을 누르면 무슨 일이 일어나는가. 발행시장과 유통시장, 증권사·거래소·예탁결제원, 체결에서 T+2 결제까지, 예수금과 미수, KOSPI·KOSDAQ·KONEX와 대체거래소, 거래 시간, 시가총액과 유동주식, 가격제한폭 ±30%, VI·사이드카·서킷브레이커, 상장과 상장폐지를 직접 움직여 본다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/market.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/market.html#chapter","name":"주식시장의 구조","headline":"주식시장의 구조 · StockBook","description":"앱에서 매수 버튼을 누르면 무슨 일이 일어나는가. 발행시장과 유통시장, 증권사·거래소·예탁결제원, 체결에서 T+2 결제까지, 예수금과 미수, KOSPI·KOSDAQ·KONEX와 대체거래소, 거래 시간, 시가총액과 유동주식, 가격제한폭 ±30%, VI·사이드카·서킷브레이커, 상장과 상장폐지를 직접 움직여 본다.","url":"https://stockbook.euiyun.com/chapters/market.html","position":2,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"2. 주식시장의 구조","item":"https://stockbook.euiyun.com/chapters/market.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  figure.diagram svg { max-width: 540px; margin: 0 auto; }
+  figure.diagram svg .t-mono { font-size: 12px; }
+  .mk-grid { display: grid; gap: 1px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin: 22px 0; }
+  .mk-grid div { background: var(--bg-elev); padding: 12px 14px; font-size: 14.5px; color: var(--text-dim); line-height: 1.55; }
+  .mk-grid b { display: block; color: var(--text); font-size: 15.5px; margin-bottom: 2px; }
+</style>
+</head>
+<body data-chapter="market">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 02</div>
+    <h1>주식시장의 구조</h1>
+    <p class="lead">증권 앱에서 "매수"를 누르면 1초도 안 돼 "체결" 알림이 온다. 그런데 그 주식이 정말 내 것이 되는 것은 이틀 뒤다. 그 사이에 주문은 증권사와 거래소를 거쳐 다른 누군가의 매도 주문과 만나고, 돈과 주식은 예탁결제원에서 맞바뀐다. 이 장은 그 길을 따라간다. 주식이 처음 태어나는 시장과 사람들끼리 사고파는 시장, 시장이 열리는 시간, 하루에 움직일 수 있는 가격의 한계, 시장 전체가 무너질 때 거는 브레이크까지 하나씩 손으로 움직여 본다.</p>
+    <ul class="objectives">
+      <li>발행시장(IPO·유상증자)과 유통시장을 구분하고, 유통시장의 거래는 회사에 돈을 넣어 주지 않는다는 것을 설명한다.</li>
+      <li>주문이 증권사→거래소→예탁결제원으로 흐르는 길과 체결 후 T+2에 결제되는 이유, 예수금(D+0, D+2)과 미수·반대매매를 이해한다.</li>
+      <li>KOSPI·KOSDAQ·KONEX와 대체거래소(NXT)의 차이, 하루의 거래 시간(동시호가, 정규장, 시간외)을 구분한다.</li>
+      <li>시가총액과 유동주식, 거래대금으로 회사의 크기와 거래의 활발함을 읽는다.</li>
+      <li>가격제한폭 ±30%와 호가 단위로 상한가·하한가를 계산하고, VI·사이드카·서킷브레이커가 언제 걸리는지, 상장과 상장폐지가 어떻게 이뤄지는지 안다.</li>
+    </ul>
+  </header>
+
+  <section id="why">
+    <h2>주식은 어디에서 사는가</h2>
+    <p><a href="overview.html">1장</a>에서 주식은 회사의 한 조각이라는 것을 보았다. 한빛반도체 1주를 72,000원에 산다는 것은 회사의 1억분의 1을 산다는 뜻이었다. 그런데 그 조각은 누구에게서 사는 것일까? 회사에서 직접? 증권사에서? 아니면 모르는 누군가에게서?</p>
+    <p>대부분의 경우 답은 "모르는 누군가"다. 내가 산 한빛반도체 10주는 같은 순간 그 가격에 팔고 싶었던 다른 투자자의 10주다. 회사는 이 거래에 끼지 않는다. 회사가 직접 주식을 팔아 돈을 받는 것은 처음 상장할 때나 새 주식을 찍어 낼 때뿐이다. 이 두 시장을 나누는 것이 이 장의 출발점이다.</p>
+    <div class="mk-grid">
+      <div><b>발행시장</b>회사가 새 주식을 만들어 투자자에게 팔고 돈을 받는 곳. IPO, 유상증자.</div>
+      <div><b>유통시장</b>이미 있는 주식을 투자자끼리 사고파는 곳. 거래소의 호가창.</div>
+      <div><b>증권사</b>투자자의 주문을 받아 거래소에 전달하는 창구. 계좌를 만들어 주는 곳.</div>
+      <div><b>한국거래소</b>매수와 매도 주문을 만나게 해 가격을 정하는 곳(체결).</div>
+      <div><b>한국예탁결제원</b>체결된 거래의 돈과 주식을 실제로 주고받게 하는 곳(결제).</div>
+    </div>
+  </section>
+
+  <section id="primary">
+    <h2>발행시장과 유통시장</h2>
+    <p>회사가 공장을 짓거나 연구를 계속하려면 돈이 필요하다. 은행에서 빌리면 이자를 내야 하고 갚아야 한다. 주식을 새로 찍어 팔면 갚을 필요가 없는 대신 회사의 주인이 늘어난다. 회사가 처음으로 일반 투자자에게 주식을 팔고 거래소에 이름을 올리는 것을 <span class="term">기업공개</span><span class="en">(IPO, Initial Public Offering)</span>라고 한다. 이미 상장한 회사가 새 주식을 더 찍어 돈을 받고 파는 것은 <span class="term">유상증자</span><span class="en">(Rights offering)</span>다. 이렇게 새 주식이 처음 팔리는 시장을 <span class="term">발행시장</span><span class="en">(Primary market)</span>이라고 부른다.</p>
+    <p>상장한 다음부터 주식은 투자자에서 투자자로 옮겨 다닌다. 이것이 <span class="term">유통시장</span><span class="en">(Secondary market)</span>이다. 우리가 매일 보는 주가, 호가창, 등락률은 모두 유통시장의 이야기다. 유통시장의 주가가 올라도 회사 통장에 돈이 들어오지는 않는다. 그런데도 회사가 주가에 신경 쓰는 이유는, 주가가 높아야 다음 유상증자 때 같은 주식 수로 더 많은 돈을 모을 수 있고, 주식을 가진 경영진과 직원의 재산도 주가에 달려 있기 때문이다. 유통시장이 활발하다는 것은 "언제든 팔 수 있다"는 뜻이고, 그래야 사람들이 발행시장에서 새 주식을 기꺼이 산다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 280" role="img" aria-label="발행시장과 유통시장의 돈과 주식 흐름">
+        <defs><marker id="mk-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-acc-soft" x="10" y="20" width="200" height="246" rx="12"/>
+        <rect class="f-acc2-soft" x="250" y="20" width="200" height="246" rx="12"/>
+        <text class="lbl-acc" x="110" y="44" text-anchor="middle">발행시장</text>
+        <text class="lbl-acc2" x="350" y="44" text-anchor="middle">유통시장</text>
+        <rect class="f-surface" x="50" y="62" width="120" height="40" rx="8"/>
+        <text class="lbl-b" x="110" y="87" text-anchor="middle">회사</text>
+        <rect class="f-surface" x="50" y="196" width="120" height="40" rx="8"/>
+        <text class="lbl" x="110" y="221" text-anchor="middle">새 투자자</text>
+        <line class="s-acc" x1="85" y1="194" x2="85" y2="106" marker-end="url(#mk-ar)"/>
+        <line class="s-ok" x1="135" y1="106" x2="135" y2="194" marker-end="url(#mk-ar)"/>
+        <text class="lbl-dim" x="78" y="155" text-anchor="end">돈</text>
+        <text class="lbl-dim" x="142" y="155">새 주식</text>
+        <text class="lbl-dim" x="110" y="256" text-anchor="middle">IPO · 유상증자</text>
+        <rect class="f-surface" x="270" y="196" width="72" height="40" rx="8"/>
+        <text class="lbl" x="306" y="221" text-anchor="middle">매도자</text>
+        <rect class="f-surface" x="358" y="196" width="72" height="40" rx="8"/>
+        <text class="lbl" x="394" y="221" text-anchor="middle">매수자</text>
+        <rect class="f-surface" x="290" y="104" width="120" height="40" rx="8"/>
+        <text class="lbl-b" x="350" y="129" text-anchor="middle">거래소</text>
+        <line class="s-acc" x1="394" y1="194" x2="394" y2="148" marker-end="url(#mk-ar)"/>
+        <line class="s-acc" x1="306" y1="148" x2="306" y2="194" marker-end="url(#mk-ar)"/>
+        <line class="s-ok" x1="322" y1="194" x2="322" y2="148" marker-end="url(#mk-ar)"/>
+        <line class="s-ok" x1="378" y1="148" x2="378" y2="194" marker-end="url(#mk-ar)"/>
+        <rect class="f-surface" x="290" y="58" width="120" height="30" rx="8"/>
+        <text class="lbl-dim" x="350" y="78" text-anchor="middle">회사</text>
+        <line class="s-dash" x1="350" y1="90" x2="350" y2="102"/>
+        <text class="lbl-dim" x="350" y="256" text-anchor="middle">회사에는 돈이 가지 않는다</text>
+      </svg>
+      <figcaption><b>그림 1. 두 시장.</b> 보라 화살표는 돈, 초록 화살표는 주식이다. 발행시장에서는 돈이 회사로 가고 새 주식이 나온다. 유통시장에서는 돈과 주식이 투자자 사이에서만 오간다. 회사는 거래를 지켜볼 뿐이다.</figcaption>
+    </figure>
+
+    <p>아래에서 같은 수의 주식이 세 가지 방식으로 거래될 때 돈이 어디로 가는지 보자. 주식 수를 바꿔 가며 회사 통장과 기존 주주의 지분율이 어떻게 달라지는지 비교한다.</p>
+
+    <div class="sim" id="sim-pr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>돈은 어디로 가는가: IPO, 유상증자, 유통시장</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="pr-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="seg" id="pr-mode"><button data-value="ipo" class="on">IPO</button><button data-value="rights">유상증자</button><button data-value="trade">유통시장 매매</button></div>
+          <label class="ctrl"><span>오가는 주식 수 <output id="pr-n-out"></output></span><input type="range" id="pr-n" min="100" max="3000" step="100" value="1000"></label>
+          <div class="btn-row"><button class="btn primary" id="pr-go">거래 실행</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">회사로 들어온 돈</span><span class="v" id="pr-o-cash">—</span></div>
+        <div class="stat"><span class="k">전체 주식 수</span><span class="v" id="pr-o-sh">—</span></div>
+        <div class="stat"><span class="k">기존 주주 지분율</span><span class="v" id="pr-o-own">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① IPO로 1,000만주를 팔면 회사에 1,000억원이 들어오고 기존 주주의 지분율이 80%로 줄어든다. ② 같은 1,000만주를 유통시장에서 거래하면 회사 통장은 그대로이고 전체 주식 수도 그대로다. ③ 유상증자는 IPO와 같은 원리로 지분을 나눈다(<a href="corporate.html">9장</a>에서 자세히). (가정: 기존 주주가 4,000만주를 가진 가상의 회사, 주당 10,000원)</div>
+    </div>
+
+    <p>IPO와 유상증자에서는 회사 통장이 불어나고 주식 수가 늘어난다. 기존 주주의 몫은 비율로 줄지만 회사가 받은 돈만큼 회사도 커진다. 유통시장 매매에서는 기존 주주가 가진 주식 일부가 새 사람에게 옮겨 갈 뿐 회사의 돈과 주식 수는 움직이지 않는다. 우리가 앞으로 이 책에서 하는 매매는 거의 전부 유통시장의 일이다.</p>
+  </section>
+
+  <section id="players">
+    <h2>거래소, 증권사, 예탁결제원</h2>
+    <p>유통시장에서 개인 투자자는 거래소에 직접 주문을 낼 수 없다. 반드시 <span class="term">증권사</span><span class="en">(Broker)</span>에 계좌를 열고 증권사를 통해 주문한다. 증권사는 주문을 받아 내 계좌에 돈이 충분한지 확인하고 <span class="term">한국거래소</span><span class="en">(KRX, Korea Exchange)</span>로 보낸다. 거래소는 같은 종목에 들어온 매수·매도 주문을 가격과 시간 순서대로 맞춰 거래를 성사시킨다. 이것이 <span class="term">체결</span><span class="en">(Execution)</span>이다. 체결이 끝났다고 돈과 주식이 바로 옮겨지지는 않는다. 누가 누구에게 얼마를 줘야 하는지 계산해(<span class="term">청산</span><span class="en">(Clearing)</span>) 정해진 날에 <span class="term">한국예탁결제원</span><span class="en">(KSD)</span>에서 돈과 주식을 동시에 맞바꾼다. 이것이 <span class="term">결제</span><span class="en">(Settlement)</span>다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 300" role="img" aria-label="투자자, 증권사, 거래소, 예탁결제원, 은행, 감독기관의 관계">
+        <defs><marker id="mk-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-surface" x="14" y="40" width="96" height="48" rx="10"/>
+        <text class="lbl-b" x="62" y="62" text-anchor="middle">투자자</text>
+        <text class="lbl-dim" x="62" y="80" text-anchor="middle">한결</text>
+        <rect class="f-acc-soft" x="182" y="40" width="96" height="48" rx="10"/>
+        <text class="lbl-b" x="230" y="62" text-anchor="middle">증권사</text>
+        <text class="lbl-dim" x="230" y="80" text-anchor="middle">계좌·주문 창구</text>
+        <rect class="f-acc-soft" x="350" y="40" width="96" height="48" rx="10"/>
+        <text class="lbl-b" x="398" y="62" text-anchor="middle">거래소</text>
+        <text class="lbl-dim" x="398" y="80" text-anchor="middle">체결</text>
+        <rect class="f-acc2-soft" x="250" y="168" width="196" height="48" rx="10"/>
+        <text class="lbl-b" x="348" y="190" text-anchor="middle">한국예탁결제원</text>
+        <text class="lbl-dim" x="348" y="208" text-anchor="middle">주식 보관·결제</text>
+        <rect class="f-surface" x="14" y="168" width="150" height="48" rx="10"/>
+        <text class="lbl-b" x="89" y="190" text-anchor="middle">결제 은행</text>
+        <text class="lbl-dim" x="89" y="208" text-anchor="middle">대금이 오가는 곳</text>
+        <line class="s-acc" x1="112" y1="56" x2="178" y2="56" marker-end="url(#mk-ar2)"/>
+        <line class="s-acc" x1="280" y1="56" x2="346" y2="56" marker-end="url(#mk-ar2)"/>
+        <line class="s-dash" x1="346" y1="74" x2="282" y2="74" marker-end="url(#mk-ar2)"/>
+        <line class="s-dash" x1="178" y1="74" x2="114" y2="74" marker-end="url(#mk-ar2)"/>
+        <text class="lbl-dim" x="146" y="48" text-anchor="middle">주문</text>
+        <text class="lbl-dim" x="314" y="48" text-anchor="middle">주문</text>
+        <text class="lbl-dim" x="314" y="102" text-anchor="middle">체결 통보</text>
+        <line class="s-acc2" x1="398" y1="90" x2="398" y2="164" marker-end="url(#mk-ar2)"/>
+        <text class="lbl-dim" x="392" y="130" text-anchor="end">청산 내역(T+1)</text>
+        <line class="s-ok" x1="246" y1="196" x2="168" y2="196" marker-start="url(#mk-ar2)" marker-end="url(#mk-ar2)"/>
+        <line class="s-ok" x1="230" y1="90" x2="300" y2="164" marker-start="url(#mk-ar2)" marker-end="url(#mk-ar2)"/>
+        <text class="lbl-dim" x="206" y="188" text-anchor="middle">대금</text>
+        <text class="lbl-dim" x="232" y="140" text-anchor="end">주식·대금(T+2)</text>
+        <rect class="f-warn-soft" x="14" y="244" width="432" height="40" rx="10"/>
+        <text class="lbl" x="230" y="269" text-anchor="middle">감독: 금융위원회 · 금융감독원 (규칙과 검사)</text>
+      </svg>
+      <figcaption><b>그림 2. 시장의 역할 분담.</b> 투자자의 주문은 증권사를 거쳐 거래소에서 체결되고, 체결 내역은 예탁결제원에서 결제된다. 주식은 종이 증서가 아니라 예탁결제원의 전자 장부에 기록되어 있다.</figcaption>
+    </figure>
+
+    <p>한결이 한빛반도체 10주를 72,000원에 사는 주문 하나를 따라가 보자. "다음 단계"를 누를 때마다 주문서, 돈, 주식이 어디로 움직이는지 보인다. 아래 숫자 중 <b>예수금(D+0)</b>과 <b>D+2 예수금</b>이 언제 갈라지고 언제 다시 같아지는지 눈여겨보자.</p>
+
+    <div class="sim" id="sim-fl">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>주문 한 건의 여행</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="fl-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn" id="fl-prev">이전</button><button class="btn primary" id="fl-next">다음 단계</button><button class="btn" id="fl-auto">자동 재생</button><button class="btn" id="fl-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시점</span><span class="v" id="fl-o-when">—</span></div>
+        <div class="stat"><span class="k">한결의 한빛반도체</span><span class="v" id="fl-o-stk">—</span></div>
+        <div class="stat"><span class="k">예수금(D+0)</span><span class="v" id="fl-o-d0">—</span></div>
+        <div class="stat"><span class="k">D+2 예수금</span><span class="v" id="fl-o-d2">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① ③단계 체결 순간에는 1초도 걸리지 않지만 주식이 확정되는 것은 ⑥단계(T+2)다. ② 체결 직후 D+2 예수금은 이미 줄었지만 예수금(D+0)은 그대로다. ③ 결제일에 예탁결제원은 돈과 주식을 동시에 바꾼다(돈만 가고 주식이 안 오는 사고를 막는 방식). (가정: 수수료 0.015%, 72만원 × 0.015% = 108원)</div>
+    </div>
+
+    <p>체결은 순식간이지만 결제는 이틀 걸린다. 한결의 앱에는 체결 직후부터 "한빛반도체 10주"가 보이고 그 주식을 다시 팔 수도 있다. 다만 장부상으로 주식이 한결의 것이 되는 것은 T+2일이다. 앱이 예수금을 두 줄로 보여 주는 이유가 여기에 있다.</p>
+  </section>
+
+  <section id="settle">
+    <h2>T+2 결제와 예수금</h2>
+    <p>거래가 체결된 날을 <b>T일</b>(Trade date)이라고 한다. 한국 주식은 T일로부터 <b>2영업일</b> 뒤에 결제한다(<span class="term">T+2</span>). 영업일이므로 주말과 공휴일, 거래소 휴장일은 세지 않는다. 금요일에 사면 결제는 다음 주 화요일이고, 중간에 공휴일이 끼면 하루 더 밀린다.</p>
+    <p>증권 계좌에서 주식을 사고 남은 현금을 <span class="term">예수금</span><span class="en">(Cash balance)</span>이라고 한다. 예수금은 보통 두 가지로 보인다. <b>예수금(D+0)</b>은 오늘 실제로 계좌에 있는 현금이고, <b>D+2 예수금</b>은 지금까지 체결된 매매가 모두 결제된 뒤 남을 현금이다. 오늘 사면 D+0은 그대로, D+2는 줄어든다. 오늘 팔면 D+2는 늘지만 그 돈을 은행으로 <b>출금</b>할 수 있는 것은 결제일이다. 대신 판 돈으로 다른 주식을 사는 것은 바로 된다(어차피 같은 날 결제되기 때문이다).</p>
+    <p>아래 달력에서 날짜를 눌러 그날 매매한 거래가 언제 결제되는지 보자. 2026년 10월에는 공휴일이 두 번 있다.</p>
+
+    <div class="sim" id="sim-cal">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>T+2 달력: 언제 내 것이 되는가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cal-cv"></canvas><span class="hint">날짜를 누른다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="cal-side"><button data-value="buy" class="on">매수</button><button data-value="sell">매도</button></div>
+          <label class="ctrl"><span>한빛반도체 주식 수 <output id="cal-q-out"></output></span><input type="range" id="cal-q" min="10" max="100" step="10" value="10"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">체결일 T</span><span class="v" id="cal-o-t">—</span></div>
+        <div class="stat"><span class="k">결제일 T+2</span><span class="v" id="cal-o-s">—</span></div>
+        <div class="stat"><span class="k">달력으로</span><span class="v" id="cal-o-gap">—</span></div>
+        <div class="stat"><span class="k" id="cal-o-k">결제일에 빠지는 돈</span><span class="v" id="cal-o-amt">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 월~수요일에 사면 결제는 이틀 뒤다. ② 목요일 10월 8일에 사면 9일(한글날)과 주말을 건너 13일 화요일에 결제된다. ③ 휴일을 누르면 주문은 다음 영업일에 체결된다(예약 주문). 매도로 바꾸면 매도 대금에서 수수료와 거래세가 빠진다. (가정: 주가 72,000원, 수수료 0.015%, 증권거래세 0.20%. 10월 5일은 개천절 대체공휴일, 9일은 한글날)</div>
+    </div>
+
+    <p>결제일은 달력 날짜가 아니라 영업일로 센다. 목요일 체결은 금요일이 휴일이면 결제까지 달력으로 5일이 걸린다. 연휴 앞에 주식을 팔고 그 돈을 연휴에 쓰려 했다면 낭패를 본다. 매도 대금이 필요한 날짜가 정해져 있다면 영업일 기준으로 이틀 이상 여유를 두고 판다.</p>
+
+    <h3>미수: 돈이 모자라도 살 수 있다?</h3>
+    <p>증권사는 주문할 때 매수 금액 전부가 아니라 일부만 계좌에 있으면 주문을 받아 주기도 한다. 주문할 때 있어야 하는 돈의 비율을 <span class="term">증거금률</span><span class="en">(Margin rate)</span>이라 한다. 증거금률이 40%인 종목이면 400만원으로 1,000만원어치를 살 수 있다. 모자란 600만원은 결제일(T+2)까지 채워 넣어야 하는데, 이 모자란 돈이 <span class="term">미수금</span><span class="en">(Unpaid balance)</span>이다. 결제일까지 채우지 못하면 증권사는 다음 날(T+3) 아침 장이 열리자마자 그 계좌의 주식을 강제로 팔아 미수금을 메운다. 이것이 <span class="term">반대매매</span><span class="en">(Forced liquidation)</span>다.</p>
+    <p>반대매매는 투자자가 가격을 고를 수 없다. 증권사는 미수금을 확실히 메우려고 보통 전일 종가보다 낮은 가격(예: 하한가)을 기준으로 팔 수량을 넉넉히 계산하고, 장 시작 동시호가에 내놓는다. 아래에서 예수금과 매수 수량을 바꾸고 "다음 날"을 눌러 보자.</p>
+
+    <div class="sim" id="sim-ms">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>미수 거래와 반대매매</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ms-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>예수금 <output id="ms-cash-out"></output></span><input type="range" id="ms-cash" min="100" max="1000" step="50" value="300"></label>
+          <label class="ctrl"><span>한빛반도체 매수 수량 <output id="ms-q-out"></output></span><input type="range" id="ms-q" min="10" max="200" step="10" value="100"></label>
+          <div class="seg" id="ms-rate"><button data-value="40" class="on">증거금률 40%</button><button data-value="100">100%</button></div>
+          <label class="check"><input type="checkbox" id="ms-pay"> 결제일까지 모자란 돈 입금</label>
+          <div class="btn-row"><button class="btn primary" id="ms-next">다음 날</button><button class="btn" id="ms-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">매수 대금(수수료 포함)</span><span class="v" id="ms-o-amt">—</span></div>
+        <div class="stat"><span class="k">미수금</span><span class="v" id="ms-o-misu">—</span></div>
+        <div class="stat"><span class="k">반대매매 수량</span><span class="v" id="ms-o-q">—</span></div>
+        <div class="stat"><span class="k">확정 손익</span><span class="v" id="ms-o-pl">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 예수금 300만원, 100주(약 720만원), 증거금률 40%로 주문이 들어가는지 본다. ② "다음 날"을 세 번 눌러 T+3 아침의 반대매매를 본다. 주가가 이미 내려 있어 손실이 확정된다. ③ 증거금률을 100%로 바꾸면 같은 주문이 처음부터 거부된다. ④ 입금 체크를 켜면 미수 없이 끝난다. (가정: 주가 경로는 72,000 → 70,200 → 68,500, T+3 시가 65,800원. 반대매매 수량은 전일 종가의 하한가로 계산. 실제 방식과 증거금률은 증권사·종목마다 다르다.)</div>
+    </div>
+
+    <p>미수는 사실상 이틀짜리 빚이다. 주가가 오르면 남의 돈으로 산 몫만큼 더 벌지만, 내리면 그 손실을 그대로 안고 강제로 팔린다. 반대매매가 나온 계좌는 한동안(약 30일) 미수를 쓸 수 없게 묶이기도 한다. 이 책에서 한결은 증거금률 100%로 계좌를 설정한다. 빌린 돈으로 투자하는 일반적인 원리는 <a href="leverage.html">19장</a>에서 다룬다.</p>
+  </section>
+
+  <section id="markets">
+    <h2>KOSPI, KOSDAQ, KONEX, 그리고 NXT</h2>
+    <p>한국거래소에는 성격이 다른 세 주식시장이 있다. 같은 회사가 두 시장에 동시에 상장하지는 않는다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>시장</th><th>어떤 회사</th><th>상장 문턱</th><th>가격제한폭</th></tr></thead>
+      <tbody>
+        <tr><td><b>KOSPI</b><br>유가증권시장</td><td>규모가 크고 이익이 안정된 회사. 한빛반도체, 누리식품, 다온은행, 모아플랫폼</td><td>가장 높다(자기자본, 매출, 이익, 주주 수 등)</td><td class="num">±30%</td></tr>
+        <tr><td><b>KOSDAQ</b><br>코스닥시장</td><td>성장 단계의 기술·바이오 회사가 많다. 별빛바이오</td><td>중간. 적자라도 기술력을 평가받아 상장하는 기술특례 제도가 있다</td><td class="num">±30%</td></tr>
+        <tr><td><b>KONEX</b><br>코넥스시장</td><td>초기 중소·벤처 기업. 코스닥으로 가기 전 단계</td><td>낮다. 대신 거래가 적다</td><td class="num">±15%(약)</td></tr>
+      </tbody>
+    </table></div>
+    <p>KOSPI와 KOSDAQ은 시장 이름이자 그 시장 전체의 움직임을 나타내는 <b>지수</b>의 이름이기도 하다. "오늘 코스피가 1% 올랐다"는 말은 유가증권시장에 상장된 주식 전체의 시가총액이 평균적으로 1% 늘었다는 뜻이다. 지수는 이 장 끝에서 맛만 보고 <a href="index.html">15장</a>에서 제대로 다룬다.</p>
+    <p>2025년 3월부터는 한국거래소 말고 다른 거래소도 생겼다. <span class="term">대체거래소</span><span class="en">(ATS, Alternative Trading System)</span>인 넥스트레이드(NXT)다. NXT는 상장 심사를 하지 않고, 한국거래소에 상장된 종목 중 일부(수백 종목)를 받아 거래만 한다. 같은 주식을 두 곳에서 사고팔 수 있게 되면서 거래 시간이 아침 8시부터 저녁 8시까지로 늘었고, 증권사는 두 거래소 중 더 유리한 곳으로 주문을 보내야 한다(<span class="term">최선집행</span><span class="en">(Best execution)</span>). 투자자는 앱에서 "통합" 또는 "KRX"·"NXT"를 고를 수 있다.</p>
+
+    <p>그렇다면 시장에서 실제로 사고파는 사람은 누구일까? 한국 시장의 참여자는 크게 개인, 외국인, 기관(연기금, 자산운용사, 보험사, 증권사 등)으로 나눈다. 아래 도넛은 거래대금(얼마나 자주 사고파는가)과 보유 비중(얼마나 많이 가지고 있는가)을 비교한다.</p>
+
+    <div class="sim" id="sim-pl">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>누가 사고파는가: 거래 비중과 보유 비중</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="pl-cv"></canvas><span class="hint">조각에 손을 올린다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="pl-mkt"><button data-value="kospi" class="on">KOSPI</button><button data-value="kosdaq">KOSDAQ</button></div>
+          <div class="seg" id="pl-basis"><button data-value="trade" class="on">거래대금</button><button data-value="hold">보유 시가총액</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">선택</span><span class="v" id="pl-o-sel">—</span></div>
+        <div class="stat"><span class="k">개인: 거래 / 보유</span><span class="v" id="pl-o-ind">—</span></div>
+        <div class="stat"><span class="k">외국인: 거래 / 보유</span><span class="v" id="pl-o-for">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① KOSDAQ 거래대금에서 개인의 몫을 본다. ② 보유로 바꾸면 개인 비중이 확 줄고, 최대주주 같은 일반법인과 외국인의 몫이 커진다. ③ 개인은 적게 가지고 많이 사고판다. (교육용 근사치. 실제 비중은 해마다, 시장 상황에 따라 크게 달라진다.)</div>
+    </div>
+
+    <p>개인 투자자는 거래대금의 절반 이상을 차지하지만 보유 비중은 그보다 훨씬 작다. 같은 돈으로 더 자주 사고판다는 뜻이다. 사고팔 때마다 수수료와 세금이 붙는다는 것을 생각하면(<a href="orderbook.html">3장</a>, <a href="tax.html">23장</a>) 거래 횟수 자체가 비용이다.</p>
+  </section>
+
+  <section id="hours">
+    <h2>시장이 열리는 시간</h2>
+    <p>한국거래소의 <span class="term">정규장</span><span class="en">(Regular session)</span>은 평일 오전 9시부터 오후 3시 30분까지다. 그런데 주문은 그 전후에도 받는다. 오전 8시 30분부터 9시까지 들어온 주문은 바로 체결되지 않고 모였다가 9시에 하나의 가격으로 한꺼번에 체결된다. 이를 <span class="term">동시호가</span><span class="en">(Call auction)</span> 또는 단일가매매라 한다. 장 마감 직전 10분(15:20~15:30)도 동시호가로 종가를 정한다. 그 사이 9시부터 3시 20분까지는 주문이 들어오는 즉시 상대 주문과 맞춰지는 <span class="term">접속매매</span><span class="en">(Continuous trading)</span>다. 동시호가의 가격 결정 원리는 <a href="orderbook.html">3장</a>에서 직접 해 본다.</p>
+    <p>정규장 밖에도 <b>시간외 거래</b>가 있다. 장 전 시간외 종가(08:30~08:40)는 전날 종가로, 장 후 시간외 종가(15:40~16:00)는 그날 종가로만 거래한다. 16:00~18:00의 시간외 단일가매매는 10분마다 한 번씩, 그날 종가의 ±10% 안에서 체결된다. 여기에 대체거래소 NXT의 프리마켓(08:00~08:50)과 애프터마켓(15:30~20:00)이 더해졌다. 아래 시간표 위의 손잡이를 끌어 시각마다 무엇을 할 수 있는지 확인해 보자.</p>
+
+    <div class="sim" id="sim-hr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>하루 거래 시간표: 지금 무엇이 가능한가</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="hr-cv"></canvas><span class="hint">시각 손잡이를 끈다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="hr-jump"><button data-value="485">08:05</button><button data-value="515">08:35</button><button data-value="600" class="on">10:00</button><button data-value="925">15:25</button><button data-value="950">15:50</button><button data-value="1020">17:00</button><button data-value="1140">19:00</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시각</span><span class="v" id="hr-o-t">—</span></div>
+        <div class="stat"><span class="k">한국거래소(KRX)</span><span class="v" id="hr-o-krx">—</span></div>
+        <div class="stat"><span class="k">대체거래소(NXT)</span><span class="v" id="hr-o-nxt">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 08:35에는 KRX 동시호가에 주문을 넣을 수 있지만 체결은 9시다. 같은 시각 NXT 프리마켓에서는 바로 체결된다. ② 15:25에는 KRX가 마감 동시호가 중이고 NXT는 쉬는 시간이다. ③ 19:00에는 NXT만 열려 있다. (2026년 기준 대략의 시간. 거래소 사정과 제도 개편으로 바뀔 수 있고, NXT는 일부 종목만 거래한다.)</div>
+    </div>
+
+    <p>시간이 늘었다고 아무 때나 같은 조건으로 사고팔 수 있는 것은 아니다. 프리마켓과 애프터마켓, 시간외 거래에는 참여자가 적어 호가가 듬성듬성하고, 작은 주문에도 가격이 크게 튈 수 있다. 처음에는 정규장 접속매매 시간에 주문하는 것이 가장 단순하다.</p>
+  </section>
+
+  <section id="mcap">
+    <h2>시가총액, 유동주식, 거래대금</h2>
+    <p>회사의 크기를 잴 때 주가만 봐서는 안 된다. 주가는 회사 전체를 몇 조각으로 나눴는지에 따라 달라지기 때문이다. 회사 전체의 시장 가격은 <span class="term">시가총액</span><span class="en">(Market capitalization)</span>, 곧 주가에 발행주식 수를 곱한 값이다.</p>
+    <div class="formula">$$\text{시가총액} = \text{주가} \times \text{발행주식 수}$$<div class="where">한빛반도체: 72,000원 × 1억 주 = 7조 2,000억원</div></div>
+    <p>이 책의 다섯 가상 회사를 시가총액으로 나란히 놓아 보자. 원을 누르면 계산이 나온다. "주가"로 바꾸면 원의 크기가 주가를 따르는데, 순서가 어떻게 바뀌는지 보자.</p>
+
+    <div class="sim" id="sim-mc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>다섯 회사의 크기: 시가총액 vs 주가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="mc-cv"></canvas><span class="hint">원을 누른다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="mc-by"><button data-value="mcap" class="on">시가총액</button><button data-value="price">주가</button></div>
+          <label class="check"><input type="checkbox" id="mc-mkt" checked> 시장별 색(KOSPI·KOSDAQ)</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">회사</span><span class="v" id="mc-o-name">—</span></div>
+        <div class="stat"><span class="k">주가 × 주식 수</span><span class="v" id="mc-o-calc">—</span></div>
+        <div class="stat"><span class="k">시가총액</span><span class="v" id="mc-o-cap">—</span></div>
+        <div class="stat"><span class="k">다섯 회사 중 비중</span><span class="v" id="mc-o-share">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 모아플랫폼(18조)이 한빛반도체(7.2조)의 2.5배다. ② 다온은행은 주가가 13,500원으로 가장 싸지만 주식이 4억 주라 시가총액은 5.4조로 셋째다. ③ "주가"로 바꾸면 순서가 뒤바뀐다. 주가가 높다고 큰 회사가 아니다. (가상의 회사, 2026년 10월 가정)</div>
+    </div>
+
+    <p>원 하나의 넓이가 시가총액에 비례한다. 모아플랫폼 하나가 나머지 넷을 합친 것(약 14.1조)보다 크다. 별빛바이오와 누리식품은 주가가 두 배 넘게 차이 나지만(15,000원 대 38,000원) 시가총액은 거의 같다. 주식 수가 5,000만 주와 2,000만 주로 다르기 때문이다. 그러면 직감을 시험해 보자.</p>
+
+    <div class="sim" id="sim-bg">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>어느 회사가 더 클까</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="bg-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="bg-a">왼쪽</button><button class="btn primary" id="bg-b">오른쪽</button></div>
+          <div class="btn-row"><button class="btn" id="bg-next">다음 문제</button><button class="btn" id="bg-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">문제</span><span class="v" id="bg-o-n">—</span></div>
+        <div class="stat"><span class="k">맞힌 수</span><span class="v" id="bg-o-ok">—</span></div>
+        <div class="stat"><span class="k">주가로만 골랐다면</span><span class="v" id="bg-o-naive">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 처음에는 주가와 업종만 보인다. 시가총액이 큰 쪽을 고른다. ② 답을 고르면 주식 수와 시가총액이 드러난다. ③ "주가가 높은 쪽"만 골랐을 때의 점수와 비교한다. 열 쌍(다섯 회사에서 둘씩)을 모두 풀면 끝난다.</div>
+    </div>
+
+    <h3>유동주식: 실제로 시장에 도는 주식</h3>
+    <p>발행주식이 모두 시장에서 거래되는 것은 아니다. 최대주주와 그 가족·계열사가 가진 주식, 회사가 사들여 보관하는 <span class="term">자기주식</span><span class="en">(Treasury stock)</span>, 정부나 우리사주처럼 오래 묶여 있는 지분은 좀처럼 팔리지 않는다. 이것을 빼고 시장에서 실제로 돌 수 있는 주식을 <span class="term">유동주식</span><span class="en">(Free float)</span>이라 한다. 지수를 만들 때도 보통 시가총액 전체가 아니라 유동주식만큼의 시가총액(유동 시가총액)을 쓴다.</p>
+
+    <div class="sim" id="sim-ff">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>100칸으로 보는 유동주식</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ff-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="seg" id="ff-co"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div>
+          <label class="ctrl"><span>최대주주·특수관계인 <output id="ff-maj-out"></output></span><input type="range" id="ff-maj" min="0" max="70" step="1" value="30"></label>
+          <label class="ctrl"><span>자기주식 <output id="ff-tre-out"></output></span><input type="range" id="ff-tre" min="0" max="20" step="1" value="5"></label>
+          <label class="ctrl"><span>기타 묶인 지분 <output id="ff-lock-out"></output></span><input type="range" id="ff-lock" min="0" max="20" step="1" value="5"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">유동주식 비율</span><span class="v" id="ff-o-r">—</span></div>
+        <div class="stat"><span class="k">유동주식 수</span><span class="v" id="ff-o-n">—</span></div>
+        <div class="stat"><span class="k">유동 시가총액</span><span class="v" id="ff-o-cap">—</span></div>
+        <div class="stat"><span class="k">하루 거래량 ÷ 유동주식</span><span class="v" id="ff-o-turn">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 최대주주 지분을 70%까지 올리면 시장에 도는 주식이 확 줄고, 같은 거래량이라도 유동주식 대비 회전율이 높아진다. ② 별빛바이오를 고르면 하루에 유동주식의 10% 넘게 손바뀜이 일어난다. ③ 유동주식이 적은 종목은 작은 매수·매도에도 가격이 크게 움직이기 쉽다. (각 회사의 지분 구조는 교육용 가정. 하루 거래량은 가상 시장의 최근 60거래일 평균)</div>
+    </div>
+
+    <p>유동주식이 적다는 것은 "살 수 있는 물량이 적다"는 뜻이다. 그런 종목에 사려는 사람이 몰리면 가격이 쉽게 치솟고, 팔려는 사람이 몰리면 쉽게 무너진다. 회사의 크기(시가총액)와 실제 거래되는 크기(유동 시가총액, 거래대금)는 따로 봐야 한다.</p>
+
+    <h3>거래대금: 얼마나 활발히 사고파는가</h3>
+    <p>하루 동안 거래된 금액의 합계, 곧 체결 가격 × 체결 수량의 합을 <span class="term">거래대금</span><span class="en">(Trading value)</span>이라 한다. 거래량(주식 수)은 주가가 낮은 종목일수록 크게 나오므로 종목끼리 비교할 때는 거래대금이 낫다. 아래는 가상 시장의 마지막 1년 동안 다섯 회사의 하루 거래대금 순위다. 재생을 누르면 날마다 순위가 바뀐다.</p>
+
+    <div class="sim" id="sim-tv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>거래대금 순위는 시가총액 순위와 다르다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="tv-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>날짜 <output id="tv-d-out"></output></span><input type="range" id="tv-d" min="0" max="249" step="1" value="249"></label>
+          <div class="btn-row"><button class="btn primary" id="tv-play">재생</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">거래대금 1위</span><span class="v" id="tv-o-1">—</span></div>
+        <div class="stat"><span class="k">다섯 회사 합계</span><span class="v" id="tv-o-sum">—</span></div>
+        <div class="stat"><span class="k">1년 중 별빛바이오가 1위인 날</span><span class="v" id="tv-o-by">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 시가총액이 가장 작은 별빛바이오가 거래대금에서는 자주 상위에 오른다. ② 시가총액 1위 모아플랫폼은 거래대금으로는 아래쪽이다. ③ 큰 등락이 있었던 날을 찾아 순위가 어떻게 뒤집히는지 본다. (가상 시장 데이터. 막대 옆 숫자는 그날 등락률)</div>
+    </div>
+
+    <p>거래대금이 많은 종목은 사고팔기 쉽다(<span class="term">유동성</span><span class="en">(Liquidity)</span>이 높다). 그러나 거래대금 상위 목록은 "좋은 회사 목록"이 아니라 "오늘 사람들이 많이 다툰 종목 목록"에 가깝다. 큰 뉴스가 있거나 주가가 크게 흔들린 종목이 자주 오른다.</p>
+  </section>
+
+  <section id="limits">
+    <h2>가격제한폭: 하루에 움직일 수 있는 한계</h2>
+    <p>한국 주식은 하루에 전날 종가(<span class="term">기준가</span>)의 위아래 30%까지만 움직일 수 있다. 이것이 <span class="term">가격제한폭</span><span class="en">(Daily price limit)</span>이다. 30% 오른 가격을 <span class="term">상한가</span>, 30% 내린 가격을 <span class="term">하한가</span>라 한다. 상한가보다 비싸게 사거나 하한가보다 싸게 파는 주문은 아예 낼 수 없다. 미국처럼 가격제한폭이 없는 시장도 많다.</p>
+    <p>정확한 상한가는 30%를 그대로 곱한 값이 아니다. 주가는 <span class="term">호가 단위</span><span class="en">(Tick size)</span>에 맞아야 하므로, 30%를 넘지 않는 가장 가까운 호가로 내림한다(하한가는 올림). 호가 단위는 가격대마다 다르다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>주가</th><th class="num">2천 미만</th><th class="num">2천~5천</th><th class="num">5천~2만</th><th class="num">2만~5만</th><th class="num">5만~20만</th><th class="num">20만~50만</th><th class="num">50만 이상</th></tr></thead>
+      <tbody><tr><td>호가 단위</td><td class="num">1원</td><td class="num">5원</td><td class="num">10원</td><td class="num">50원</td><td class="num">100원</td><td class="num">500원</td><td class="num">1,000원</td></tr></tbody>
+    </table></div>
+    <p>한빛반도체의 전날 종가가 72,000원이면 72,000 × 1.3 = 93,600원이 상한가, 72,000 × 0.7 = 50,400원이 하한가다. 둘 다 100원 단위에 딱 맞는다. 아래에서 종가를 바꾸면서 딱 떨어지지 않는 경우를 찾아보자.</p>
+
+    <div class="sim" id="sim-lm">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>상한가·하한가 계산기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lm-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>전일 종가 <output id="lm-p-out"></output></span><input type="range" id="lm-p" min="0" max="1000" step="1" value="0"></label>
+          <div class="seg" id="lm-co"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">상한가</span><span class="v" id="lm-o-up">—</span></div>
+        <div class="stat"><span class="k">하한가</span><span class="v" id="lm-o-lo">—</span></div>
+        <div class="stat"><span class="k">전일 종가의 호가 단위</span><span class="v" id="lm-o-tick">—</span></div>
+        <div class="stat"><span class="k">하한가~상한가 호가 개수</span><span class="v" id="lm-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 다온은행(13,500원)의 상한가는 17,550원(+30.0%)이다. ② 종가를 1,999원 근처로 옮기면 상한가 2,595원은 +29.8%로 30%에 못 미친다. 2,598.7원이 5원 단위가 아니어서 내림했기 때문이다. ③ 호가 단위가 바뀌는 경계(세로 점선)를 넘는 구간에서는 위아래 호가 간격이 다르다.</div>
+    </div>
+
+    <p>상한가에서는 그 가격에 팔려는 사람보다 사려는 사람이 훨씬 많아 매수 주문이 쌓인 채 거래가 거의 멈춘다. 하한가는 반대다. 가격제한폭은 하루의 공포나 열광이 가격을 끝없이 끌고 가지 않도록 막는 장치지만, 움직임을 없애 주지는 않는다. 내일로 미룰 뿐이다. 상한가가 며칠 연달아 이어지면 어떻게 될까?</p>
+
+    <div class="sim" id="sim-st">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>연속 상한가와 연속 하한가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="st-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>며칠 연속 <output id="st-n-out"></output></span><input type="range" id="st-n" min="1" max="8" step="1" value="3"></label>
+          <div class="seg" id="st-mode"><button data-value="up" class="on">상한가</button><button data-value="down">하한가</button><button data-value="alt">번갈아</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">마지막 날 가격</span><span class="v" id="st-o-p">—</span></div>
+        <div class="stat"><span class="k">누적 등락</span><span class="v" id="st-o-r">—</span></div>
+        <div class="stat"><span class="k">72,000원 회복에 필요한 상한가</span><span class="v" id="st-o-rec">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 상한가 3일이면 72,000원이 158,000원(+119%)이 된다. ② 하한가 3일이면 24,750원(−66%)이다. 다시 72,000원이 되려면 상한가가 몇 번 필요한지 본다. ③ "번갈아"(상한가 다음 하한가)는 제자리가 아니라 매번 9%씩 깎인다. (한빛반도체 72,000원에서 시작, 호가 단위 반영)</div>
+    </div>
+
+    <p>+30%와 −30%는 대칭이 아니다. 상한가 다음 날 하한가를 맞으면 1.3 × 0.7 = 0.91, 9%를 잃는다. 하한가가 이어지면 회복에 필요한 상승률은 더 빨리 커진다. 가격제한폭은 하루를 막을 뿐 추세를 막지 못하고, 연속 하한가에서는 팔고 싶어도 사 줄 사람이 없어 팔지 못하는 일이 생긴다.</p>
+  </section>
+
+  <section id="brakes">
+    <h2>시장의 브레이크: VI, 사이드카, 서킷브레이커</h2>
+    <p>가격제한폭이 하루의 한계라면, 하루 안에서 갑자기 튀는 가격을 잠시 식히는 장치도 있다. 종목 하나에 거는 것이 <span class="term">변동성 완화장치</span><span class="en">(VI, Volatility Interruption)</span>다. 기준가(보통 그날 시가나 직전 단일가 체결가)에서 약 ±10% 벗어나는 가격에 체결되려 하면 <b>정적 VI</b>가, 직전 체결가에서 짧은 순간에 약 3%(종목·시간대에 따라 다르다) 넘게 튀려 하면 <b>동적 VI</b>가 걸린다. VI가 걸리면 그 종목은 약 2분 동안 접속매매를 멈추고 동시호가처럼 주문을 모아 하나의 가격으로 체결한다. 거래를 막는 것이 아니라 "숨 고를 시간"을 주는 것이다.</p>
+    <p>아래는 별빛바이오의 하루를 1분씩 흘려보낸 가상의 장이다. 재생하면서 "호재 뉴스"나 "악재 뉴스"를 눌러 가격을 밀어 보자.</p>
+
+    <div class="sim" id="sim-vi">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>VI 발동: 2분의 냉각</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="vi-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>일중 흔들림 <output id="vi-s-out"></output></span><input type="range" id="vi-s" min="0.5" max="3" step="0.1" value="1.2"></label>
+          <label class="check"><input type="checkbox" id="vi-dyn" checked> 동적 VI(1분 새 약 3% 급변)</label>
+          <div class="btn-row"><button class="btn primary" id="vi-good">호재 뉴스</button><button class="btn" id="vi-bad">악재 뉴스</button></div>
+          <div class="btn-row"><button class="btn" id="vi-play">일시정지</button><button class="btn" id="vi-re">다시 뽑기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시각</span><span class="v" id="vi-o-t">—</span></div>
+        <div class="stat"><span class="k">현재가</span><span class="v" id="vi-o-p">—</span></div>
+        <div class="stat"><span class="k">정적 VI 기준가</span><span class="v" id="vi-o-ref">—</span></div>
+        <div class="stat"><span class="k">VI 발동</span><span class="v" id="vi-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 호재 뉴스를 두세 번 눌러 가격이 기준가 +10% 선에 닿을 때 노란 2분 구간이 생기는 것을 본다. ② VI가 풀리면 기준가가 새 단일가로 옮겨 가고 ±10% 띠도 따라 움직인다. ③ 그래도 전일 종가 ±30%(상한가·하한가)는 넘지 못한다. (전일 종가 15,000원, 1분 단위 모형. 실제 VI 기준과 시간은 종목·시간대·제도에 따라 다르다.)</div>
+    </div>
+
+    <p>VI는 종목 하나의 문제다. 시장 전체가 한꺼번에 무너질 때는 더 큰 브레이크가 있다. <span class="term">사이드카</span><span class="en">(Sidecar)</span>는 선물 가격이 급변할 때(KOSPI200 선물이 전일 대비 약 5% 넘게 움직여 1분 이어지면) 컴퓨터가 자동으로 내는 프로그램 매매 주문을 5분 동안 멈춘다. <span class="term">서킷브레이커</span><span class="en">(Circuit breaker)</span>는 지수 자체가 전일 대비 8%, 15%, 20% 넘게 떨어져 1분 이어질 때 단계적으로 시장 전체의 거래를 멈춘다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>단계</th><th>조건(지수 하락, 1분 지속)</th><th>조치</th></tr></thead>
+      <tbody>
+        <tr><td>1단계</td><td class="num">−8%</td><td>모든 주식 거래 20분 중단, 이후 10분 동시호가로 재개</td></tr>
+        <tr><td>2단계</td><td class="num">−15%</td><td>다시 20분 중단, 10분 동시호가로 재개</td></tr>
+        <tr><td>3단계</td><td class="num">−20%</td><td>그날 장을 그대로 끝낸다</td></tr>
+      </tbody>
+    </table></div>
+    <p>1·2단계는 하루에 한 번씩만, 장 종료 40분 전(14:50) 이후에는 발동하지 않는다. 한국에서 서킷브레이커는 손에 꼽을 만큼 드물게 걸렸다. 2020년 3월 코로나19 급락 때가 대표적이다. 아래 손잡이로 지수를 끌어내려 보자.</p>
+
+    <div class="sim" id="sim-cb">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>서킷브레이커의 단계</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cb-cv"></canvas><span class="hint">지수 손잡이를 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>시각 <output id="cb-t-out"></output></span><input type="range" id="cb-t" min="545" max="925" step="5" value="660"></label>
+          <div class="btn-row"><button class="btn" id="cb-m6">−6%</button><button class="btn" id="cb-m9">−9%</button><button class="btn" id="cb-m16">−16%</button><button class="btn" id="cb-m21">−21%</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">지수 등락</span><span class="v" id="cb-o-r">—</span></div>
+        <div class="stat"><span class="k">상태</span><span class="v" id="cb-o-st">—</span></div>
+        <div class="stat"><span class="k">조치</span><span class="v" id="cb-o-do">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① −6%에서는 사이드카만 걸린다(여기서는 선물도 지수만큼 빠졌다고 가정). ② −9%로 내리면 1단계, 시장 전체가 20분 멈춘다. ③ 시각을 15:00으로 옮기면 같은 −9%에도 1단계가 걸리지 않는다. −21%의 3단계는 시각과 관계없이 장을 끝낸다. (2026년 기준 대략의 규칙)</div>
+    </div>
+
+    <p>브레이크는 하락을 없애 주지 않는다. 공포에 휩쓸린 주문이 한꺼번에 쏟아지는 것을 잠시 멈춰, 사람들이 정보를 확인하고 다시 생각할 시간을 준다. 멈춘 뒤에도 가격은 같은 방향으로 갈 수 있다.</p>
+    <div class="callout warn"><strong>제도는 바뀐다</strong>
+      <p>이 장의 숫자(거래 시간, 가격제한폭, VI·사이드카·서킷브레이커 기준, 증거금률, 상장 요건)는 2026년 기준 대략의 값이다. 거래소는 거래 시간 연장, 대체거래소 확대, 상장폐지 기준 강화처럼 제도를 자주 고친다. 실제로 주문하기 전에는 증권사 앱의 안내와 한국거래소 공지를 확인한다.</p>
+    </div>
+  </section>
+
+  <section id="index-taste">
+    <h2>지수 맛보기</h2>
+    <p>"오늘 시장이 올랐다"는 말은 어떤 숫자를 보고 하는 말일까? 종목 수천 개의 등락을 한 숫자로 줄인 것이 <span class="term">주가지수</span><span class="en">(Stock index)</span>다. KOSPI는 기준 시점의 시가총액을 100으로 놓고 오늘의 시가총액이 그 몇 배인지로 계산한다. 시가총액이 큰 회사일수록 지수를 많이 움직인다. 이 책은 가상 시장의 지수를 <b>SB 종합지수</b>라고 부른다.</p>
+    <div class="formula">$$\text{지수}_t = \frac{\sum_i \text{주가}_{i,t} \times \text{주식 수}_i}{\text{기준 시점 시가총액}} \times \text{기준값}$$<div class="where">실제로는 유동주식만큼만 반영하고, 증자·상장 같은 변화가 지수를 튀게 하지 않도록 기준 시가총액을 조정한다.</div></div>
+    <p>다섯 회사로만 이루어진 작은 지수를 만들어 보자. 막대 끝의 손잡이를 끌어 오늘의 등락률을 정하면 세 가지 방식의 지수가 함께 움직인다.</p>
+
+    <div class="sim" id="sim-ix">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>다섯 회사로 만드는 지수</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ix-cv"></canvas><span class="hint">막대 끝을 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn" id="ix-moa">모아만 +10%</button><button class="btn" id="ix-byeol">별빛만 +30%</button></div>
+          <div class="btn-row"><button class="btn" id="ix-all">모두 −5%</button><button class="btn" id="ix-re">초기화</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시가총액 가중</span><span class="v" id="ix-o-cap">—</span></div>
+        <div class="stat"><span class="k">주가 평균(가격 가중)</span><span class="v" id="ix-o-px">—</span></div>
+        <div class="stat"><span class="k">동일 가중</span><span class="v" id="ix-o-eq">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① "모아만 +10%"를 누르면 모아플랫폼의 비중이 56%라서 시가총액 가중 지수가 약 +5.6% 오른다. ② "별빛만 +30%"는 상한가인데도 시가총액 가중 지수는 약 +0.7%만 오른다. 동일 가중이면 +6%다. ③ 주가 평균은 주가가 비싼 모아·한빛에 끌려간다. (어제 지수를 1,000으로 둔 가상 지수)</div>
+    </div>
+
+    <p>시가총액 가중 지수에서 큰 회사 몇 개가 지수의 방향을 정한다. 그래서 "지수는 올랐는데 내 종목은 내렸다"는 일이 흔하다. 지수의 계산 방식과 지수를 그대로 따라가는 ETF는 <a href="index.html">15장</a>에서 자세히 다룬다.</p>
+  </section>
+
+  <section id="listing">
+    <h2>상장과 상장폐지</h2>
+    <p>거래소에서 주식이 거래되려면 <span class="term">상장</span><span class="en">(Listing)</span> 심사를 통과해야 한다. 거래소는 회사의 규모(자기자본, 시가총액), 실적(매출, 이익), 주식이 충분히 퍼져 있는지(일반 주주 수, 공모 주식 비율), 회계와 지배구조가 믿을 만한지(감사의견, 경영 투명성)를 본다. KOSPI는 문턱이 가장 높고, KOSDAQ은 적자 기업도 기술력이나 성장성을 인정받으면 들어올 수 있는 길(기술특례 상장)이 있다. 구체적인 기준은 여러 갈래로 나뉘고 자주 바뀌므로 숫자를 외울 필요는 없다.</p>
+    <p>상장은 영원하지 않다. 회사가 망가지거나 시장에 남을 자격을 잃으면 거래소는 주식을 시장에서 내보낸다. 이것이 <span class="term">상장폐지</span><span class="en">(Delisting)</span>다. 주요 사유는 다음과 같다.</p>
+    <div class="mk-grid">
+      <div><b>회계</b>감사인이 재무제표를 믿을 수 없다고 하는 경우(감사의견 거절·부적정)</div>
+      <div><b>재무</b>자본이 바닥나는 자본잠식, 매출이 기준 아래로 떨어지는 경우</div>
+      <div><b>시장성</b>시가총액이 기준 아래로 오래 머물거나 거래가 거의 없는 경우</div>
+      <div><b>신뢰</b>횡령·배임, 공시 위반, 부도처럼 회사를 믿을 수 없게 된 경우</div>
+    </div>
+    <p>2026년에는 상장폐지 기준이 단계적으로 높아지는 중이다. 예를 들어 시가총액 기준은 KOSPI 약 200억원, KOSDAQ 약 150억원 미만으로 올라가고, 앞으로 몇 해에 걸쳐 더 높아질 예정이다. 오래 살아남지 못하는 회사를 빨리 정리해 시장 전체의 질을 높이려는 뜻이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="상장에서 상장폐지까지의 단계">
+        <defs><marker id="mk-ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-ok-soft" x="10" y="24" width="96" height="52" rx="10"/>
+        <text class="lbl-b" x="58" y="47" text-anchor="middle">상장 심사</text>
+        <text class="lbl-dim" x="58" y="66" text-anchor="middle">규모·실적·분산</text>
+        <rect class="f-acc-soft" x="128" y="24" width="96" height="52" rx="10"/>
+        <text class="lbl-b" x="176" y="47" text-anchor="middle">상장·거래</text>
+        <text class="lbl-dim" x="176" y="66" text-anchor="middle">유통시장</text>
+        <rect class="f-warn-soft" x="246" y="24" width="96" height="52" rx="10"/>
+        <text class="lbl-b" x="294" y="47" text-anchor="middle">관리종목</text>
+        <text class="lbl-dim" x="294" y="66" text-anchor="middle">경고 표시</text>
+        <rect class="f-warn-soft" x="364" y="24" width="86" height="52" rx="10"/>
+        <text class="lbl-b" x="407" y="47" text-anchor="middle">거래정지</text>
+        <text class="lbl-dim" x="407" y="66" text-anchor="middle">심사 중</text>
+        <line class="s-acc" x1="108" y1="50" x2="124" y2="50" marker-end="url(#mk-ar3)"/>
+        <line class="s-acc" x1="226" y1="50" x2="242" y2="50" marker-end="url(#mk-ar3)"/>
+        <line class="s-acc" x1="344" y1="50" x2="360" y2="50" marker-end="url(#mk-ar3)"/>
+        <rect class="f-bad-soft" x="246" y="138" width="96" height="52" rx="10"/>
+        <text class="lbl-bad" x="294" y="161" text-anchor="middle">정리매매</text>
+        <text class="lbl-dim" x="294" y="180" text-anchor="middle">약 7거래일</text>
+        <rect class="f-bad-soft" x="364" y="138" width="86" height="52" rx="10"/>
+        <text class="lbl-bad" x="407" y="161" text-anchor="middle">상장폐지</text>
+        <text class="lbl-dim" x="407" y="180" text-anchor="middle">장외로</text>
+        <path class="s-bad" d="M407 78 L407 108 L294 108 L294 134" marker-end="url(#mk-ar3)"/>
+        <text class="lbl-dim" x="350" y="102" text-anchor="middle">폐지 결정</text>
+        <line class="s-bad" x1="344" y1="164" x2="360" y2="164" marker-end="url(#mk-ar3)"/>
+        <path class="s-ok" d="M294 78 L294 92 L176 92 L176 80" marker-end="url(#mk-ar3)"/>
+        <text class="lbl-dim" x="200" y="108" text-anchor="middle">사유 해소</text>
+        <text class="lbl-dim" x="10" y="150">정리매매에는 가격제한폭이</text>
+        <text class="lbl-dim" x="10" y="170">없다. 하루에 반토막도 흔하다.</text>
+        <text class="lbl-dim" x="10" y="226">폐지 후에도 주식은 남지만, 사고팔 시장이 사라진다.</text>
+      </svg>
+      <figcaption><b>그림 3. 상장에서 상장폐지까지.</b> 문제가 생기면 먼저 관리종목으로 지정해 경고하고, 사유가 해소되지 않으면 거래를 멈추고 심사한다. 폐지가 결정되면 마지막으로 주식을 정리할 기회(정리매매)를 준 뒤 시장에서 내보낸다. 단계와 기간은 사유에 따라 다르다.</figcaption>
+    </figure>
+
+    <p>아래에서 어느 가상의 회사가 상장폐지에 이르는 과정을 한 단계씩 따라가 보자. 정리매매 기간의 가격을 특히 눈여겨보자.</p>
+
+    <div class="sim" id="sim-dl">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>상장폐지까지의 길</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dl-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>내가 가진 주식 <output id="dl-q-out"></output></span><input type="range" id="dl-q" min="100" max="2000" step="100" value="500"></label>
+          <div class="btn-row"><button class="btn primary" id="dl-next">다음 단계</button><button class="btn" id="dl-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">단계</span><span class="v" id="dl-o-st">—</span></div>
+        <div class="stat"><span class="k">거래</span><span class="v" id="dl-o-tr">—</span></div>
+        <div class="stat"><span class="k">주가</span><span class="v" id="dl-o-p">—</span></div>
+        <div class="stat"><span class="k">내 주식의 평가액</span><span class="v" id="dl-o-v">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 관리종목 지정 뒤에도 거래는 되지만 주가가 미끄러진다. ② 거래정지 동안은 팔고 싶어도 팔 수 없다. 심사는 몇 달씩 걸리기도 한다. ③ 정리매매 첫날 가격제한폭 없이 반토막이 난다. 처음 4,000원이던 주식의 평가액이 어디까지 줄어드는지 본다. (가상의 회사, 가격 경로는 교육용 예시)</div>
+    </div>
+
+    <p>상장폐지까지 가는 회사는 보통 그 전에 오랫동안 신호를 보낸다. 몇 년째 이어지는 적자, 늘어나는 빚, 자주 바뀌는 최대주주와 경영진, 감사인의 의견, 늦어지는 공시. 이 신호를 재무제표에서 읽는 법은 <a href="statements.html">5장</a>에서 다룬다. 한 종목에 돈을 몰아넣지 않는 이유도 여기에 있다(<a href="risk.html">13장</a>).</p>
+  </section>
+
+  <section id="together">
+    <h2>모두 합치기: 이 주문은 어떻게 처리될까</h2>
+    <p>이제 이 장에서 본 것을 한 화면에 모은다. 요일과 시각, 종목, 주문 가격과 수량을 고르면, 그 주문이 어느 시장에서 어떤 방식으로 처리되는지, 가격제한폭 안에 있는지, 예수금이 충분한지, 결제는 언제인지 한 번에 보인다. 시간표의 손잡이와 가격 띠의 손잡이는 직접 끌 수도 있다.</p>
+
+    <div class="sim" id="sim-oc">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>주문 판정기: 언제, 어디서, 얼마에, 언제 결제</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="oc-cv"></canvas><span class="hint">시각·가격 손잡이를 끈다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="oc-day"><button data-value="1">월</button><button data-value="2">화</button><button data-value="3">수</button><button data-value="4" class="on">목</button><button data-value="5">금</button><button data-value="6">토</button></div>
+          <div class="seg" id="oc-co"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div>
+          <label class="ctrl"><span>주문 가격(전일 대비) <output id="oc-px-out"></output></span><input type="range" id="oc-px" min="-35" max="35" step="1" value="0"></label>
+          <label class="ctrl"><span>수량 <output id="oc-q-out"></output></span><input type="range" id="oc-q" min="1" max="300" step="1" value="10"></label>
+          <label class="check"><input type="checkbox" id="oc-misu"> 증거금률 40% 계좌(미수 허용)</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">처리되는 곳</span><span class="v" id="oc-o-where">—</span></div>
+        <div class="stat"><span class="k">가격 판정</span><span class="v" id="oc-o-px">—</span></div>
+        <div class="stat"><span class="k">필요한 돈 / 예수금</span><span class="v" id="oc-o-cash">—</span></div>
+        <div class="stat"><span class="k">체결일 → 결제일</span><span class="v" id="oc-o-set">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 목요일 10:00, 한빛 10주(72,000원)는 KRX 접속매매로 바로 체결될 수 있고 결제는 다음 주 월요일이다. ② 가격을 +31%로 올리면 상한가 93,600원을 넘어 주문이 거부된다. ③ 수량을 150주로 늘리면 예수금 1,000만원을 넘는다. 미수 허용을 켜면 주문은 들어가지만 미수금이 생긴다. ④ 시각을 19:00으로 옮기면 NXT 애프터마켓만 남는다. 토요일은 다음 주 월요일 처리다. (가정: 예수금 1,000만원, 오늘 종가 = 전일 종가, 모든 종목이 NXT에서 거래된다고 가정, 공휴일 없는 주)</div>
+    </div>
+
+    <p>하나의 주문에도 시간, 장소, 가격, 돈, 날짜라는 다섯 가지 조건이 걸려 있다. 대부분은 증권 앱이 알아서 걸러 주지만, 왜 주문이 거부되었는지, 왜 판 돈을 바로 찾을 수 없는지 알면 당황하지 않는다. 다음 장에서는 이 주문이 거래소의 호가창 안에서 실제로 어떻게 상대를 만나 가격이 정해지는지 들여다본다.</p>
+
+    <div class="casefile">
+      <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 2장</span></div>
+      <h4>계좌를 열고, 시장의 지도를 그리다</h4>
+      <p>한결은 점심시간에 증권사 앱으로 비대면 계좌를 열었다. 신분증을 찍고, 본인 명의 은행 계좌로 1원 인증을 하자 10분 만에 계좌가 생겼다. 시드 1,000만원을 이체하자 예수금(D+0)과 D+2 예수금 모두 1,000만원으로 찍혔다. 계좌 설정에서 증거금률은 100%로 골랐다. 갖고 있는 돈보다 많이 사는 일은 처음부터 막아 두기로 했다.</p>
+      <p>첫 주문 전에 다섯 회사를 시가총액으로 줄 세웠다. 모아플랫폼 18조, 한빛반도체 7.2조, 다온은행 5.4조, 누리식품 7,600억, 별빛바이오 7,500억. 별빛바이오만 KOSDAQ이고 나머지는 KOSPI다. 주가가 가장 싼 다온은행이 셋째로 크다는 것이 의외였다. 가장 먼저 살펴볼 한빛반도체(72,000원)는 하루에 상한가 93,600원에서 하한가 50,400원 사이를 움직일 수 있다. 하루에 최대 −30%, 1,000만원을 다 넣는다면 하루 만에 300만원이 사라질 수도 있다는 뜻이다.</p>
+      <p>결제일도 확인했다. 10월 8일 목요일에 사면 9일 한글날과 주말을 건너 13일 화요일에 결제된다. 그전까지 그 돈은 "주문 가능 금액"에서는 빠지지만 아직 계좌를 떠나지 않은 상태다.</p>
+      <div class="clue">
+        <div><b>이 장에서 정한 것</b>비대면 계좌 개설, 시드 1,000만원 입금, 증거금률 100%(미수 쓰지 않기), 정규장 접속매매 시간에 주문하기.</div>
+        <div><b>아직 남은 문제</b>주문은 정확히 어떻게 체결되는가. 시장가와 지정가 중 무엇을 쓰고, 비용은 얼마나 드는가.</div>
+        <div><b>다음 단계</b><a href="orderbook.html">3장</a>: 첫 주문, 한빛반도체 10주.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li><b>발행시장</b>(IPO·유상증자)에서는 돈이 회사로 가고 새 주식이 생긴다. <b>유통시장</b>에서는 돈과 주식이 투자자끼리만 오간다. 매일의 주가는 유통시장의 가격이다.</li>
+      <li>주문은 <b>증권사</b>를 거쳐 <b>거래소</b>에서 체결되고, <b>예탁결제원</b>에서 돈과 주식이 맞바뀐다. 결제는 체결일로부터 2영업일 뒤(<b>T+2</b>)다. 판 돈의 출금도 결제일부터다.</li>
+      <li>예수금은 오늘의 현금(D+0)과 결제 후 현금(D+2)으로 나뉜다. 증거금만 내고 산 모자란 돈(<b>미수</b>)을 결제일까지 채우지 못하면 다음 날 아침 <b>반대매매</b>로 강제로 팔린다.</li>
+      <li>KOSPI는 큰 회사, KOSDAQ은 성장·기술 기업, KONEX는 초기 기업의 시장이다. 대체거래소 <b>NXT</b>가 생기면서 거래 시간이 08:00~20:00으로 늘었다. 정규장 09:00~15:30, 시작과 마감은 동시호가다.</li>
+      <li><b>시가총액</b> = 주가 × 주식 수. 주가가 높다고 큰 회사가 아니다. 시장에서 실제로 도는 <b>유동주식</b>과 하루 <b>거래대금</b>은 따로 본다.</li>
+      <li>하루 가격은 전일 종가의 <b>±30%</b>(호가 단위로 맞춤) 안에서만 움직인다. 종목의 급변에는 <b>VI</b>(약 2분 단일가), 시장 전체의 급락에는 <b>사이드카</b>와 <b>서킷브레이커</b>(−8%·−15%·−20%)가 걸린다. 브레이크는 하락을 늦출 뿐 없애지 않는다.</li>
+      <li>상장은 심사를 거쳐 얻고, 회계·재무·시장성·신뢰에 문제가 생기면 관리종목 → 거래정지 → <b>정리매매</b>(가격제한폭 없음) → 상장폐지로 잃는다. 제도와 수치는 바뀌므로 2026년 기준 대략의 값으로 기억한다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 한결이 유통시장에서 모아플랫폼 주식 10주를 120만원에 샀다. 모아플랫폼 회사 통장에 들어오는 돈은?</p>
+        <div class="opts">
+          <button class="opt">120만원</button>
+          <button class="opt">수수료를 뺀 약 119만원</button>
+          <button class="opt" data-correct>0원</button>
+          <button class="opt">결제일(T+2)에 120만원</button>
+        </div>
+        <div class="quiz-exp">유통시장의 거래는 투자자와 투자자 사이의 거래다. 돈은 주식을 판 다른 투자자에게 간다. 회사가 돈을 받는 것은 IPO나 유상증자 같은 발행시장에서뿐이다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 금요일(공휴일 아님)에 주식을 팔았다. 다음 주 월요일이 공휴일이라면, 매도 대금을 출금할 수 있는 날은?</p>
+        <div class="opts">
+          <button class="opt">다음 주 월요일</button>
+          <button class="opt">다음 주 화요일</button>
+          <button class="opt" data-correct>다음 주 수요일</button>
+          <button class="opt">팔자마자 바로</button>
+        </div>
+        <div class="quiz-exp">결제는 2영업일 뒤다. 주말과 공휴일인 월요일을 건너뛰면 화요일이 T+1, 수요일이 T+2다. 판 돈으로 다른 주식을 사는 것은 바로 되지만 은행으로 출금하는 것은 결제일부터다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 전일 종가가 13,500원인 다온은행의 상한가는? (5,000~20,000원 구간의 호가 단위는 10원)</p>
+        <div class="opts">
+          <button class="opt" data-correct>17,550원</button>
+          <button class="opt">17,500원</button>
+          <button class="opt">17,600원</button>
+          <button class="opt">13,500원의 정확한 1.3배인 17,550.5원</button>
+        </div>
+        <div class="quiz-exp">13,500 × 1.3 = 17,550원이고 10원 단위에 맞으므로 그대로 상한가다. 1.3배가 호가 단위에 맞지 않을 때는 30%를 넘지 않도록 아래 호가로 내린다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 시가총액에 대한 설명으로 옳은 것은?</p>
+        <div class="opts">
+          <button class="opt">주가가 가장 높은 회사가 시가총액도 가장 크다.</button>
+          <button class="opt">시가총액은 회사가 은행에 가진 현금의 합이다.</button>
+          <button class="opt">시가총액이 크면 거래대금도 항상 가장 많다.</button>
+          <button class="opt" data-correct>주가가 13,500원인 다온은행이 주가 38,000원인 누리식품보다 시가총액이 클 수 있다.</button>
+        </div>
+        <div class="quiz-exp">시가총액은 주가 × 발행주식 수다. 다온은행은 4억 주라 5.4조원, 누리식품은 2,000만 주라 7,600억원이다. 거래대금 순위는 시가총액 순위와 자주 다르다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 장중에 지수가 전일 대비 9% 떨어진 상태가 1분 넘게 이어졌다. 시각은 오전 11시다. 무슨 일이 일어나는가? (2026년 기준 규칙)</p>
+        <div class="opts">
+          <button class="opt">그날 장이 그대로 끝난다.</button>
+          <button class="opt" data-correct>서킷브레이커 1단계로 주식 거래가 20분 멈췄다가 동시호가로 다시 열린다.</button>
+          <button class="opt">해당 종목들에만 2분 동안 VI가 걸리고 지수와는 관계없다.</button>
+          <button class="opt">아무 일도 없다. 가격제한폭 30%에 닿지 않았기 때문이다.</button>
+        </div>
+        <div class="quiz-exp">지수가 8% 넘게 떨어져 1분 이어지면 1단계 서킷브레이커가 걸려 시장 전체의 거래가 20분 멈추고 10분 동시호가로 다시 시작한다. 장을 끝내는 것은 20% 하락의 3단계다. VI는 종목 하나에 거는 장치다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const $ = (id) => document.getElementById(id);
+  const narrow = (id) => $(id).parentElement.clientWidth < 560;
+  const CO = ST.CO, KEYS = ST.COKEYS;
+  const capOf = (k) => CO[k].price * CO[k].shares;
+  const CAPSUM = KEYS.reduce((s, k) => s + capOf(k), 0);
+  const shareFmt = (n) => MB.won(n, { short: true }) + "주";
+  const hm = (m) => String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(Math.round(m % 60)).padStart(2, "0");
+  const span = (c, s) => '<span class="' + c + '">' + s + "</span>";
+  const tone = (x, s) => span(MB.tone(x), s);
+  const coColor = (P, k) => ({ hanbit: P.accent, nuri: P.ok, byeol: P.warn, daon: P.dim, moa: P.accent2 })[k];
+  const short = (k) => CO[k].name.slice(0, 2);
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color || MB.color("text"); ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function knob(ctx, x, y, P, r) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = P.bg; ctx.stroke();
+    ctx.restore();
+  }
+  function rrect(ctx, x, y, w, h, r) {
+    r = Math.max(0, Math.min(r, w / 2, h / 2));
+    ctx.beginPath(); ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  function soft(ctx, a, color, fn) { ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = color; fn(); ctx.restore(); }
+  function wrap(ctx, s, x, y, maxW, lh) {
+    let line = "";
+    for (const w of s.split(" ")) {
+      const t = line ? line + " " + w : w;
+      if (ctx.measureText(t).width > maxW && line) { ctx.fillText(line, x, y); y += lh; line = w; } else line = t;
+    }
+    if (line) ctx.fillText(line, x, y);
+    return y + lh;
+  }
+  function arrow(ctx, x0, y0, x1, y1, color, w) {
+    const a = Math.atan2(y1 - y0, x1 - x0), L = 7;
+    ctx.save(); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = w || 1.5;
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - Math.cos(a) * L * 0.8, y1 - Math.sin(a) * L * 0.8); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 - L * Math.cos(a - 0.45), y1 - L * Math.sin(a - 0.45)); ctx.lineTo(x1 - L * Math.cos(a + 0.45), y1 - L * Math.sin(a + 0.45)); ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function pill(ctx, x, y, s, bg, fg) {
+    ctx.font = MB.font(11, false, 600);
+    const tw = ctx.measureText(s).width + 12;
+    rrect(ctx, x - tw / 2, y - 10, tw, 20, 10); ctx.fillStyle = bg; ctx.fill();
+    ctx.fillStyle = fg; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(s, x, y + 0.5);
+  }
+
+  /* 영업일 달력 (2026년 10월 공휴일) */
+  const HOL = { "2026-10-05": "대체공휴일", "2026-10-09": "한글날" };
+  const iso = (d) => d.toISOString().slice(0, 10);
+  const isBiz = (d) => { const w = d.getUTCDay(); return w !== 0 && w !== 6 && !HOL[iso(d)]; };
+  const addDays = (d, k) => new Date(d.getTime() + k * 864e5);
+  const nextBiz = (d) => { while (!isBiz(d)) d = addDays(d, 1); return d; };
+  const addBiz = (d, k) => { let x = d; for (let i = 0; i < k; i++) { x = addDays(x, 1); while (!isBiz(x)) x = addDays(x, 1); } return x; };
+  const DOW = "일월화수목금토";
+  const dlabel = (d) => (d.getUTCMonth() + 1) + "/" + d.getUTCDate() + "(" + DOW[d.getUTCDay()] + ")";
+
+  /* 거래 시간 (2026년 기준 대략, 분 단위) */
+  const T0 = 450, T1 = 1230;
+  const SES = [
+    { lane: 0, a: 510, b: 540, name: "동시호가", c: "accent2" },
+    { lane: 0, a: 540, b: 920, name: "정규장 접속매매", c: "accent" },
+    { lane: 0, a: 920, b: 930, name: "", c: "accent2" },
+    { lane: 1, a: 510, b: 520, name: "", c: "ok" },
+    { lane: 1, a: 940, b: 960, name: "종가", c: "ok" },
+    { lane: 1, a: 960, b: 1080, name: "시간외 단일가", c: "warn" },
+    { lane: 2, a: 480, b: 530, name: "프리", c: "accent", soft: true },
+    { lane: 2, a: 540, b: 920, name: "메인마켓", c: "accent" },
+    { lane: 2, a: 930, b: 1200, name: "애프터마켓", c: "accent", soft: true },
+  ];
+  const LANES = ["KRX 정규장", "KRX 시간외", "NXT 대체거래소"];
+  function krxState(m) {
+    if (m >= 510 && m < 520) return { open: true, kind: "auction", name: "동시호가 접수 + 장전 시간외 종가" };
+    if (m >= 520 && m < 540) return { open: true, kind: "auction", name: "동시호가 접수(09:00 체결)" };
+    if (m >= 540 && m < 920) return { open: true, kind: "cont", name: "정규장 접속매매" };
+    if (m >= 920 && m < 930) return { open: true, kind: "auction", name: "마감 동시호가(15:30 체결)" };
+    if (m >= 940 && m < 960) return { open: true, kind: "closePx", name: "장후 시간외 종가" };
+    if (m >= 960 && m < 1080) return { open: true, kind: "single", name: "시간외 단일가(10분마다)" };
+    return { open: false, kind: "none", name: m < 510 ? "열리기 전" : m < 940 ? "쉬는 시간" : "마감" };
+  }
+  function nxtState(m) {
+    if (m >= 480 && m < 530) return { open: true, kind: "cont", name: "프리마켓" };
+    if (m >= 540 && m < 920) return { open: true, kind: "cont", name: "메인마켓" };
+    if (m >= 930 && m < 1200) return { open: true, kind: "cont", name: "애프터마켓" };
+    return { open: false, kind: "none", name: m < 480 ? "열리기 전" : m >= 1200 ? "마감" : "쉬는 시간" };
+  }
+  /** 세 줄 시간표. B={x,y,w}, o={lh(막대 높이), gap, labels} → {X, inv, bottom} */
+  function drawSessions(ctx, B, m, P, o) {
+    o = o || {};
+    const lh = o.lh || 24, gap = o.gap || 30, onA = MB.color("on-accent");
+    const X = (t) => B.x + ((t - T0) / (T1 - T0)) * B.w;
+    LANES.forEach((name, i) => {
+      const y = B.y + i * (lh + gap) + 34;
+      text(ctx, name, B.x, y - 5, { size: 11, color: P.dim });
+      rrect(ctx, B.x, y, B.w, lh, 5); ctx.fillStyle = P.grid; ctx.fill();
+      SES.filter((s) => s.lane === i).forEach((s) => {
+        const x0 = X(s.a), x1 = X(s.b), on = m >= s.a && m < s.b;
+        ctx.save(); ctx.globalAlpha = s.soft ? (on ? 0.75 : 0.45) : on ? 1 : 0.8;
+        rrect(ctx, x0, y, Math.max(2, x1 - x0), lh, 4); ctx.fillStyle = P[s.c]; ctx.fill(); ctx.restore();
+        if (on) { ctx.save(); ctx.strokeStyle = P.text; ctx.lineWidth = 2; rrect(ctx, x0, y, Math.max(2, x1 - x0), lh, 4); ctx.stroke(); ctx.restore(); }
+        ctx.font = MB.font(11, false, 600);
+        if (s.name && ctx.measureText(s.name).width + 8 < x1 - x0) text(ctx, s.name, (x0 + x1) / 2, y + lh / 2 + 0.5, { size: 11, weight: 600, color: s.soft ? P.text : onA, align: "center", base: "middle" });
+      });
+    });
+    const bottom = B.y + 3 * (lh + gap) - gap + 34;
+    const step = B.w < 420 ? 120 : 60;
+    ctx.strokeStyle = P.axis; ctx.lineWidth = 1;
+    for (let t = 480; t <= 1200; t += step) {
+      const x = X(t);
+      ctx.beginPath(); ctx.moveTo(x, bottom + 2); ctx.lineTo(x, bottom + 6); ctx.stroke();
+      text(ctx, String(t / 60), x, bottom + 18, { size: 11, mono: true, color: P.dim, align: "center" });
+    }
+    const cx = X(m);
+    ctx.save(); ctx.strokeStyle = P.text; ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(cx, B.y + 6); ctx.lineTo(cx, bottom + 4); ctx.stroke(); ctx.restore();
+    knob(ctx, cx, B.y + 4, P, 6);
+    const lab = hm(m), lw = 40;
+    text(ctx, lab, MB.clamp(cx + 12, B.x + 2, B.x + B.w - lw), B.y + 8, { size: 12, mono: true, weight: 700, color: P.text, base: "middle" });
+    return { X, inv: (px) => T0 + ((px - B.x) / B.w) * (T1 - T0), bottom: bottom + 30 };
+  }
+
+  /* ---------------------------------------------------------- 1. 발행시장과 유통시장 */
+  (function () {
+    const OLD = 4000e4, PX = 10000;
+    let t = 0;
+    const mode = MB.seg("pr-mode", () => { t = 0; cv.redraw(); });
+    const N = MB.range("pr-n", (v) => MB.won(v * 1e4, { short: true }) + "주", () => cv.redraw());
+    const cv = MB.canvas("#pr-cv", (ctx, w, h) => {
+      const P = MB.palette(), md = mode(), n = N() * 1e4, trade = md === "trade";
+      const bw = Math.min(150, w * 0.38), bh = 70;
+      const co = { x: 14, y: 16 }, old = { x: w - 14 - bw, y: 16 }, nw = { x: (w - bw) / 2, y: h - 30 - bh };
+      const cash = trade ? 0 : n * PX, total = trade ? OLD : OLD + n;
+      const oldSh = trade ? OLD - n : OLD, newSh = n;
+      const box = (b, title, l1, l2, hot) => {
+        rrect(ctx, b.x, b.y, bw, bh, 10); ctx.fillStyle = P.surface; ctx.fill();
+        ctx.lineWidth = hot ? 2 : 1; ctx.strokeStyle = hot ? P.accent : P.border; ctx.stroke();
+        text(ctx, title, b.x + 10, b.y + 20, { size: 13, weight: 700 });
+        text(ctx, l1, b.x + 10, b.y + 40, { size: 11.5, color: P.dim });
+        text(ctx, l2, b.x + 10, b.y + 58, { size: 11.5, color: P.dim });
+      };
+      text(ctx, md === "ipo" ? "상장 전 회사가 처음 주식을 판다" : md === "rights" ? "상장된 회사가 새 주식을 찍어 판다" : "기존 주주가 거래소에서 주식을 판다", w / 2, h - 2, { size: 11, color: P.faint, align: "center", base: "bottom" });
+      box(co, "회사", "받은 돈 " + (cash ? MB.won(cash, { short: true }) : "0"), "주식 " + shareFmt(total), !trade);
+      box(old, "기존 주주", shareFmt(oldSh), "지분 " + MB.pct(oldSh / total, 1), trade);
+      box(nw, trade ? "매수자" : "새 투자자", shareFmt(newSh), "지분 " + MB.pct(newSh / total, 1), true);
+      const src = trade ? old : co, sx = trade ? 0.25 : 0.55, tx = trade ? 0.62 : 0.12;
+      const A = { x: src.x + bw * sx, y: src.y + bh }, B = { x: nw.x + bw * tx, y: nw.y };
+      const A2 = { x: src.x + bw * (sx + 0.3), y: src.y + bh }, B2 = { x: nw.x + bw * (tx + 0.3), y: nw.y };
+      ctx.save(); ctx.setLineDash([3, 4]);
+      arrow(ctx, A.x, A.y, B.x, B.y, P.ok, 1.2);
+      arrow(ctx, B2.x, B2.y, A2.x, A2.y, P.accent2, 1.2);
+      ctx.restore();
+      if (trade) text(ctx, "회사는 관여하지 않는다", co.x + 10, co.y + bh + 18, { size: 11, color: P.faint });
+      const u = (t % 1.6) / 1.6;
+      for (let k = 0; k < 2; k++) {
+        const s = (u + k / 2) % 1;
+        pill(ctx, MB.lerp(A.x, B.x, s), MB.lerp(A.y, B.y, s), "주식", P.ok, P.bg);
+        pill(ctx, MB.lerp(B2.x, A2.x, s), MB.lerp(B2.y, A2.y, s), "돈", P.accent2, P.bg);
+      }
+      MB.stat("pr-o-cash", cash ? MB.won(cash) : "0원");
+      MB.stat("pr-o-sh", shareFmt(total));
+      MB.stat("pr-o-own", MB.pct(oldSh / total, 1));
+    }, { height: 270 });
+    $("pr-go").addEventListener("click", () => { t = 0; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { t += dt; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 2. 주문 한 건의 여행 */
+  (function () {
+    const BUY = ST.cost({ side: "buy", price: 72000, qty: 10 }), S0 = 1e7, S1 = S0 - BUY.total;
+    const NODES = { me: [0, 0, "한결", "매수자"], br: [1, 0, "증권사", "주문 창구"], kx: [2, 0, "거래소", "체결"], sel: [3, 0, "매도자", "다른 투자자"], ksd: [1.5, 1, "예탁결제원", "결제"] };
+    const STEPS = [
+      { t: "① 주문 입력", when: "T일 10:00", stk: "0주", d0: S0, d2: S0, mv: [["me", "br", "o", "매수 10주"]], hot: ["me", "br"],
+        s: "한결이 앱에서 한빛반도체 10주를 72,000원에 사는 지정가 주문을 낸다." },
+      { t: "② 증권사 점검·전송", when: "T일 10:00", stk: "0주", d0: S0, d2: S0, mv: [["br", "kx", "o", "매수 주문"]], hot: ["br", "kx"],
+        s: "증권사는 예수금이 " + MB.price(BUY.total) + "(수수료 포함) 이상인지 확인하고 주문을 거래소로 보낸다." },
+      { t: "③ 체결", when: "T일 10:00", stk: "10주 체결", d0: S0, d2: S1, mv: [["sel", "kx", "o", "매도 10주"]], hot: ["kx", "sel"], match: true,
+        s: "거래소 호가창에서 72,000원에 10주를 팔려는 매도 주문과 만난다. 1초도 걸리지 않는다." },
+      { t: "④ 체결 통보", when: "T일 10:00", stk: "10주(결제 전)", d0: S0, d2: S1, mv: [["kx", "br", "o", "체결"], ["br", "me", "o", "체결 10주"]], hot: ["me", "br", "kx"],
+        s: "체결 결과가 증권사를 거쳐 앱에 뜬다. D+2 예수금은 줄었지만 현금은 아직 계좌에 있다." },
+      { t: "⑤ 청산(T+1)", when: "T+1일", stk: "10주(결제 전)", d0: S0, d2: S1, mv: [["kx", "ksd", "o", "결제 내역"]], hot: ["kx", "ksd"],
+        s: "하루치 거래를 모아 증권사마다 주고받을 돈과 주식을 계산해 예탁결제원에 넘긴다." },
+      { t: "⑥ 결제(T+2)", when: "T+2일", stk: "10주(결제 중)", d0: S0, d2: S1, mv: [["br", "ksd", "c", "72만원"], ["ksd", "br", "s", "10주"], ["sel", "ksd", "s", "10주"], ["ksd", "sel", "c", "72만원"]], hot: ["br", "ksd", "sel"],
+        s: "예탁결제원에서 한결 쪽의 돈과 매도자 쪽의 주식이 동시에 맞바뀐다." },
+      { t: "⑦ 완료", when: "T+2일", stk: "10주 확정", d0: S1, d2: S1, mv: [["br", "me", "s", "10주"]], hot: ["me"],
+        s: "주식 10주가 한결의 계좌에 확정되고 예수금(D+0)에서도 " + MB.price(BUY.total) + "이 빠진다." },
+    ];
+    let k = 0, t = 0, auto = false, acc = 0;
+    const WIDE = { me: [0.1, 0], br: [0.37, 0], kx: [0.63, 0], sel: [0.9, 0], ksd: [0.5, 1] };
+    const NAR = { me: [0.18, 0], br: [0.82, 0], kx: [0.82, 1], sel: [0.18, 1], ksd: [0.5, 2] };
+    const cv = MB.canvas("#fl-cv", (ctx, w, h) => {
+      const P = MB.palette(), st = STEPS[k], nar = w < 480, G = nar ? NAR : WIDE;
+      const bw = nar ? Math.min(110, w * 0.34) : Math.min(100, w * 0.16), bh = 44, rowH = nar ? 84 : 104;
+      const px = (n) => { const [fx, r] = G[n]; return { x: MB.lerp(12 + bw / 2, w - 12 - bw / 2, (fx - (nar ? 0.18 : 0.1)) / (nar ? 0.64 : 0.8)), y: 40 + r * rowH + bh / 2 }; };
+      const links = [["me", "br"], ["br", "kx"], ["kx", "sel"], ["br", "ksd"], ["kx", "ksd"], ["sel", "ksd"]];
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 2;
+      links.forEach(([a, b]) => { const A = px(a), B = px(b); ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(B.x, B.y); ctx.stroke(); });
+      const u = (t % 1.3) / 1.3;
+      const labels = [];
+      st.mv.forEach(([a, b, kind, lab], j) => {
+        const A = px(a), B = px(b), L = Math.hypot(B.x - A.x, B.y - A.y) || 1, nx = -(B.y - A.y) / L, ny = (B.x - A.x) / L;
+        const sd = st.mv.length > 2 ? (j % 2 ? 1 : -1) : 0, col = kind === "o" ? P.accent : kind === "c" ? P.accent2 : P.ok;
+        const x = MB.lerp(A.x, B.x, u) + nx * sd * 5, y = MB.lerp(A.y, B.y, u) + ny * sd * 5;
+        ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.globalAlpha = 0.55; ctx.beginPath(); ctx.moveTo(A.x + nx * sd * 5, A.y + ny * sd * 5); ctx.lineTo(B.x + nx * sd * 5, B.y + ny * sd * 5); ctx.stroke(); ctx.restore();
+        ctx.beginPath(); ctx.arc(x, y, 6, 0, TAU); ctx.fillStyle = col; ctx.fill();
+        const flip = sd === 0 ? (Math.abs(ny) > 0.5 ? 1 : -1) : sd;
+        const mx = (A.x + B.x) / 2 + nx * flip * 18, my = (A.y + B.y) / 2 + ny * flip * 18;
+        labels.push([mx, my, lab, col]);
+      });
+      Object.keys(G).forEach((n) => {
+        const p = px(n), hot = st.hot.includes(n), bx = n === "ksd" ? Math.min(bw * 1.25, 130) : bw;
+        rrect(ctx, p.x - bx / 2, p.y - bh / 2, bx, bh, 9); ctx.fillStyle = P.surface; ctx.fill();
+        ctx.lineWidth = hot ? 2.2 : 1; ctx.strokeStyle = hot ? P.accent : P.border; ctx.stroke();
+        text(ctx, NODES[n][2], p.x, p.y - 6, { size: 13, weight: 700, align: "center", base: "middle" });
+        text(ctx, NODES[n][3], p.x, p.y + 11, { size: 10.5, color: P.dim, align: "center", base: "middle" });
+      });
+      labels.forEach(([x, y, lab, col]) => pill(ctx, MB.clamp(x, 40, w - 40), y, lab, col, P.bg));
+      if (st.match) {
+        const p = px("kx"), r = 30 + 6 * Math.sin(t * 6);
+        ctx.save(); ctx.globalAlpha = 0.4; ctx.strokeStyle = P.accent2; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, TAU); ctx.stroke(); ctx.restore();
+        pill(ctx, MB.clamp(p.x, 70, w - 70), p.y + bh / 2 + 16, "72,000원 × 10주 체결", P.accent2, P.bg);
+      }
+      const cy = Math.max(...Object.keys(G).map((n) => px(n).y)) + bh / 2 + 28;
+      text(ctx, st.t + " · " + st.when, 14, cy, { size: 14, weight: 700 });
+      ctx.font = MB.font(13); ctx.fillStyle = P.dim; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+      wrap(ctx, st.s, 14, cy + 22, w - 28, 19);
+      const lg = [["주문·통보", P.accent], ["돈", P.accent2], ["주식", P.ok]];
+      let lx = w - 12;
+      for (let i = lg.length - 1; i >= 0; i--) { ctx.font = MB.font(11); const tw = ctx.measureText(lg[i][0]).width; lx -= tw; text(ctx, lg[i][0], lx, 14, { size: 11, color: P.dim, base: "middle" }); lx -= 14; ctx.fillStyle = lg[i][1]; ctx.beginPath(); ctx.arc(lx + 4.5, 14, 4.5, 0, TAU); ctx.fill(); lx -= 10; }
+      text(ctx, (k + 1) + " / " + STEPS.length, 12, 14, { size: 11, mono: true, color: P.dim, base: "middle" });
+      MB.stat("fl-o-when", st.when);
+      MB.stat("fl-o-stk", st.stk);
+      MB.stat("fl-o-d0", MB.price(st.d0));
+      MB.stat("fl-o-d2", st.d2 < S0 ? span("down-t", MB.price(st.d2)) : MB.price(st.d2));
+    }, { get height() { return narrow("fl-cv") ? 360 : 270; } });
+    const go = (d) => { k = MB.clamp(k + d, 0, STEPS.length - 1); t = 0; cv.redraw(); };
+    $("fl-next").addEventListener("click", () => go(1));
+    $("fl-prev").addEventListener("click", () => go(-1));
+    $("fl-re").addEventListener("click", () => { k = 0; t = 0; auto = false; $("fl-auto").textContent = "자동 재생"; cv.redraw(); });
+    $("fl-auto").addEventListener("click", () => { auto = !auto; acc = 0; if (auto && k === STEPS.length - 1) { k = 0; t = 0; } $("fl-auto").textContent = auto ? "멈춤" : "자동 재생"; });
+    MB.loop(cv.canvas, (dt) => {
+      t += dt;
+      if (auto) { acc += dt; if (acc > 3) { acc = 0; if (k < STEPS.length - 1) go(1); else { auto = false; $("fl-auto").textContent = "자동 재생"; } } }
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 3. T+2 달력 */
+  (function () {
+    const START = new Date(Date.UTC(2026, 8, 27));
+    let sel = new Date(Date.UTC(2026, 9, 8)), L = null;
+    const side = MB.seg("cal-side", () => cv.redraw());
+    const Q = MB.range("cal-q", (v) => v + "주", () => cv.redraw());
+    const cv = MB.canvas("#cal-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 420;
+      const cw = (w - 20) / 7, top = 50, ch = (h - top - 26) / 6;
+      L = { cw, ch, top };
+      const T = nextBiz(sel), T1 = addBiz(T, 1), T2 = addBiz(T, 2);
+      text(ctx, "2026년 10월", 10, 20, { size: 14, weight: 700 });
+      text(ctx, "T = 체결일, T+2 = 결제일", w - 10, 20, { size: 11, color: P.dim, align: "right" });
+      for (let i = 0; i < 7; i++) text(ctx, DOW[i], 10 + cw * (i + 0.5), top - 8, { size: 11, color: i === 0 || i === 6 ? P.faint : P.dim, align: "center" });
+      for (let r = 0; r < 6; r++) for (let c = 0; c < 7; c++) {
+        const d = addDays(START, r * 7 + c), x = 10 + c * cw, y = top + r * ch, key = iso(d);
+        const inOct = d.getUTCMonth() === 9, biz = isBiz(d), hol = HOL[key];
+        const mark = +d === +T ? "T" : +d === +T1 ? "T+1" : +d === +T2 ? "T+2" : "";
+        rrect(ctx, x + 2, y + 2, cw - 4, ch - 4, 7);
+        if (mark === "T") { ctx.fillStyle = P.accent; ctx.globalAlpha = 0.22; ctx.fill(); ctx.globalAlpha = 1; }
+        else if (mark === "T+2") { ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.3; ctx.fill(); ctx.globalAlpha = 1; }
+        else if (mark === "T+1") { ctx.fillStyle = P.grid; ctx.fill(); }
+        else if (!biz && inOct) { ctx.fillStyle = P.surface; ctx.fill(); }
+        if (+d === +sel) { ctx.lineWidth = 2; ctx.strokeStyle = P.text; ctx.stroke(); }
+        const col = !inOct ? P.faint : !biz ? (hol ? P.warn : P.faint) : P.text;
+        text(ctx, String(d.getUTCDate()), x + 7, y + 16, { size: 12, mono: true, weight: biz && inOct ? 600 : 400, color: col });
+        if (hol && !nar) text(ctx, hol, x + cw - 5, y + 16, { size: 9.5, color: P.warn, align: "right" });
+        else if (hol) text(ctx, "휴", x + cw - 6, y + 16, { size: 10, color: P.warn, align: "right" });
+        if (mark) text(ctx, mark === "T+2" && !nar ? "T+2 결제" : mark, x + cw / 2, y + ch - 9, { size: nar ? 10.5 : 11.5, weight: 700, color: mark === "T" ? P.accent : mark === "T+2" ? P.accent2 : P.dim, align: "center" });
+      }
+      const buy = side() === "buy", c = ST.cost({ side: side(), price: 72000, qty: Q() });
+      const gap = Math.round((T2 - T) / 864e5);
+      MB.stat("cal-o-t", dlabel(T) + (+T !== +sel ? " <small>예약</small>" : ""));
+      MB.stat("cal-o-s", dlabel(T2));
+      MB.stat("cal-o-gap", gap + "<small>일 뒤</small>");
+      MB.stat("cal-o-k", buy ? "결제일에 빠지는 돈" : "결제일에 들어오는 돈");
+      MB.stat("cal-o-amt", buy ? span("down-t", "−" + MB.price(c.total)) : span("up-t", "+" + MB.price(c.total)));
+    }, { get height() { return narrow("cal-cv") ? 330 : 360; } });
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        if (!L || y < L.top) return;
+        const c = Math.floor((x - 10) / L.cw), r = Math.floor((y - L.top) / L.ch);
+        if (c < 0 || c > 6 || r < 0 || r > 5) return;
+        const d = addDays(START, r * 7 + c);
+        if (d.getUTCMonth() === 8) return;
+        sel = d; cv.redraw();
+      },
+    });
+  })();
+
+  /* ---------------------------------------------------------- 4. 미수와 반대매매 */
+  (function () {
+    const CL = [72000, 70200, 68500, 66500], OPEN3 = 65800;
+    const LAB = ["T 매수", "T+1", "T+2 결제", "T+3 아침"];
+    let day = 0;
+    const reset = () => { day = 0; cv.redraw(); };
+    const C = MB.range("ms-cash", (v) => MB.won(v * 1e4), reset);
+    const Q = MB.range("ms-q", (v) => v + "주", reset);
+    const rate = MB.seg("ms-rate", reset);
+    $("ms-pay").addEventListener("change", reset);
+    function model() {
+      const cash = C() * 1e4, q = Q(), r = +rate() / 100, pay = $("ms-pay").checked;
+      const amt = ST.cost({ side: "buy", price: 72000, qty: q }).total;
+      const ok = cash >= r * amt, short = Math.max(0, amt - cash), misu = pay ? 0 : short;
+      const lower = ST.limits(CL[2]).lower, keep = 1 - ST.KR.fee - ST.KR.sellTax.KOSPI;
+      const sq = misu ? Math.min(q, Math.ceil(misu / (lower * keep))) : 0;
+      const sale = sq ? ST.cost({ side: "sell", price: OPEN3, qty: sq }) : null;
+      const pl = sq ? sale.total - (amt / q) * sq : 0;
+      const days = [];
+      for (let d = 0; d < 4; d++) {
+        if (d < 2) days.push({ cash: Math.max(0, cash - amt), stock: q * CL[d], misu: -short });
+        else if (d === 2) days.push({ cash: Math.max(0, cash + (pay ? short : 0) - amt), stock: q * CL[2], misu: -misu });
+        else days.push(sq ? { cash: sale.total - misu + Math.max(0, cash - amt), stock: (q - sq) * CL[3], misu: 0 } : { cash: Math.max(0, cash + (pay ? short : 0) - amt), stock: q * CL[3], misu: 0 });
+      }
+      return { cash, q, r, pay, amt, ok, short, misu, sq, sale, pl, days };
+    }
+    const cv = MB.canvas("#ms-cv", (ctx, w, h) => {
+      const P = MB.palette(), m = model();
+      const shown = m.ok ? day : -1;
+      const val = (d, f) => (d <= shown ? m.days[d][f] : 0);
+      const hi = Math.max(m.cash, m.q * 72000 + Math.max(0, m.cash - m.amt)) * 1.12, lo = -Math.max(m.short, m.cash * 0.2) * 1.15;
+      const B = { x: 54, y: 52, w: w - 66, h: h - 52 - 44 };
+      MB.bars(ctx, B, {
+        labels: LAB, y: [lo, hi], yFmt: MB.wonAxis, gap: 0.4,
+        stacks: [
+          { label: "현금", color: P.accent, data: [0, 1, 2, 3].map((d) => val(d, "cash")) },
+          { label: "주식 평가액", color: P.accent2, data: [0, 1, 2, 3].map((d) => val(d, "stock")) },
+          { label: "부족분·미수금", color: P.bad, data: [0, 1, 2, 3].map((d) => val(d, "misu")) },
+        ],
+        hlines: [{ y: 0, color: P.axis, dash: [] }],
+      });
+      const slot = B.w / 4;
+      for (let d = 0; d <= Math.max(0, shown); d++) {
+        if (shown < 0) break;
+        const px = d === 3 ? OPEN3 : CL[d], cx = B.x + slot * (d + 0.5);
+        text(ctx, MB.price(px, { short: true }), cx, B.y + B.h + 34, { size: 11, mono: true, color: MB.toneColor(px - 72000), align: "center" });
+      }
+      let msg, col = P.text;
+      if (!m.ok) { msg = "주문 거부: 증거금 " + MB.won(m.r * m.amt) + "이 필요한데 예수금이 " + MB.won(m.cash) + "뿐이다."; col = P.warn; }
+      else if (day === 0) msg = m.short ? "체결. 결제일까지 " + MB.won(m.short) + "을 채워야 한다." : "체결. 예수금으로 충분하다.";
+      else if (day === 1) msg = m.short ? "주가가 내린다. 모자란 " + MB.won(m.short) + "은 아직 그대로." : "결제를 기다린다.";
+      else if (day === 2) { msg = m.misu ? "결제일. 미수금 " + MB.won(m.misu) + " 발생." : m.short ? "결제일. 모자란 돈을 입금해 미수 없이 결제." : "결제 완료."; if (m.misu) col = P.bad; }
+      else { msg = m.sq ? "반대매매: " + m.sq + "주를 시가 65,800원에 강제 매도." : "반대매매 없음."; if (m.sq) col = P.bad; }
+      text(ctx, msg, 12, 18, { size: 12.5, weight: 600, color: col });
+      const lg = [["주식 평가액", P.accent2], ["D+2 현금", P.accent], ["부족분·미수", P.bad]];
+      let lx = 12; lg.forEach(([n, c]) => { ctx.fillStyle = c; ctx.fillRect(lx, 31, 10, 10); text(ctx, n, lx + 14, 36, { size: 11, color: P.dim, base: "middle" }); ctx.font = MB.font(11); lx += ctx.measureText(n).width + 28; });
+      MB.stat("ms-o-amt", MB.price(m.amt));
+      MB.stat("ms-o-misu", !m.ok ? "—" : m.misu ? span("bad-t", MB.price(m.misu)) : m.short && m.pay ? "0원 <small>입금</small>" : "0원");
+      MB.stat("ms-o-q", day >= 3 && m.ok ? (m.sq ? span("bad-t", m.sq + "주") : "없음") : "—");
+      MB.stat("ms-o-pl", day >= 3 && m.ok && m.sq ? tone(m.pl, MB.price(m.pl)) : "—");
+    }, { get height() { return narrow("ms-cv") ? 320 : 330; } });
+    $("ms-next").addEventListener("click", () => { day = Math.min(3, day + 1); cv.redraw(); });
+    $("ms-re").addEventListener("click", reset);
+  })();
+
+  /* ---------------------------------------------------------- 5. 시장 참여자 */
+  (function () {
+    const D = {
+      kospi: { trade: [50, 30, 18, 2], hold: [22, 31, 15, 32] },
+      kosdaq: { trade: [78, 14, 6, 2], hold: [40, 10, 7, 43] },
+    };
+    const NAMES = ["개인", "외국인", "기관", "일반법인 등"];
+    let hot = 0, hit = null;
+    const mkt = MB.seg("pl-mkt", () => cv.redraw());
+    const basis = MB.seg("pl-basis", () => cv.redraw());
+    const cv = MB.canvas("#pl-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 460, d = D[mkt()], v = d[basis()];
+      const cols = [P.accent, P.accent2, P.ok, P.dim];
+      const R = nar ? Math.min(w / 2 - 30, 112) : Math.min(h / 2 - 22, w * 0.24);
+      const cx = nar ? w / 2 : 24 + R, cy = nar ? R + 20 : h / 2;
+      hit = MB.donut(ctx, cx, cy, R, NAMES.map((n, i) => ({ label: n, value: v[i], color: cols[i] })), {
+        inner: 0.58, highlight: hot, center: { big: v[hot] + "%", small: NAMES[hot] },
+      }).hit;
+      const lx = nar ? 24 : cx + R + 40, ly = nar ? cy + R + 30 : cy - 64;
+      text(ctx, (mkt() === "kospi" ? "KOSPI" : "KOSDAQ") + " · " + (basis() === "trade" ? "거래대금 비중" : "보유 시가총액 비중"), lx, ly - 8, { size: 12, weight: 700 });
+      NAMES.forEach((n, i) => {
+        const y = ly + 14 + i * 24;
+        ctx.fillStyle = cols[i]; ctx.fillRect(lx, y - 6, 12, 12);
+        text(ctx, n, lx + 20, y, { size: 12.5, weight: i === hot ? 700 : 400, base: "middle" });
+        const other = d[basis() === "trade" ? "hold" : "trade"][i];
+        text(ctx, v[i] + "%", lx + 120, y, { size: 12, mono: true, weight: 700, align: "right", base: "middle" });
+        text(ctx, "(" + (basis() === "trade" ? "보유 " : "거래 ") + other + "%)", lx + 128, y, { size: 11, color: P.dim, base: "middle" });
+      });
+      text(ctx, "교육용 근사치", lx, ly + 14 + 4 * 24, { size: 11, color: P.faint, base: "middle" });
+      MB.stat("pl-o-sel", NAMES[hot] + " " + v[hot] + "%");
+      MB.stat("pl-o-ind", d.trade[0] + "% / " + d.hold[0] + "%");
+      MB.stat("pl-o-for", d.trade[1] + "% / " + d.hold[1] + "%");
+    }, { get height() { return narrow("pl-cv") ? 400 : 280; } });
+    const pick = (x, y) => { const i = hit ? hit(x, y) : -1; if (i >= 0 && i !== hot) { hot = i; cv.redraw(); } };
+    MB.drag(cv.canvas, { start: pick, hover: pick });
+  })();
+
+  /* ---------------------------------------------------------- 6. 하루 거래 시간표 */
+  (function () {
+    let m = 600, L = null;
+    const jump = MB.seg("hr-jump", (v) => { m = +v; cv.redraw(); });
+    const cv = MB.canvas("#hr-cv", (ctx, w, h) => {
+      const P = MB.palette();
+      L = drawSessions(ctx, { x: 12, y: 6, w: w - 24 }, m, P, { lh: 26, gap: 30 });
+      const k = krxState(m), n = nxtState(m);
+      const how = (s) => (s.kind === "cont" ? "들어오는 즉시 상대 주문과 체결" : s.kind === "auction" ? "주문을 모아 한 가격으로 체결" : s.kind === "closePx" ? "종가 한 가격으로만 거래" : s.kind === "single" ? "10분마다 한 가격, 종가 ±10% 안" : "주문 체결 없음");
+      text(ctx, "KRX: " + how(k), 12, L.bottom + 8, { size: 12, color: k.open ? P.text : P.faint });
+      text(ctx, "NXT: " + how(n), 12, L.bottom + 27, { size: 12, color: n.open ? P.text : P.faint });
+      MB.stat("hr-o-t", hm(m));
+      MB.stat("hr-o-krx", k.open ? k.name : span("down-t", k.name));
+      MB.stat("hr-o-nxt", n.open ? n.name : span("down-t", n.name));
+    }, { height: 262 });
+    MB.drag(cv.canvas, { move(x) { if (!L) return; m = MB.clamp(Math.round(L.inv(x) / 5) * 5, T0, T1 - 5); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 7. 시가총액 버블 */
+  (function () {
+    let sel = "hanbit", lay = {}, cur = {}, lastW = 0;
+    const by = MB.seg("mc-by", () => loop.start());
+    $("mc-mkt").addEventListener("change", () => cv.redraw());
+    function target(w, h) {
+      const v = {}; KEYS.forEach((k) => (v[k] = by() === "mcap" ? capOf(k) : CO[k].price));
+      const order = KEYS.slice().sort((a, b) => v[b] - v[a]);
+      const sq = order.map((k) => Math.sqrt(v[k])), gap = 10;
+      const s = Math.min((w - 24 - gap * 4) / (2 * ST.sum(sq)), (h - 96) / (2 * sq[0]));
+      const out = {}; let x = (w - (2 * s * ST.sum(sq) + gap * 4)) / 2;
+      order.forEach((k, i) => { const r = s * sq[i]; out[k] = { x: x + r, r, rank: i }; x += 2 * r + gap; });
+      return out;
+    }
+    const cv = MB.canvas("#mc-cv", (ctx, w, h) => {
+      const P = MB.palette(), base = h - 46, mk = $("mc-mkt").checked;
+      lay = target(w, h);
+      if (w !== lastW) { lastW = w; KEYS.forEach((k) => (cur[k] = Object.assign({}, lay[k]))); }
+      const small = KEYS.filter((k) => cur[k].r < 30).sort((a, b) => cur[a].x - cur[b].x);
+      KEYS.slice().sort((a, b) => cur[b].r - cur[a].r).forEach((k) => {
+        const c = cur[k], y = base - c.r, col = mk ? (CO[k].market === "KOSPI" ? P.accent : P.accent2) : coColor(P, k);
+        ctx.beginPath(); ctx.arc(c.x, y, Math.max(2, c.r), 0, TAU);
+        ctx.save(); ctx.globalAlpha = sel === k ? 0.95 : 0.7; ctx.fillStyle = col; ctx.fill(); ctx.restore();
+        if (sel === k) { ctx.lineWidth = 2.5; ctx.strokeStyle = P.text; ctx.stroke(); }
+        const val = by() === "mcap" ? MB.wonAxis(capOf(k)) : MB.price(CO[k].price, { short: true });
+        if (c.r >= 30) {
+          text(ctx, CO[k].name, c.x, y - 2, { size: c.r > 50 ? 13 : 11.5, weight: 700, color: MB.color("on-accent"), align: "center", base: "middle" });
+          text(ctx, val, c.x, y + 14, { size: 11, mono: true, color: MB.color("on-accent"), align: "center", base: "middle" });
+        } else {
+          const lv = small.indexOf(k) % 2, ty = base - 2 * c.r - 8 - lv * 30;
+          ctx.strokeStyle = P.faint; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(c.x, base - 2 * c.r - 2); ctx.lineTo(c.x, ty + 4); ctx.stroke();
+          const lxc = MB.clamp(c.x, 34, w - 34);
+          text(ctx, CO[k].name, lxc, ty - 12, { size: 11, weight: 700, align: "center" });
+          text(ctx, val, lxc, ty, { size: 10.5, mono: true, color: P.dim, align: "center" });
+        }
+        text(ctx, String(c.rank + 1), c.x, base + 16, { size: 11, mono: true, color: P.dim, align: "center" });
+      });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(10, base); ctx.lineTo(w - 10, base); ctx.stroke();
+      text(ctx, (by() === "mcap" ? "원의 넓이 ∝ 시가총액" : "원의 넓이 ∝ 주가") + " · 숫자는 순위", 12, h - 8, { size: 11, color: P.dim });
+      if (mk) {
+        ctx.fillStyle = P.accent; ctx.fillRect(12, 10, 10, 10); text(ctx, "KOSPI", 26, 15, { size: 11, color: P.dim, base: "middle" });
+        ctx.fillStyle = P.accent2; ctx.fillRect(76, 10, 10, 10); text(ctx, "KOSDAQ", 90, 15, { size: 11, color: P.dim, base: "middle" });
+      }
+      const c = CO[sel];
+      MB.stat("mc-o-name", c.name + " <small>" + c.market + "</small>");
+      MB.stat("mc-o-calc", MB.price(c.price, { short: true }) + " × " + shareFmt(c.shares));
+      MB.stat("mc-o-cap", MB.won(capOf(sel)));
+      MB.stat("mc-o-share", MB.pct(capOf(sel) / CAPSUM, 1));
+    }, { get height() { return narrow("mc-cv") ? 270 : 300; } });
+    const loop = MB.loop(cv.canvas, (dt) => {
+      let moving = false;
+      KEYS.forEach((k) => {
+        const c = cur[k], t = lay[k]; if (!c || !t) return;
+        const a = Math.min(1, dt * 6);
+        c.x += (t.x - c.x) * a; c.r += (t.r - c.r) * a; c.rank = t.rank;
+        if (Math.abs(t.x - c.x) > 0.3 || Math.abs(t.r - c.r) > 0.3) moving = true;
+      });
+      cv.redraw();
+      if (!moving) loop.stop();
+    });
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        const base = cv.h - 46;
+        let best = null, bd = 1e9;
+        KEYS.forEach((k) => { const c = cur[k], d = Math.hypot(x - c.x, y - (base - c.r)); if (d < Math.max(c.r, 18) && d < bd) { bd = d; best = k; } });
+        if (best) { sel = best; cv.redraw(); }
+      },
+    });
+  })();
+
+  /* ---------------------------------------------------------- 8. 어느 회사가 더 클까 */
+  (function () {
+    let seed = 3, rounds, i, ans, ok, naive;
+    function reset() {
+      const r = ST.rng(seed), pairs = [];
+      for (let a = 0; a < 5; a++) for (let b = a + 1; b < 5; b++) pairs.push(r() < 0.5 ? [KEYS[a], KEYS[b]] : [KEYS[b], KEYS[a]]);
+      for (let k = pairs.length - 1; k > 0; k--) { const j = Math.floor(r() * (k + 1)); [pairs[k], pairs[j]] = [pairs[j], pairs[k]]; }
+      rounds = pairs; i = 0; ans = null; ok = 0; naive = 0;
+    }
+    reset();
+    const cv = MB.canvas("#bg-cv", (ctx, w, h) => {
+      const P = MB.palette();
+      if (i >= rounds.length) {
+        text(ctx, "열 문제 끝", w / 2, h / 2 - 30, { size: 18, weight: 800, align: "center" });
+        text(ctx, "맞힌 수 " + ok + " / 10", w / 2, h / 2, { size: 14, align: "center" });
+        text(ctx, "주가가 높은 쪽만 골랐다면 " + naive + " / 10", w / 2, h / 2 + 24, { size: 13, color: P.dim, align: "center" });
+        text(ctx, "주가만으로는 크기를 알 수 없다. 주식 수를 곱해야 한다.", w / 2, h / 2 + 52, { size: 12, color: P.dim, align: "center" });
+        MB.stat("bg-o-n", "10 / 10"); MB.stat("bg-o-ok", ok + "개"); MB.stat("bg-o-naive", naive + "개");
+        return;
+      }
+      const pair = rounds[i], big = capOf(pair[0]) >= capOf(pair[1]) ? 0 : 1;
+      const cw = (w - 36) / 2, ch = Math.min(170, h - 90);
+      pair.forEach((k, j) => {
+        const c = CO[k], x = 12 + j * (cw + 12), y = 14;
+        rrect(ctx, x, y, cw, ch, 12); ctx.fillStyle = P.surface; ctx.fill();
+        const right = ans != null && j === big, mine = ans === j;
+        ctx.lineWidth = mine ? 2.5 : 1; ctx.strokeStyle = ans == null ? P.border : right ? P.ok : mine ? P.warn : P.border; ctx.stroke();
+        text(ctx, j ? "오른쪽" : "왼쪽", x + 12, y + 20, { size: 11, color: P.faint });
+        text(ctx, c.name, x + 12, y + 44, { size: cw < 150 ? 14 : 16, weight: 800 });
+        text(ctx, c.sector + " · " + c.market, x + 12, y + 64, { size: 11.5, color: P.dim });
+        text(ctx, MB.price(c.price), x + 12, y + 92, { size: cw < 150 ? 15 : 18, weight: 700, mono: true });
+        text(ctx, "주식 수 " + (ans == null ? "?" : shareFmt(c.shares)), x + 12, y + 118, { size: 12, color: ans == null ? P.faint : P.text });
+        text(ctx, "시총 " + (ans == null ? "?" : MB.wonAxis(capOf(k))), x + 12, y + 140, { size: 12, weight: 700, color: ans == null ? P.faint : right ? P.ok : P.text });
+      });
+      const by = 14 + ch + 18;
+      if (ans == null) text(ctx, "시가총액이 더 큰 쪽은? (주가와 업종만 보인다)", 12, by + 4, { size: 12.5, color: P.dim });
+      else {
+        const mx = Math.max(capOf(pair[0]), capOf(pair[1]));
+        pair.forEach((k, j) => {
+          const y = by + j * 20, bw = ((w - 120) * capOf(k)) / mx;
+          text(ctx, short(k), 12, y + 5, { size: 11, color: P.dim, base: "middle" });
+          ctx.fillStyle = coColor(P, k); ctx.fillRect(44, y - 2, Math.max(2, bw), 14);
+          text(ctx, MB.wonAxis(capOf(k)), 50 + bw, y + 5, { size: 11, mono: true, base: "middle" });
+        });
+        text(ctx, ans === big ? "정답" : "아쉽다", w - 12, by + 4, { size: 14, weight: 800, color: ans === big ? P.ok : P.warn, align: "right" });
+      }
+      MB.stat("bg-o-n", (i + 1) + " / 10");
+      MB.stat("bg-o-ok", ok + "개");
+      MB.stat("bg-o-naive", naive + "개");
+    }, { get height() { return narrow("bg-cv") ? 250 : 250; } });
+    function pick(j) {
+      if (i >= rounds.length || ans != null) return;
+      const pair = rounds[i], big = capOf(pair[0]) >= capOf(pair[1]) ? 0 : 1, hiPx = CO[pair[0]].price >= CO[pair[1]].price ? 0 : 1;
+      ans = j; if (j === big) ok++; if (hiPx === big) naive++;
+      cv.redraw();
+    }
+    $("bg-a").addEventListener("click", () => pick(0));
+    $("bg-b").addEventListener("click", () => pick(1));
+    $("bg-next").addEventListener("click", () => { if (ans == null || i >= rounds.length) return; i++; ans = null; cv.redraw(); });
+    $("bg-re").addEventListener("click", () => { seed++; reset(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 9. 유동주식 */
+  (function () {
+    const M = ST.market();
+    const AVGV = {}; KEYS.forEach((k) => (AVGV[k] = ST.mean(M.stocks[k].slice(-60).map((d) => d.v))));
+    const PRESET = { hanbit: [30, 5, 5], nuri: [45, 3, 2], byeol: [25, 2, 8], daon: [10, 2, 15], moa: [35, 4, 3] };
+    let busy = false;
+    const redraw = () => { if (!busy) cv.redraw(); };
+    const MAJ = MB.range("ff-maj", (v) => v + "%", redraw);
+    const TRE = MB.range("ff-tre", (v) => v + "%", redraw);
+    const LCK = MB.range("ff-lock", (v) => v + "%", redraw);
+    const co = MB.seg("ff-co", (k) => { busy = true; MAJ.set(PRESET[k][0]); TRE.set(PRESET[k][1]); LCK.set(PRESET[k][2]); busy = false; cv.redraw(); });
+    const cv = MB.canvas("#ff-cv", (ctx, w, h) => {
+      const P = MB.palette(), k = co(), c = CO[k], nar = w < 460;
+      const maj = MAJ(), tre = Math.min(TRE(), 100 - maj), lck = Math.min(LCK(), 100 - maj - tre), free = 100 - maj - tre - lck;
+      const parts = [["최대주주·특수관계인", maj, P.accent2], ["자기주식", tre, P.dim], ["기타 묶인 지분", lck, P.faint], ["유동주식", free, P.accent]];
+      const gs = nar ? Math.min((w - 24) / 10, 26) : Math.min((h - 24) / 10, (w * 0.5) / 10), gx = nar ? (w - gs * 10) / 2 : 14, gy = 12;
+      let idx = 0;
+      parts.forEach(([, n, col]) => { for (let j = 0; j < n; j++, idx++) { const r = Math.floor(idx / 10), q = idx % 10; rrect(ctx, gx + q * gs + 1.5, gy + r * gs + 1.5, gs - 3, gs - 3, 3); ctx.fillStyle = col; ctx.fill(); } });
+      const lx = nar ? 14 : gx + gs * 10 + 24, ly = nar ? gy + gs * 10 + 24 : 30;
+      text(ctx, c.name + " 지분 100칸", lx, ly - 4, { size: 13, weight: 700 });
+      parts.forEach(([n, v, col], i) => {
+        const y = ly + 18 + i * 22;
+        ctx.fillStyle = col; ctx.fillRect(lx, y - 6, 12, 12);
+        text(ctx, n, lx + 20, y, { size: 12, base: "middle" });
+        text(ctx, v + "%", lx + 190, y, { size: 12, mono: true, weight: 700, align: "right", base: "middle" });
+      });
+      const fs = c.shares * free / 100, turn = fs > 0 ? AVGV[k] / fs : Infinity;
+      text(ctx, "하루 평균 거래량 " + shareFmt(Math.round(AVGV[k])), lx, ly + 18 + 4 * 22 + 6, { size: 11.5, color: P.dim, base: "middle" });
+      MB.stat("ff-o-r", MB.pct(free / 100, 0));
+      MB.stat("ff-o-n", shareFmt(fs));
+      MB.stat("ff-o-cap", MB.won(fs * c.price));
+      MB.stat("ff-o-turn", isFinite(turn) ? (turn > 0.1 ? span("warn-t", MB.pct(turn, 1)) : MB.pct(turn, 2)) : "—");
+    }, { get height() { return narrow("ff-cv") ? 410 : 290; } });
+  })();
+
+  /* ---------------------------------------------------------- 10. 거래대금 순위 */
+  (function () {
+    const M = ST.market(), base = M.days - 250;
+    const tvOf = (i, k) => M.stocks[k][i].c * M.stocks[k][i].v;
+    const capRank = KEYS.slice().sort((a, b) => capOf(b) - capOf(a));
+    let byeolTop = 0;
+    for (let d = 0; d < 250; d++) { const i = base + d; if (KEYS.every((k) => tvOf(i, k) <= tvOf(i, "byeol"))) byeolTop++; }
+    const ypos = {};
+    let playing = false, acc = 0;
+    const D = MB.range("tv-d", (v) => M.dates[base + v], () => cv.redraw());
+    const cv = MB.canvas("#tv-cv", (ctx, w, h) => {
+      const P = MB.palette(), i = base + D();
+      const order = KEYS.slice().sort((a, b) => tvOf(i, b) - tvOf(i, a));
+      const mx = tvOf(i, order[0]) * 1.08, rowH = (h - 40) / 5, lw = 84, bx = lw + 8, bwMax = w - bx - 120;
+      order.forEach((k, r) => { const ty = 12 + r * rowH; if (ypos[k] == null) ypos[k] = ty; });
+      KEYS.forEach((k) => {
+        const y = ypos[k], d = M.stocks[k][i], prev = M.stocks[k][i - 1].c, chg = d.c / prev - 1, v = tvOf(i, k);
+        const bh = Math.min(26, rowH - 12), bw = Math.max(2, (bwMax * v) / mx);
+        text(ctx, CO[k].name, 10, y + bh / 2, { size: 12.5, weight: 700, base: "middle" });
+        text(ctx, "시총 " + (capRank.indexOf(k) + 1) + "위", 10, y + bh / 2 + 15, { size: 10.5, color: P.dim, base: "middle" });
+        rrect(ctx, bx, y, bw, bh, 4); ctx.fillStyle = coColor(P, k); ctx.fill();
+        text(ctx, MB.wonAxis(v), bx + bw + 6, y + bh / 2, { size: 11.5, mono: true, weight: 700, base: "middle" });
+        text(ctx, MB.chg(chg, 1), bx + bw + 6, y + bh / 2 + 15, { size: 10.5, mono: true, color: MB.toneColor(chg), base: "middle" });
+      });
+      text(ctx, "하루 거래대금(가상 시장) · " + M.dates[i], 10, h - 8, { size: 11, color: P.dim });
+      MB.stat("tv-o-1", CO[order[0]].name);
+      MB.stat("tv-o-sum", Math.round(KEYS.reduce((s, k) => s + tvOf(i, k), 0) / 1e8).toLocaleString("ko-KR") + "억원");
+      MB.stat("tv-o-by", byeolTop + "<small>일 / 250일</small>");
+    }, { get height() { return narrow("tv-cv") ? 300 : 300; } });
+    function targets() {
+      const i = base + D(), rowH = (cv.h - 40) / 5;
+      const order = KEYS.slice().sort((a, b) => tvOf(i, b) - tvOf(i, a));
+      const t = {}; order.forEach((k, r) => (t[k] = 12 + r * rowH)); return t;
+    }
+    MB.loop(cv.canvas, (dt) => {
+      let dirty = false;
+      if (playing) { acc += dt; if (acc > 0.22) { acc = 0; if (D() >= 249) { playing = false; $("tv-play").textContent = "재생"; } else D.set(D() + 1); } }
+      const t = targets();
+      KEYS.forEach((k) => { if (ypos[k] == null) return; const dy = t[k] - ypos[k]; if (Math.abs(dy) > 0.3) { ypos[k] += dy * Math.min(1, dt * 9); dirty = true; } else if (dy) { ypos[k] = t[k]; dirty = true; } });
+      if (dirty) cv.redraw();
+    });
+    $("tv-play").addEventListener("click", () => { playing = !playing; if (playing && D() >= 249) D.set(0); $("tv-play").textContent = playing ? "멈춤" : "재생"; });
+  })();
+
+  /* ---------------------------------------------------------- 11. 상한가·하한가 계산기 */
+  (function () {
+    const LO = 1000, HI = 600000;
+    const toP = (v) => ST.roundTick(LO * Math.pow(HI / LO, v / 1000));
+    const toV = (p) => Math.round((1000 * Math.log(p / LO)) / Math.log(HI / LO));
+    let prev = 72000, quiet = false;
+    const S = MB.range("lm-p", (v) => MB.price(quiet ? prev : toP(v)), (v) => { if (!quiet) prev = toP(v); cv.redraw(); });
+    MB.seg("lm-co", (k) => { prev = CO[k].price; quiet = true; S.set(toV(prev)); quiet = false; });
+    const cv = MB.canvas("#lm-cv", (ctx, w, h) => {
+      const P = MB.palette(), lim = ST.limits(prev);
+      const a = prev * 0.64, b = prev * 1.36, X = (p) => 14 + ((p - a) / (b - a)) * (w - 28);
+      const y0 = 54;
+      soft(ctx, 0.12, P.accent, () => ctx.fillRect(X(lim.lower), y0 - 16, X(lim.upper) - X(lim.lower), 32));
+      ctx.strokeStyle = P.axis; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(14, y0); ctx.lineTo(w - 14, y0); ctx.stroke();
+      ST.KR.ticks.forEach(([edge]) => {
+        if (edge > a && edge < b) {
+          const x = X(edge);
+          ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = P.faint; ctx.beginPath(); ctx.moveTo(x, y0 - 30); ctx.lineTo(x, y0 + 22); ctx.stroke(); ctx.restore();
+          text(ctx, "호가 " + ST.tick(edge - 1) + "→" + ST.tick(edge) + "원", MB.clamp(x, 50, w - 50), y0 - 34, { size: 10.5, color: P.dim, align: "center" });
+        }
+      });
+      const mark = (p, col, lab, up) => {
+        const x = X(p);
+        ctx.fillStyle = col; ctx.fillRect(x - 1.5, y0 - 16, 3, 32);
+        text(ctx, lab, MB.clamp(x, 40, w - 40), up ? y0 - 20 : y0 + 30, { size: 11, weight: 700, color: col, align: "center", base: up ? "bottom" : "top" });
+        text(ctx, MB.price(p, { short: true }), MB.clamp(x, 40, w - 40), up ? y0 - 20 : y0 + 44, { size: 11, mono: true, color: col, align: "center", base: up ? "top" : "top" });
+      };
+      mark(lim.lower, P.down, "하한가", false);
+      mark(lim.upper, P.up, "상한가", false);
+      mark(prev, P.text, "전일 종가", false);
+      // 상한가 근처 확대
+      const zy = 142, ex = prev * 1.3, n = 7;
+      text(ctx, "상한가 근처의 호가(확대)", 14, zy - 12, { size: 11.5, weight: 700, color: P.dim });
+      const prices = []; for (let j = -4; j <= 2; j++) prices.push(ST.stepTick(lim.upper, j));
+      const cw = (w - 28) / n;
+      prices.forEach((p, j) => {
+        const x = 14 + j * cw, over = p > lim.upper, on = p === lim.upper;
+        rrect(ctx, x + 2, zy, cw - 4, 30, 6);
+        ctx.fillStyle = on ? P.up : over ? P.surface : P.grid; ctx.fill();
+        text(ctx, MB.price(p, { short: true }), x + cw / 2, zy + 15, { size: cw < 52 ? 9.5 : 11, mono: true, weight: on ? 700 : 400, color: on ? MB.color("on-accent") : over ? P.faint : P.text, align: "center", base: "middle" });
+        if (over && j === n - 1) text(ctx, "주문 불가", x + cw / 2, zy + 44, { size: 10.5, color: P.faint, align: "center" });
+      });
+      const lo0 = prices[0], hi0 = prices[n - 1];
+      const ux = 14 + (MB.clamp((ex - lo0) / (hi0 - lo0), 0, 1)) * (n - 1) * cw + cw / 2;
+      ctx.strokeStyle = P.text; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(ux, zy - 6); ctx.lineTo(ux, zy + 2); ctx.moveTo(ux, zy + 28); ctx.lineTo(ux, zy + 36); ctx.stroke();
+      text(ctx, "×1.3 = " + MB.fmt(ex, 6), MB.clamp(ux, 50, w - 50), zy + 50, { size: 11, mono: true, color: P.dim, align: "center" });
+      let cnt = 0; for (let p = lim.lower; p <= lim.upper && cnt < 5000; p = ST.stepTick(p, 1)) cnt++;
+      MB.stat("lm-o-up", span("up-t", MB.price(lim.upper)) + " <small>" + MB.chg(lim.upper / prev - 1, 1) + "</small>");
+      MB.stat("lm-o-lo", span("down-t", MB.price(lim.lower)) + " <small>" + MB.chg(lim.lower / prev - 1, 1) + "</small>");
+      MB.stat("lm-o-tick", MB.price(ST.tick(prev)));
+      MB.stat("lm-o-n", cnt.toLocaleString("ko-KR") + "<small>개</small>");
+    }, { height: 214 });
+    quiet = true; S.set(toV(prev)); quiet = false;
+  })();
+
+  /* ---------------------------------------------------------- 12. 연속 상한가·하한가 */
+  (function () {
+    const P0 = 72000;
+    const N = MB.range("st-n", (v) => v + "일", () => cv.redraw());
+    const mode = MB.seg("st-mode", () => cv.redraw());
+    const cv = MB.canvas("#st-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = N(), md = mode();
+      const path = [P0];
+      for (let i = 1; i <= n; i++) { const l = ST.limits(path[i - 1]); path.push(md === "up" || (md === "alt" && i % 2) ? l.upper : l.lower); }
+      const last = path[n];
+      let rec = 0, p = last; while (p < P0 && rec < 60) { p = ST.limits(p).upper; rec++; }
+      const ymax = Math.max(...path) * 1.12;
+      const c = MB.chart(ctx, { x: 58, y: 18, w: w - 76, h: h - 18 - 40 }, {
+        x: [0, n], y: [0, ymax], yFmt: MB.wonAxis, xTicks: path.map((_, i) => i), xFmt: (i) => (i ? i + "일" : "시작"),
+        hlines: [{ y: P0, color: P.faint, label: "72,000원" }],
+        series: [{ data: path.map((v, i) => [i, v]), color: P.text, width: 1.5 }],
+      });
+      path.forEach((v, i) => {
+        const col = i === 0 ? P.dim : MB.toneColor(v - path[i - 1]);
+        ctx.fillStyle = col; ctx.beginPath(); ctx.arc(c.X(i), c.Y(v), 5, 0, TAU); ctx.fill();
+        if (n <= 4 || i === n || (w > 520 && n <= 6)) text(ctx, MB.wonAxis(v), c.X(i), c.Y(v) - 10, { size: 11, mono: true, color: col, align: i === n && n > 0 ? "right" : "center", base: "bottom" });
+      });
+      MB.stat("st-o-p", span(MB.tone(last - P0), MB.price(last)));
+      MB.stat("st-o-r", tone(last - P0, MB.chg(last / P0 - 1, 1)));
+      MB.stat("st-o-rec", last >= P0 ? "필요 없음" : rec + "<small>번 (" + MB.chg(P0 / last - 1, 0) + ")</small>");
+    }, { get height() { return narrow("st-cv") ? 260 : 280; } });
+  })();
+
+  /* ---------------------------------------------------------- 13. VI 발동 */
+  (function () {
+    const PREV = 15000, LIM = ST.limits(PREV), END = 390;
+    let seed = 7, g, path, refs, bands, ref, viUntil, pend, minute, impulse, count, playing = true, acc = 0;
+    function reset() {
+      g = ST.gauss(seed);
+      const open = ST.roundTick(PREV * (1 + 0.012 * g()));
+      path = [open]; refs = [open]; bands = []; ref = open; viUntil = -1; pend = 0; minute = 0; impulse = 0; count = 0;
+    }
+    const clampL = (p) => MB.clamp(ST.roundTick(p), LIM.lower, LIM.upper);
+    function step() {
+      if (minute >= END) return;
+      minute++;
+      const last = path[path.length - 1], sig = S();
+      if (minute < viUntil) { path.push(last); refs.push(ref); return; }
+      if (minute === viUntil) { const p = clampL(pend * (1 + 0.004 * g())); path.push(p); ref = p; refs.push(ref); return; }
+      const r = 0.0016 * sig * g() + impulse; impulse *= 0.6;
+      const p = clampL(last * (1 + r));
+      const stat = p >= ref * 1.1 || p <= ref * 0.9, dyn = $("vi-dyn").checked && Math.abs(p / last - 1) >= ST.KR.vi.dynamic;
+      if ((stat || dyn) && p !== last) { count++; viUntil = minute + 2; pend = p; bands.push({ a: minute - 1, b: minute + 2, kind: stat ? "정적" : "동적" }); path.push(last); refs.push(ref); return; }
+      path.push(p); refs.push(ref);
+    }
+    const S = MB.range("vi-s", (v) => "×" + v.toFixed(1), () => {});
+    reset();
+    const cv = MB.canvas("#vi-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = path.length;
+      let lo = Math.min(...path, ...refs.map((r) => r * 0.9)), hi = Math.max(...path, ...refs.map((r) => r * 1.1));
+      lo = Math.max(LIM.lower, lo * 0.985); hi = Math.min(LIM.upper, hi * 1.015);
+      if (hi > LIM.upper * 0.97) hi = LIM.upper * 1.01; if (lo < LIM.lower * 1.03) lo = LIM.lower * 0.99;
+      const hl = [{ y: PREV, color: P.faint, label: "전일 종가" }];
+      if (hi >= LIM.upper) hl.push({ y: LIM.upper, color: P.up, label: "상한가 " + MB.price(LIM.upper, { short: true }), dash: [] });
+      if (lo <= LIM.lower) hl.push({ y: LIM.lower, color: P.down, label: "하한가 " + MB.price(LIM.lower, { short: true }), dash: [] });
+      const c = MB.chart(ctx, { x: 60, y: 14, w: w - 74, h: h - 14 - 34 }, {
+        x: [0, END], y: [lo, hi], xTicks: w < 460 ? [0, 120, 240, 360] : [0, 60, 120, 180, 240, 300, 360], xFmt: (v) => hm(540 + v), yFmt: (v) => MB.price(v, { short: true }),
+        hlines: hl,
+        series: [
+          { data: refs.map((r, i) => [i, r * 1.1]), color: P.warn, width: 1.2, dash: [4, 3] },
+          { data: refs.map((r, i) => [i, r * 0.9]), color: P.warn, width: 1.2, dash: [4, 3] },
+          { data: path.map((p, i) => [i, p]), color: P.accent, width: 2 },
+        ],
+      });
+      bands.forEach((b) => soft(ctx, 0.25, P.warn, () => ctx.fillRect(c.X(b.a), c.box.y, Math.max(3, c.X(Math.min(b.b, n - 1)) - c.X(b.a)), c.box.h)));
+      if (n > 1) { ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(c.X(n - 1), c.Y(path[n - 1]), 4, 0, TAU); ctx.fill(); }
+      text(ctx, "점선: 정적 VI 기준가 ±10%", c.box.x + 6, c.box.y + 12, { size: 11, color: P.warn });
+      const p = path[n - 1], inVi = minute < viUntil;
+      MB.stat("vi-o-t", hm(540 + minute));
+      MB.stat("vi-o-p", tone(p - PREV, MB.price(p, { short: true })) + " <small>" + MB.chg(p / PREV - 1, 1) + "</small>");
+      MB.stat("vi-o-ref", MB.price(ref, { short: true }));
+      MB.stat("vi-o-n", count + "<small>회</small>" + (inVi ? " " + span("warn-t", "단일가 중") : ""));
+    }, { get height() { return narrow("vi-cv") ? 280 : 320; } });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing || minute >= END) return;
+      acc += dt;
+      if (acc > 0.07) { acc = 0; step(); cv.redraw(); }
+    });
+    $("vi-good").addEventListener("click", () => { impulse += 0.03; if (minute >= END) { seed++; reset(); } });
+    $("vi-bad").addEventListener("click", () => { impulse -= 0.03; if (minute >= END) { seed++; reset(); } });
+    $("vi-play").addEventListener("click", () => { playing = !playing; $("vi-play").textContent = playing ? "일시정지" : "재생"; });
+    $("vi-re").addEventListener("click", () => { seed++; reset(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 14. 서킷브레이커 */
+  (function () {
+    const W = [0], gs = ST.gauss(5);
+    for (let i = 1; i <= 400; i++) W.push(W[i - 1] + 0.0016 * gs());
+    let drop = 0.04, C = null;
+    const TS = MB.range("cb-t", (v) => hm(v), () => cv.redraw());
+    const LV = [[0.05, "사이드카", "accent2"], [0.08, "1단계", "warn"], [0.15, "2단계", "warn"], [0.2, "3단계", "bad"]];
+    function state(d, t) {
+      const late = t >= 890;
+      if (d >= 0.2) return ["3단계", "그날 장 종료", "bad-t"];
+      if (late && d >= 0.05) return ["발동 없음", "14:50 이후 1·2단계·사이드카 없음", ""];
+      if (d >= 0.15) return ["2단계", "20분 중단 → 10분 단일가", "warn-t"];
+      if (d >= 0.08) return ["1단계", "20분 중단 → 10분 단일가", "warn-t"];
+      if (d >= 0.05) return ["사이드카", "프로그램 매매 5분 정지", ""];
+      return ["정상", "정상 거래", ""];
+    }
+    const cv = MB.canvas("#cb-cv", (ctx, w, h) => {
+      const P = MB.palette(), t = TS(), k = t - 540;
+      const val = (m) => { const j = m - 540; return -drop * (j / k) + (W[j] - (W[k] * j) / k) * 1.2; };
+      const data = []; for (let m = 540; m <= t; m++) data.push([m, val(m)]);
+      C = MB.chart(ctx, { x: 52, y: 14, w: w - 66, h: h - 14 - 50 }, {
+        x: [540, 930], y: [-0.25, 0.02], xTicks: w < 460 ? [540, 660, 780, 900] : [540, 600, 660, 720, 780, 840, 900], xFmt: hm, yFmt: (v) => Math.round(v * 100) + "%",
+        vlines: [{ x: 890, color: P.faint, label: w < 460 ? "" : "14:50" }],
+        hlines: LV.map(([d, lab, c]) => ({ y: -d, color: P[c], label: lab + " −" + Math.round(d * 100) + "%" })),
+        series: [{ data, color: P.accent, width: 2 }],
+      });
+      soft(ctx, 0.08, P.warn, () => ctx.fillRect(C.box.x, C.Y(-0.08), C.box.w, C.Y(-0.15) - C.Y(-0.08)));
+      soft(ctx, 0.15, P.warn, () => ctx.fillRect(C.box.x, C.Y(-0.15), C.box.w, C.Y(-0.2) - C.Y(-0.15)));
+      soft(ctx, 0.12, P.bad, () => ctx.fillRect(C.box.x, C.Y(-0.2), C.box.w, C.Y(-0.25) - C.Y(-0.2)));
+      knob(ctx, C.X(t), C.Y(-drop), P, 8);
+      const st = state(drop, t);
+      MB.stat("cb-o-r", span("down-t", MB.chg(-drop, 1)));
+      MB.stat("cb-o-st", st[2] ? span(st[2], st[0]) : st[0]);
+      MB.stat("cb-o-do", st[1]);
+    }, { get height() { return narrow("cb-cv") ? 300 : 320; } });
+    MB.drag(cv.canvas, {
+      move(x, y) {
+        if (!C) return;
+        const v = 0.02 - ((y - C.box.y) / C.box.h) * 0.27;
+        drop = MB.clamp(Math.round(-v * 200) / 200, 0, 0.25);
+        const t = MB.clamp(Math.round((540 + ((x - C.box.x) / C.box.w) * 390) / 5) * 5, 545, 925);
+        if (t !== TS()) TS.set(t); else cv.redraw();
+      },
+    });
+    [["cb-m6", 0.06], ["cb-m9", 0.09], ["cb-m16", 0.16], ["cb-m21", 0.21]].forEach(([id, d]) => $(id).addEventListener("click", () => { drop = d; cv.redraw(); }));
+  })();
+
+  /* ---------------------------------------------------------- 15. 다섯 회사 지수 */
+  (function () {
+    const r = {}; KEYS.forEach((k) => (r[k] = 0));
+    let L = null, act = null;
+    const cv = MB.canvas("#ix-cv", (ctx, w, h) => {
+      const P = MB.palette(), top = 46, bot = h - 72, mid = (top + bot) / 2, cw = (w - 20) / 5;
+      const Y = (v) => mid - (v / 0.3) * (bot - top) / 2;
+      L = { cw, Y, top, bot };
+      const cap = KEYS.reduce((s, k) => s + capOf(k) * (1 + r[k]), 0) / CAPSUM;
+      text(ctx, "SB 미니 지수(시가총액 가중)", 12, 18, { size: 11.5, color: P.dim });
+      text(ctx, (cap * 1000).toFixed(2), 12, 38, { size: 18, mono: true, weight: 800, color: MB.toneColor(cap - 1) });
+      [0.3, -0.3].forEach((v) => { ctx.save(); ctx.setLineDash([4, 3]); ctx.strokeStyle = v > 0 ? P.up : P.down; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(10, Y(v)); ctx.lineTo(w - 10, Y(v)); ctx.stroke(); ctx.restore(); });
+      text(ctx, "상한가 +30%", w - 12, Y(0.3) - 4, { size: 10.5, color: P.up, align: "right" });
+      text(ctx, "하한가 −30%", w - 12, Y(-0.3) - 4, { size: 10.5, color: P.down, align: "right" });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(10, mid); ctx.lineTo(w - 10, mid); ctx.stroke();
+      KEYS.forEach((k, i) => {
+        const cx = 10 + cw * (i + 0.5), bw = Math.min(34, cw * 0.45), v = r[k], y = Y(v);
+        soft(ctx, 1, MB.toneColor(v), () => ctx.fillRect(cx - bw / 2, Math.min(y, mid), bw, Math.max(1, Math.abs(y - mid))));
+        knob(ctx, cx, y, P, 7);
+        text(ctx, MB.chg(v, 0), cx, v >= 0 ? y - 14 : y + 22, { size: 11, mono: true, weight: 700, color: MB.toneColor(v), align: "center" });
+        text(ctx, cw < 70 ? short(k) : CO[k].name, cx, bot + 22, { size: 11.5, weight: 700, align: "center" });
+        text(ctx, "비중 " + Math.round((capOf(k) / CAPSUM) * 100) + "%", cx, bot + 38, { size: 10.5, color: P.dim, align: "center" });
+      });
+      const px = KEYS.reduce((s, k) => s + CO[k].price * (1 + r[k]), 0) / KEYS.reduce((s, k) => s + CO[k].price, 0);
+      const eq = 1 + ST.mean(KEYS.map((k) => r[k]));
+      const f = (x) => (x * 1000).toFixed(2) + " <small>" + MB.chg(x - 1, 2) + "</small>";
+      MB.stat("ix-o-cap", tone(cap - 1, f(cap)));
+      MB.stat("ix-o-px", tone(px - 1, f(px)));
+      MB.stat("ix-o-eq", tone(eq - 1, f(eq)));
+    }, { get height() { return narrow("ix-cv") ? 320 : 340; } });
+    MB.drag(cv.canvas, {
+      start(x) { if (!L) return; const i = Math.floor((x - 10) / L.cw); act = i >= 0 && i < 5 ? KEYS[i] : null; },
+      move(x, y) { if (!L || !act) return; const mid = (L.top + L.bot) / 2; r[act] = MB.clamp(Math.round(((mid - y) / ((L.bot - L.top) / 2)) * 30) / 100, -0.3, 0.3); cv.redraw(); },
+      end() { act = null; },
+    });
+    const set = (o) => { KEYS.forEach((k) => (r[k] = o[k] || 0)); cv.redraw(); };
+    $("ix-moa").addEventListener("click", () => set({ moa: 0.1 }));
+    $("ix-byeol").addEventListener("click", () => set({ byeol: 0.3 }));
+    $("ix-all").addEventListener("click", () => set({ hanbit: -0.05, nuri: -0.05, byeol: -0.05, daon: -0.05, moa: -0.05 }));
+    $("ix-re").addEventListener("click", () => set({}));
+  })();
+
+  /* ---------------------------------------------------------- 16. 상장폐지까지의 길 */
+  (function () {
+    const g = ST.gauss(21), pre = [4000];
+    for (let i = 1; i < 40; i++) pre.push(ST.roundTick(pre[i - 1] * Math.exp((i < 20 ? -0.006 : -0.014) + 0.028 * g())));
+    const LQ = [-0.62, -0.35, 0.3, -0.38, -0.2, 0.15, -0.33], liq = [];
+    let p = pre[39]; LQ.forEach((r) => { p = Math.max(1, ST.roundTick(p * (1 + r))); liq.push(p); });
+    const NAMES = ["정상 거래", "관리종목 지정", "거래정지·실질심사", "상장폐지 결정", "정리매매", "상장폐지"];
+    const NOTE = ["적자가 몇 년째 이어진다(가상).", "감사의견 한정, 자본잠식 50% 이상. 이름 옆에 경고가 붙는다.", "거래가 멈춘다. 심사는 몇 달 걸리기도 한다.", "거래소가 상장폐지를 결정한다.", "가격제한폭 없이 7거래일 동안 마지막으로 거래된다.", "거래소에서 사라진다. 주식은 남지만 팔 곳이 없다."];
+    let stage = 0, lq = 0, acc = 0;
+    const Q = MB.range("dl-q", (v) => v.toLocaleString("ko-KR") + "주", () => cv.redraw());
+    const cv = MB.canvas("#dl-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 460;
+      const sx = (i) => 22 + (i * (w - 44)) / 5;
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(sx(0), 18); ctx.lineTo(sx(5), 18); ctx.stroke();
+      NAMES.forEach((n, i) => {
+        const done = i <= stage, col = i >= 4 ? P.bad : i >= 1 ? P.warn : P.ok;
+        ctx.beginPath(); ctx.arc(sx(i), 18, i === stage ? 8 : 6, 0, TAU); ctx.fillStyle = done ? col : P.surface; ctx.fill();
+        ctx.lineWidth = 1.5; ctx.strokeStyle = done ? col : P.border; ctx.stroke();
+        if (!nar || i === stage) text(ctx, n, MB.clamp(sx(i), 40, w - 40), 42, { size: 11, weight: i === stage ? 700 : 400, color: i === stage ? P.text : P.dim, align: "center" });
+      });
+      ctx.font = MB.font(12); ctx.fillStyle = P.dim; ctx.textAlign = "left"; ctx.textBaseline = "alphabetic";
+      wrap(ctx, NOTE[stage], 12, 64, w - 24, 16);
+      const nPre = stage === 0 ? 20 : 40, showHalt = stage >= 2, nLq = stage === 4 ? lq : stage >= 5 ? 7 : 0;
+      const c = MB.chart(ctx, { x: 52, y: 84, w: w - 66, h: h - 84 - 30 }, {
+        x: [0, 60], y: [0, 4800], yFmt: (v) => MB.price(v, { short: true }), xTicks: [],
+        series: [
+          { data: pre.slice(0, nPre).map((v, i) => [i, v]), color: P.accent, width: 2 },
+          { data: nLq ? [[51, pre[39]]].concat(liq.slice(0, nLq).map((v, i) => [52 + i, v])) : [], color: P.bad, width: 2 },
+        ],
+      });
+      if (stage >= 1) soft(ctx, 0.12, P.warn, () => ctx.fillRect(c.X(20), c.box.y, c.X(Math.min(nPre, 40)) - c.X(20), c.box.h));
+      if (showHalt) {
+        soft(ctx, 0.22, P.warn, () => ctx.fillRect(c.X(40), c.box.y, c.X(51) - c.X(40), c.box.h));
+        ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = P.faint; ctx.beginPath(); ctx.moveTo(c.X(39), c.Y(pre[39])); ctx.lineTo(c.X(51), c.Y(pre[39])); ctx.stroke(); ctx.restore();
+        text(ctx, "거래정지", c.X(45.5), c.box.y + 14, { size: 11, weight: 700, color: P.warn, align: "center" });
+      }
+      if (stage >= 4) text(ctx, "정리매매", c.X(55), c.box.y + 14, { size: 11, weight: 700, color: P.bad, align: "center" });
+      if (stage >= 5) { text(ctx, "폐지", c.X(59.5), c.box.y + 30, { size: 11, weight: 700, color: P.bad, align: "right" }); }
+      if (stage >= 1) text(ctx, "관리종목", c.X(30), c.box.y + 14, { size: 11, color: P.warn, align: "center" });
+      const price = stage === 0 ? pre[19] : stage <= 3 ? pre[39] : stage === 4 ? (lq ? liq[lq - 1] : pre[39]) : null;
+      MB.stat("dl-o-st", NAMES[stage] + (stage === 4 ? " <small>" + lq + "/7일</small>" : ""));
+      MB.stat("dl-o-tr", stage <= 1 ? "가능" : stage <= 3 ? span("warn-t", "정지") : stage === 4 ? span("bad-t", "가능, 제한폭 없음") : span("bad-t", "시장 없음"));
+      MB.stat("dl-o-p", price == null ? "—" : tone(price - 4000, MB.price(price)));
+      MB.stat("dl-o-v", price == null ? span("bad-t", "팔 곳 없음") : MB.won(price * Q()) + " <small>처음 " + MB.won(4000 * Q()) + "</small>");
+    }, { get height() { return narrow("dl-cv") ? 300 : 320; } });
+    MB.loop(cv.canvas, (dt) => {
+      if (stage !== 4 || lq >= 7) return;
+      acc += dt; if (acc > 0.55) { acc = 0; lq++; cv.redraw(); }
+    });
+    $("dl-next").addEventListener("click", () => { if (stage === 4 && lq < 7) { lq = 7; } else stage = Math.min(5, stage + 1); if (stage === 4 && lq === 0) acc = 0; cv.redraw(); });
+    $("dl-re").addEventListener("click", () => { stage = 0; lq = 0; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 17. 주문 판정기 */
+  (function () {
+    const SEED = 1e7, WD = ["월", "화", "수", "목", "금", "토", "일"];
+    let m = 600, L = null;
+    const day = MB.seg("oc-day", () => cv.redraw());
+    const co = MB.seg("oc-co", () => cv.redraw());
+    const PX = MB.range("oc-px", (v) => MB.chg(v / 100, 0), () => cv.redraw());
+    const Q = MB.range("oc-q", (v) => v + "주", () => cv.redraw());
+    $("oc-misu").addEventListener("change", () => cv.redraw());
+    const bizIdx = (i) => i % 7 < 5;
+    const addB = (i, k) => { let x = i; for (let j = 0; j < k; j++) { x++; while (!bizIdx(x)) x++; } return x; };
+    const wd = (i) => (i >= 7 ? "다음 주 " : "") + WD[i % 7];
+    function judge() {
+      const k = co(), c = CO[k], prev = c.price, lim = ST.limits(prev), dIdx = +day() - 1, weekend = dIdx >= 5;
+      const px = ST.roundTick(prev * (1 + PX() / 100)), q = Q(), K = krxState(m), N = nxtState(m);
+      const live = !weekend && m >= 480 && m < 1200;
+      let where, wc = "";
+      if (weekend) { where = "휴장 → 월요일 예약"; wc = "warn-t"; }
+      else if (m >= 1200) { where = "마감 → 다음 영업일 예약"; wc = "warn-t"; }
+      else if (m < 480) { where = "예약 주문(장 열릴 때 전송)"; }
+      else if (K.open && N.open) where = K.kind === "cont" ? "KRX·NXT 중 유리한 곳" : "KRX 동시호가 · NXT";
+      else where = K.open ? "KRX " + K.name.replace(/\(.*\)/, "") : N.open ? "NXT " + N.name : "쉬는 시간";
+      let pv, pc = "";
+      const inLim = px <= lim.upper && px >= lim.lower;
+      if (!inLim) { pv = px > lim.upper ? "상한가 초과: 거부" : "하한가 미만: 거부"; pc = "warn-t"; }
+      else if (live && !N.open && K.kind === "closePx") pv = "종가 " + MB.price(prev, { short: true }) + "로만 체결";
+      else if (live && !N.open && K.kind === "single") { const ok = Math.abs(px / prev - 1) <= 0.1 + 1e-9; pv = ok ? "시간외 단일가 범위 안" : "종가 ±10% 밖: 거부"; if (!ok) pc = "warn-t"; }
+      else if (live && !N.open && K.kind === "auction") pv = "단일가로 체결 여부 결정";
+      else pv = px >= prev ? "제한폭 안, 바로 체결 가능" : "제한폭 안, 현재가 아래라 대기";
+      const cost = ST.cost({ side: "buy", price: px, qty: q });
+      let cv_, cc = "";
+      if (cost.total <= SEED) cv_ = MB.won(cost.total) + " / 1,000만원";
+      else if ($("oc-misu").checked && cost.total * 0.4 <= SEED) { cv_ = "미수 " + MB.won(cost.total - SEED); cc = "bad-t"; }
+      else { cv_ = "예수금 부족: 거부"; cc = "warn-t"; }
+      const T = weekend ? 7 : m >= 1200 ? addB(dIdx, 1) : dIdx, T2 = addB(T, 2);
+      const rejected = !inLim || pc === "warn-t" || cc === "warn-t";
+      return { c, prev, lim, px, q, where, wc, pv, pc, cv_, cc, T, T2, rejected, dIdx };
+    }
+    const cv = MB.canvas("#oc-cv", (ctx, w, h) => {
+      const P = MB.palette(), J = judge();
+      L = { s: drawSessions(ctx, { x: 12, y: 2, w: w - 24 }, m, P, { lh: 16, gap: 24 }) };
+      // 가격 띠
+      const y0 = L.s.bottom + 34, a = J.prev * 0.6, b = J.prev * 1.4, X = (p) => 14 + ((p - a) / (b - a)) * (w - 28);
+      L.py = y0; L.pinv = (x) => ((a + ((x - 14) / (w - 28)) * (b - a)) / J.prev - 1) * 100;
+      text(ctx, J.c.name + " 주문 가격", 12, y0 - 22, { size: 11.5, weight: 700, color: P.dim });
+      soft(ctx, 0.14, P.accent, () => ctx.fillRect(X(J.lim.lower), y0 - 10, X(J.lim.upper) - X(J.lim.lower), 20));
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(14, y0); ctx.lineTo(w - 14, y0); ctx.stroke();
+      [[J.lim.lower, P.down, "하한"], [J.prev, P.dim, "전일"], [J.lim.upper, P.up, "상한"]].forEach(([p, col, lab]) => {
+        ctx.fillStyle = col; ctx.fillRect(X(p) - 1, y0 - 10, 2, 20);
+        text(ctx, lab + " " + MB.wonAxis(p), X(p), y0 + 24, { size: 10.5, color: col, align: "center" });
+      });
+      knob(ctx, X(J.px), y0, P, 7);
+      text(ctx, MB.price(J.px, { short: true }), MB.clamp(X(J.px), 30, w - 30), y0 - 14, { size: 11, mono: true, weight: 700, color: J.px > J.lim.upper || J.px < J.lim.lower ? P.warn : P.text, align: "center" });
+      // 결제 띠
+      const sy = y0 + 52, n = 10, bw = (w - 24) / n;
+      text(ctx, "체결일과 결제일", 12, sy - 6, { size: 11.5, weight: 700, color: P.dim });
+      for (let i = 0; i < n; i++) {
+        const x = 12 + i * bw, biz = bizIdx(i), mk = i === J.T ? "T" : i === J.T2 ? "T+2" : i > J.T && i < J.T2 && biz ? "T+1" : "";
+        rrect(ctx, x + 1.5, sy, bw - 3, 38, 6);
+        ctx.fillStyle = mk === "T" ? P.accent : mk === "T+2" ? P.accent2 : biz ? P.grid : P.surface;
+        ctx.save(); if (mk === "T" || mk === "T+2") ctx.globalAlpha = 0.35; ctx.fill(); ctx.restore();
+        if (i === J.dIdx) { ctx.lineWidth = 2; ctx.strokeStyle = P.text; ctx.stroke(); }
+        text(ctx, WD[i % 7], x + bw / 2, sy + 14, { size: 11, color: biz ? P.text : P.faint, align: "center" });
+        if (mk) text(ctx, mk, x + bw / 2, sy + 30, { size: bw < 36 ? 9.5 : 11, weight: 700, color: mk === "T" ? P.accent : mk === "T+2" ? P.accent2 : P.dim, align: "center" });
+      }
+      text(ctx, "이번 주", 12, sy + 52, { size: 10.5, color: P.faint });
+      text(ctx, "다음 주", 12 + 7 * bw + 2, sy + 52, { size: 10.5, color: P.faint });
+      if (J.rejected) text(ctx, "이 주문은 거부된다", w - 12, sy - 6, { size: 11.5, weight: 700, color: P.warn, align: "right" });
+      MB.stat("oc-o-where", J.wc ? span(J.wc, J.where) : J.where);
+      MB.stat("oc-o-px", J.pc ? span(J.pc, J.pv) : J.pv);
+      MB.stat("oc-o-cash", J.cc ? span(J.cc, J.cv_) : J.cv_);
+      MB.stat("oc-o-set", J.rejected ? "—" : wd(J.T) + " → " + wd(J.T2));
+    }, { height: 350 });
+    MB.drag(cv.canvas, {
+      move(x, y) {
+        if (!L) return;
+        if (y < L.s.bottom - 10) { m = MB.clamp(Math.round(L.s.inv(x) / 5) * 5, T0, T1 - 5); cv.redraw(); }
+        else if (Math.abs(y - L.py) < 30) { const v = MB.clamp(Math.round(L.pinv(x)), -35, 35); if (v !== PX()) PX.set(v); }
+      },
+    });
+  })();
+})();
+</script>
+</body>
+</html>

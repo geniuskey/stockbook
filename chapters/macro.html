@@ -1,0 +1,1433 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "금리가 할인율·이자 비용·자산 간 경쟁의 세 경로로 주가에 닿는 원리, 성장주가 금리에 더 민감한 이유(주식의 듀레이션), 경기 순환과 업종 순환, 실적 시즌의 기대와 서프라이즈, 인플레이션·환율과 주식, 주식 위험 프리미엄, 매크로 예측의 함정을 시뮬레이터로 익힌다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>금리·경기·주식 · StockBook</title>
+<meta name="description" content="금리가 할인율·이자 비용·자산 간 경쟁의 세 경로로 주가에 닿는 원리, 성장주가 금리에 더 민감한 이유(주식의 듀레이션), 경기 순환과 업종 순환, 실적 시즌의 기대와 서프라이즈, 인플레이션·환율과 주식, 주식 위험 프리미엄, 매크로 예측의 함정을 시뮬레이터로 익힌다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/macro.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="금리·경기·주식 · StockBook">
+<meta property="og:description" content="금리가 할인율·이자 비용·자산 간 경쟁의 세 경로로 주가에 닿는 원리, 성장주가 금리에 더 민감한 이유(주식의 듀레이션), 경기 순환과 업종 순환, 실적 시즌의 기대와 서프라이즈, 인플레이션·환율과 주식, 주식 위험 프리미엄, 매크로 예측의 함정을 시뮬레이터로 익힌다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/macro.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/macro.html#chapter","name":"금리·경기·주식","headline":"금리·경기·주식 · StockBook","description":"금리가 할인율·이자 비용·자산 간 경쟁의 세 경로로 주가에 닿는 원리, 성장주가 금리에 더 민감한 이유(주식의 듀레이션), 경기 순환과 업종 순환, 실적 시즌의 기대와 서프라이즈, 인플레이션·환율과 주식, 주식 위험 프리미엄, 매크로 예측의 함정을 시뮬레이터로 익힌다.","url":"https://stockbook.euiyun.com/chapters/macro.html","position":21,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"21. 금리·경기·주식","item":"https://stockbook.euiyun.com/chapters/macro.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  figure.diagram svg { max-width: 560px; margin: 0 auto; }
+  .ev-msg { padding: 10px 16px; font-size: 14px; line-height: 1.6; color: var(--text-dim); border-top: 1px solid var(--border); background: var(--bg-elev); min-height: 3.4em; }
+  .ev-msg b { color: var(--text); }
+  #sg-ans .btn { flex: 1 1 auto; min-width: 0; }
+</style>
+</head>
+<body data-chapter="macro">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 21</div>
+    <h1>금리·경기·주식</h1>
+    <p class="lead">목요일 오전 10시, 증권 앱에 속보가 뜬다. "기준금리 0.25%p 인상, 추가 인상 가능성 시사." 몇 분 뒤 관심 종목 창이 파랗게 물든다. 그런데 물든 정도가 제각각이다. 모아플랫폼은 −12%, 누리식품은 −1%, 다온은행은 오히려 빨갛다. 회사의 실적은 그날 아침과 달라진 것이 하나도 없다. 무엇이 이 차이를 만들까? 이 장은 금리와 경기, 물가와 환율 같은 큰 숫자(매크로)가 주가에 닿는 길을 하나씩 손으로 당겨 본다. 그리고 마지막에, 그 길을 다 알아도 매크로를 맞혀서 돈을 벌기는 왜 그렇게 어려운지 확인한다.</p>
+    <ul class="objectives">
+      <li>금리가 주가에 닿는 세 경로(할인율, 기업의 이자 비용, 다른 자산과의 경쟁)를 구분해 설명한다.</li>
+      <li>현금흐름의 무게중심(주식의 듀레이션)으로 성장주가 금리에 더 민감한 이유를 계산한다.</li>
+      <li>주식 위험 프리미엄(이익수익률 − 실질금리)을 계산하고 금리가 PER을 누르는 크기를 어림한다.</li>
+      <li>경기 순환의 네 국면과 업종 순환, 주가가 경기보다 먼저 움직이는 이유를 말한다.</li>
+      <li>실적 발표에서 주가를 움직이는 것은 숫자가 아니라 기대와의 차이임을 설명한다.</li>
+      <li>인플레이션과 환율이 업종별로 다르게 작용하는 모습을 보고, 매크로 예측으로 매매하기 어려운 이유를 말한다.</li>
+    </ul>
+  </header>
+
+  <section id="three-paths">
+    <h2>금리가 주가에 닿는 세 길</h2>
+    <p>금리가 오르면 주가가 내린다는 말은 자주 듣는다. <a href="https://moneybook.euiyun.com/chapters/economy.html">MoneyBook 5장</a>에서 기준금리가 예금·대출 금리, 소비, 환율로 번지는 도미노를 보았다. 이 장은 그 도미노가 주식 한 주의 값에 닿는 마지막 몇 칸을 확대해서 본다. 길은 셋이다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 460 290" role="img" aria-label="금리 상승이 할인율, 이자 비용, 다른 자산과의 경쟁이라는 세 경로를 거쳐 주가를 누르는 흐름도">
+        <defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect x="8" y="112" width="98" height="58" rx="10" class="f-acc-soft s-acc"/>
+        <text x="57" y="136" text-anchor="middle" class="lbl-b">금리 상승</text>
+        <text x="57" y="156" text-anchor="middle" class="lbl-dim">기준·국채 금리</text>
+        <rect x="150" y="14" width="160" height="66" rx="10" class="f-surface s-line"/>
+        <text x="230" y="36" text-anchor="middle" class="lbl-acc">① 할인율이 오른다</text>
+        <text x="230" y="55" text-anchor="middle" class="lbl-dim">먼 미래 이익의</text>
+        <text x="230" y="71" text-anchor="middle" class="lbl-dim">현재가치가 준다</text>
+        <rect x="150" y="108" width="160" height="66" rx="10" class="f-surface s-line"/>
+        <text x="230" y="130" text-anchor="middle" class="lbl-acc">② 이자 비용이 는다</text>
+        <text x="230" y="149" text-anchor="middle" class="lbl-dim">빚이 많은 회사의</text>
+        <text x="230" y="165" text-anchor="middle" class="lbl-dim">순이익이 준다</text>
+        <rect x="150" y="202" width="160" height="66" rx="10" class="f-surface s-line"/>
+        <text x="230" y="224" text-anchor="middle" class="lbl-acc">③ 경쟁자가 강해진다</text>
+        <text x="230" y="243" text-anchor="middle" class="lbl-dim">예금·채권 이자가</text>
+        <text x="230" y="259" text-anchor="middle" class="lbl-dim">주식의 몫을 빼앗는다</text>
+        <path d="M106 130 L148 52" class="s-line" marker-end="url(#ar1)"/>
+        <path d="M106 141 L148 141" class="s-line" marker-end="url(#ar1)"/>
+        <path d="M106 152 L148 230" class="s-line" marker-end="url(#ar1)"/>
+        <rect x="352" y="112" width="100" height="58" rx="10" class="f-down-soft s-down"/>
+        <text x="402" y="136" text-anchor="middle" class="lbl-down">주가 하락 압력</text>
+        <text x="402" y="156" text-anchor="middle" class="lbl-dim">다른 것이 같다면</text>
+        <path d="M310 52 L350 130" class="s-line" marker-end="url(#ar1)"/>
+        <path d="M310 141 L350 141" class="s-line" marker-end="url(#ar1)"/>
+        <path d="M310 230 L350 152" class="s-line" marker-end="url(#ar1)"/>
+        <text x="230" y="286" text-anchor="middle" class="lbl-dim">경기가 좋아서 오르는 금리라면 이익 증가가 이 압력을 덮기도 한다</text>
+      </svg>
+      <figcaption><b>금리가 주가에 닿는 세 경로.</b> ①은 모든 회사에 닿지만 먼 미래의 이익에 기대는 회사일수록 세게 닿는다. ②는 빚이 많은 회사에, ③은 시장 전체의 PER에 닿는다. 은행처럼 금리가 오를 때 이익이 느는 회사도 있다.</figcaption>
+    </figure>
+    <ul>
+      <li><b>할인율.</b> <a href="valuation.html">7장</a>에서 주식의 가치는 앞으로 벌 현금을 오늘의 돈으로 바꿔 더한 값이었다. 바꾸는 비율(할인율)은 무위험 금리에 위험의 대가를 더한 것이다. 금리가 오르면 할인율이 오르고, 같은 미래 현금의 오늘 가치가 준다.</li>
+      <li><b>이자 비용.</b> 빌린 돈이 많은 회사는 금리가 오르면 이자로 나가는 돈이 늘어 순이익 자체가 준다. 할인율이 가치를 깎는 것과 달리 이쪽은 이익을 깎는다.</li>
+      <li><b>다른 자산과의 경쟁.</b> 예금이 연 2%일 때와 5%일 때, 주식에 요구하는 수익률은 같을 수 없다. 안전한 이자가 오르면 사람들은 주식에 더 높은 수익률을 요구하고, 같은 이익에 더 낮은 값(낮은 PER)을 매긴다.</li>
+    </ul>
+    <p>셋 가운데 가장 크고, 회사마다 크기가 가장 다른 것은 첫째 길이다. 그래서 먼저 할인율을 손으로 움직여 본다.</p>
+  </section>
+
+  <section id="discount">
+    <h2>할인율: 먼 돈일수록 많이 깎인다</h2>
+    <p>두 회사를 비교한다. 누리식품은 지금 벌고 있는 돈을 앞으로도 비슷하게 번다. 모아플랫폼은 지금 버는 돈은 작지만 앞으로 15년 동안 빠르게 커질 것으로 기대된다. 아래 막대는 해마다 들어올 현금의 <b>현재가치</b>다. 할인율 8%에서 두 회사의 현재가치 합계를 똑같이 100으로 맞춰 두었다. 오늘 시장에서 같은 값을 받는 두 회사라는 뜻이다. 흐린 막대가 8%일 때, 진한 막대가 지금 할인율일 때이고, 점선은 1년 뒤, 10년 뒤의 1원이 오늘 얼마인지(할인 계수)를 보여 준다.</p>
+    <div class="formula">$$P=\sum_{t=1}^{\infty}\frac{CF_t}{(1+r)^t}$$<div class="where">\(P\): 주식의 가치, \(CF_t\): \(t\)년 뒤 들어올 현금흐름, \(r\): 할인율. 분모의 지수 \(t\)가 클수록 \(r\)의 작은 변화가 크게 증폭된다.</div></div>
+
+    <div class="sim" id="sim-pv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>같은 값의 두 회사, 다른 현금흐름: 할인율을 올리면</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="pv-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>할인율 <output id="pv-r-out"></output></span><input type="range" id="pv-r" min="3" max="14" step="0.5" value="10"></label>
+          <div class="legend" style="padding:0"><span><i style="background:var(--ok)"></i>누리식품</span><span><i style="background:var(--accent-2)"></i>모아플랫폼</span><span><i style="background:var(--text-faint)"></i>8%일 때</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">누리식품 가치</span><span class="v" id="pv-o-n">—</span></div>
+        <div class="stat"><span class="k">모아플랫폼 가치</span><span class="v" id="pv-o-m">—</span></div>
+        <div class="stat"><span class="k">10년 안에 들어오는 몫</span><span class="v" id="pv-o-s">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 할인율을 8%에서 10%로 올린다(처음 값). 누리식품은 100에서 80.5(−19.5%), 모아플랫폼은 67.9(−32.1%)가 된다. 같은 값이던 두 회사가 같은 뉴스에 다르게 떨어진다. ② 6%로 내리면 반대로 모아가 +58.7%, 누리가 +30.6%로 더 크게 오른다. ③ 오른쪽 끝의 막대를 본다. 30년 뒤의 1원은 할인율 8%에서 약 0.10원, 12%에서 약 0.03원이다. (교육용 가상 현금흐름이다. 누리: 매년 같은 현금. 모아: 첫해 성장률 35%에서 15년에 걸쳐 3%로 낮아진다. 60년까지만 더했다.)</div>
+    </div>
+
+    <p>할인율 8%에서 누리식품 가치의 약 54%는 앞으로 10년 안에 들어오는 현금이다. 모아플랫폼은 약 20%뿐이고 나머지 80%가 10년 뒤의 현금이다. 할인 계수 \(1/(1+r)^t\)는 \(t\)가 클수록 \(r\)에 민감하다. 1년 뒤의 돈은 할인율이 2%p 올라도 약 2% 깎이지만, 30년 뒤의 돈은 약 42% 깎인다. 그래서 가치의 대부분이 먼 미래에 있는 회사일수록 금리에 크게 흔들린다.</p>
+  </section>
+
+  <section id="duration">
+    <h2>주식의 듀레이션: 현금흐름의 무게중심</h2>
+    <p>채권에는 금리 민감도를 한 숫자로 요약하는 <span class="term">듀레이션</span><span class="en">(Duration)</span>이 있다. 현금이 들어오는 시점들을 현재가치로 가중 평균한 것, 다시 말해 <b>현금흐름의 무게중심</b>이 몇 년 뒤에 있는지다(<a href="https://moneybook.euiyun.com/chapters/bond.html">MoneyBook 14장</a>). 같은 생각을 주식에도 쓸 수 있다. 무게중심이 멀수록, 금리 1%p가 가치를 더 많이 움직인다.</p>
+    <div class="formula">$$D=\frac{1}{P}\sum_{t}t\cdot\frac{CF_t}{(1+r)^t},\qquad \frac{\Delta P}{P}\approx-\frac{D}{1+r}\,\Delta r$$<div class="where">\(D\): 듀레이션(현금흐름 시점의 현재가치 가중 평균, 년), \(\Delta r\): 할인율 변화. 영원히 \(g\)씩 크는 현금흐름이면 \(D/(1+r)=1/(r-g)\)이 되어, 금리 1%p당 가치 변화는 약 \(1/(r-g)\)%다.</div></div>
+    <p>마지막 식이 중요하다. \(P=CF_1/(r-g)\)(<a href="valuation.html">7장</a>의 고든 모형)이므로 \(1/(r-g)\)는 <b>주가 ÷ 내년 현금흐름</b>, 즉 현금흐름 기준의 PER과 같다. 주가가 이익에 비해 비싼 회사(높은 PER)는 그만큼 먼 미래의 성장에 값을 치르고 있는 것이고, 그래서 듀레이션이 길다. 아래에서 고성장 기간의 성장률과 길이를 움직여 무게중심(받침점)이 어디로 가는지 본다.</p>
+
+    <div class="sim" id="sim-dur">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>주식의 듀레이션: 성장이 길수록 받침점이 멀어진다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dur-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>고성장 기간 성장률 <output id="dur-g-out"></output></span><input type="range" id="dur-g" min="0" max="40" step="1" value="20"></label>
+          <label class="ctrl"><span>고성장 기간 <output id="dur-n-out"></output></span><input type="range" id="dur-n" min="0" max="20" step="1" value="10"></label>
+          <label class="ctrl"><span>할인율 <output id="dur-r-out"></output></span><input type="range" id="dur-r" min="4" max="15" step="0.05" value="8"></label>
+          <div class="btn-row"><button class="btn" id="dur-nuri">누리식품처럼</button><button class="btn" id="dur-moa">모아플랫폼처럼</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">무게중심(듀레이션)</span><span class="v" id="dur-o-d">—</span></div>
+        <div class="stat"><span class="k">할인율 +1%p면</span><span class="v" id="dur-o-s">—</span></div>
+        <div class="stat"><span class="k">가치 ÷ 내년 현금흐름</span><span class="v" id="dur-o-m">—</span></div>
+        <div class="stat"><span class="k">10년 안에 들어오는 몫</span><span class="v" id="dur-o-f">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 고성장 기간을 0으로 내린다. 현금흐름이 처음부터 연 3%씩 큰다(고든 모형). 받침점이 21.6년, 금리 +1%p에 −16.7%다. ② '누리식품처럼'을 누른다. 실제 주가 38,000원과 현금흐름(주당 3,750원)에 맞춘 할인율 13.2%에서 받침점은 약 11년, +1%p에 약 −9%다. ③ '모아플랫폼처럼'을 누른다. 10년 동안 20%에서 3%로 줄어드는 성장, 주가 120,000원에 맞춘 할인율 약 6.6%에서 받침점은 약 32년, +1%p에 약 −23%다(작은 변화의 기울기로는 1%p당 약 30%). ④ 할인율을 고성장 기간 성장률 쪽으로 낮춰 본다. 영구 성장률 3%에 가까워질수록 받침점이 끝없이 멀어지고 가치가 폭발한다. 모형이 무너지는 자리다. (막대는 해마다 들어오는 현금의 현재가치 비중, 마지막 막대는 50년 이후를 묶은 것이다. 고성장이 끝나면 영원히 연 3% 성장한다고 가정했다. 할인율은 7장의 역DCF처럼 주가에 맞춰 푼 값이다.)</div>
+    </div>
+
+    <p>두 회사의 실제 지표로 돌아가면, 누리식품의 주가는 주당 현금흐름의 약 10배, 모아플랫폼은 약 60배다(<a href="ratios.html">6장</a>의 PER 9.5와 50과 같은 그림이다). 할인율이 1%p 오르면 누리는 약 9%, 모아는 약 23% 내린다(작은 변화에서의 기울기는 각각 약 10과 30이다). 이 비율이 이 장의 첫 번째 열쇠다.</p>
+    <div class="callout">
+      <strong>성장주와 가치주의 금리 민감도</strong>
+      흔히 PER이 높고 이익의 대부분이 미래에 있는 회사를 <span class="term">성장주</span><span class="en">(Growth stock)</span>, PER이 낮고 지금 벌어 배당하는 회사를 <span class="term">가치주</span><span class="en">(Value stock)</span>라고 부른다(<a href="factor.html">16장</a>). 금리가 빠르게 오르던 2022년에 미국 나스닥 종합지수는 약 −33%, S&amp;P 500은 약 −19% 내렸다. 기술·성장주 비중이 큰 쪽이 더 크게 내린 것이다. 반대로 금리가 내릴 것이라는 기대가 생기면 성장주가 먼저, 크게 오르곤 한다. 다만 이것은 경향이다. 성장 기대 자체가 바뀌면(이익이 예상보다 빨리 크면) 금리를 이기고 오르기도 한다.
+    </div>
+  </section>
+
+  <section id="rate-day">
+    <h2>금리 발표의 날</h2>
+    <p>한국은행 금융통화위원회는 1년에 8번 기준금리를 정한다(2026년 기준). 미국 연방준비제도(연준)의 공개시장위원회(FOMC)도 1년에 8번 모인다. 그런데 발표가 시장에 주는 충격은 금리를 얼마나 바꿨는지보다 <b>예상과 얼마나 달랐는지</b>로 정해진다. 0.25%p 인상이 이미 모두의 예상이었다면, 그 금리는 며칠 전부터 채권 금리와 주가에 들어가 있다. 시장을 흔드는 것은 예상 밖의 결정과, 앞으로 금리를 어디로 끌고 갈지에 대한 신호(포워드 가이던스)다. 주가를 할인하는 금리는 오늘의 기준금리가 아니라 앞으로 수년의 금리를 반영한 장기 금리이기 때문이다.</p>
+    <p>아래는 세 가지 뉴스에 다섯 회사가 반응하는 모형이다. 막대 하나는 세 경로와 하나의 덤(자금 이동)으로 쪼개진다. 할인율 효과는 앞 시뮬레이터의 듀레이션 모형으로, 이자 비용은 순부채로, 은행의 이익 증가는 순이자마진(바로 뒤에서 다룬다)으로 계산했다.</p>
+
+    <div class="sim" id="sim-ev">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>속보: 기준금리 결정, 다섯 회사의 반응</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ev-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="seg" id="ev-mode"><button data-value="exp">예상된 인상</button><button data-value="hawk" class="on">예상 밖 인상</button><button data-value="dove">예상 밖 인하</button></div>
+          <div class="btn-row"><button class="btn primary" id="ev-go">속보 받기</button></div>
+          <div class="legend" style="padding:0"><span><i style="background:var(--accent)"></i>할인율</span><span><i style="background:var(--warn)"></i>이자 비용</span><span><i style="background:var(--ok)"></i>순이자마진</span><span><i style="background:var(--text-dim)"></i>자금 이동</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">장기 금리(할인율) 변화</span><span class="v" id="ev-o-l">—</span></div>
+        <div class="stat"><span class="k">모아플랫폼</span><span class="v" id="ev-o-moa">—</span></div>
+        <div class="stat"><span class="k">누리식품</span><span class="v" id="ev-o-nuri">—</span></div>
+        <div class="stat"><span class="k">다온은행</span><span class="v" id="ev-o-daon">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① '예상 밖 인상'(처음 값). 기준금리는 0.25%p 올랐지만 추가 인상 신호에 장기 금리가 0.45%p 오른다. 모아 −12.0%, 누리 −1.0%, 다온 +1.2%. ② '예상된 인상'을 누른다. 같은 0.25%p 인상인데 모든 막대가 1~2% 안쪽으로 줄어든다. 이미 값에 들어 있던 뉴스다. ③ '예상 밖 인하'에서는 별빛바이오와 모아가 크게 오르고, 다온은행이 내린다. (교육용 모형이다. 할인율 효과는 주가에 맞춘 2단계 성장 모형의 정확한 재계산, 별빛바이오는 현금흐름이 대부분 먼 미래에 있다고 보고 듀레이션 35로 두었다. 이자 비용은 순부채 × 금리 변화 × (1 − 법인세 24%) ÷ 순이익. 다온은행은 순이자마진 변화로 늘어날 2년 치 이익. 자금 이동은 성장주에서 방어주로 옮기는 돈을 가정한 값이다. 실제 하루 주가는 이 모든 것보다 소음이 크다.)</div>
+    </div>
+
+    <p>모아플랫폼의 −12% 가운데 −11.8%가 할인율 하나에서 나온다. 누리식품도 할인율만 보면 −4.2%지만, 같은 날 성장주에서 빠진 돈 일부가 실적이 안정적인 방어주로 옮겨 오면서 대부분을 메웠다. 금리 인상이 경기를 식힐 것이라는 걱정이 생기면 투자자는 경기와 덜 얽힌 회사를 찾는다. 다온은행은 할인율로 −2.9%를 잃지만 대출 이자가 예금 이자보다 빨리 오르는 덕에 이익이 늘어 +1.2%로 끝난다.</p>
+    <p>발표일에는 변동성 자체가 커진다. 아래는 가상의 1년(250거래일)이다. 금리 발표가 있는 8일만 하루 변동성을 보통 날의 약 2.4배로 두고, 발표 전날은 관망세로 조금 조용하게 두었다.</p>
+
+    <div class="sim" id="sim-fm">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>금리 발표일의 변동성: 1년을 하루씩 흘려 보기</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="fm-cv"></canvas></div>
+      </div>
+      <div class="sim-controls">
+        <div class="btn-row"><button class="btn primary" id="fm-go">1년 재생</button><button class="btn" id="fm-re">다른 1년 뽑기</button></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">발표일 평균 등락폭</span><span class="v" id="fm-o-e">—</span></div>
+        <div class="stat"><span class="k">보통 날 평균 등락폭</span><span class="v" id="fm-o-n">—</span></div>
+        <div class="stat"><span class="k">가장 크게 움직인 10일 중 발표일</span><span class="v" id="fm-o-t">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 재생을 누르고 보라색 표시가 붙은 날(발표일)을 본다. 1년의 3%밖에 안 되는 8일이 가장 큰 날들 사이에 자주 끼어 있다. ② 다른 1년을 여러 번 뽑는다. 발표일이 가장 큰 날을 차지하는 개수는 해마다 다르다. 발표일이라고 늘 크게 움직이는 것도, 보통 날이 늘 조용한 것도 아니다. (가상 데이터다. 보통 날 하루 변동성 0.9%, 발표일 2.2%, 발표 전날 0.6%의 정규분포로 뽑았다.)</div>
+    </div>
+    <p>이 장에서 금리 발표일을 따로 보는 이유는 두 가지다. 첫째, 큰 등락이 '회사에 무슨 일이 생겨서'가 아니라 할인율이 흔들려서 생길 수 있다는 것을 알면, 하루의 숫자에 덜 놀란다(<a href="price.html">4장</a>). 둘째, 레버리지를 쓴 계좌라면 이런 날이 반대매매의 날이 될 수 있다(<a href="leverage.html">19장</a>).</p>
+  </section>
+
+  <section id="debt-bank">
+    <h2>이자 비용, 그리고 금리가 반가운 회사</h2>
+    <p>둘째 길은 이익을 직접 깎는다. 영업으로 번 돈(영업이익)에서 이자를 내고 세금을 낸 나머지가 순이익이다(<a href="statements.html">5장</a>). 영업이익이 100억원인 회사가 있다. 빌린 돈이 영업이익의 몇 배인지(부채 배수)를 움직이고, 금리를 올려 본다. 처음 빌린 금리는 연 4%다.</p>
+    <div class="sim" id="sim-de">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>빚이 많은 회사의 금리 인상: 순이익은 얼마나 줄까</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="de-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>차입금 ÷ 영업이익 <output id="de-d-out"></output></span><input type="range" id="de-d" min="0" max="12" step="0.5" value="3"></label>
+          <label class="ctrl"><span>금리 상승 <output id="de-r-out"></output></span><input type="range" id="de-r" min="0" max="6" step="0.25" value="2"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">이자 비용(1년)</span><span class="v" id="de-o-i">—</span></div>
+        <div class="stat"><span class="k">이자보상배율</span><span class="v" id="de-o-c">—</span></div>
+        <div class="stat"><span class="k">순이익 변화</span><span class="v" id="de-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 부채 배수 3배, 금리 +2%p(처음 값). 이자가 12억에서 18억으로 늘어 순이익이 약 −7%다. ② 부채 배수를 10배로 올린다. 같은 +2%p에 순이익이 −33%. 빚이 이익을 깎는 힘은 빚의 크기에 비례한다. ③ 10배에서 금리를 +6%p까지 민다. 이자(100억)가 영업이익을 다 먹어 이자보상배율이 1배로 떨어지고, 그 너머는 적자다. (영업이익 100억원 고정, 기존 금리 연 4%, 법인세 24%, 모든 빚의 금리가 바로 바뀐다고 가정했다. 실제로는 고정금리 차입이 있어 천천히 바뀐다.)</div>
+    </div>
+    <p><span class="term">이자보상배율</span><span class="en">(Interest coverage ratio)</span>은 영업이익 ÷ 이자 비용이다. 1배 미만이면 영업으로 번 돈으로 이자도 다 못 낸다는 뜻이다. 이런 상태가 3년 넘게 이어지는 기업을 흔히 '한계기업'이라고 부른다. 금리가 낮을 때 빚으로 버티던 회사들은 금리가 오르면 가장 먼저 무너진다. 금리 인상기에 부채가 많은 회사의 주가가 약한 이유다.</p>
+    <p>반대로 금리가 오를 때 이익이 느는 회사도 있다. 은행이다. 은행은 예금으로 돈을 모아 대출로 빌려주고 그 이자 차이로 번다. 운용 자산 대비 이 차이를 <span class="term">순이자마진</span><span class="en">(NIM, Net interest margin)</span>이라 한다. 대출 가운데 변동금리 비중이 크면 금리가 오를 때 대출 이자는 빨리 오르고, 예금 이자는 천천히 오른다. 하지만 금리가 너무 높아지면 빚을 갚지 못하는 사람이 늘어 떼일 것에 대비한 비용(대손비용)이 커진다. 다온은행의 이익을 기준금리 축 위에서 끌어 본다.</p>
+    <div class="sim" id="sim-nm">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>다온은행의 금리 곡선: 순이자마진과 대손비용의 줄다리기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="nm-cv"></canvas><span class="hint">점을 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>변동금리 대출 비중 <output id="nm-v-out"></output></span><input type="range" id="nm-v" min="30" max="90" step="5" value="60"></label>
+          <label class="ctrl"><span>예금 금리 반영률 <output id="nm-b-out"></output></span><input type="range" id="nm-b" min="20" max="80" step="5" value="45"></label>
+          <div class="btn-row"><button class="btn" id="nm-re">기준금리 2.5%로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">기준금리</span><span class="v" id="nm-o-r">—</span></div>
+        <div class="stat"><span class="k">순이자마진</span><span class="v" id="nm-o-m">—</span></div>
+        <div class="stat"><span class="k">대손비용률</span><span class="v" id="nm-o-c">—</span></div>
+        <div class="stat"><span class="k">순이익</span><span class="v" id="nm-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 점을 2.5%(현재)에서 4.5%로 끈다. 순이익이 약 9,000억에서 약 1.5조로 늘어난다. 금리가 오를 때 은행주가 강한 이유다. ② 계속 7%, 8%로 끈다. 대손비용이 급격히 늘어 이익이 꺾이고 8%에서는 적자다. ③ 0%로 끌면 예금 금리를 0 아래로 내릴 수 없어 마진이 눌린다. 은행에는 너무 낮은 금리도 너무 높은 금리도 나쁘다. ④ 예금 금리 반영률을 변동금리 비중보다 높게 올리면 곡선이 거꾸로 기운다. (교육용 모형이다. 이자수익 자산 340조, 대출 304조, 대출 금리 3.0%·예금 금리 1.5%에서 출발해 기준금리 변화를 각각 변동금리 비중·반영률만큼 따라간다. 대손비용률 0.3%에 기준금리 3% 초과분의 제곱에 비례하는 비용을 더했다. 판관비는 기준금리 2.5%에서 순이익 9,000억이 되게 맞췄다.)</div>
+    </div>
+  </section>
+
+  <section id="erp">
+    <h2>다른 자산과의 경쟁: 주식 위험 프리미엄</h2>
+    <p>셋째 길은 시장 전체의 값에 닿는다. 주식 시장 전체의 PER이 12배라면, 1만원어치 주식이 1년에 약 833원의 이익을 낸다는 뜻이다. 이 비율 \(E/P\)를 <span class="term">이익수익률</span><span class="en">(Earnings yield)</span>이라 한다. PER을 뒤집은 것이다. 같은 1만원을 국채에 넣으면 연 3.5%를 받는다. 주식이 국채보다 위험한 만큼, 주식의 이익수익률이 국채보다 얼마나 높은지가 주식을 들고 있는 대가다.</p>
+    <p>비교할 때 하나 조심할 것이 있다. 국채 이자는 물가가 올라도 고정된 명목 금액이지만, 기업의 이익은 물가를 따라 커질 수 있다. 그래서 이익수익률은 물가를 뺀 <b>실질금리</b>와 비교하는 편이 공정하다. 그 차이를 이 장에서는 <span class="term">주식 위험 프리미엄</span><span class="en">(ERP, Equity risk premium)</span>의 어림값으로 쓴다.</p>
+    <div class="formula">$$\text{ERP}\approx\frac{E}{P}-\big(\text{국채 금리}-\text{기대 인플레이션}\big)$$<div class="where">\(E/P\): 이익수익률(= 1 ÷ PER). 괄호 안이 실질금리. ERP는 정의와 계산법이 여럿이고, 미국 시장의 장기 평균은 약 4~6%라는 추정이 흔하지만 방법에 따라 크게 다르다.</div></div>
+
+    <div class="sim" id="sim-er">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>이익수익률과 실질금리의 저울</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="er-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>시장 PER <output id="er-pe-out"></output></span><input type="range" id="er-pe" min="6" max="30" step="0.5" value="12"></label>
+          <label class="ctrl"><span>국채 10년 금리 <output id="er-y-out"></output></span><input type="range" id="er-y" min="0" max="8" step="0.1" value="3.5"></label>
+          <label class="ctrl"><span>기대 인플레이션 <output id="er-i-out"></output></span><input type="range" id="er-i" min="0" max="6" step="0.1" value="2"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">이익수익률</span><span class="v" id="er-o-e">—</span></div>
+        <div class="stat"><span class="k">실질금리</span><span class="v" id="er-o-r">—</span></div>
+        <div class="stat"><span class="k">위험 프리미엄</span><span class="v" id="er-o-p">—</span></div>
+        <div class="stat"><span class="k">실질금리 +1%p에 같은 ERP의 PER</span><span class="v" id="er-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 처음 값: PER 12배(이익수익률 8.33%), 실질금리 1.5%, ERP 6.83%. 실질금리가 1%p 오르는데 투자자가 같은 ERP를 요구하면 PER은 10.7배, 이익이 그대로여도 주가가 약 −11%다. ② PER을 25배로 올린다. 이익수익률 4%, ERP 2.5%로 쿠션이 얇다. 같은 실질금리 +1%p에 PER은 20배, −20%다. 비싼 시장일수록 금리에 약하다. 듀레이션과 같은 이야기다. ③ 국채 금리를 6%, 기대 인플레이션을 2%로 둔다. 실질금리 4%, ERP 4.3%로 줄어든다. 안전한 이자의 매력이 커진 것이다. (어림 모형이다. 실제 투자자가 요구하는 ERP도 시기마다 바뀐다.)</div>
+    </div>
+    <p>이 저울은 "지금 주식이 싸다, 비싸다"를 판정하는 기계가 아니다. ERP가 낮게 오래 머문 시기도, 높은 ERP가 더 높아진 시기도 있다. 쓸모는 따로 있다. 금리가 1%p 움직이면 시장의 PER이 대략 얼마나 눌리는지, 그리고 비싼 시장일수록 그 충격이 커진다는 것을 숫자로 어림하게 해 준다.</p>
+  </section>
+
+  <section id="inflation">
+    <h2>인플레이션과 주식: 단기에는 악재, 장기에는 실물</h2>
+    <p>물가가 오르면 주식에는 두 힘이 반대로 작용한다. 하나는 할인율이다. 물가가 오르면 중앙은행이 금리를 올리고, 물가가 얼마나 더 오를지 모른다는 불확실성까지 더해져 할인율이 오른다. 다른 하나는 이익이다. 회사가 파는 물건 값도 오르므로 명목 이익이 커진다. 문제는 얼마나 따라 오르느냐, 즉 원가 상승을 판매 가격에 넘길 수 있는 <span class="term">가격 전가력</span><span class="en">(Pricing power)</span>이다.</p>
+    <div class="sim" id="sim-in">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>물가 상승률 슬라이더: 이익 성장과 할인율의 줄다리기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="in-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>물가 상승률 <output id="in-p-out"></output></span><input type="range" id="in-p" min="0" max="10" step="0.5" value="6"></label>
+          <label class="ctrl"><span>가격 전가력 <output id="in-s-out"></output></span><input type="range" id="in-s" min="0" max="100" step="5" value="50"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">할인율</span><span class="v" id="in-o-r">—</span></div>
+        <div class="stat"><span class="k">명목 이익 성장률</span><span class="v" id="in-o-g">—</span></div>
+        <div class="stat"><span class="k">주식 가치 변화(물가 2% 대비)</span><span class="v" id="in-o-v">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 물가 6%, 전가력 50%(처음 값). 할인율이 8%에서 12.9%로, 이익 성장은 2%에서 4%로 오른다. 할인율이 더 많이 올라 가치가 약 −33%다. ② 전가력을 100%로 올린다. 이익이 물가를 다 따라가도 −15%가 남는다. 높은 물가 자체가 위험 프리미엄을 올리기 때문이다. ③ 물가를 0~2%로 내린다. 낮고 안정된 물가에서 주식의 가치가 가장 높다. (고든 모형: 할인율 = 실질 무위험 금리 1% + 물가 + 위험 프리미엄 5% + 물가 3% 초과분의 30%, 이익 성장률 = 실질 성장 1% + 물가 × 전가력.)</div>
+    </div>
+    <p>그래서 물가가 뛰는 해에 주식은 대체로 약하다. 미국의 1970년대처럼 물가가 높게 오래 머문 시기에 주식의 실질 수익률은 오랫동안 부진했다. 그런데 기간을 길게 늘리면 이야기가 달라진다. 이미 떨어진 값에서 출발한 주식은 높아진 할인율만큼 높은 기대수익률을 갖는다. 그리고 그 수익은 물가를 따라 커지는 이익에서 나온다. 현금은 그런 장치가 없다.</p>
+    <div class="sim" id="sim-rl">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>물가 충격 뒤 10년: 현금, 예금, 주식의 실질 가치</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="rl-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>새 물가 상승률 <output id="rl-p-out"></output></span><input type="range" id="rl-p" min="2" max="10" step="0.5" value="6"></label>
+          <label class="ctrl"><span>가격 전가력 <output id="rl-s-out"></output></span><input type="range" id="rl-s" min="0" max="100" step="5" value="50"></label>
+          <div class="legend" style="padding:0"><span><i style="background:var(--accent)"></i>주식</span><span><i style="background:var(--ok)"></i>예금</span><span><i style="background:var(--text-dim)"></i>현금</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">10년 뒤 주식(실질)</span><span class="v" id="rl-o-s">—</span></div>
+        <div class="stat"><span class="k">10년 뒤 예금(실질)</span><span class="v" id="rl-o-d">—</span></div>
+        <div class="stat"><span class="k">10년 뒤 현금(실질)</span><span class="v" id="rl-o-c">—</span></div>
+        <div class="stat"><span class="k">주식이 처음 값을 되찾는 때</span><span class="v" id="rl-o-y">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 물가 6%, 전가력 50%(처음 값). 주식은 충격에 실질 −33%로 떨어지지만 약 6.3년 뒤 처음 값을 되찾고 10년 뒤 실질 약 127이 된다. 현금은 약 56으로 녹는다. ② 전가력을 0%로 내린다. 회복이 늦어지지만 그래도 현금보다는 낫다. ③ 물가를 2%로 두면 충격이 없다. 점선은 물가 2%가 계속됐을 때의 주식이다. (앞 시뮬레이터와 같은 모형이다. 충격 뒤 할인율·성장률이 그대로 유지되고 주식의 기대 명목수익률이 할인율과 같다고 가정했다. 예금은 물가 + 0.5%. 실제 결과는 이 평균 경로 주위로 크게 흩어진다.)</div>
+    </div>
+    <p>정리하면 인플레이션은 주식에 <b>단기 악재, 장기 방어</b>다. 물가가 오르는 순간의 주가는 아프지만, 회사의 공장과 브랜드, 판매 가격은 물가와 함께 커지는 실물이다. <a href="https://moneybook.euiyun.com/chapters/inflation.html">MoneyBook 3장</a>에서 본 "현금은 물가에 녹는다"를 주식이 피할 수 있는 이유다. 다만 전가력이 약한 회사(원가가 오르는데 값을 못 올리는 회사)는 장기에도 피하지 못한다.</p>
+  </section>
+
+  <section id="cycle">
+    <h2>경기 순환과 업종 순환</h2>
+    <p>경기는 확장과 수축을 되풀이한다(<a href="https://moneybook.euiyun.com/chapters/economy.html">MoneyBook 5장</a>). 주식 관점에서 중요한 것은 국면마다 <b>이익이 가장 크게 바뀌는 업종이 다르다</b>는 점이다. 반도체·철강·화학처럼 경기에 따라 이익이 크게 출렁이는 <span class="term">경기 민감주</span><span class="en">(Cyclical)</span>, 음식료·통신·전력처럼 경기와 상관없이 비슷하게 팔리는 <span class="term">방어주</span><span class="en">(Defensive)</span>, 금리에 민감한 성장주와 은행이 국면마다 번갈아 앞선다. 이를 <span class="term">업종 순환</span><span class="en">(Sector rotation)</span>이라 한다.</p>
+    <p>아래 시계의 바늘을 끌어 국면을 옮겨 본다. 오른쪽 막대는 교과서적인 경향에서 각 회사가 상대적으로 강한지(오른쪽) 약한지(왼쪽)다.</p>
+    <div class="sim" id="sim-ck">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>경기 시계: 바늘을 돌리면 강한 업종이 바뀐다</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="ck-cv"></canvas><span class="hint">바늘 끝을 돌린다</span></div>
+      </div>
+      <div class="sim-controls">
+        <div class="btn-row"><button class="btn primary" id="ck-play">자동으로 돌리기</button></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">국면</span><span class="v" id="ck-o-p">—</span></div>
+        <div class="stat"><span class="k">금리</span><span class="v" id="ck-o-r">—</span></div>
+        <div class="stat"><span class="k">기업 이익</span><span class="v" id="ck-o-e">—</span></div>
+        <div class="stat"><span class="k">상대적으로 강한 쪽</span><span class="v" id="ck-o-s">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 바늘을 '회복'(12시~3시)에 둔다. 금리가 낮고 이익이 바닥을 지나는 때, 경기 민감주(한빛반도체)가 가장 크게 반등한다. ② '둔화'(6시~9시)로 돌린다. 금리가 높고 이익이 정점을 지나는 때, 듀레이션이 긴 모아플랫폼이 가장 약하고 누리식품이 강해진다. ③ '침체'에서는 채권과 방어주가 앞서고, 은행은 연체 걱정에 약하다. ④ 별빛바이오의 막대는 거의 움직이지 않는다. 신약 결과 하나가 경기보다 훨씬 크다. (교과서적 경향을 −2~+2로 그린 것이다. 실제 순환은 이렇게 규칙적이지 않고, 국면의 경계도 지나고 나서야 보인다.)</div>
+    </div>
+    <p>여기에 한 가지 비틀림이 있다. 주가는 경기를 따라가지 않고 <b>앞서간다</b>. 주가는 오늘의 이익이 아니라 앞으로의 이익을 할인한 값이므로, 투자자들이 6개월~1년 뒤의 경기를 미리 값에 넣는다. 그래서 통계청이 매달 내는 경기종합지수 가운데 앞날을 미리 보여 주는 <span class="term">선행지수</span><span class="en">(Leading index)</span>의 구성 지표에 주가지수(KOSPI)가 들어 있다. 주가 자체가 경기 예측의 재료다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 460 262" role="img" aria-label="주가, 생산, 실업률이 시차를 두고 같은 순환을 그리는 그림">
+        <line x1="34" y1="196" x2="446" y2="196" class="s-axis"/>
+        <text x="446" y="214" text-anchor="end" class="lbl-dim">시간</text>
+        <path d="M34 112 L40 106 L46 100 L52 94 L58 90 L64 86 L70 83 L76 82 L82 82 L88 83 L94 86 L100 90 L106 94 L112 100 L118 106 L124 112 L130 119 L136 126 L142 132 L148 138 L154 143 L160 148 L166 151 L172 153 L178 154 L184 154 L190 152 L196 149 L202 145 L208 140 L214 134 L220 128 L226 121 L232 115 L238 108 L244 102 L250 96 L256 91 L262 87 L268 84 L274 82 L280 82 L286 83 L292 85 L298 88 L304 93 L310 98 L316 104 L322 110 L328 117 L334 124 L340 130 L346 136 L352 142 L358 146 L364 150 L370 153 L376 154 L382 154 L388 153 L394 150 L400 146 L406 142 L412 136 L418 130 L424 124 L430 117 L436 110 L442 104" class="s-dash"/>
+        <path d="M34 74 L40 75 L46 77 L52 81 L58 86 L64 92 L70 99 L76 107 L82 115 L88 124 L94 132 L100 139 L106 146 L112 152 L118 157 L124 160 L130 162 L136 162 L142 161 L148 158 L154 154 L160 148 L166 142 L172 134 L178 126 L184 118 L190 110 L196 102 L202 94 L208 88 L214 82 L220 78 L226 75 L232 74 L238 74 L244 76 L250 79 L256 84 L262 90 L268 97 L274 104 L280 112 L286 121 L292 129 L298 137 L304 144 L310 150 L316 155 L322 159 L328 161 L334 162 L340 161 L346 159 L352 155 L358 150 L364 144 L370 137 L376 129 L382 121 L388 112 L394 104 L400 97 L406 90 L412 84 L418 79 L424 76 L430 74 L436 74 L442 75" class="s-acc2" style="stroke-width:2.4;fill:none"/>
+        <path d="M34 109 L40 120 L46 131 L52 141 L58 151 L64 159 L70 166 L76 171 L82 175 L88 176 L94 175 L100 173 L106 168 L112 162 L118 154 L124 144 L130 134 L136 123 L142 113 L148 102 L154 92 L160 82 L166 74 L172 68 L178 63 L184 61 L190 60 L196 61 L202 65 L208 70 L214 77 L220 85 L226 95 L232 105 L238 116 L244 127 L250 138 L256 148 L262 156 L268 164 L274 170 L280 174 L286 176 L292 176 L298 174 L304 170 L310 164 L316 156 L322 148 L328 138 L334 127 L340 116 L346 105 L352 95 L358 85 L364 77 L370 70 L376 65 L382 61 L388 60 L394 61 L400 63 L406 68 L412 74 L418 82 L424 92 L430 102 L436 113 L442 123" class="s-acc" style="stroke-width:2.6;fill:none"/>
+        <line x1="190" y1="54" x2="190" y2="196" class="s-dash"/>
+        <line x1="234" y1="68" x2="234" y2="196" class="s-dash"/>
+        <text x="186" y="44" text-anchor="end" class="lbl-acc">주가 고점</text>
+        <text x="240" y="64" text-anchor="start" class="lbl-acc2">경기 정점</text>
+        <path d="M192 182 L230 182" class="s-line" marker-end="url(#ar1)"/>
+        <text x="212" y="176" text-anchor="middle" class="lbl-dim">약 6개월</text>
+        <text x="20" y="236" class="lbl-acc">— 선행: 주가, 건설 수주</text>
+        <text x="20" y="254" class="lbl-acc2">— 동행: 생산, 소매 판매</text>
+        <text x="250" y="236" class="lbl-dim">- - 후행: 실업률(뒤집음)</text>
+      </svg>
+      <figcaption><b>선행, 동행, 후행.</b> 주가는 경기의 정점과 저점보다 먼저 꺾이고, 실업률은 경기보다 늦게 나빠지고 늦게 좋아진다(실업률은 위아래를 뒤집어 그렸다). 시차는 순환마다 다르다.</figcaption>
+    </figure>
+    <p>시차가 얼마나 비싼지 직접 본다. 위는 주가, 아래는 경기(동행지수의 순환 부분)다. 선행 개월 수를 바꾸고, 세로 커서를 끌어 각 시점의 두 그래프를 비교한다.</p>
+    <div class="sim" id="sim-ld">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>주가는 경기보다 먼저 꺾인다: 위상차 애니메이션</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ld-cv"></canvas><span class="hint">커서를 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>주가가 앞서는 기간 <output id="ld-l-out"></output></span><input type="range" id="ld-l" min="0" max="12" step="1" value="6"></label>
+          <div class="btn-row"><button class="btn primary" id="ld-play">재생</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">커서의 경기</span><span class="v" id="ld-o-e">—</span></div>
+        <div class="stat"><span class="k">커서의 주가</span><span class="v" id="ld-o-s">—</span></div>
+        <div class="stat"><span class="k">경기 정점일 때 주가(고점 대비)</span><span class="v" id="ld-o-p">—</span></div>
+        <div class="stat"><span class="k">저점 확인 뒤 사면 이미 오른 폭</span><span class="v" id="ld-o-m">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 6개월(처음 값)에서 커서를 경기 정점(보라 점선)에 놓는다. 경기는 꼭대기인데 주가는 이미 고점에서 약 6% 내려와 있다. "경기가 이렇게 좋은데 왜 주가가 빠지지?"의 정체다. ② 경기 저점에서 3개월 지나 회복을 확인하고 산다면, 주가는 바닥에서 이미 약 14% 오른 뒤다. ③ 선행 기간을 0으로 내리면 두 숫자가 거의 0이 된다. 주가가 경기를 앞서지 않는 세상이라면 경기를 보고 사도 늦지 않다. (교육용 모양이다. 4년 주기의 매끈한 순환에 작은 소음을 얹었다. 실제 선행 기간은 순환마다 들쭉날쭉하다.)</div>
+    </div>
+    <p>이제 이 책의 가상 시장(<code>SB 종합지수</code>와 다섯 회사, 교육용으로 만든 가짜 가격이다)에서 국면별 성과를 실제로 재 본다. 지수 그래프에서 구간을 눌러 고른다.</p>
+    <div class="sim" id="sim-rg">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>가상 시장 10년: 국면마다 누가 강했나</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="rg-cv"></canvas><span class="hint">구간을 누른다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn" id="rg-prev">이전 국면</button><button class="btn" id="rg-next">다음 국면</button></div>
+          <label class="check"><input type="checkbox" id="rg-avg"> 하락 국면 셋의 평균</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">국면</span><span class="v" id="rg-o-n">—</span></div>
+        <div class="stat"><span class="k">SB 종합지수</span><span class="v" id="rg-o-i">—</span></div>
+        <div class="stat"><span class="k">가장 강한 종목</span><span class="v" id="rg-o-b">—</span></div>
+        <div class="stat"><span class="k">가장 약한 종목</span><span class="v" id="rg-o-w">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① '급락'(40거래일, 지수 −34%)을 고른다. 누리식품(베타 0.6)이 −21%로 가장 덜 빠지고, 별빛바이오가 −55%로 가장 크게 빠진다. ② '하락 국면 셋의 평균'을 켠다. 평균은 모아플랫폼이 가장 높지만 약세장 한 번의 +42%가 만든 숫자다. 조정·급락·약세장 세 번 모두 지수보다 뚜렷하게 덜 빠진 것은 누리식품이다. 방어주의 이름값이다. ③ '약세장'을 고른다. 지수가 −25%인데 모아플랫폼은 +42%다. 교과서적 업종 순환과 정반대다. 개별 회사의 일(고유 위험)이 국면보다 클 때가 많다(<a href="risk.html">13장</a>). (가상 시장 데이터다. 각 종목은 베타 × 시장 + 고유 움직임으로 만들어졌다.)</div>
+    </div>
+    <p>국면은 방향을 기울일 뿐, 개별 종목의 운명을 정하지 않는다. 그리고 실제로는 국면의 경계를 지나고 나서야 알 수 있다. 업종 순환은 "지금 무엇을 사라"가 아니라 "내가 가진 것이 어떤 환경에 약한지"를 아는 지도로 쓰는 편이 안전하다.</p>
+  </section>
+
+  <section id="earnings">
+    <h2>실적 시즌: 숫자보다 기대</h2>
+    <p>상장 회사는 분기마다 실적을 낸다. 분기 보고서는 분기가 끝나고 45일 안에 내야 하고(2026년 기준), 그보다 먼저 잠정 실적을 공시하는 회사가 많다. 이 발표가 몰리는 몇 주를 <b>실적 시즌</b>이라고 부른다. 발표 전에 증권사 애널리스트들은 이익을 예상하고, 그 평균을 <span class="term">컨센서스</span><span class="en">(Consensus)</span>라 한다. 발표가 컨센서스보다 좋으면 <span class="term">어닝 서프라이즈</span><span class="en">(Earnings surprise)</span>, 나쁘면 <span class="term">어닝 쇼크</span><span class="en">(Earnings shock)</span>라 한다.</p>
+    <p>그런데 주가는 컨센서스만 보지 않는다. 시장에는 공식 숫자보다 높은 '진짜 기대'(위스퍼 넘버)가 있을 수 있고, 지난 분기보다 앞으로의 전망(가이던스)이 더 중요하며, 발표 전 몇 달 동안 이미 오른 주가는 좋은 숫자를 미리 먹었을 수 있다.</p>
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="컨센서스, 시장의 실제 기대, 발표 실적을 막대로 비교한 그림. 실적은 컨센서스보다 높지만 기대보다 낮다">
+        <line x1="40" y1="206" x2="440" y2="206" class="s-axis"/>
+        <rect x="70" y="86" width="70" height="120" class="f-surface s-line"/>
+        <text x="105" y="76" text-anchor="middle" class="t-mono lbl-b">3,000억</text>
+        <text x="105" y="226" text-anchor="middle" class="lbl">컨센서스</text>
+        <rect x="190" y="62" width="70" height="144" class="f-acc-soft s-acc s-dash"/>
+        <text x="225" y="52" text-anchor="middle" class="t-mono lbl-acc">3,600억</text>
+        <text x="225" y="226" text-anchor="middle" class="lbl-acc">시장의 진짜 기대</text>
+        <rect x="310" y="74" width="70" height="132" class="f-acc2-soft s-acc2"/>
+        <text x="345" y="64" text-anchor="middle" class="t-mono lbl-acc2">3,300억</text>
+        <text x="345" y="226" text-anchor="middle" class="lbl-acc2">발표 실적</text>
+        <path d="M140 92 C 220 120, 280 112, 308 86" class="s-up" marker-end="url(#ar1)"/>
+        <text x="228" y="134" text-anchor="middle" class="lbl-up">+10% 서프라이즈?</text>
+        <path d="M262 64 C 290 40, 300 50, 310 70" class="s-down" marker-end="url(#ar1)"/>
+        <text x="300" y="30" text-anchor="middle" class="lbl-down">기대 대비 −8%</text>
+        <text x="240" y="246" text-anchor="middle" class="lbl-dim">주가는 '기대 대비'에 반응한다</text>
+      </svg>
+      <figcaption><b>세 개의 막대.</b> 신문 제목은 "컨센서스 대비 10% 서프라이즈"라고 쓰지만, 이미 주가가 많이 올라 시장이 3,600억을 기대했다면 결과는 실망이다. 좋은 실적에 주가가 내리는 흔한 이유다.</figcaption>
+    </figure>
+    <p>여섯 번의 가상 실적 발표를 보고 주가가 오를지 내릴지 맞혀 본다. 숫자 하나만이 아니라 가이던스와 발표 전 주가 흐름까지 본다.</p>
+    <div class="sim" id="sim-sg">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>실적 발표 맞히기: 오를까, 내릴까</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="sg-cv"></canvas></div>
+      </div>
+      <div class="sim-controls">
+        <div class="btn-row" id="sg-ans"><button class="btn primary" id="sg-up">오른다</button><button class="btn primary" id="sg-dn">내린다</button><button class="btn" id="sg-next">다음 발표</button></div>
+      </div>
+      <div class="ev-msg" id="sg-msg">카드를 읽고 '오른다' 또는 '내린다'를 고른다.</div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">발표</span><span class="v" id="sg-o-r">—</span></div>
+        <div class="stat"><span class="k">맞힌 수</span><span class="v" id="sg-o-s">—</span></div>
+        <div class="stat"><span class="k">이번 발표 다음 날 주가</span><span class="v" id="sg-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 컨센서스 대비 숫자만 보고 답해 본다. 몇 개를 맞히는가? ② 다시 돌면서 가이던스와 '발표 전 3개월 주가'를 같이 본다. ③ 여섯 개 중 '좋은 실적인데 하락'과 '나쁜 실적인데 상승'이 몇 개인지 센다. (가상의 발표와 반응이다. 실제 회사의 실적이 아니다.)</div>
+    </div>
+    <p>여섯 번 가운데 컨센서스보다 좋은 숫자가 넷인데 그중 셋이 내렸다. 극단적으로 골랐지만 드문 일이 아니다. 많은 발표를 모아 보면 어떨까. 가상의 80건을 뿌린다. 가로축은 컨센서스 대비 서프라이즈, 세로축은 다음 날 주가 반응이다.</p>
+    <div class="sim" id="sim-sc">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>서프라이즈와 주가 반응: 80번의 발표</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>발표와 무관한 하루 소음 <output id="sc-n-out"></output></span><input type="range" id="sc-n" min="0" max="8" step="0.5" value="3"></label>
+          <div class="btn-row"><button class="btn" id="sc-re">다른 80건 뽑기</button></div>
+          <div class="legend" style="padding:0"><span><i style="background:var(--up)"></i>가이던스 상향</span><span><i style="background:var(--text-faint)"></i>유지</span><span><i style="background:var(--down)"></i>하향</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">서프라이즈와 반응의 상관</span><span class="v" id="sc-o-c">—</span></div>
+        <div class="stat"><span class="k">좋은 실적인데 하락</span><span class="v" id="sc-o-a">—</span></div>
+        <div class="stat"><span class="k">나쁜 실적인데 상승</span><span class="v" id="sc-o-b">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 점들은 오른쪽 위로 기울지만 흩어짐이 크다. 서프라이즈가 양수인 발표의 상당수가 하락한다(오른쪽 아래 칸). ② 색을 본다. 같은 서프라이즈에서도 파란 점(가이던스 하향)은 아래, 빨간 점은 위에 있다. 시장은 지난 분기보다 다음 분기를 본다. ③ 소음을 0으로 내려도 점이 한 줄로 모이지 않는다. 발표 전에 미리 오른 만큼 반응이 깎이기 때문이다. (가상 모형: 반응 = 0.4 × 서프라이즈 − 0.2 × 발표 전 3개월 상승률 + 가이던스 효과 ±3.5% + 소음.)</div>
+    </div>
+  </section>
+
+  <section id="fx">
+    <h2>환율과 수출주</h2>
+    <p>원/달러 환율이 오르면(원화 약세) 달러로 파는 수출 회사는 같은 1달러 매출이 더 많은 원화가 된다. 반대로 원재료를 수입하는 회사는 비용이 는다. 같은 환율 뉴스에 업종마다 반대로 반응하는 이유다. 아래 그래프에서 세로선을 끌어 환율을 바꾼다. 출발점은 1,400원이다.</p>
+    <div class="sim" id="sim-fx">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>환율 1원의 무게: 회사별 영업이익 변화</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="fx-cv"></canvas><span class="hint">세로선을 좌우로 끈다</span></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">원/달러 환율</span><span class="v" id="fx-o-x">—</span></div>
+        <div class="stat"><span class="k">한빛반도체 영업이익</span><span class="v" id="fx-o-h">—</span></div>
+        <div class="stat"><span class="k">누리식품 영업이익</span><span class="v" id="fx-o-n">—</span></div>
+        <div class="stat"><span class="k">모아플랫폼 영업이익</span><span class="v" id="fx-o-m">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 환율을 1,450원으로 끈다(+3.6%). 한빛반도체 영업이익은 9,000억에서 약 1.02조(+13%)로 늘고, 누리식품은 1,100억에서 약 1,013억(−8%)으로 준다. ② 1,250원으로 끈다. 한빛이 −39%로 반대가 된다. 영업이익률이 낮은 회사에서는 매출의 작은 변화가 이익을 크게 흔든다. ③ 모아플랫폼은 거의 평평하다. 국내에서 팔고 국내에서 쓰는 회사다. (교육용 가정: 한빛은 매출 6조의 80%가 수출, 원가 5.1조의 30%가 수입. 누리는 매출의 10%가 수출, 원가 1.69조의 25%가 수입 원재료. 모아는 원가 3.6조의 5%가 달러 비용. 판매 가격과 물량은 그대로, 환헤지는 없다고 가정했다. 별빛바이오와 다온은행은 환율 영향이 작다고 보고 뺐다.)</div>
+    </div>
+    <p>주가는 이 막대만큼 움직이지 않는다. 투자자는 환율이 다시 돌아올 수 있다는 것, 회사가 선물환으로 일부를 헤지한다는 것, 원가 상승을 몇 달 뒤 판매 가격에 넘긴다는 것을 함께 본다. 환율은 해외 주식을 사는 투자자에게도 직접 닿는다. 미국 주식의 원화 수익률은 주가 수익률과 환율 변화가 곱해진 것이다. 이 이야기는 <a href="global.html">22장</a>에서 이어진다.</p>
+  </section>
+
+  <section id="forecast">
+    <h2>매크로를 맞혀도 돈을 벌기 어려운 이유</h2>
+    <p>여기까지 오면 계획이 하나 떠오른다. "경기 침체를 예측해서 그 전에 팔고, 회복을 예측해서 다시 사면 되지 않을까?" 이 계획에는 두 개의 함정이 있다. 첫째, 주가는 경기를 앞서므로 <b>올해의 경기</b>를 맞혀서는 늦다. 주가가 보는 것은 내년의 경기다. 둘째, 다른 투자자들도 예측을 하고, 그 평균은 이미 값에 들어 있다. 돈이 되는 것은 경기를 맞히는 것이 아니라 <b>시장의 예상보다</b> 더 잘 맞히는 것이다.</p>
+    <p>가상의 30년을 400번 돌린다. 해마다 경기는 호황이거나 침체(약 15%의 해)이고, 주가는 다음 해의 경기를 미리 반영한다. 예측이 '침체'라고 말하면 주식을 팔고 연 3% 현금으로 있다가, '호황'이면 다시 산다(갈아탈 때마다 비용 0.3%).</p>
+    <div class="sim" id="sim-tp">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>매크로 맞히기의 함정: 정확도 몇 %면 이기나</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="tp-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="seg" id="tp-mode"><button data-value="now" class="on">올해 경기를 맞힌다</button><button data-value="next">내년 경기를 맞힌다</button></div>
+          <label class="ctrl"><span>예측 정확도 <output id="tp-a-out"></output></span><input type="range" id="tp-a" min="50" max="100" step="5" value="80"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">예측 전략 연수익(평균)</span><span class="v" id="tp-o-s">—</span></div>
+        <div class="stat"><span class="k">매수 후 보유</span><span class="v" id="tp-o-b">—</span></div>
+        <div class="stat"><span class="k">차이</span><span class="v" id="tp-o-d">—</span></div>
+        <div class="stat"><span class="k">본전이 되는 정확도</span><span class="v" id="tp-o-e">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① '올해 경기를 맞힌다', 정확도 80%(처음 값). 경기를 다섯 번에 네 번 맞히는데 매수 후 보유보다 연 약 0.8%p 뒤진다. ② 정확도를 100%로 올린다. 올해 경기를 완벽하게 맞혀도 겨우 연 0.2%p 앞선다. 주가는 이미 그 경기를 지나갔다. ③ '내년 경기를 맞힌다'로 바꾼다. 본전이 되려면 약 70%가 필요하다. 1년 뒤 침체를 열 번에 일곱 번 맞히는 예측은 현실에서 찾기 어렵다. (가상 모형: 호황 다음 해 호황 확률 88%, 침체 다음 해 호황 확률 70%. 연 주식 수익률 = 3% + (다음 해 호황이면 +10%, 침체면 −22%) + 소음 10%. 400번 평균이다.)</div>
+    </div>
+    <p>이 결과는 정직한 결론으로 이어진다. 매크로를 아는 것은 쓸모가 있다. 금리가 오를 때 내 계좌의 어느 부분이 아플지, 왜 아픈지 알면 놀라서 팔지 않는다. 하지만 매크로를 <b>맞혀서</b> 사고파는 것은 전문가에게도 어렵다. 경기를 맞혀도 주가는 이미 반영했고, 금리를 맞혀도 시장은 이미 그 금리를 값에 넣었다.</p>
+    <div class="callout warn">
+      <strong>숫자와 제도는 바뀐다</strong>
+      금융통화위원회의 연 8회 회의, 분기 보고서 45일 기한은 2026년 기준이다. 이 장의 모든 반응 크기(−12%, +1.2%, 듀레이션 30 등)는 교육용 가정에서 나온 것이며 실제 회사나 시장의 예측이 아니다. 과거에 금리 인상기에 성장주가 약했다는 경향이 다음 인상기에도 그대로 나타난다는 보장은 없다.
+    </div>
+  </section>
+
+  <section id="dashboard">
+    <h2>종합: 매크로 대시보드</h2>
+    <p>지금까지의 길을 한 판에 모은다. 장기 금리, 환율, 경기 국면을 동시에 바꾸면 다섯 회사가 어떻게 갈리는지 본다. 막대는 금리(할인율과 은행 마진), 환율(영업이익 변화의 40%만 주가에 반영), 경기 국면(시계의 경향 한 칸당 3%)의 합이다.</p>
+    <div class="sim" id="sim-bd">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>매크로 대시보드: 금리·환율·국면을 한 번에</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="bd-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>장기 금리 변화 <output id="bd-r-out"></output></span><input type="range" id="bd-r" min="-1.5" max="1.5" step="0.25" value="0.5"></label>
+          <label class="ctrl"><span>원/달러 환율 변화 <output id="bd-x-out"></output></span><input type="range" id="bd-x" min="-15" max="15" step="1" value="0"></label>
+          <div class="seg" id="bd-ph"><button data-value="0">회복</button><button data-value="1">확장</button><button data-value="2" class="on">둔화</button><button data-value="3">침체</button></div>
+          <div class="legend" style="padding:0"><span><i style="background:var(--accent)"></i>금리</span><span><i style="background:var(--accent-2)"></i>환율</span><span><i style="background:var(--ok)"></i>국면</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">가장 강한 회사</span><span class="v" id="bd-o-b">—</span></div>
+        <div class="stat"><span class="k">가장 약한 회사</span><span class="v" id="bd-o-w">—</span></div>
+        <div class="stat"><span class="k">다섯 종목 같은 비중</span><span class="v" id="bd-o-a">—</span></div>
+        <div class="stat"><span class="k">최강과 최약의 차이</span><span class="v" id="bd-o-g">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 처음 값(금리 +0.5%p, 환율 그대로, 둔화). 모아플랫폼이 −19%로 가장 약하고 다온은행(+1.7%)과 누리식품(−0.2%)이 버틴다. 이 장의 첫 장면이다. ② 금리 −1%p, 환율 +10%, 회복으로 바꾼다. 순위가 뒤집혀 별빛바이오·모아플랫폼처럼 먼 미래에 기대는 회사와 수출주 한빛반도체가 앞서고 누리식품이 가장 뒤처진다. ③ 금리를 +1.5%p, 둔화로 둔다. 별빛바이오와 모아플랫폼이 −40% 안팎까지 내려간다. 듀레이션 30~35의 무게다. 다섯 종목 같은 비중은 어느 조합에서도 가장 극단적인 막대보다 덜 흔들린다(<a href="risk.html">13장</a>의 분산). (앞 시뮬레이터들의 모형을 더했다. 은행 마진은 장기 금리 변화의 60%만큼 기준금리가 움직인다고 보았다. 서로의 상호작용과 이미 반영된 기대는 무시한 방향 감각용 모형이다.)</div>
+    </div>
+    <p>이 대시보드에서 얻을 것은 예측이 아니라 <b>노출의 지도</b>다. 내 계좌가 금리 상승에, 원화 강세에, 경기 둔화에 각각 얼마나 기울어 있는지. 한 방향에 모두 기운 계좌는 그 한 방향의 뉴스에 무너진다. 지수처럼 여러 업종이 섞인 계좌는 막대들이 서로를 상쇄한다.</p>
+  </section>
+
+  <div class="casefile">
+    <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 21장</span></div>
+    <h4>기준금리 인상 속보: 모아플랫폼 −12%, 누리식품 −1%</h4>
+    <p>관심 종목에 넣어 둔 두 회사가 같은 뉴스에 전혀 다르게 움직였다. 한결은 처음에 모아플랫폼에 나쁜 일이 생긴 줄 알았다. 공시를 찾아봤지만 아무것도 없었다. 이 장의 모형으로 그날을 다시 쪼개 보았다. 기준금리 인상은 0.25%p였지만 추가 인상 신호에 장기 금리(할인율)가 약 0.45%p 올랐다.</p>
+    <div class="slip">
+      <div class="row"><span>모아플랫폼: 할인율(듀레이션 약 30)</span><span>−11.8%</span></div>
+      <div class="row"><span>모아플랫폼: 이자 비용(순현금이라 이자 수입 증가)</span><span>+0.4%</span></div>
+      <div class="row"><span>모아플랫폼: 성장주에서 빠지는 돈</span><span>−0.5%</span></div>
+      <div class="row total"><span>모아플랫폼 합계</span><span>−12.0%</span></div>
+      <div class="row"><span>누리식품: 할인율(듀레이션 약 10)</span><span>−4.2%</span></div>
+      <div class="row"><span>누리식품: 이자 비용(순부채 1,200억)</span><span>−0.3%</span></div>
+      <div class="row"><span>누리식품: 방어주로 옮겨 온 돈</span><span>+3.5%</span></div>
+      <div class="row total"><span>누리식품 합계</span><span>−1.0%</span></div>
+    </div>
+    <p>차이의 대부분은 할인율 하나에서 나왔다. 모아플랫폼의 주가는 주당 현금흐름의 약 60배이고 가치의 대부분이 10년 뒤의 현금이다. 누리식품은 약 10배이고 가까운 현금이 많다. 같은 0.45%p가 한쪽은 세 배 가까이 무겁게 누른 것이다. 회사의 실적은 그날 아침과 달라진 것이 없었다.</p>
+    <div class="clue">
+      <div><b>이 장에서 정한 것</b>관심 종목마다 '금리 1%p당 얼마'를 적어 둔다(모아 약 −23%, 누리 약 −9%). 금리 뉴스로 출렁인 날에는 공시부터 확인하고, 회사에 일이 없으면 그 출렁임을 회사 문제로 읽지 않는다.</div>
+      <div><b>아직 남은 문제</b>계좌의 일부를 미국 지수에 넣으면 금리뿐 아니라 환율이 또 하나의 길이 된다.</div>
+      <div><b>다음 단계</b><a href="global.html">22장</a>: 환율 1,300원에서 1,450원의 효과와 환헤지, 해외 주식 양도세.</div>
+    </div>
+  </div>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>금리는 세 길로 주가에 닿는다. 할인율(가치를 깎음), 이자 비용(이익을 깎음), 다른 자산과의 경쟁(시장의 PER을 누름). 은행처럼 금리가 오를 때 이익이 느는 회사도 있다.</li>
+      <li>먼 미래의 현금일수록 할인율 변화에 크게 흔들린다. 현금흐름의 무게중심(주식의 듀레이션)이 멀수록 금리에 민감하고, 영구 성장 모형에서 금리 1%p당 가치 변화는 약 \(1/(r-g)\) = 주가 ÷ 현금흐름이다. 그래서 PER이 높은 성장주가 금리에 더 약하다.</li>
+      <li>시장을 흔드는 것은 금리 결정 자체가 아니라 예상과의 차이와 앞으로의 신호다. 예상된 인상은 이미 값에 들어 있다.</li>
+      <li>주식 위험 프리미엄은 이익수익률(1/PER) − 실질금리로 어림한다. 실질금리가 오르면 같은 ERP를 위해 PER이 내려가야 하고, PER이 높은 시장일수록 충격이 크다.</li>
+      <li>인플레이션은 할인율을 올려 단기에는 주가를 누르지만, 이익도 물가를 따라 커지므로 장기에는 현금보다 나은 실물 자산이다. 가격 전가력이 차이를 만든다.</li>
+      <li>경기 국면마다 강한 업종이 바뀌지만(경기 민감 → 금융·성장 → 방어), 주가는 경기를 약 반년 앞서고, 개별 회사의 고유 위험이 국면보다 클 때가 많다.</li>
+      <li>실적 발표에서 주가는 컨센서스가 아니라 시장의 실제 기대, 가이던스, 발표 전 주가 흐름과의 차이에 반응한다. 좋은 실적에 내리는 일은 흔하다.</li>
+      <li>환율은 수출주와 수입 원가가 큰 회사에 반대로 작용한다. 매크로를 아는 것은 노출을 이해하는 데 쓸모 있지만, 맞혀서 매매하기는 어렵다. 주가는 이미 시장의 예상을 반영하고 있다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 장기 금리가 0.5%p 올랐다. 오늘 시장 가치가 같은 두 회사 A(PER 50배, 이익 대부분이 10년 뒤)와 B(PER 9배, 지금 버는 이익을 배당) 가운데 이론상 더 크게 내릴 회사와 그 이유는?</p>
+        <div class="opts">
+          <button class="opt">B. 배당을 많이 주는 회사는 금리가 오르면 배당을 줄여야 하기 때문이다.</button>
+          <button class="opt" data-correct>A. 현금흐름의 무게중심(듀레이션)이 멀어 할인율 변화가 더 크게 증폭되기 때문이다.</button>
+          <button class="opt">둘이 같다. 시장 가치가 같으면 금리 민감도도 같다.</button>
+          <button class="opt">A. PER이 높은 회사는 빚이 많기 때문이다.</button>
+        </div>
+        <div class="quiz-exp">할인 계수 \(1/(1+r)^t\)는 \(t\)가 클수록 \(r\)에 민감하다. 가치의 대부분이 먼 미래에 있는 A의 듀레이션이 길다. 영구 성장 모형에서 금리 1%p당 가치 변화 ≈ \(1/(r-g)\) = 주가 ÷ 현금흐름이므로 PER이 높을수록 민감하다. PER과 부채는 별개의 이야기다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 시장 PER 20배, 국채 10년 금리 4%, 기대 인플레이션 2%다. 이 장의 방법으로 어림한 주식 위험 프리미엄(ERP)은?</p>
+        <div class="opts">
+          <button class="opt">1%</button>
+          <button class="opt">16%</button>
+          <button class="opt" data-correct>3%</button>
+          <button class="opt">5%</button>
+        </div>
+        <div class="quiz-exp">이익수익률 = 1/20 = 5%, 실질금리 = 4% − 2% = 2%. ERP ≈ 5% − 2% = 3%. 5%는 이익수익률만 본 것, 1%는 명목 국채 금리와 비교한 값이다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. "경기 저점을 확인하고 나서 주식을 사면 안전하다." 이 계획의 가장 큰 문제는?</p>
+        <div class="opts">
+          <button class="opt" data-correct>주가는 경기보다 먼저 움직여서, 저점이 확인될 무렵에는 이미 바닥에서 꽤 오른 뒤인 경우가 많다.</button>
+          <button class="opt">경기 저점에서는 거래소가 문을 닫는다.</button>
+          <button class="opt">경기 저점에는 기준금리가 가장 높다.</button>
+          <button class="opt">경기와 주가는 아무 관계가 없다.</button>
+        </div>
+        <div class="quiz-exp">주가는 앞으로의 이익을 할인한 값이라 6개월~1년 뒤의 경기를 미리 반영한다. 주가지수가 경기 선행지수의 재료로 쓰일 정도다. 위상차 시뮬레이터에서 6개월 선행이면 저점 3개월 뒤 확인하고 살 때 이미 약 14% 오른 뒤였다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 한 회사가 컨센서스보다 10% 높은 영업이익을 발표했는데 다음 날 주가가 5% 내렸다. 이유로 가장 거리가 먼 것은?</p>
+        <div class="opts">
+          <button class="opt">발표 전 몇 달 동안 주가가 크게 올라, 시장의 실제 기대가 컨센서스보다 높았다.</button>
+          <button class="opt">다음 분기 전망(가이던스)을 낮췄다.</button>
+          <button class="opt" data-correct>컨센서스보다 좋은 실적은 회계상 반드시 다음 분기 이익을 줄인다.</button>
+          <button class="opt">같은 날 금리 뉴스로 시장 전체가 내렸다.</button>
+        </div>
+        <div class="quiz-exp">주가는 기대와의 차이에 반응한다. 위스퍼 넘버, 가이던스, 발표 전 주가 흐름, 그날의 시장 전체 소음이 모두 반응을 바꾼다. 이번 분기 실적이 좋다고 다음 분기 이익이 회계상 자동으로 줄지는 않는다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 기준금리 인상 뉴스에 다온은행 주가가 올랐다. 이 장의 모형으로 가장 알맞은 설명은?</p>
+        <div class="opts">
+          <button class="opt">은행은 할인율의 영향을 전혀 받지 않는다.</button>
+          <button class="opt">금리가 오르면 대출을 갚지 못하는 사람이 줄어서다.</button>
+          <button class="opt">은행 주식은 채권이라서 금리가 오르면 값이 오른다.</button>
+          <button class="opt" data-correct>변동금리 대출의 이자가 예금 이자보다 빨리 올라 순이자마진이 커지고, 그 이익 증가가 할인율 효과보다 컸다. 다만 금리가 너무 높아지면 대손비용이 이를 뒤집는다.</button>
+        </div>
+        <div class="quiz-exp">모형에서 다온은행은 할인율로 약 −2.9%를 잃지만 순이자마진 확대로 약 +4.1%를 얻어 +1.2%로 끝났다. 금리를 계속 올리면 연체가 늘어 대손비용이 이익을 깎는다. 은행에는 너무 낮은 금리도, 너무 높은 금리도 나쁘다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const $ = (id) => document.getElementById(id);
+  const wOf = (id) => $(id).parentElement.clientWidth;
+  function knob(ctx, x, y, P, r) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = P.bg; ctx.stroke();
+    ctx.restore();
+  }
+  function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, r); else ctx.rect(x, y, w, h);
+  }
+  function alpha(col, a) {
+    if (col && col.startsWith("#")) {
+      const n = col.length === 4 ? col.slice(1).split("").map((c) => parseInt(c + c, 16)) : [1, 3, 5].map((i) => parseInt(col.slice(i, i + 2), 16));
+      return "rgba(" + n.join(",") + "," + a + ")";
+    }
+    return col;
+  }
+  function text(ctx, s, x, y, o) {
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "middle";
+    ctx.fillText(s, x, y);
+  }
+  const tchg = (x, d) => '<span class="' + MB.tone(Math.abs(x) < 5e-4 ? 0 : x) + '">' + MB.chg(x, d == null ? 1 : d) + "</span>";
+  const pp = (x, d) => (x > 1e-9 ? "+" : x < -1e-9 ? "−" : "") + Math.abs(x).toFixed(d == null ? 2 : d) + "%p";
+  const pc = (x, d) => (x * 100).toFixed(d == null ? 1 : d) + "%";
+  const eok = (x) => (Math.abs(x) >= 1e12 ? (x / 1e12).toFixed(2) + "조" : Math.round(x / 1e8).toLocaleString("ko-KR") + "억");
+  const ease = (t) => 1 - Math.pow(1 - MB.clamp(t, 0, 1), 3);
+  const CO = ST.CO, NAME = (k) => CO[k].name;
+  function coColor(k, P) { return { hanbit: P.accent, nuri: P.ok, byeol: P.warn, daon: P.dim, moa: P.accent2 }[k]; }
+
+  /* ---------------------------------------------------------- 공통 가치 모형: 주가에 맞춘 2단계 성장 */
+  function gAt(t, g1, gT, N) { return t <= N ? (N > 1 ? g1 + (gT - g1) * (t - 1) / (N - 1) : g1) : gT; }
+  function val(cf0, g1, gT, N, r) {
+    let v = 0, cf = cf0;
+    for (let t = 1; t <= N; t++) { cf *= 1 + gAt(t, g1, gT, N); v += cf / Math.pow(1 + r, t); }
+    return v + (cf * (1 + gT)) / (r - gT) / Math.pow(1 + r, N);
+  }
+  function solveR(price, m) {
+    let lo = m.gT + 1e-4, hi = 1;
+    for (let i = 0; i < 80; i++) { const mid = (lo + hi) / 2; if (val(m.cf0, m.g1, m.gT, m.N, mid) > price) lo = mid; else hi = mid; }
+    return (lo + hi) / 2;
+  }
+  const VM = { hanbit: { g1: 0.08, gT: 0.02, N: 5 }, nuri: { g1: 0.03, gT: 0.03, N: 0 }, daon: { g1: 0.02, gT: 0.02, N: 0 }, moa: { g1: 0.2, gT: 0.03, N: 10 } };
+  Object.keys(VM).forEach((k) => {
+    const m = VM[k];
+    m.cf0 = CO[k].fcf / CO[k].shares; m.r = solveR(CO[k].price, m);
+    m.D = (val(m.cf0, m.g1, m.gT, m.N, m.r - 5e-4) - val(m.cf0, m.g1, m.gT, m.N, m.r + 5e-4)) / CO[k].price / 1e-3;
+  });
+  VM.byeol = { D: 35 };
+  const discFx = (k, dr) => (k === "byeol" ? Math.exp(-VM.byeol.D * dr) - 1 : val(VM[k].cf0, VM[k].g1, VM[k].gT, VM[k].N, VM[k].r + dr) / CO[k].price - 1);
+  const intFx = (k, dp) => (k === "daon" || CO[k].net <= 0 ? 0 : (-(CO[k].debt - CO[k].cash) * dp * 0.76) / CO[k].net);
+  const BANK = { ea: 340e12, loans: 304e12, v: 0.6, b: 0.45 };
+  const nimFx = (k, dp) => (k === "daon" ? (BANK.ea * (BANK.v - 0.95 * BANK.b) * dp * 0.76 * 2) / (CO.daon.price * CO.daon.shares) : 0);
+  const ROT = { hanbit: -0.01, nuri: 0.035, byeol: -0.02, daon: 0, moa: -0.005 };
+
+  /** 가로 누적 막대. rows:[{label, parts:[...], color}], o:{range:[lo,hi], colors:[...], p, top, step} */
+  function hstack(ctx, w, h, rows, o) {
+    const P = MB.palette(), narrow = w < 420;
+    const lw = narrow ? 74 : 92, vw = narrow ? 50 : 58, top = o.top || 8, bot = 22;
+    const x0 = lw + 6, x1 = w - vw - 6, rowH = (h - top - bot) / rows.length;
+    const [lo, hi] = o.range, X = (v) => x0 + ((v - lo) / (hi - lo)) * (x1 - x0), p = o.p == null ? 1 : o.p;
+    const step = o.step || 0.05;
+    ctx.font = MB.font(10.5, true); ctx.textAlign = "center"; ctx.textBaseline = "top";
+    for (let v = Math.ceil(lo / step - 1e-9) * step; v <= hi + 1e-9; v += step) {
+      const x = X(v);
+      ctx.strokeStyle = Math.abs(v) < 1e-9 ? P.axis : P.grid; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, h - bot); ctx.stroke();
+      ctx.fillStyle = P.faint; ctx.fillText((v > 1e-9 ? "+" : v < -1e-9 ? "−" : "") + Math.round(Math.abs(v) * 100) + "%", x, h - bot + 5);
+    }
+    rows.forEach((r, i) => {
+      const yc = top + rowH * (i + 0.5), bh = Math.min(22, rowH * 0.56);
+      text(ctx, r.label, lw, yc, { size: narrow ? 11.5 : 12.5, color: r.strong ? P.text : P.dim, align: "right", weight: r.strong ? 700 : 400 });
+      let pos = 0, neg = 0, tot = 0;
+      r.parts.forEach((v0, j) => {
+        const v = v0 * p; if (!v) return;
+        const a = v >= 0 ? pos : neg, b = a + v;
+        if (v >= 0) pos = b; else neg = b;
+        const xa = X(MB.clamp(a, lo, hi)), xb = X(MB.clamp(b, lo, hi));
+        ctx.fillStyle = (r.colors || o.colors)[j]; ctx.fillRect(Math.min(xa, xb), yc - bh / 2, Math.max(1, Math.abs(xb - xa)), bh);
+        tot += v;
+      });
+      const xt = X(MB.clamp(tot, lo, hi));
+      ctx.strokeStyle = P.text; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(xt, yc - bh / 2 - 4); ctx.lineTo(xt, yc + bh / 2 + 4); ctx.stroke();
+      text(ctx, MB.chg(tot, 1), w - 4, yc, { size: narrow ? 11 : 12, mono: true, weight: 700, color: MB.toneColor(Math.abs(tot) < 5e-4 ? 0 : tot), align: "right" });
+    });
+  }
+
+  /* ---------------------------------------------------------- 1. 할인율과 두 회사 */
+  (function () {
+    const T = 60, nu = [], mo = [];
+    let b = 1;
+    for (let t = 1; t <= T; t++) { nu.push(1); mo.push(b); b *= 1 + (t < 15 ? 0.35 + ((0.03 - 0.35) * (t - 1)) / 14 : 0.03); }
+    const pvs = (cf, r) => cf.map((c, i) => c / Math.pow(1 + r, i + 1));
+    const sum = (a) => a.reduce((s, x) => s + x, 0);
+    const kN = 100 / sum(pvs(nu, 0.08)), kM = 100 / sum(pvs(mo, 0.08));
+    const R = MB.range("pv-r", (v) => v.toFixed(1) + "%", () => cv.redraw());
+    const cv = MB.canvas("#pv-cv", (ctx, w, h) => {
+      const P = MB.palette(), r = R() / 100, narrow = w < 420;
+      const left = narrow ? 8 : 12, right = narrow ? 30 : 40, gap = 30;
+      const ph = (h - 26 - gap - 18) / 2;
+      const panels = [
+        { name: "누리식품: 지금부터 꾸준히", cf: nu, k: kN, col: P.ok, y: 22 },
+        { name: "모아플랫폼: 먼 미래에 크게", cf: mo, k: kM, col: P.accent2, y: 22 + ph + gap },
+      ];
+      const bw = (w - left - right) / T;
+      panels.forEach((pn) => {
+        const base = pvs(pn.cf, 0.08).map((x) => x * pn.k), cur = pvs(pn.cf, r).map((x) => x * pn.k);
+        const mx = Math.max(...base) * 1.9, Y = (v) => pn.y + ph - (Math.min(v, mx) / mx) * ph;
+        ctx.strokeStyle = P.axis; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(left, pn.y + ph + 0.5); ctx.lineTo(w - right, pn.y + ph + 0.5); ctx.stroke();
+        for (let i = 0; i < T; i++) {
+          const x = left + i * bw;
+          ctx.fillStyle = alpha(P.faint, 0.35); ctx.fillRect(x + bw * 0.12, Y(base[i]), bw * 0.76, pn.y + ph - Y(base[i]));
+          ctx.fillStyle = pn.col; ctx.globalAlpha = 0.9;
+          ctx.fillRect(x + bw * 0.22, Y(cur[i]), bw * 0.56, pn.y + ph - Y(cur[i]));
+          ctx.globalAlpha = 1;
+          if (cur[i] > mx) { ctx.fillStyle = pn.col; ctx.beginPath(); ctx.moveTo(x + bw / 2, pn.y - 5); ctx.lineTo(x + bw * 0.9, pn.y + 1); ctx.lineTo(x + bw * 0.1, pn.y + 1); ctx.fill(); }
+        }
+        ctx.strokeStyle = P.accent; ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5; ctx.beginPath();
+        for (let i = 0; i <= T; i++) { const x = left + i * bw, y = pn.y + ph - Math.pow(1 + r, -i) * ph; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+        ctx.stroke(); ctx.setLineDash([]);
+        const tot = sum(cur);
+        text(ctx, pn.name, left, pn.y - 12, { size: narrow ? 12 : 13, weight: 700, color: P.text });
+        text(ctx, tot.toFixed(1), w - 4, pn.y - 12, { size: narrow ? 12 : 13, mono: true, weight: 700, color: pn.col, align: "right" });
+      });
+      ctx.font = MB.font(10.5, true); ctx.fillStyle = P.faint; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      [1, 10, 20, 30, 40, 50, 60].forEach((t) => ctx.fillText(t + (t === 60 ? "년" : ""), left + (t - 0.5) * bw, h - 16));
+      text(ctx, "점선: 할인 계수", w - 4, 22 + 8, { size: 10.5, color: P.accent, align: "right" });
+      const s10 = (pn) => sum(pvs(pn, r).slice(0, 10)) / sum(pvs(pn, r));
+      MB.stat("pv-o-n", (sum(pvs(nu, r)) * kN).toFixed(1) + " " + tchg(sum(pvs(nu, r)) * kN / 100 - 1));
+      MB.stat("pv-o-m", (sum(pvs(mo, r)) * kM).toFixed(1) + " " + tchg(sum(pvs(mo, r)) * kM / 100 - 1));
+      MB.stat("pv-o-s", pc(s10(nu), 0) + " / " + pc(s10(mo), 0));
+    }, { get height() { return wOf("pv-cv") < 420 ? 330 : 340; } });
+  })();
+
+  /* ---------------------------------------------------------- 2. 주식의 듀레이션 */
+  (function () {
+    const gT = 0.03, SHOW = 50;
+    const G = MB.range("dur-g", (v) => v + "%", () => cv.redraw());
+    const N = MB.range("dur-n", (v) => v + "년", () => cv.redraw());
+    const R = MB.range("dur-r", (v) => v.toFixed(2) + "%", () => cv.redraw());
+    function calc() {
+      const g1 = G() / 100, n = N(), r = Math.max(R() / 100, gT + 0.004);
+      const pv = []; let cf = 1, v = 0, s = 0;
+      for (let t = 1; t <= 3000; t++) { cf *= 1 + gAt(t, g1, gT, n); const p = cf / Math.pow(1 + r, t); pv.push(p); v += p; s += t * p; if (p < 1e-12 * v) break; }
+      const V = val(1, g1, gT, n, r), up = val(1, g1, gT, n, r + 0.01) / V - 1;
+      return { pv, v, mac: s / v, up, mult: V / (1 + gAt(1, g1, gT, n)), f10: pv.slice(0, 10).reduce((a, b) => a + b, 0) / v };
+    }
+    const cv = MB.canvas("#dur-cv", (ctx, w, h) => {
+      const P = MB.palette(), c = calc(), narrow = w < 420;
+      const left = 10, right = 10, top = 22, beamY = h - 58;
+      const bars = c.pv.slice(0, SHOW).map((x) => x / c.v);
+      bars.push(c.pv.slice(SHOW).reduce((a, b) => a + b, 0) / c.v);
+      const n = bars.length, bw = (w - left - right) / n;
+      const mx = Math.max(0.05, ...bars.slice(0, SHOW)) * 1.1;
+      const Y = (v) => beamY - (Math.min(v, mx) / mx) * (beamY - top);
+      for (let i = 0; i < n; i++) {
+        const x = left + i * bw, last = i === n - 1;
+        ctx.fillStyle = last ? alpha(P.accent2, 0.85) : alpha(P.accent, 0.75);
+        ctx.fillRect(x + bw * 0.14, Y(bars[i]), bw * 0.72, beamY - Y(bars[i]));
+        if (last && bars[i] > mx) text(ctx, pc(bars[i], 0), x + bw / 2, top - 8, { size: 10.5, mono: true, color: P.accent2, align: "right" });
+      }
+      ctx.strokeStyle = P.text; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(left, beamY + 1.5); ctx.lineTo(w - right, beamY + 1.5); ctx.stroke();
+      const fx = left + MB.clamp((c.mac - 0.5) / SHOW, 0, 1) * (w - left - right - bw) + bw / 2;
+      ctx.fillStyle = P.accent; ctx.beginPath(); ctx.moveTo(fx, beamY + 3); ctx.lineTo(fx + 11, beamY + 22); ctx.lineTo(fx - 11, beamY + 22); ctx.closePath(); ctx.fill();
+      const lab = "무게중심 " + c.mac.toFixed(1) + "년" + (c.mac > SHOW ? " →" : "");
+      text(ctx, lab, MB.clamp(fx, 60, w - 60), beamY + 34, { size: 12.5, weight: 700, color: P.accent, align: "center" });
+      ctx.font = MB.font(10.5, true); ctx.fillStyle = P.faint; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      [1, 10, 20, 30, 40].forEach((t) => ctx.fillText(String(t), left + (t - 0.5) * bw, beamY + 6));
+      ctx.fillText("50+", left + (n - 0.5) * bw, beamY + 6);
+      text(ctx, "해마다 들어오는 현금의 현재가치 비중", left, 9, { size: narrow ? 11 : 12, color: P.dim });
+      MB.stat("dur-o-d", c.mac.toFixed(1) + "<small>년</small>");
+      MB.stat("dur-o-s", tchg(c.up));
+      MB.stat("dur-o-m", c.mult.toFixed(1) + "<small>배</small>");
+      MB.stat("dur-o-f", pc(c.f10, 0));
+    }, { get height() { return wOf("dur-cv") < 420 ? 280 : 300; } });
+    function preset(k) { const m = VM[k]; G.set(Math.round(m.g1 * 100)); N.set(m.N); R.set(Math.round(m.r * 2000) / 20); }
+    $("dur-nuri").addEventListener("click", () => preset("nuri"));
+    $("dur-moa").addEventListener("click", () => preset("moa"));
+  })();
+
+  /* ---------------------------------------------------------- 3. 기준금리 속보 */
+  (function () {
+    const MODES = {
+      exp: { dl: 0.0005, dp: 0.0025, s: 0.2, rot: 0.2, head: "기준금리 0.25%p 인상 · 시장 예상과 같음" },
+      hawk: { dl: 0.0045, dp: 0.0025, s: 1, rot: 1, head: "기준금리 0.25%p 인상 · 추가 인상 시사" },
+      dove: { dl: -0.0035, dp: -0.0025, s: 1, rot: -0.6, head: "기준금리 0.25%p 깜짝 인하" },
+    };
+    const KEYS = ["moa", "byeol", "hanbit", "nuri", "daon"];
+    let p = 1;
+    const mode = MB.seg("ev-mode", () => { p = 0; });
+    function parts(k) { const m = MODES[mode()]; return [discFx(k, m.dl), intFx(k, m.dp * m.s), nimFx(k, m.dp * m.s), ROT[k] * m.rot]; }
+    const cv = MB.canvas("#ev-cv", (ctx, w, h) => {
+      const P = MB.palette(), m = MODES[mode()];
+      rr(ctx, 6, 6, w - 12, 30, 6); ctx.fillStyle = alpha(P.bad, 0.1); ctx.fill();
+      text(ctx, "속보", 16, 21, { size: 12, weight: 700, color: P.bad });
+      const msg = m.head, n = Math.ceil(msg.length * MB.clamp(p * 3, 0, 1));
+      text(ctx, msg.slice(0, n), 52, 21, { size: w < 420 ? 11.5 : 13, weight: 600, color: P.text });
+      const rows = KEYS.map((k) => ({ label: NAME(k), parts: parts(k), strong: k === "moa" || k === "nuri" }));
+      hstack(ctx, w, h, rows, { range: [-0.2, 0.2], step: 0.05, top: 46, p: ease((p - 0.25) / 0.75), colors: [P.accent, P.warn, P.ok, P.dim] });
+      const tot = (k) => parts(k).reduce((a, b) => a + b, 0);
+      MB.stat("ev-o-l", pp(m.dl * 100));
+      MB.stat("ev-o-moa", tchg(tot("moa")));
+      MB.stat("ev-o-nuri", tchg(tot("nuri")));
+      MB.stat("ev-o-daon", tchg(tot("daon")));
+    }, { get height() { return wOf("ev-cv") < 420 ? 290 : 300; } });
+    MB.loop(cv.canvas, (dt) => { if (p < 1) { p = Math.min(1, p + dt / 1.6); cv.redraw(); } });
+    $("ev-go").addEventListener("click", () => { p = 0; });
+  })();
+
+  /* ---------------------------------------------------------- 4. 발표일의 변동성 */
+  (function () {
+    const DAYS = 250, EV = [14, 46, 77, 108, 140, 171, 202, 233];
+    let seed = 7, data = [], n = DAYS, playing = false;
+    function gen() {
+      const g = ST.gauss(seed);
+      data = [];
+      for (let i = 0; i < DAYS; i++) {
+        const ev = EV.includes(i), pre = EV.includes(i + 1);
+        data.push({ r: (ev ? 0.022 : pre ? 0.006 : 0.009) * g(), ev });
+      }
+      const ab = (a) => a.reduce((s, d) => s + Math.abs(d.r), 0) / a.length;
+      const top = data.slice().sort((a, b) => Math.abs(b.r) - Math.abs(a.r)).slice(0, 10);
+      MB.stat("fm-o-e", pc(ab(data.filter((d) => d.ev)), 2));
+      MB.stat("fm-o-n", pc(ab(data.filter((d) => !d.ev)), 2));
+      MB.stat("fm-o-t", top.filter((d) => d.ev).length + "<small>일 / 10일</small>");
+    }
+    gen();
+    const cv = MB.canvas("#fm-cv", (ctx, w, h) => {
+      const P = MB.palette(), narrow = w < 420;
+      const box = { x: narrow ? 34 : 44, y: 34, w: w - (narrow ? 34 : 44) - 10, h: h - 62 };
+      const lim = 0.07, Y = (v) => box.y + box.h / 2 - (v / lim) * (box.h / 2), bw = box.w / DAYS;
+      ctx.font = MB.font(10.5, true); ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      [-0.06, -0.03, 0, 0.03, 0.06].forEach((v) => {
+        ctx.strokeStyle = v === 0 ? P.axis : P.grid; ctx.beginPath(); ctx.moveTo(box.x, Y(v)); ctx.lineTo(box.x + box.w, Y(v)); ctx.stroke();
+        ctx.fillStyle = P.faint; ctx.fillText((v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v * 100) + "%", box.x - 4, Y(v));
+      });
+      for (let i = 0; i < n; i++) {
+        const d = data[i], x = box.x + i * bw;
+        if (d.ev) { ctx.fillStyle = alpha(P.accent, 0.1); ctx.fillRect(x - bw, box.y, bw * 3, box.h); }
+        ctx.fillStyle = MB.toneColor(d.r);
+        const y0 = Y(0), y1 = Y(MB.clamp(d.r, -lim, lim));
+        ctx.fillRect(x, Math.min(y0, y1), Math.max(1, bw * 0.8), Math.max(1, Math.abs(y1 - y0)));
+        if (d.ev) { ctx.fillStyle = P.accent; ctx.beginPath(); ctx.moveTo(x + bw / 2, box.y - 2); ctx.lineTo(x + bw / 2 + 5, box.y - 11); ctx.lineTo(x + bw / 2 - 5, box.y - 11); ctx.fill(); }
+      }
+      ctx.font = MB.font(10.5); ctx.fillStyle = P.faint; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      ["1월", "4월", "7월", "10월"].forEach((m, i) => ctx.fillText(m, box.x + (i * DAYS * bw) / 4 + 10, box.y + box.h + 6));
+      text(ctx, "▼ 금리 발표일", box.x + box.w, 8, { size: 11, color: P.accent, align: "right" });
+      text(ctx, n < DAYS ? Math.floor(n) + "일째" : "하루 등락률", box.x + 2, 8, { size: 11, color: P.dim });
+    }, { get height() { return wOf("fm-cv") < 420 ? 230 : 250; } });
+    MB.loop(cv.canvas, (dt) => { if (playing) { n = Math.min(DAYS, n + dt * 60); if (n >= DAYS) playing = false; cv.redraw(); } });
+    $("fm-go").addEventListener("click", () => { n = 0; playing = true; });
+    $("fm-re").addEventListener("click", () => { seed += 1; gen(); n = 0; playing = true; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 5. 부채와 이자 비용 */
+  (function () {
+    const EBIT = 100, R0 = 0.04;
+    const net = (d, dr) => { const pre = EBIT - d * EBIT * (R0 + dr); return pre > 0 ? pre * 0.76 : pre; };
+    const chg = (d, dr) => net(d, dr) / net(d, 0) - 1;
+    const D = MB.range("de-d", (v) => v.toFixed(1) + "배", () => cv.redraw());
+    const R = MB.range("de-r", (v) => "+" + v.toFixed(2) + "%p", () => cv.redraw());
+    const cv = MB.canvas("#de-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = D(), dr = R() / 100, narrow = w < 420;
+      const box = { x: narrow ? 48 : 56, y: 14, w: w - (narrow ? 48 : 56) - (narrow ? 34 : 40), h: h - 14 - 46 };
+      const line = (dd) => { const a = []; for (let x = 0; x <= 6.001; x += 0.1) a.push([x, Math.max(-1.6, chg(dd, x / 100)) * 100]); return a; };
+      const ref = [1, 3, 6, 10];
+      const c = MB.chart(ctx, box, {
+        x: [0, 6], y: [-160, 10], xLabel: "금리 상승(%p)", yLabel: "순이익 변화",
+        yFmt: (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "%", xFmt: (v) => "+" + v,
+        bands: [], hlines: [{ y: -100, color: P.bad, label: "적자 전환" }],
+        series: ref.map((dd) => ({ data: line(dd), color: alpha(P.dim, 0.5), width: 1.2 })).concat([{ data: line(d), color: P.accent, width: 2.6 }]),
+      });
+      ref.forEach((dd) => { const yv = Math.max(-160, chg(dd, 0.06) * 100); text(ctx, dd + "배", box.x + box.w + 4, c.Y(yv), { size: 10.5, color: P.faint }); });
+      const y = Math.max(-160, chg(d, dr) * 100);
+      ctx.fillStyle = y < -100 ? P.bad : P.accent; ctx.beginPath(); ctx.arc(c.X(dr * 100), c.Y(y), 6, 0, TAU); ctx.fill();
+      const I = d * EBIT * (R0 + dr), cov = I > 0 ? EBIT / I : Infinity;
+      MB.stat("de-o-i", Math.round(d * EBIT * R0) + " → " + Math.round(I) + "<small>억</small>");
+      MB.stat("de-o-c", isFinite(cov) ? '<span class="' + (cov < 1 ? "bad-t" : cov < 1.5 ? "warn-t" : "") + '">' + cov.toFixed(2) + "배</span>" : "빚 없음");
+      MB.stat("de-o-n", net(d, dr) <= 0 ? '<span class="bad-t">적자</span>' : tchg(chg(d, dr)));
+    }, { get height() { return wOf("de-cv") < 420 ? 280 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 6. 은행의 금리 곡선 */
+  (function () {
+    let x = 0.025;
+    const V = MB.range("nm-v", (v) => v + "%", () => cv.redraw());
+    const B = MB.range("nm-b", (v) => v + "%", () => cv.redraw());
+    const nim = (x, v, b) => 0.03 + v * (x - 0.025) - 0.95 * Math.max(0.001, 0.015 + b * (x - 0.025));
+    const cc = (x) => 0.003 + 6 * Math.pow(Math.max(0, x - 0.03), 2);
+    const OPEX = BANK.ea * nim(0.025, 0.6, 0.45) - BANK.loans * cc(0.025) - 9000e8 / 0.76;
+    const net = (x, v, b) => { const p = BANK.ea * nim(x, v, b) - BANK.loans * cc(x) - OPEX; return p > 0 ? p * 0.76 : p; };
+    let L = null;
+    const cv = MB.canvas("#nm-cv", (ctx, w, h) => {
+      const P = MB.palette(), v = V() / 100, b = B() / 100, narrow = w < 420;
+      const box = { x: narrow ? 46 : 52, y: 16, w: w - (narrow ? 46 : 52) - 14, h: h - 16 - 46 };
+      const data = []; for (let r = 0; r <= 0.0801; r += 0.0025) data.push([r * 100, net(r, v, b) / 1e12]);
+      const ys = data.map((d) => d[1]), lo = Math.min(-0.5, Math.floor(Math.min(...ys) * 2) / 2), hi = Math.max(2, Math.ceil(Math.max(...ys) * 2) / 2);
+      const c = MB.chart(ctx, box, {
+        x: [0, 8], y: [lo, hi], xLabel: "기준금리(%)", yLabel: "순이익(조원)", yFmt: (v) => v.toFixed(1), xFmt: (v) => v + "%",
+        bands: [], hlines: [{ y: 0, color: P.bad }, { y: 0.9, color: P.faint, label: "현재 9,000억" }],
+        series: [{ data, color: P.accent, width: 2.6 }],
+      });
+      L = c;
+      text(ctx, "적자", c.X(4), c.Y(0) + 9, { size: 11, color: P.bad });
+      const y = net(x, v, b) / 1e12;
+      ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(x * 100), box.y); ctx.lineTo(c.X(x * 100), box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, c.X(x * 100), c.Y(MB.clamp(y, lo, hi)), P, 8);
+      MB.stat("nm-o-r", (x * 100).toFixed(2) + "%");
+      MB.stat("nm-o-m", pc(nim(x, v, b), 2));
+      MB.stat("nm-o-c", pc(cc(x), 2));
+      const n = net(x, v, b);
+      MB.stat("nm-o-n", n <= 0 ? '<span class="bad-t">적자 ' + eok(-n) + "</span>" : eok(n));
+    }, { get height() { return wOf("nm-cv") < 420 ? 270 : 300; } });
+    MB.drag(cv.canvas, { move(px) { if (!L) return; x = Math.round(MB.clamp((px - L.box.x) / L.box.w * 8, 0, 8) * 4) / 400; cv.redraw(); } });
+    $("nm-re").addEventListener("click", () => { x = 0.025; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 7. ERP 저울 */
+  (function () {
+    const PE = MB.range("er-pe", (v) => v.toFixed(1) + "배", () => cv.redraw());
+    const Yd = MB.range("er-y", (v) => v.toFixed(1) + "%", () => cv.redraw());
+    const I = MB.range("er-i", (v) => v.toFixed(1) + "%", () => cv.redraw());
+    const cv = MB.canvas("#er-cv", (ctx, w, h) => {
+      const P = MB.palette(), ey = 1 / PE(), real = (Yd() - I()) / 100, erp = ey - real, narrow = w < 420;
+      const cx = w / 2, cy = 116, arm = Math.min(w * 0.36, 190), ang = MB.clamp(-erp * 3.2, -0.3, 0.3);
+      const lx = cx - arm * Math.cos(ang), ly = cy + arm * Math.sin(ang), rx = cx + arm * Math.cos(ang), ry = cy - arm * Math.sin(ang);
+      ctx.fillStyle = P.surface; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 18, h - 72); ctx.lineTo(cx - 18, h - 72); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = P.border; ctx.stroke();
+      ctx.strokeStyle = P.text; ctx.lineWidth = 4; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(rx, ry); ctx.stroke(); ctx.lineCap = "butt";
+      ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(cx, cy, 5, 0, TAU); ctx.fill();
+      function pan(x, y, v, col, lab) {
+        const pw = narrow ? 92 : 112, hh = MB.clamp(v * 700, 2, 60);
+        ctx.strokeStyle = P.dim; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - pw / 2, y + 20); ctx.moveTo(x, y); ctx.lineTo(x + pw / 2, y + 20); ctx.stroke();
+        ctx.fillStyle = alpha(col, 0.85); ctx.fillRect(x - pw / 2 + 10, y + 20 - hh, pw - 20, hh);
+        ctx.strokeStyle = P.text; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - pw / 2, y + 20); ctx.lineTo(x + pw / 2, y + 20); ctx.stroke();
+        text(ctx, lab, x, y + 34, { size: narrow ? 11 : 12, color: P.dim, align: "center" });
+        text(ctx, pc(v, 2), x, y + 50, { size: narrow ? 13 : 15, mono: true, weight: 700, color: col, align: "center" });
+      }
+      pan(lx, ly, ey, P.accent, "주식 이익수익률");
+      pan(rx, ry, Math.max(0, real), P.ok, real < 0 ? "실질금리(음수)" : "국채 실질금리");
+      const sx0 = 24, sx1 = w - 24, sy = h - 28, lo = -0.04, hi = 0.12, X = (v) => sx0 + ((MB.clamp(v, lo, hi) - lo) / (hi - lo)) * (sx1 - sx0);
+      [[lo, 0.02, alpha(P.warn, 0.25)], [0.02, 0.06, alpha(P.faint, 0.2)], [0.06, hi, alpha(P.ok, 0.22)]].forEach(([a, b, col]) => { ctx.fillStyle = col; ctx.fillRect(X(a), sy - 6, X(b) - X(a), 12); });
+      ctx.font = MB.font(10.5); ctx.fillStyle = P.faint; ctx.textBaseline = "top"; ctx.textAlign = "center";
+      ctx.fillText("얇은 쿠션", (X(lo) + X(0.02)) / 2, sy + 9); ctx.fillText("보통", (X(0.02) + X(0.06)) / 2, sy + 9); ctx.fillText("두꺼운 쿠션", (X(0.06) + X(hi)) / 2, sy + 9);
+      ctx.fillStyle = P.accent; ctx.beginPath(); ctx.moveTo(X(erp), sy - 8); ctx.lineTo(X(erp) + 6, sy - 18); ctx.lineTo(X(erp) - 6, sy - 18); ctx.fill();
+      text(ctx, "ERP " + pc(erp, 2), MB.clamp(X(erp), 40, w - 40), sy - 26, { size: 12, mono: true, weight: 700, color: P.accent, align: "center" });
+      const pe2 = 1 / (erp + real + 0.01);
+      MB.stat("er-o-e", pc(ey, 2));
+      MB.stat("er-o-r", pc(real, 2));
+      MB.stat("er-o-p", '<span class="' + (erp < 0.02 ? "warn-t" : "") + '">' + pc(erp, 2) + "</span>");
+      MB.stat("er-o-x", erp + real + 0.01 > 0 ? pe2.toFixed(1) + "배 " + tchg(pe2 / PE() - 1) : "—");
+    }, { get height() { return wOf("er-cv") < 420 ? 270 : 290; } });
+  })();
+
+  /* ---------------------------------------------------------- 8. 인플레이션: 이익 성장 vs 할인율 */
+  const INF = {
+    r: (pi) => 0.01 + pi + 0.05 + 0.3 * Math.max(0, pi - 0.03),
+    g: (pi, s) => 0.01 + s * pi,
+    ratio: (pi, s) => (INF.r(0.02) - INF.g(0.02, s)) / (INF.r(pi) - INF.g(pi, s)),
+  };
+  (function () {
+    const Pi = MB.range("in-p", (v) => v.toFixed(1) + "%", () => cv.redraw());
+    const S = MB.range("in-s", (v) => v + "%", () => cv.redraw());
+    const cv = MB.canvas("#in-cv", (ctx, w, h) => {
+      const P = MB.palette(), pi = Pi() / 100, s = S() / 100, narrow = w < 420;
+      const box = { x: narrow ? 48 : 54, y: 14, w: w - (narrow ? 48 : 54) - (narrow ? 54 : 62), h: h - 14 - 46 };
+      const line = (ss) => { const a = []; for (let x = 0; x <= 10.001; x += 0.25) a.push([x, (INF.ratio(x / 100, ss) - 1) * 100]); return a; };
+      const refs = [0, 0.5, 1];
+      const c = MB.chart(ctx, box, {
+        x: [0, 10], y: [-70, 45], xLabel: "물가 상승률(%)", yLabel: "주식 가치 변화",
+        yFmt: (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "%", xFmt: (v) => v + "%",
+        hlines: [{ y: 0, color: P.axis }], vlines: [{ x: 2, color: P.faint, label: "기준 2%" }],
+        series: refs.map((ss) => ({ data: line(ss), color: alpha(P.dim, 0.5), width: 1.2 })).concat([{ data: line(s), color: P.accent, width: 2.6 }]),
+      });
+      refs.forEach((ss) => text(ctx, "전가 " + ss * 100 + "%", box.x + box.w + 4, c.Y((INF.ratio(0.1, ss) - 1) * 100), { size: 10.5, color: P.faint }));
+      const v = INF.ratio(pi, s) - 1;
+      ctx.fillStyle = MB.toneColor(v); ctx.beginPath(); ctx.arc(c.X(pi * 100), c.Y(v * 100), 6, 0, TAU); ctx.fill();
+      MB.stat("in-o-r", pc(INF.r(0.02), 1) + " → " + pc(INF.r(pi), 1));
+      MB.stat("in-o-g", pc(INF.g(0.02, s), 1) + " → " + pc(INF.g(pi, s), 1));
+      MB.stat("in-o-v", tchg(v));
+    }, { get height() { return wOf("in-cv") < 420 ? 270 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 9. 물가 충격 뒤 10년 */
+  (function () {
+    const Pi = MB.range("rl-p", (v) => v.toFixed(1) + "%", () => cv.redraw());
+    const S = MB.range("rl-s", (v) => v + "%", () => cv.redraw());
+    const cv = MB.canvas("#rl-cv", (ctx, w, h) => {
+      const P = MB.palette(), pi = Pi() / 100, s = S() / 100, narrow = w < 420;
+      const r = INF.r(pi), q = INF.ratio(pi, s), gr = (1 + r) / (1 + pi);
+      const stock = [[0, 100]], dep = [], cash = [], base = [];
+      for (let t = 0; t <= 10; t += 0.1) {
+        if (t > 0) stock.push([t, 100 * q * Math.pow(gr, t)]);
+        dep.push([t, 100 * Math.pow((1 + pi + 0.005) / (1 + pi), t)]);
+        cash.push([t, 100 / Math.pow(1 + pi, t)]);
+        base.push([t, 100 * Math.pow(1.08 / 1.02, t)]);
+      }
+      stock.splice(1, 0, [0.001, 100 * q]);
+      const box = { x: narrow ? 40 : 46, y: 14, w: w - (narrow ? 40 : 46) - 12, h: h - 14 - 46 };
+      MB.chart(ctx, box, {
+        x: [0, 10], y: [0, 200], xLabel: "충격 뒤 경과(년)", yLabel: "실질 가치(처음 100)", xFmt: (v) => v + "년",
+        hlines: [{ y: 100, color: P.faint }],
+        series: [
+          { data: base, color: alpha(P.accent, 0.45), width: 1.4, dash: [5, 4] },
+          { data: cash, color: P.dim, width: 2 },
+          { data: dep, color: P.ok, width: 2 },
+          { data: stock, color: P.accent, width: 2.8 },
+        ],
+      });
+      const yrs = q >= 1 ? 0 : Math.log(1 / q) / Math.log(gr);
+      MB.stat("rl-o-s", (100 * q * Math.pow(gr, 10)).toFixed(0));
+      MB.stat("rl-o-d", (100 * Math.pow((1 + pi + 0.005) / (1 + pi), 10)).toFixed(0));
+      MB.stat("rl-o-c", (100 / Math.pow(1 + pi, 10)).toFixed(0));
+      MB.stat("rl-o-y", q >= 0.9995 ? "충격 없음" : yrs > 10 ? "10년 넘게" : "약 " + yrs.toFixed(1) + "<small>년</small>");
+    }, { get height() { return wOf("rl-cv") < 420 ? 260 : 290; } });
+  })();
+
+  /* ---------------------------------------------------------- 10. 경기 시계 */
+  const PHASES = [
+    { name: "회복", rate: "낮음, 인하 끝", earn: "바닥에서 반등" },
+    { name: "확장", rate: "오르기 시작", earn: "빠르게 증가" },
+    { name: "둔화", rate: "높음, 정점 부근", earn: "정점 지나 둔화" },
+    { name: "침체", rate: "인하 시작", earn: "감소" },
+  ];
+  const CYC = [
+    { k: "hanbit", label: "한빛반도체", sub: "경기 민감", s: [2, 1.5, -1, -2] },
+    { k: "nuri", label: "누리식품", sub: "방어", s: [-1, -1, 1.5, 2] },
+    { k: "byeol", label: "별빛바이오", sub: "개별 재료", s: [0.3, 0, -0.3, 0] },
+    { k: "daon", label: "다온은행", sub: "금융", s: [1, 1.5, 0, -2] },
+    { k: "moa", label: "모아플랫폼", sub: "성장", s: [1, 1, -2, 0.5] },
+    { k: "bond", label: "채권", sub: "", s: [0, -1, -0.5, 2] },
+  ];
+  (function () {
+    let u = 0.06, playing = false, geo = null;
+    function strength(row, u) {
+      const f = u * 4 - 0.5, i0 = ((Math.floor(f) % 4) + 4) % 4, t = f - Math.floor(f), sm = t * t * (3 - 2 * t);
+      return MB.lerp(row.s[i0], row.s[(i0 + 1) % 4], sm);
+    }
+    const cv = MB.canvas("#ck-cv", (ctx, w, h) => {
+      const P = MB.palette(), narrow = w < 560;
+      const R = narrow ? Math.min(w / 2 - 34, 118) : Math.min(h / 2 - 34, 118);
+      const cx = narrow ? w / 2 : R + 44, cy = narrow ? R + 34 : h / 2;
+      geo = { cx, cy, R };
+      const cols = [alpha(P.ok, 0.16), alpha(P.accent, 0.14), alpha(P.warn, 0.18), alpha(P.dim, 0.18)];
+      const ph = Math.floor(u * 4) % 4;
+      for (let i = 0; i < 4; i++) {
+        const a0 = -Math.PI / 2 + (i * TAU) / 4, a1 = a0 + TAU / 4;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, a0, a1); ctx.closePath();
+        ctx.fillStyle = cols[i]; ctx.fill();
+        if (i === ph) { ctx.lineWidth = 2.5; ctx.strokeStyle = P.text; ctx.stroke(); }
+        const am = (a0 + a1) / 2;
+        text(ctx, PHASES[i].name, cx + Math.cos(am) * R * 0.62, cy + Math.sin(am) * R * 0.62 - 8, { size: 14, weight: 700, color: i === ph ? P.text : P.dim, align: "center" });
+        text(ctx, "이익 " + PHASES[i].earn.split(" ")[0], cx + Math.cos(am) * R * 0.62, cy + Math.sin(am) * R * 0.62 + 10, { size: 10.5, color: P.faint, align: "center" });
+      }
+      ctx.strokeStyle = P.border; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+      [["12시", 0], ["3시", 1], ["6시", 2], ["9시", 3]].forEach(([s, i]) => { const a = -Math.PI / 2 + (i * TAU) / 4; text(ctx, s, cx + Math.cos(a) * (R + 16), cy + Math.sin(a) * (R + 14), { size: 10, color: P.faint, align: "center" }); });
+      const a = -Math.PI / 2 + u * TAU, hx = cx + Math.cos(a) * R * 0.92, hy = cy + Math.sin(a) * R * 0.92;
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(hx, hy); ctx.stroke();
+      ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, TAU); ctx.fill();
+      knob(ctx, hx, hy, P, 8);
+      const bx = narrow ? 12 : cx + R + 40, by = narrow ? cy + R + 30 : 26, bw = w - bx - 12, bh = narrow ? h - by - 12 : h - 52;
+      const lw = 92, mid = bx + lw + (bw - lw) / 2, half = (bw - lw) / 2 - 6, rowH = bh / CYC.length;
+      text(ctx, "약함", bx + lw + 4, by - 12, { size: 10.5, color: P.faint });
+      text(ctx, "강함", bx + bw - 4, by - 12, { size: 10.5, color: P.faint, align: "right" });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(mid, by); ctx.lineTo(mid, by + bh); ctx.stroke();
+      CYC.forEach((row, i) => {
+        const v = strength(row, u), yc = by + rowH * (i + 0.5);
+        text(ctx, row.label, bx + lw - 6, yc - (row.sub ? 6 : 0), { size: 12.5, weight: 600, color: P.text, align: "right" });
+        if (row.sub) text(ctx, row.sub, bx + lw - 6, yc + 9, { size: 10.5, color: P.faint, align: "right" });
+        const col = row.k === "bond" ? P.dim : coColor(row.k, P), len = (v / 2) * half;
+        ctx.fillStyle = col; ctx.globalAlpha = 0.35 + 0.65 * Math.min(1, Math.abs(v) / 2);
+        ctx.fillRect(Math.min(mid, mid + len), yc - Math.min(9, rowH * 0.3), Math.abs(len), Math.min(18, rowH * 0.6));
+        ctx.globalAlpha = 1;
+      });
+      const ranked = CYC.map((row) => ({ l: row.label, v: strength(row, u) })).sort((a, b) => b.v - a.v);
+      MB.stat("ck-o-p", PHASES[ph].name);
+      MB.stat("ck-o-r", PHASES[ph].rate);
+      MB.stat("ck-o-e", PHASES[ph].earn);
+      MB.stat("ck-o-s", ranked[0].l + ", " + ranked[1].l);
+    }, { get height() { return wOf("ck-cv") < 560 ? 560 : 320; } });
+    MB.drag(cv.canvas, {
+      move(x, y) { if (!geo) return; const a = Math.atan2(y - geo.cy, x - geo.cx); u = (((a + Math.PI / 2) / TAU) % 1 + 1) % 1; playing = false; $("ck-play").textContent = "자동으로 돌리기"; cv.redraw(); },
+    });
+    MB.loop(cv.canvas, (dt) => { if (playing) { u = (u + dt * 0.07) % 1; cv.redraw(); } });
+    $("ck-play").addEventListener("click", () => { playing = !playing; $("ck-play").textContent = playing ? "멈추기" : "자동으로 돌리기"; });
+  })();
+
+  /* ---------------------------------------------------------- 11. 위상차 */
+  (function () {
+    const T = 96, PER = 48, A = 0.22;
+    const noise = []; { const g = ST.gauss(48); let z = 0; for (let i = 0; i <= T * 4; i++) { z = 0.85 * z + 0.012 * g(); noise.push(z); } }
+    let c = 30, playing = false, B = null;
+    const Lr = MB.range("ld-l", (v) => v + "개월", () => cv.redraw());
+    const econ = (t) => 100 + 3 * Math.sin((TAU * t) / PER);
+    const stockClean = (t, L) => 100 * Math.exp(A * Math.sin((TAU * (t + L)) / PER));
+    const stock = (t, L) => stockClean(t, L) * Math.exp(noise[Math.round(MB.clamp(t, 0, T) * 4)]);
+    const cv = MB.canvas("#ld-cv", (ctx, w, h) => {
+      const P = MB.palette(), L = Lr(), narrow = w < 420;
+      const left = narrow ? 40 : 48, right = 12, top = 34, gap = 40, ph = (h - top - gap - 30) / 2;
+      const X = (t) => left + (t / T) * (w - left - right);
+      B = { left, right, w };
+      const panel = (y0, f, lo, hi, col, name, fmt) => {
+        const Y = (v) => y0 + ph - ((v - lo) / (hi - lo)) * ph;
+        ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+        [lo, (lo + hi) / 2, hi].forEach((v) => { ctx.beginPath(); ctx.moveTo(left, Y(v)); ctx.lineTo(w - right, Y(v)); ctx.stroke(); text(ctx, fmt(v), left - 4, Y(v), { size: 10, mono: true, color: P.faint, align: "right" }); });
+        ctx.strokeStyle = col; ctx.lineWidth = 2.4; ctx.beginPath();
+        for (let t = 0; t <= T; t += 0.25) { const x = X(t), y = Y(f(t)); t ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+        ctx.stroke();
+        text(ctx, name, left + 2, y0 - 16, { size: 12, weight: 700, color: col });
+        return Y;
+      };
+      const y1 = top, y2 = top + ph + gap;
+      [12, 60].forEach((t) => { ctx.strokeStyle = P.accent; ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(X(t), y1); ctx.lineTo(X(t), y2 + ph); ctx.stroke(); ctx.setLineDash([]); });
+      [36, 84].forEach((t) => { ctx.strokeStyle = P.faint; ctx.setLineDash([2, 4]); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(X(t), y1); ctx.lineTo(X(t), y2 + ph); ctx.stroke(); ctx.setLineDash([]); });
+      const Ys = panel(y1, (t) => stock(t, L), 75, 135, P.accent2, "주가", (v) => v.toFixed(0));
+      const Ye = panel(y2, econ, 96, 104, P.accent, "경기(동행지수 순환변동치)", (v) => v.toFixed(0));
+      [12, 60].forEach((t) => { const tp = t - L; if (tp >= 0) { ctx.fillStyle = P.up; ctx.beginPath(); ctx.arc(X(tp), Ys(stockClean(tp, L)), 4.5, 0, TAU); ctx.fill(); } });
+      [36, 84].forEach((t) => { const tp = t - L; if (tp >= 0) { ctx.fillStyle = P.down; ctx.beginPath(); ctx.arc(X(tp), Ys(stockClean(tp, L)), 4.5, 0, TAU); ctx.fill(); } });
+      text(ctx, "경기 정점", X(12) + 4, y2 + ph - 8, { size: 10.5, color: P.accent });
+      ctx.font = MB.font(10.5); ctx.fillStyle = P.faint; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (let yr = 0; yr <= 6; yr += 2) ctx.fillText(yr + "년", X(yr * 12), h - 18);
+      ctx.strokeStyle = P.text; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X(c), y1 - 4); ctx.lineTo(X(c), y2 + ph + 4); ctx.stroke();
+      knob(ctx, X(c), y2 + ph, P, 7);
+      ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.arc(X(c), Ys(stock(c, L)), 4, 0, TAU); ctx.fill();
+      ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(X(c), Ye(econ(c)), 4, 0, TAU); ctx.fill();
+      const de = Math.cos((TAU * c) / PER), ds = Math.cos((TAU * (c + L)) / PER);
+      MB.stat("ld-o-e", de > 0 ? '<span class="up-t">확장</span>' : '<span class="down-t">수축</span>');
+      MB.stat("ld-o-s", ds > 0 ? '<span class="up-t">오르는 중</span>' : '<span class="down-t">내리는 중</span>');
+      MB.stat("ld-o-p", tchg(stockClean(12, L) / stockClean(12 - L, L) - 1));
+      MB.stat("ld-o-m", tchg(stockClean(39, L) / stockClean(36 - L, L) - 1));
+    }, { get height() { return wOf("ld-cv") < 420 ? 330 : 340; } });
+    MB.drag(cv.canvas, { move(x) { if (!B) return; c = MB.clamp(((x - B.left) / (B.w - B.left - B.right)) * T, 0, T); playing = false; cv.redraw(); } });
+    MB.loop(cv.canvas, (dt) => { if (playing) { c += dt * 10; if (c > T) c = 0; cv.redraw(); } });
+    $("ld-play").addEventListener("click", () => { playing = !playing; });
+  })();
+
+  /* ---------------------------------------------------------- 12. 가상 시장 국면별 성과 */
+  (function () {
+    const M = ST.market(), RG = M.regimes;
+    const DOWN = RG.map((g, i) => (g.ret < 0 ? i : -1)).filter((i) => i >= 0);
+    let sel = 3, geo = null;
+    const AVG = $("rg-avg");
+    const ret = (arr, g) => arr[g.to] / arr[g.from] - 1;
+    function rowsFor() {
+      const keys = ["index"].concat(ST.COKEYS);
+      return keys.map((k) => {
+        const arr = k === "index" ? M.index : M.closes[k];
+        const v = AVG.checked ? DOWN.reduce((s, i) => s + ret(arr, RG[i]), 0) / DOWN.length : ret(arr, RG[sel]);
+        return { k, label: k === "index" ? "SB 종합지수" : NAME(k), v };
+      });
+    }
+    const cv = MB.canvas("#rg-cv", (ctx, w, h) => {
+      const P = MB.palette(), narrow = w < 420;
+      const top = 20, th = Math.round(h * 0.36), left = narrow ? 34 : 40, right = 8;
+      const X = (i) => left + (i / (M.days - 1)) * (w - left - right);
+      const lo = Math.min(...M.index), hi = Math.max(...M.index), Y = (v) => top + th - ((v - lo) / (hi - lo)) * th;
+      geo = { left, right, w, top, th };
+      RG.forEach((g, i) => {
+        const on = AVG.checked ? DOWN.includes(i) : i === sel;
+        ctx.fillStyle = alpha(g.ret < 0 ? P.down : P.up, on ? 0.2 : 0.05);
+        ctx.fillRect(X(g.from), top, X(g.to) - X(g.from), th);
+        if (on) { ctx.strokeStyle = g.ret < 0 ? P.down : P.up; ctx.lineWidth = 1.5; ctx.strokeRect(X(g.from) + 0.5, top + 0.5, X(g.to) - X(g.from) - 1, th - 1); }
+      });
+      ctx.strokeStyle = P.text; ctx.lineWidth = 1.4; ctx.beginPath();
+      for (let i = 0; i < M.days; i += 2) { const x = X(i), y = Y(M.index[i]); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke();
+      ctx.font = MB.font(10, true); ctx.fillStyle = P.faint; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (let yr = 2016; yr <= 2025; yr += narrow ? 3 : 2) { const i = M.dates.findIndex((d) => d.startsWith(String(yr))); if (i >= 0) ctx.fillText(String(yr), X(i), top + th + 3); }
+      text(ctx, "SB 종합지수(가상)", left, 8, { size: 11, color: P.dim });
+      const rows = rowsFor();
+      const mx = Math.max(0.25, ...rows.map((r) => Math.abs(r.v))), rng = Math.ceil(mx / 0.25) * 0.25;
+      hstack(ctx, w, h, rows.map((r) => ({ label: r.label, parts: [r.v], strong: r.k === "index", colors: [r.k === "index" ? P.text : coColor(r.k, P)] })), { range: [-rng, rng], step: rng <= 0.5 ? 0.25 : rng <= 1.5 ? 0.5 : 1, top: top + th + 26, colors: [P.accent] });
+      const cos = rows.slice(1).sort((a, b) => b.v - a.v);
+      const g = RG[sel];
+      MB.stat("rg-o-n", AVG.checked ? "하락 국면 셋 평균" : g.name + "<small> " + M.dates[g.from].slice(0, 7) + "~" + M.dates[g.to].slice(0, 7) + "</small>");
+      MB.stat("rg-o-i", tchg(rows[0].v));
+      MB.stat("rg-o-b", cos[0].label + " " + tchg(cos[0].v));
+      MB.stat("rg-o-w", cos[cos.length - 1].label + " " + tchg(cos[cos.length - 1].v));
+    }, { get height() { return wOf("rg-cv") < 420 ? 400 : 420; } });
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        if (!geo || y > geo.top + geo.th + 14) return;
+        const i = MB.clamp(((x - geo.left) / (geo.w - geo.left - geo.right)) * (M.days - 1), 0, M.days - 1);
+        const k = RG.findIndex((g) => i >= g.from && i <= g.to);
+        if (k >= 0) { sel = k; AVG.checked = false; cv.redraw(); }
+      },
+    });
+    $("rg-prev").addEventListener("click", () => { sel = (sel + RG.length - 1) % RG.length; AVG.checked = false; cv.redraw(); });
+    $("rg-next").addEventListener("click", () => { sel = (sel + 1) % RG.length; AVG.checked = false; cv.redraw(); });
+    AVG.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 13. 실적 발표 맞히기 */
+  (function () {
+    const ROUNDS = [
+      { k: "hanbit", q: "2분기", cons: 2100, act: 2500, guide: "다음 분기 전망 상향", pre: 0.02, move: 0.065,
+        why: "숫자도 좋고 앞으로도 좋다. 발표 전에 주가가 거의 오르지 않아 기대가 높지 않았고, 서프라이즈가 그대로 값에 들어갔다." },
+      { k: "moa", q: "3분기", cons: 900, act: 950, guide: "내년 매출 성장률 25% → 15% 둔화", pre: 0.18, move: -0.09,
+        why: "이번 분기는 좋았지만 모아의 값은 먼 미래의 성장에 달려 있다. 성장 전망이 꺾이자 듀레이션이 긴 가치가 크게 깎였다. 발표 전 18% 오른 기대도 한몫했다." },
+      { k: "nuri", q: "3분기", cons: 280, act: 265, guide: "원재료 가격 하락, 다음 분기 마진 회복", pre: -0.08, move: 0.024,
+        why: "숫자는 기대에 못 미쳤지만 이미 주가가 8% 빠져 나쁜 소식이 들어 있었다. 시장은 다음 분기의 회복에 반응했다." },
+      { k: "hanbit", q: "4분기", cons: 3000, act: 3300, guide: "전망 유지", pre: 0.35, rumor: "시장 소문 3,600억", move: -0.052,
+        why: "컨센서스 대비 +10%지만 석 달 동안 35% 오르며 시장이 실제로 기대한 것은 3,600억이었다. '소문에 사서 뉴스에 판다'의 전형이다." },
+      { k: "daon", q: "3분기", cons: 2300, act: 2310, guide: "연체 대비 대손충당금 확대", pre: 0.05, move: -0.031,
+        why: "이번 숫자는 예상대로였지만, 앞으로 떼일 돈에 대비한다는 말이 다음 분기들의 이익을 깎는다." },
+      { k: "byeol", q: "3분기", cons: -110, act: -80, guide: "운영 자금 위해 자금 조달 검토", pre: 0.1, move: -0.084,
+        why: "손실은 예상보다 작았지만 '자금 조달 검토'는 유상증자 가능성이다(9장). 주식 수가 늘면 내 몫이 희석된다." },
+    ];
+    let i = 0, ans = null, score = 0, p = 1, done = 0;
+    const msg = $("sg-msg");
+    const path = (r) => { const g = ST.gauss(77 + r), a = [0]; for (let t = 1; t <= 40; t++) a.push(a[t - 1] + 0.004 * g()); const m = ROUNDS[r].move; return a.map((x, t) => x - (a[40] * t) / 40 + (m * (1 - Math.exp(-t / 6))) / (1 - Math.exp(-40 / 6))); };
+    const cv = MB.canvas("#sg-cv", (ctx, w, h) => {
+      const P = MB.palette(), R = ROUNDS[i], narrow = w < 520, c = coColor(R.k, P);
+      const loss = R.cons < 0, sur = (R.act - R.cons) / Math.abs(R.cons);
+      text(ctx, NAME(R.k) + " · " + R.q + " " + (loss ? "영업손실" : "영업이익"), 14, 18, { size: 14, weight: 700, color: P.text });
+      const bx = 14, bw = narrow ? w - 28 : w * 0.46, by = 42, bh = narrow ? 120 : h - 80;
+      const mx = Math.max(Math.abs(R.cons), Math.abs(R.act)) * 1.25, colW = Math.min(70, bw / 4);
+      [[R.cons, "컨센서스", alpha(P.faint, 0.5)], [R.act, "발표 실적", c]].forEach(([v, lab, col], j) => {
+        const x = bx + bw * (j === 0 ? 0.3 : 0.7) - colW / 2, hh = (Math.abs(v) / mx) * bh;
+        ctx.fillStyle = col; ctx.fillRect(x, by + bh - hh, colW, hh);
+        text(ctx, (v < 0 ? "−" : "") + Math.abs(v).toLocaleString("ko-KR") + "억", x + colW / 2, by + bh - hh - 10, { size: 12, mono: true, weight: 700, color: P.text, align: "center" });
+        text(ctx, lab, x + colW / 2, by + bh + 12, { size: 11.5, color: P.dim, align: "center" });
+      });
+      text(ctx, (loss ? (sur > 0 ? "손실 축소 " : "손실 확대 ") : "컨센서스 대비 ") + MB.chg(loss ? Math.abs(sur) * Math.sign(sur) : sur, 0), bx + bw / 2, by + bh + 30, { size: 12, weight: 700, color: MB.toneColor(sur), align: "center" });
+      const ix = narrow ? 14 : w * 0.54, iy = narrow ? by + bh + 56 : 50, lh = 22;
+      const lines = [["가이던스", R.guide], ["발표 전 3개월 주가", MB.chg(R.pre, 0)]];
+      if (R.rumor) lines.push(["발표 전 분위기", R.rumor]);
+      lines.forEach(([k, v], j) => { text(ctx, k, ix, iy + j * lh * 1.6, { size: 11, color: P.faint }); text(ctx, v, ix, iy + j * lh * 1.6 + 15, { size: 12.5, weight: 600, color: P.text }); });
+      if (ans != null) {
+        const ry = iy + lines.length * lh * 1.6 + 6, rw = w - ix - 14, rh = Math.max(50, h - ry - 12);
+        const a = path(i), n = Math.max(1, Math.round(40 * ease(p))), lo = Math.min(...a, -0.1), hi = Math.max(...a, 0.1);
+        const X = (t) => ix + (t / 40) * (rw - 70), Y = (v) => ry + rh - ((v - lo) / (hi - lo)) * rh;
+        ctx.strokeStyle = P.grid; ctx.beginPath(); ctx.moveTo(ix, Y(0)); ctx.lineTo(ix + rw - 70, Y(0)); ctx.stroke();
+        ctx.strokeStyle = MB.toneColor(R.move); ctx.lineWidth = 2; ctx.beginPath();
+        for (let t = 0; t < n; t++) { t ? ctx.lineTo(X(t), Y(a[t])) : ctx.moveTo(X(t), Y(a[t])); }
+        ctx.stroke();
+        if (p >= 1) text(ctx, MB.chg(R.move, 1), ix + rw, Y(R.move), { size: 16, mono: true, weight: 700, color: MB.toneColor(R.move), align: "right" });
+      }
+      MB.stat("sg-o-r", i + 1 + " / " + ROUNDS.length);
+      MB.stat("sg-o-s", score + " / " + done);
+      MB.stat("sg-o-x", ans == null ? "?" : tchg(R.move));
+    }, { get height() { return wOf("sg-cv") < 520 ? 420 : 300; } });
+    function answer(up) {
+      if (ans != null) return;
+      const R = ROUNDS[i], ok = up === R.move > 0;
+      ans = up; done++; if (ok) score++; p = 0;
+      msg.innerHTML = '<b class="' + (ok ? "ok-t" : "bad-t") + '">' + (ok ? "맞혔다. " : "틀렸다. ") + "</b>" + R.why;
+    }
+    $("sg-up").addEventListener("click", () => answer(true));
+    $("sg-dn").addEventListener("click", () => answer(false));
+    $("sg-next").addEventListener("click", () => {
+      i = (i + 1) % ROUNDS.length; ans = null; p = 1;
+      if (i === 0) { score = 0; done = 0; }
+      msg.textContent = "카드를 읽고 '오른다' 또는 '내린다'를 고른다.";
+      cv.redraw();
+    });
+    MB.loop(cv.canvas, (dt) => { if (p < 1) { p = Math.min(1, p + dt / 1.2); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 14. 서프라이즈 산점도 */
+  (function () {
+    let seed = 31, pts = [];
+    function gen() {
+      const g = ST.gauss(seed);
+      pts = [];
+      for (let j = 0; j < 80; j++) {
+        const s = MB.clamp(0.02 + 0.07 * g(), -0.2, 0.25), gz = (0.6 * (s - 0.02)) / 0.07 + 0.8 * g();
+        const gd = gz > 0.75 ? 1 : gz < -0.75 ? -1 : 0, pre = 0.08 * g();
+        pts.push({ s, gd, base: 0.4 * s - 0.2 * pre + 0.035 * gd, z: g() });
+      }
+    }
+    gen();
+    const N = MB.range("sc-n", (v) => v.toFixed(1) + "%", () => cv.redraw());
+    const cv = MB.canvas("#sc-cv", (ctx, w, h) => {
+      const P = MB.palette(), sd = N() / 100, narrow = w < 420;
+      const box = { x: narrow ? 42 : 48, y: 14, w: w - (narrow ? 42 : 48) - 12, h: h - 14 - 46 };
+      const fmt = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "%";
+      const c = MB.chart(ctx, box, { x: [-20, 25], y: [-20, 20], xLabel: "컨센서스 대비 서프라이즈", yLabel: "다음 날 주가", xFmt: fmt, yFmt: fmt, hlines: [{ y: 0, color: P.axis, dash: [] }], vlines: [{ x: 0, color: P.axis, dash: [] }] });
+      ctx.fillStyle = alpha(P.down, 0.07); ctx.fillRect(c.X(0), c.Y(0), c.X(25) - c.X(0), c.Y(-20) - c.Y(0));
+      ctx.fillStyle = alpha(P.up, 0.07); ctx.fillRect(c.X(-20), c.Y(20), c.X(0) - c.X(-20), c.Y(0) - c.Y(20));
+      text(ctx, "좋은 실적, 하락", c.X(25) - 4, c.Y(-20) - 10, { size: 10.5, color: P.faint, align: "right" });
+      text(ctx, "나쁜 실적, 상승", c.X(-20) + 4, c.Y(20) + 10, { size: 10.5, color: P.faint });
+      const xs = [], ys = []; let a = 0, na = 0, b = 0, nb = 0;
+      pts.forEach((q) => {
+        const y = q.base + sd * q.z; xs.push(q.s); ys.push(y);
+        if (q.s > 0) { na++; if (y < 0) a++; } else if (q.s < 0) { nb++; if (y > 0) b++; }
+        ctx.fillStyle = q.gd > 0 ? P.up : q.gd < 0 ? P.down : P.faint; ctx.globalAlpha = 0.85;
+        ctx.beginPath(); ctx.arc(c.X(q.s * 100), c.Y(MB.clamp(y, -0.2, 0.2) * 100), 4, 0, TAU); ctx.fill(); ctx.globalAlpha = 1;
+      });
+      MB.stat("sc-o-c", ST.corr(xs, ys).toFixed(2));
+      MB.stat("sc-o-a", a + "/" + na + "<small>건</small>");
+      MB.stat("sc-o-b", b + "/" + nb + "<small>건</small>");
+    }, { get height() { return wOf("sc-cv") < 420 ? 290 : 310; } });
+    $("sc-re").addEventListener("click", () => { seed++; gen(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 15. 환율과 영업이익 */
+  const FXS = {
+    hanbit: { exp: 4.8e12, imp: 1.53e12, op: 9000e8 },
+    nuri: { exp: 0.18e12, imp: 0.4225e12, op: 1100e8 },
+    moa: { exp: 0, imp: 0.18e12, op: 4000e8 },
+  };
+  const fxOp = (k, d) => (FXS[k] ? ((FXS[k].exp - FXS[k].imp) * d) / FXS[k].op : 0);
+  (function () {
+    let fx = 1450, L = null;
+    const cv = MB.canvas("#fx-cv", (ctx, w, h) => {
+      const P = MB.palette(), narrow = w < 420;
+      const box = { x: narrow ? 44 : 52, y: 16, w: w - (narrow ? 44 : 52) - (narrow ? 64 : 84), h: h - 16 - 46 };
+      const keys = Object.keys(FXS);
+      const c = MB.chart(ctx, box, {
+        x: [1150, 1650], y: [-70, 70], xLabel: "원/달러 환율", yLabel: "영업이익 변화",
+        xTicks: [1200, 1300, 1400, 1500, 1600], xFmt: (v) => v.toLocaleString("ko-KR"), yFmt: (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "%",
+        hlines: [{ y: 0, color: P.axis, dash: [] }], vlines: [{ x: 1400, color: P.faint, label: "출발 1,400" }],
+        series: keys.map((k) => ({ data: [1150, 1650].map((x) => [x, fxOp(k, x / 1400 - 1) * 100]), color: coColor(k, P), width: 2.4 })),
+      });
+      L = c;
+      keys.forEach((k) => text(ctx, NAME(k), box.x + box.w + 4, c.Y(MB.clamp(fxOp(k, 1650 / 1400 - 1) * 100, -66, 66)), { size: 11, color: coColor(k, P) }));
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(c.X(fx), box.y); ctx.lineTo(c.X(fx), box.y + box.h); ctx.stroke();
+      keys.forEach((k) => { ctx.fillStyle = coColor(k, P); ctx.beginPath(); ctx.arc(c.X(fx), c.Y(fxOp(k, fx / 1400 - 1) * 100), 4.5, 0, TAU); ctx.fill(); });
+      knob(ctx, c.X(fx), box.y + box.h - 10, P, 8);
+      const d = fx / 1400 - 1;
+      MB.stat("fx-o-x", fx.toLocaleString("ko-KR") + "원 <small>" + MB.chg(d, 1) + "</small>");
+      ["hanbit", "nuri", "moa"].forEach((k) => MB.stat("fx-o-" + k[0], eok(FXS[k].op * (1 + fxOp(k, d))) + " " + tchg(fxOp(k, d), 0)));
+    }, { get height() { return wOf("fx-cv") < 420 ? 280 : 320; } });
+    MB.drag(cv.canvas, { move(x) { if (!L) return; fx = Math.round(MB.clamp(1150 + ((x - L.box.x) / L.box.w) * 500, 1150, 1650) / 10) * 10; cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 16. 매크로 맞히기의 함정 */
+  (function () {
+    const Y = 30, NP = 400, CASH = 0.03, COST = 0.003;
+    const paths = [];
+    { const u = ST.rng(2121), g = ST.gauss(2122);
+      for (let p = 0; p < NP; p++) {
+        const E = [u() < 0.85]; for (let t = 1; t <= Y; t++) E.push(u() < (E[t - 1] ? 0.88 : 0.7));
+        const R = []; for (let t = 0; t < Y; t++) R.push(0.03 + (E[t + 1] ? 0.1 : -0.22) + 0.1 * g());
+        const U = []; for (let t = 0; t < Y; t++) U.push(u());
+        paths.push({ E, R, U });
+      } }
+    function run(mode, acc) {
+      let ex = 0, bs = 0, ss = 0;
+      for (const P of paths) {
+        let bh = 1, st = 1, inn = true;
+        for (let t = 0; t < Y; t++) {
+          const truth = mode === "now" ? P.E[t] : P.E[t + 1], f = P.U[t] < acc ? truth : !truth;
+          let c = 0; if (f !== inn) { c = COST; inn = f; }
+          st *= (1 + (inn ? P.R[t] : CASH)) * (1 - c); bh *= 1 + P.R[t];
+        }
+        const cs = Math.pow(st, 1 / Y) - 1, cb = Math.pow(bh, 1 / Y) - 1;
+        ex += cs - cb; bs += cb; ss += cs;
+      }
+      return { ex: ex / NP, bh: bs / NP, st: ss / NP };
+    }
+    const ACC = []; for (let a = 50; a <= 100; a += 5) ACC.push(a);
+    const TAB = { now: ACC.map((a) => run("now", a / 100 + 1e-9)), next: ACC.map((a) => run("next", a / 100 + 1e-9)) };
+    const mode = MB.seg("tp-mode", () => cv.redraw());
+    const A = MB.range("tp-a", (v) => v + "%", () => cv.redraw());
+    const cv = MB.canvas("#tp-cv", (ctx, w, h) => {
+      const P = MB.palette(), m = mode(), narrow = w < 420;
+      const box = { x: narrow ? 44 : 50, y: 14, w: w - (narrow ? 44 : 50) - 14, h: h - 14 - 46 };
+      const ser = (k) => ACC.map((a, j) => [a, TAB[k][j].ex * 100]);
+      const c = MB.chart(ctx, box, {
+        x: [50, 100], y: [-3, 4.5], xLabel: "예측 정확도", yLabel: "매수 후 보유 대비(연 %p)", xFmt: (v) => v + "%", yFmt: (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v),
+        hlines: [{ y: 0, color: P.axis, label: "매수 후 보유와 같음" }],
+        series: [
+          { data: ser("now"), color: m === "now" ? P.accent2 : alpha(P.accent2, 0.35), width: m === "now" ? 2.8 : 1.4 },
+          { data: ser("next"), color: m === "next" ? P.accent : alpha(P.accent, 0.35), width: m === "next" ? 2.8 : 1.4 },
+        ],
+      });
+      text(ctx, "내년 경기", c.X(97), c.Y(TAB.next[9].ex * 100) - 14, { size: 11, color: P.accent, align: "right" });
+      text(ctx, "올해 경기", c.X(97), c.Y(TAB.now[9].ex * 100) + 14, { size: 11, color: P.accent2, align: "right" });
+      const j = ACC.indexOf(A()), r = TAB[m][j];
+      ctx.fillStyle = m === "now" ? P.accent2 : P.accent; ctx.beginPath(); ctx.arc(c.X(A()), c.Y(r.ex * 100), 6, 0, TAU); ctx.fill();
+      let be = null; const T = TAB[m];
+      for (let k = 1; k < ACC.length; k++) if (T[k - 1].ex < 0 && T[k].ex >= 0) { be = ACC[k - 1] + (5 * -T[k - 1].ex) / (T[k].ex - T[k - 1].ex); break; }
+      MB.stat("tp-o-s", pc(r.st, 1));
+      MB.stat("tp-o-b", pc(r.bh, 1));
+      MB.stat("tp-o-d", '<span class="' + MB.tone(r.ex) + '">' + pp(r.ex * 100, 1) + "</span>");
+      MB.stat("tp-o-e", be == null ? "—" : "약 " + Math.round(be) + "%");
+    }, { get height() { return wOf("tp-cv") < 420 ? 280 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 17. 매크로 대시보드 */
+  (function () {
+    const Rr = MB.range("bd-r", (v) => pp(v), () => cv.redraw());
+    const Xr = MB.range("bd-x", (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "%", () => cv.redraw());
+    const ph = MB.seg("bd-ph", () => cv.redraw());
+    const parts = (k, dl, d, i) => {
+      const row = CYC.find((r) => r.k === k);
+      return [discFx(k, dl) + nimFx(k, 0.6 * dl), fxOp(k, d) * 0.4, row.s[i] * 0.03];
+    };
+    const cv = MB.canvas("#bd-cv", (ctx, w, h) => {
+      const P = MB.palette(), dl = Rr() / 100, d = Xr() / 100, i = Number(ph());
+      const rows = ST.COKEYS.map((k) => ({ k, label: NAME(k), parts: parts(k, dl, d, i) }));
+      const avg = [0, 1, 2].map((j) => rows.reduce((s, r) => s + r.parts[j], 0) / rows.length);
+      rows.push({ k: "eq", label: "같은 비중", parts: avg, strong: true });
+      let mx = 0.2;
+      rows.forEach((r) => { let a = 0, b = 0; r.parts.forEach((v) => (v > 0 ? (a += v) : (b += v))); mx = Math.max(mx, a, -b); });
+      const rng = Math.ceil(mx * 10) / 10;
+      hstack(ctx, w, h, rows, { range: [-rng, rng], step: rng <= 0.4 ? 0.1 : 0.2, top: 10, colors: [P.accent, P.accent2, P.ok] });
+      const tot = rows.slice(0, 5).map((r) => ({ l: r.label, v: r.parts.reduce((a, b) => a + b, 0) })).sort((a, b) => b.v - a.v);
+      MB.stat("bd-o-b", tot[0].l + " " + tchg(tot[0].v));
+      MB.stat("bd-o-w", tot[4].l + " " + tchg(tot[4].v));
+      MB.stat("bd-o-a", tchg(avg.reduce((a, b) => a + b, 0)));
+      MB.stat("bd-o-g", pp((tot[0].v - tot[4].v) * 100, 1));
+    }, { get height() { return wOf("bd-cv") < 420 ? 300 : 320; } });
+  })();
+})();
+</script>
+</body>
+</html>

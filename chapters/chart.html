@@ -1,0 +1,1661 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "캔들 하나에 접힌 하루, 꼬리와 거래량의 뜻, 일봉·주봉·월봉, 이동평균의 지연, 선형 축과 로그 축, 수정주가와 갭, 52주 신고가, y축 착시와 상대 강도를 가상 시장의 한빛반도체 차트로 직접 끌고 접어 보며 익힌다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>차트 읽기 · StockBook</title>
+<meta name="description" content="캔들 하나에 접힌 하루, 꼬리와 거래량의 뜻, 일봉·주봉·월봉, 이동평균의 지연, 선형 축과 로그 축, 수정주가와 갭, 52주 신고가, y축 착시와 상대 강도를 가상 시장의 한빛반도체 차트로 직접 끌고 접어 보며 익힌다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/chart.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="차트 읽기 · StockBook">
+<meta property="og:description" content="캔들 하나에 접힌 하루, 꼬리와 거래량의 뜻, 일봉·주봉·월봉, 이동평균의 지연, 선형 축과 로그 축, 수정주가와 갭, 52주 신고가, y축 착시와 상대 강도를 가상 시장의 한빛반도체 차트로 직접 끌고 접어 보며 익힌다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/chart.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/chart.html#chapter","name":"차트 읽기","headline":"차트 읽기 · StockBook","description":"캔들 하나에 접힌 하루, 꼬리와 거래량의 뜻, 일봉·주봉·월봉, 이동평균의 지연, 선형 축과 로그 축, 수정주가와 갭, 52주 신고가, y축 착시와 상대 강도를 가상 시장의 한빛반도체 차트로 직접 끌고 접어 보며 익힌다.","url":"https://stockbook.euiyun.com/chapters/chart.html","position":11,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"11. 차트 읽기","item":"https://stockbook.euiyun.com/chapters/chart.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  .sim-say { padding: 10px 18px; border-top: 1px solid var(--border); font-size: 14.5px; line-height: 1.6; color: var(--text); background: var(--bg-elev); min-height: 46px; }
+  .sim-say b { color: var(--accent); }
+  figure.diagram svg { max-width: 520px; margin: 0 auto; }
+  figure.diagram svg .t-mono { font-size: 12px; }
+  .sim-view:has(.hint) { padding-bottom: 28px; }
+  .stat .v small, .stat .v.kr { font-family: var(--font); }
+</style>
+</head>
+<body data-chapter="chart">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 11</div>
+    <h1>차트 읽기</h1>
+    <p class="lead">증권 앱을 열면 가장 먼저 보이는 것이 차트다. 빨간 막대와 파란 막대, 그 위를 지나는 몇 가닥의 선, 아래에 깔린 거래량. 익숙해 보이지만 차트는 가격을 있는 그대로 보여 주지 않는다. 하루 수백 번의 체결을 네 개의 숫자로 접고, 축을 어떻게 잡느냐에 따라 같은 10년이 로켓처럼도, 늪처럼도 보인다. 이 장은 차트가 무엇을 남기고 무엇을 버리는지를 직접 접고, 끌고, 바꿔 보며 익힌다. 예측하는 법이 아니라 <b>속지 않고 읽는 법</b>이 목표다.</p>
+    <ul class="objectives">
+      <li>캔들의 네 가격(시가·고가·저가·종가)과 몸통·꼬리를 읽고, 하루의 가격 경로가 캔들 하나로 접히며 무엇이 사라지는지 설명한다.</li>
+      <li>양봉·음봉과 전일 대비 등락이 서로 다른 개념이라는 것, 한국과 미국의 색 관례가 반대라는 것을 구분한다.</li>
+      <li>거래량, 일봉·주봉·월봉, 이동평균과 그 지연, 갭, 52주 신고가·신저가를 차트에서 찾는다.</li>
+      <li>선형 축과 로그 축의 차이를 알고 긴 기간은 로그 축으로 본다. 수정주가가 왜 필요한지 설명한다.</li>
+      <li>y축 범위와 비교 기준일이 만드는 착시를 알아채고, 두 종목을 100으로 맞춰 공정하게 비교한다.</li>
+    </ul>
+  </header>
+
+  <section id="why">
+    <h2>같은 데이터, 다른 그림</h2>
+    <p>한결은 계좌를 열고 한빛반도체를 검색했다. 첫 화면의 2년 차트는 27,050원에서 72,000원까지 오른쪽 위로 가파르게 올라가 있었다. 기간을 10년으로 바꾸자 그림이 달라졌다. 앞쪽 8년은 바닥에 납작하게 깔려 있고 마지막 2년만 하늘로 솟아 있었다. 1년으로 줄이자 연초에 9만원을 찍고 6만원 아래까지 미끄러진 산 모양이 되었고, 3개월로 줄이자 이번에는 빨강과 파랑 막대가 오르락내리락하는 톱니 모양이었다. 같은 회사, 같은 가격인데 어느 그림이 "진짜"인가?</p>
+    <p>답은 셋 다 진짜라는 것이다. 차트는 가격 기록을 <b>압축하고 배치하는 방법</b>이고, 압축 방법(선이냐 캔들이냐, 하루냐 한 달이냐)과 배치 방법(축의 범위, 선형이냐 로그냐)에 따라 같은 기록이 전혀 다른 인상을 준다. 이 장의 예시는 모두 이 책의 <b>가상 시장</b>(<code>ST.market()</code>, 2016년 1월~2025년 12월의 약 10년, 2,601거래일)에서 나온다. 교육용으로 만든 가짜 가격이며 실제 어떤 회사와도 관계없다.</p>
+    <p>먼저 가장 단순한 비교부터 하자. 아래는 한빛반도체의 마지막 60거래일이다. 같은 60일을 네 가지 방식으로 그릴 수 있다. <span class="term">선 차트</span><span class="en">(Line chart)</span>는 매일의 종가만 이은 것이고, <span class="term">캔들 차트</span><span class="en">(Candlestick chart)</span>는 하루마다 네 개의 가격을 막대 하나에 담는다. 차트 위에 마우스를 올리거나 손가락으로 짚으면 그날의 숫자가 보인다.</p>
+
+    <div class="sim" id="sim-lc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>같은 60일을 네 가지로 그리기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lc-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>그리는 방식</span>
+            <div class="seg" id="lc-mode"><button data-value="line">선</button><button data-value="bar">OHLC 막대</button><button data-value="candle" class="on">캔들</button><button data-value="hollow">속 빈 캔들</button></div>
+          </div>
+          <p class="sim-hint" style="margin:0;font-size:13.5px;color:var(--text-dim)">선 차트는 장중의 높낮이를 모두 버린다. 막대와 캔들은 같은 네 숫자를 다르게 칠한 것이다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">날짜</span><span class="v" id="lc-o-d">—</span></div>
+        <div class="stat"><span class="k">시가 · 종가</span><span class="v" id="lc-o-oc" style="font-size:15px">—</span></div>
+        <div class="stat"><span class="k">고가 · 저가</span><span class="v" id="lc-o-hl" style="font-size:15px">—</span></div>
+        <div class="stat"><span class="k">60일 종가 폭 / 장중 폭</span><span class="v" id="lc-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 선과 캔들을 번갈아 눌러 선이 놓치는 장중 움직임이 어디서 가장 큰지 찾는다. ② OHLC 막대에서 왼쪽 가지는 시가, 오른쪽 가지는 종가다. 캔들과 같은 날을 짚어 숫자가 같은지 본다. ③ 오른쪽 아래 숫자에서 종가만 볼 때와 고가·저가까지 볼 때 60일의 가격 폭이 얼마나 다른지 본다.</div>
+    </div>
+
+    <p>선 차트는 깔끔하지만 하루 안에서 가격이 얼마나 출렁였는지를 지운다. 종가만 이은 60일의 폭보다 고가·저가까지 넣은 폭이 늘 더 넓다. 캔들은 그 출렁임을 남기는 대신 화면을 복잡하게 만든다. 어느 쪽이 낫다기보다 <b>무엇을 버렸는지 알고 고르는 것</b>이 중요하다. 이제 캔들 하나를 해부한다.</p>
+  </section>
+
+  <section id="candle">
+    <h2>캔들 하나의 해부</h2>
+    <p>캔들 하나는 한 기간(일봉이면 하루)의 네 가격으로 만든다. <span class="term">시가</span><span class="en">(Open)</span>는 그 기간에 처음 체결된 가격, <span class="term">종가</span><span class="en">(Close)</span>는 마지막 가격, <span class="term">고가</span><span class="en">(High)</span>와 <span class="term">저가</span><span class="en">(Low)</span>는 그 사이 가장 높고 낮았던 가격이다. 시가와 종가 사이를 칠한 직사각형이 <span class="term">몸통</span><span class="en">(Body)</span>, 몸통 위아래로 고가·저가까지 뻗은 가는 선이 <span class="term">꼬리</span><span class="en">(Wick, Shadow)</span>다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 300" role="img" aria-label="양봉과 음봉의 구조: 고가, 종가, 시가, 저가, 몸통, 꼬리">
+        <line class="s-up" x1="120" y1="30" x2="120" y2="230" stroke-width="2"/>
+        <rect class="f-up" x="98" y="80" width="44" height="90" rx="2"/>
+        <g class="lbl" text-anchor="end">
+          <text x="84" y="35">고가</text><text x="84" y="85">종가</text><text x="84" y="175">시가</text><text x="84" y="235">저가</text>
+        </g>
+        <g class="s-dash"><line x1="88" y1="30" x2="114" y2="30"/><line x1="88" y1="230" x2="114" y2="230"/></g>
+        <g class="s-line"><path d="M152 32 h6 v46 h-6"/><path d="M152 82 h6 v86 h-6"/><path d="M152 172 h6 v56 h-6"/></g>
+        <g class="lbl-dim"><text x="164" y="60">위꼬리</text><text x="164" y="130">몸통</text><text x="164" y="205">아래꼬리</text></g>
+        <text class="lbl-up" x="120" y="262" text-anchor="middle">양봉: 종가 ≥ 시가</text>
+
+        <line class="s-down" x1="330" y1="50" x2="330" y2="240" stroke-width="2"/>
+        <rect class="f-down" x="308" y="70" width="44" height="120" rx="2"/>
+        <g class="lbl" text-anchor="start">
+          <text x="366" y="55">고가</text><text x="366" y="75">시가</text><text x="366" y="195">종가</text><text x="366" y="245">저가</text>
+        </g>
+        <text class="lbl-down" x="330" y="262" text-anchor="middle">음봉: 종가 &lt; 시가</text>
+        <text class="lbl-dim" x="230" y="292" text-anchor="middle">몸통 = 시가와 종가 사이, 꼬리 = 고가·저가까지</text>
+      </svg>
+      <figcaption><b>그림 11-1. 캔들의 구조.</b> 양봉은 아래가 시가, 위가 종가이고 음봉은 그 반대다. 몸통의 색은 "그날 시가보다 올랐는가"만 말해 준다. 전날보다 올랐는지는 색으로 알 수 없다.</figcaption>
+    </figure>
+
+    <p>몸통이 빨간 캔들을 <span class="term">양봉</span><span class="en">(Bullish candle)</span>, 파란 캔들을 <span class="term">음봉</span><span class="en">(Bearish candle)</span>이라 한다. 여기서 흔히 헷갈리는 점이 있다. 양봉은 <b>그날의 시가보다 종가가 높다</b>는 뜻이지 <b>전날보다 올랐다</b>는 뜻이 아니다. 전날 종가가 72,000원이고 오늘 69,000원에 시작해 71,000원에 끝났다면 캔들은 빨간 양봉이지만 전일 대비로는 −1.4% 하락이다. 증권 앱의 등락률 숫자와 캔들 색이 다른 날이 있는 이유다.</p>
+
+    <div class="callout">
+      <strong>빨강은 나라마다 뜻이 반대다</strong>
+      <p>한국과 중국의 증권 화면은 오르면 빨강, 내리면 파랑이다. 미국과 유럽은 거꾸로 오르면 초록, 내리면 빨강이다. 미국 증권 사이트에서 빨간 숫자는 손실이다. 해외 주식 앱을 쓸 때(<a href="global.html">22장</a>) 색만 보고 판단하면 정반대로 읽을 수 있으니, 대부분의 앱에 있는 "상승/하락 색 바꾸기" 설정부터 확인하자. 이 책은 한국 관례를 따른다.</p>
+    </div>
+
+    <p>캔들은 어떻게 만들어지는가? 한국 정규 시장은 오전 9시에 열려 오후 3시 30분에 닫힌다(2026년 기준). 그 390분 동안 가격은 쉬지 않고 오르내린다. 아래 시뮬레이터에서 <b>재생</b>을 누르면 하루의 가격 경로가 그려지고, 오른쪽의 캔들이 실시간으로 자란다. 장이 끝나면 경로 전체가 캔들 하나로 접힌다. 장중에 가격이 시가 위아래를 오갈 때 캔들 색이 바뀌는 것도 지켜보자.</p>
+
+    <div class="sim" id="sim-fold">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>하루가 캔들 하나로 접히는 과정</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="fd-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="fd-play">재생</button><button class="btn" id="fd-new">다른 하루</button></div>
+          <div class="ctrl"><span>속도</span>
+            <div class="seg" id="fd-speed"><button data-value="1">보통</button><button data-value="3" class="on">빠르게</button></div>
+          </div>
+          <label class="check"><input type="checkbox" id="fd-keep" checked> 접힌 뒤에도 경로 흐리게 남기기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시각</span><span class="v" id="fd-o-t">—</span></div>
+        <div class="stat"><span class="k">시가</span><span class="v" id="fd-o-o">—</span></div>
+        <div class="stat"><span class="k">고가 (시각)</span><span class="v" id="fd-o-h">—</span></div>
+        <div class="stat"><span class="k">저가 (시각)</span><span class="v" id="fd-o-l">—</span></div>
+        <div class="stat"><span class="k">현재가 · 종가</span><span class="v" id="fd-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 재생하는 동안 오른쪽 캔들의 색이 몇 번 바뀌는지 센다. 가격이 시가 선을 넘을 때마다 바뀐다. ② 고가와 저가가 각각 몇 시에 나왔는지 본다. 접힌 캔들에는 그 시각이 남지 않는다. ③ "다른 하루"를 여러 번 눌러 몸통은 작은데 꼬리가 긴 날을 찾아본다. (가격 경로는 하루 변동성 약 2.4%의 무작위 걸음으로 만든 가상 데이터다)</div>
+    </div>
+
+    <p>접히는 순간 사라지는 것이 많다. 고가와 저가 중 무엇이 먼저였는지, 가격이 시가 근처에서 몇 번 오갔는지, 오후 내내 밀렸는지 막판에 급락했는지. 캔들은 이 모든 것을 <b>네 숫자</b>로 줄인다. 압축은 편하지만 되돌릴 수 없다.</p>
+
+    <div class="callout warn">
+      <strong>"하루"의 정의도 바뀐다</strong>
+      <p>2025년 3월 대체거래소(넥스트레이드)가 문을 열면서 오전 8시부터 오후 8시까지 거래할 수 있게 되었다(약, 2026년 기준). 그러자 같은 종목의 같은 날 캔들이 "정규 시장만" 기준인지 "통합" 기준인지에 따라 달라지게 되었다. 시가·고가·저가가 다를 수 있다. 거래 시간과 제도는 계속 바뀌므로, 차트를 비교할 때는 같은 기준의 데이터인지 먼저 확인한다.</p>
+    </div>
+  </section>
+
+  <section id="shapes">
+    <h2>꼬리가 말하는 것</h2>
+    <p>꼬리는 장중에 가격이 갔다가 <b>돌아온 거리</b>다. 긴 <span class="term">위꼬리</span><span class="en">(Upper shadow)</span>는 장중 한때 높이 올랐지만 그 가격을 지키지 못하고 밀렸다는 뜻이고, 긴 <span class="term">아래꼬리</span><span class="en">(Lower shadow)</span>는 한때 크게 빠졌다가 되돌아왔다는 뜻이다. 몸통이 거의 없는 캔들은 시작과 끝이 같았다는 뜻이다. 많은 사람이 이런 모양에 이름을 붙였다. 아래에서 네 손잡이를 위아래로 끌어 캔들을 직접 만들어 보자. 왼쪽 손잡이가 시가, 오른쪽이 종가, 위아래 끝이 고가와 저가다.</p>
+
+    <div class="sim" id="sim-mk">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>캔들 직접 만들기: 네 손잡이 끌기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="mk-cv"></canvas><span class="hint">손잡이를 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>모양 불러오기</span>
+            <div class="btn-row">
+              <button class="btn sm" data-preset="long">장대양봉</button><button class="btn sm" data-preset="doji">도지</button><button class="btn sm" data-preset="hammer">망치형</button><button class="btn sm" data-preset="star">유성형</button><button class="btn sm" data-preset="trap">양봉인데 하락</button>
+            </div>
+          </div>
+          <label class="check"><input type="checkbox" id="mk-us"> 미국식 색으로 보기</label>
+        </div>
+      </div>
+      <div class="sim-say" id="mk-say">—</div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">이름</span><span class="v kr" id="mk-o-n">—</span></div>
+        <div class="stat"><span class="k">몸통 / 전체 폭</span><span class="v" id="mk-o-b">—</span></div>
+        <div class="stat"><span class="k">위꼬리 · 아래꼬리</span><span class="v" id="mk-o-w">—</span></div>
+        <div class="stat"><span class="k">전일 대비</span><span class="v" id="mk-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 시가를 종가 위로 끌어 올려 캔들 색이 뒤집히는 순간을 본다. ② "양봉인데 하락"을 불러와 빨간 캔들인데 전일 대비가 파란 숫자인 것을 확인한다. ③ 시가와 종가를 거의 같게 두고 고가·저가만 바꿔 도지의 세 가지 모양을 만든다. ④ 미국식 색을 켜면 같은 캔들이 초록이 된다. (전일 종가는 72,000원으로 고정, 가격은 100원 단위)</div>
+    </div>
+
+    <p>이름은 외울 필요가 없다. <span class="term">도지</span><span class="en">(Doji)</span>는 시가와 종가가 거의 같아 몸통이 선처럼 얇은 캔들, <span class="term">망치형</span><span class="en">(Hammer)</span>은 아래꼬리가 몸통의 두 배 이상 길고 위꼬리가 거의 없는 캔들, <span class="term">유성형</span><span class="en">(Shooting star)</span>은 그 반대다. 중요한 것은 이름이 아니라 <b>모양이 기록하는 사실</b>이다. 망치형은 "장중에 크게 빠졌다가 되돌아왔다"는 사실을 기록할 뿐, 내일 오른다고 약속하지 않는다. 같은 모양이 하락 추세 끝에 나오면 망치형, 상승 추세 끝에 나오면 교수형이라고 부르는 것만 봐도 이름이 해석을 앞질러 가 있다.</p>
+    <p>더 근본적인 문제가 있다. 하루 경로에서 캔들은 하나로 정해지지만, 캔들에서 하루 경로는 정해지지 않는다. 아래 그림의 두 날은 전혀 다른 하루를 보냈지만 똑같은 캔들을 남긴다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 272" role="img" aria-label="서로 다른 두 하루의 가격 경로가 같은 캔들을 만든다">
+        <defs><marker id="ch-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-surface" x="14" y="14" width="200" height="116" rx="8"/>
+        <rect class="f-surface" x="14" y="140" width="200" height="116" rx="8"/>
+        <text class="lbl-b" x="26" y="33">하루 A</text>
+        <text class="lbl-b" x="26" y="159">하루 B</text>
+        <g class="s-dash"><line x1="30" y1="40" x2="206" y2="40"/><line x1="30" y1="96" x2="206" y2="96"/><line x1="30" y1="166" x2="206" y2="166"/><line x1="30" y1="222" x2="206" y2="222"/></g>
+        <polyline class="s-acc" fill="none" stroke-width="2" points="30,71.7 46,60.5 58,40 66,43.7 80,56.8 96,60.5 112,77.3 128,92.3 140,96 152,88.5 168,73.6 184,62.4 198,56.8"/>
+        <polyline class="s-acc" fill="none" stroke-width="2" points="30,197.7 42,210 54,222 66,216 80,204 96,194 110,176 122,168 134,166 150,172 166,180 184,179 198,182.8"/>
+        <text class="lbl-dim" x="114" y="119" text-anchor="middle">아침 급등 → 오후 급락 → 막판 회복</text>
+        <text class="lbl-dim" x="114" y="245" text-anchor="middle">아침 급락 → 오후 급등 → 밀림</text>
+        <line class="s-line" x1="222" y1="72" x2="318" y2="116" marker-end="url(#ch-ar)"/>
+        <line class="s-line" x1="222" y1="198" x2="318" y2="154" marker-end="url(#ch-ar)"/>
+        <line class="s-up" x1="370" y1="40" x2="370" y2="220" stroke-width="2"/>
+        <rect class="f-up" x="350" y="94" width="40" height="48" rx="2"/>
+        <g class="lbl" text-anchor="start"><text x="398" y="45">고가</text><text x="398" y="99">종가</text><text x="398" y="147">시가</text><text x="398" y="225">저가</text></g>
+        <text class="lbl-acc" x="370" y="250" text-anchor="middle">같은 캔들</text>
+      </svg>
+      <figcaption><b>그림 11-2. 같은 캔들, 다른 하루.</b> 시가·고가·저가·종가가 같으면 캔들은 같다. 고가가 아침이었는지 오후였는지, 그 사이 무슨 일이 있었는지는 캔들에 남지 않는다. 캔들에서 장중 이야기를 읽어 내는 해석은 대부분 추측이다.</figcaption>
+    </figure>
+
+    <p>그래도 캔들과 경로 사이에는 단서가 있다. 고가는 경로의 가장 높은 점, 저가는 가장 낮은 점, 몸통의 위아래는 처음과 끝이다. 아래 게임에서 캔들 하나를 보고, 네 개의 하루 중 그 캔들을 만든 하루를 골라 보자. 네 경로는 같은 세로 눈금으로 그려져 있다.</p>
+
+    <div class="sim" id="sim-gm">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>이 캔들을 만든 하루는?</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="gm-cv"></canvas><span class="hint">경로 하나를 누른다</span></div>
+      </div>
+      <div class="sim-say" id="gm-say">왼쪽(좁은 화면에서는 위쪽) 캔들을 만든 하루를 네 경로 가운데서 고른다.</div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">맞힘 / 푼 문제</span><span class="v" id="gm-o-s">0 / 0</span></div>
+        <div class="stat"><span class="k">연속 정답</span><span class="v" id="gm-o-k">0</span></div>
+        <div class="stat"><div class="btn-row"><button class="btn primary" id="gm-next">다음 문제</button><button class="btn" id="gm-re">점수 초기화</button></div></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 먼저 캔들의 색으로 "끝이 처음보다 높은가"를 보고 후보를 줄인다. ② 다음으로 위꼬리와 아래꼬리의 길이로 경로의 최고점·최저점이 처음·끝에서 얼마나 떨어져 있는지 비교한다. ③ 답을 고르면 네 경로 모두 옆에 자기 캔들이 나타난다. 경로가 많이 달라도 캔들이 비슷한 경우를 찾아본다.</div>
+    </div>
+
+    <div class="callout warn">
+      <strong>캔들 패턴은 예측 도구가 아니다</strong>
+      <p>"망치형이 나오면 반등", "장대음봉 세 개면 추세 전환" 같은 규칙은 수백 가지가 있다. 이런 규칙이 거래 비용을 빼고도 꾸준히 돈을 벌었는지는 따로 검증해야 하고, 대부분은 무작위로 만든 차트에서도 비슷한 빈도로 나타난다. 그 검증은 <a href="technical.html">12장</a>에서 한다. 이 장에서는 캔들을 <b>기록</b>으로만 읽는다.</p>
+    </div>
+  </section>
+
+  <section id="volume">
+    <h2>거래량: 얼마나 많은 사람이 동의했나</h2>
+    <p>캔들 아래에 깔린 막대는 <span class="term">거래량</span><span class="en">(Volume)</span>, 그 기간에 체결된 주식 수다. 막대 색은 그날 캔들 색을 따른다. 가격이 "어디서" 거래되었는지를 말한다면 거래량은 "얼마나 많이" 거래되었는지를 말한다. 1,000주가 거래되며 3% 오른 날과 300만 주가 거래되며 3% 오른 날은 같은 캔들이어도 무게가 다르다. 거래량에 가격을 곱하면 <span class="term">거래대금</span><span class="en">(Trading value)</span>이 된다.</p>
+    <p>아래는 한빛반도체 10년 전체를 담은 탐색기다. 가로로 끌어 기간을 옮기고, 슬라이더로 한 화면에 보이는 날 수를 바꾼다. 십자선이 가리키는 날의 네 가격과 거래량이 아래에 나온다. 세모 표시는 가상 시장에 심어 둔 실적 발표일이다.</p>
+
+    <div class="sim" id="sim-ex">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>한빛반도체 10년 탐색기: 끌어서 옮기고 십자선으로 읽기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ex-cv"></canvas><span class="hint">가로로 끌어 기간 이동</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>보이는 날 수 <output id="ex-n-out"></output></span><input type="range" id="ex-n" min="20" max="500" step="10" value="120"></label>
+          <div class="btn-row"><button class="btn" id="ex-crash">2019년 급락</button><button class="btn" id="ex-2018">2018년 바닥</button><button class="btn" id="ex-end">최근</button></div>
+          <label class="check"><input type="checkbox" id="ex-ev" checked> 실적 발표일 표시</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">날짜</span><span class="v" id="ex-o-d">—</span></div>
+        <div class="stat"><span class="k">시 · 고 · 저 · 종</span><span class="v" id="ex-o-p" style="font-size:14px">—</span></div>
+        <div class="stat"><span class="k">전일 대비</span><span class="v" id="ex-o-c">—</span></div>
+        <div class="stat"><span class="k">거래량 (20일 평균 대비)</span><span class="v" id="ex-o-v">—</span></div>
+        <div class="stat"><span class="k">그날의 뉴스</span><span class="v kr" id="ex-o-e" style="font-size:14px">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 실적 발표일(세모)을 짚어 그날의 거래량이 평소의 몇 배인지 본다. ② 보이는 날 수를 500으로 늘리면 캔들이 얼마나 가늘어지는지 본다. ③ "2019년 급락"으로 가서 급락 구간의 거래량 막대가 평소와 어떻게 다른지 본다.</div>
+    </div>
+
+    <p>큰 움직임에는 대개 큰 거래량이 따른다. 뉴스가 나오면 생각이 엇갈린 사람들이 한꺼번에 사고팔기 때문이다. 이번에는 직접 찾아보자. 최근 120거래일 가운데 거래량이 <b>직전 20일 평균의 2배 이상</b>인 날을 모두 누른다.</p>
+
+    <div class="sim" id="sim-vs">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>거래량 급증일 찾기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="vs-cv"></canvas><span class="hint">캔들이나 거래량 막대를 누른다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="vs-show">정답 보기</button><button class="btn" id="vs-re">다시</button></div>
+          <label class="check"><input type="checkbox" id="vs-avg"> 20일 평균 거래량 선 보기(힌트)</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">찾은 급증일</span><span class="v" id="vs-o-f">—</span></div>
+        <div class="stat"><span class="k">헛짚음</span><span class="v" id="vs-o-x">—</span></div>
+        <div class="stat"><span class="k">누른 날의 배수</span><span class="v" id="vs-o-m">—</span></div>
+        <div class="stat"><span class="k">평균 |등락률| 급증일 / 보통 날</span><span class="v" id="vs-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 힌트 없이 막대 높이만 보고 먼저 찾는다. 바로 앞 20일이 조용했는지에 따라 같은 높이도 급증이 되거나 안 된다. ② 정답을 본 뒤 급증일의 평균 등락 폭이 보통 날의 몇 배인지 오른쪽 아래에서 확인한다. (급증 기준: 그날 거래량 ≥ 직전 20거래일 평균 × 2)</div>
+    </div>
+
+    <p>급증일의 평균 등락 폭은 보통 날보다 훨씬 크다. 다만 순서를 조심하자. 거래량이 늘어서 가격이 움직인 것이 아니라, 대개 같은 원인(뉴스, 실적, 시장 전체의 공포)이 둘을 함께 움직인다. "거래량이 터지면 오른다"는 말은 절반만 맞다. 급락일에도 거래량은 터진다.</p>
+  </section>
+
+  <section id="timeframe">
+    <h2>일봉·주봉·월봉: 접는 단위 바꾸기</h2>
+    <p>하루를 캔들 하나로 접었듯이, 한 주나 한 달을 캔들 하나로 접을 수도 있다. <span class="term">주봉</span><span class="en">(Weekly candle)</span>은 그 주 첫날의 시가, 다섯 날 중 가장 높은 고가와 가장 낮은 저가, 마지막 날의 종가로 만들고 거래량은 다섯 날을 더한다. <span class="term">월봉</span>은 한 달(약 21거래일)을 같은 방식으로 접는다. 이 책의 엔진에서는 <code>ST.resample(일봉, 5)</code>가 주봉, <code>ST.resample(일봉, 21)</code>이 월봉이다.</p>
+
+    <div class="sim" id="sim-tf">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>일봉·주봉·월봉 전환</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="tf-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>캔들 하나의 기간</span>
+            <div class="seg" id="tf-k"><button data-value="1" class="on">일봉</button><button data-value="5">주봉</button><button data-value="21">월봉</button></div>
+          </div>
+          <div class="ctrl"><span>보는 기간</span>
+            <div class="seg" id="tf-span"><button data-value="126">6개월</button><button data-value="504" class="on">2년</button><button data-value="2601">10년</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">캔들 수</span><span class="v" id="tf-o-n">—</span></div>
+        <div class="stat"><span class="k">캔들 폭</span><span class="v" id="tf-o-w">—</span></div>
+        <div class="stat"><span class="k">기간 수익률</span><span class="v" id="tf-o-r">—</span></div>
+        <div class="stat"><span class="k">가장 긴 캔들(고가/저가)</span><span class="v" id="tf-o-b">—</span></div>
+        <div class="stat"><span class="k">짚은 캔들</span><span class="v" id="tf-o-h" style="font-size:14px">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 10년을 일봉으로 보면 캔들이 1픽셀보다 가늘어 띠처럼 뭉개진다. 월봉으로 바꾸면 모양이 다시 보인다. ② 같은 2년을 일봉과 월봉으로 보며 "가장 긴 캔들"의 크기를 비교한다. 월봉 하나에는 한 달치 출렁임이 다 들어간다. ③ 기간 수익률은 접는 단위와 상관없이 같다. 바뀌는 것은 보이는 모양뿐이다.</div>
+    </div>
+
+    <p>접는 단위가 커질수록 잔물결은 사라지고 큰 흐름이 남는다. 대신 캔들 하나하나가 길어진다. 하루짜리 −5%는 월봉 안에서 꼬리 한 조각이 되고, 그 달 전체의 고점과 저점이 몸통과 꼬리를 정한다. 10년을 보려면 월봉, 1년이면 주봉, 몇 달이면 일봉이 대체로 읽기 편하다. 화면의 폭이 정하는 문제이기도 하다. 캔들 하나에 최소 3~4픽셀은 있어야 모양이 보인다.</p>
+  </section>
+
+  <section id="ma">
+    <h2>이동평균과 그 지연</h2>
+    <p>캔들 위를 지나는 매끄러운 선은 대개 <span class="term">이동평균</span><span class="en">(Moving average)</span>이다. 최근 n일의 종가를 평균 낸 값을 날마다 다시 계산해 이은 선이다. 5일선, 20일선, 60일선, 120일선이 흔히 쓰인다(대략 1주, 1개월, 1분기, 반년).</p>
+    <div class="formula">$$\text{SMA}_n(t) = \frac{P_t + P_{t-1} + \cdots + P_{t-n+1}}{n}$$<div class="where">\(P_t\)는 t일의 종가, n은 기간이다. 모든 날에 같은 무게를 주는 단순 이동평균(SMA)이다. 최근 날에 더 큰 무게를 주는 지수 이동평균(EMA)도 많이 쓴다.</div></div>
+    <p>평균은 흔들림을 줄이지만 대가가 있다. 20일 평균은 오늘 가격만이 아니라 19일 전 가격까지 똑같이 반영하므로, 평균이 가리키는 "시점"은 사실상 약 10일 전이다. 일반적으로 n일 단순 이동평균은 약 \((n-1)/2\)일 늦다. 아래에서 V자로 떨어졌다 오르는 가격의 바닥 손잡이를 끌고, 평균의 기간을 바꿔 보자.</p>
+
+    <div class="sim" id="sim-lag">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>이동평균은 얼마나 늦게 돌아서는가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lag-cv"></canvas><span class="hint">바닥 손잡이를 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>이동평균 기간 <output id="lag-n-out"></output></span><input type="range" id="lag-n" min="3" max="60" step="1" value="20"></label>
+          <div class="ctrl"><span>종류</span>
+            <div class="seg" id="lag-kind"><button data-value="sma" class="on">단순(SMA)</button><button data-value="ema">지수(EMA)</button></div>
+          </div>
+          <label class="check"><input type="checkbox" id="lag-noise" checked> 잡음 섞기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">가격 바닥</span><span class="v" id="lag-o-p">—</span></div>
+        <div class="stat"><span class="k">평균선 바닥</span><span class="v" id="lag-o-m">—</span></div>
+        <div class="stat"><span class="k">지연</span><span class="v" id="lag-o-l">—</span></div>
+        <div class="stat"><span class="k">평균이 돌아설 때 가격은 바닥에서</span><span class="v" id="lag-o-g">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기간을 5, 20, 60으로 바꿔 지연이 대략 (n−1)/2일인지 확인한다. ② 같은 기간에서 EMA로 바꾸면 지연이 얼마나 줄어드는지 본다. ③ 바닥을 깊게 끌수록 "평균선이 돌아섰다"는 신호가 왔을 때 이미 놓친 상승이 커진다. ④ 잡음을 끄면 지연이 이론값에 더 가까워진다. (가상의 V자 가격, 기간 160일)</div>
+    </div>
+
+    <p>이동평균은 미래를 알려 주는 선이 아니라 <b>지나간 가격을 늦게 요약한 선</b>이다. 길게 잡을수록 매끄럽지만 늦고, 짧게 잡을수록 빠르지만 가격을 따라 흔들린다. 진짜 차트에서 확인해 보자. 아래는 한빛반도체가 2017년 하락 끝에 2018년 1월 바닥(8,840원)을 찍고 반등한 구간이다.</p>
+
+    <div class="sim" id="sim-ma">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>5·20·60·120일선: 빠르면 시끄럽고 느리면 늦다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ma-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="check"><input type="checkbox" id="ma-5"> 5일선</label>
+          <label class="check"><input type="checkbox" id="ma-20" checked> 20일선</label>
+          <label class="check"><input type="checkbox" id="ma-60" checked> 60일선</label>
+          <label class="check"><input type="checkbox" id="ma-120"> 120일선</label>
+          <div class="ctrl"><span>종류</span>
+            <div class="seg" id="ma-kind"><button data-value="sma" class="on">SMA</button><button data-value="ema">EMA</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">5일선 바닥 지연 · 교차</span><span class="v" id="ma-o-5">—</span></div>
+        <div class="stat"><span class="k">20일선</span><span class="v" id="ma-o-20">—</span></div>
+        <div class="stat"><span class="k">60일선</span><span class="v" id="ma-o-60">—</span></div>
+        <div class="stat"><span class="k">120일선</span><span class="v" id="ma-o-120">—</span></div>
+        <div class="stat"><span class="k">짚은 날 · 이격도(종가/20일선)</span><span class="v" id="ma-o-h" style="font-size:14px">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 네 선을 모두 켜고 바닥 뒤에 각 선이 돌아서는 순서를 본다. ② "교차"는 이 기간에 종가가 그 선을 위아래로 가로지른 횟수다. 5일선은 수십 번, 120일선은 몇 번뿐이다. 교차를 매매 신호로 쓰면 짧은 선은 거래 비용을, 긴 선은 늦음을 치른다. ③ 십자선으로 바닥 근처를 짚어 이격도가 얼마나 낮았는지 본다. (기간: 2017년 7월~2018년 10월, 가상 시장)</div>
+    </div>
+
+    <p>바닥에서 20일선이 돌아서기까지 약 15거래일, 60일선은 약 28거래일이 걸린다. 그동안 가격은 이미 바닥에서 크게 올라 있다. 이동평균 두 개가 교차하는 "골든크로스"를 신호로 쓰는 규칙이 이 지연을 그대로 물려받는다. 그 규칙이 정말 돈이 되는지는 <a href="technical.html">12장</a>에서 백테스트한다.</p>
+  </section>
+
+  <section id="log">
+    <h2>선형 축과 로그 축</h2>
+    <p>세로축에 금액을 같은 간격으로 매긴 것이 <span class="term">선형 축</span><span class="en">(Linear scale)</span>이다. 10,000원과 20,000원 사이의 거리가 70,000원과 80,000원 사이의 거리와 같다. 그런데 투자자에게 중요한 것은 금액보다 <b>비율</b>이다. 10,000원이 20,000원이 되는 것은 두 배(+100%)이고, 70,000원이 80,000원이 되는 것은 +14%다. <span class="term">로그 축</span><span class="en">(Logarithmic scale)</span>은 같은 비율을 같은 거리로 그린다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 270" role="img" aria-label="선형 축과 로그 축에서 두 배 간격 비교">
+        <defs><marker id="lg-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <line class="s-axis" x1="110" y1="30" x2="110" y2="230"/>
+        <g class="s-line"><line x1="104" y1="205" x2="116" y2="205"/><line x1="104" y1="180" x2="116" y2="180"/><line x1="104" y1="130" x2="116" y2="130"/><line x1="104" y1="30" x2="116" y2="30"/><line x1="104" y1="230" x2="116" y2="230"/></g>
+        <g class="t-mono" text-anchor="end"><text x="98" y="234">0</text><text x="98" y="209">1만</text><text x="98" y="184">2만</text><text x="98" y="134">4만</text><text x="98" y="34">8만</text></g>
+        <g class="s-acc" stroke-width="1.6"><line x1="130" y1="203" x2="130" y2="182" marker-start="url(#lg-ar)" marker-end="url(#lg-ar)"/><line x1="130" y1="178" x2="130" y2="132" marker-start="url(#lg-ar)" marker-end="url(#lg-ar)"/><line x1="130" y1="128" x2="130" y2="32" marker-start="url(#lg-ar)" marker-end="url(#lg-ar)"/></g>
+        <g class="lbl-acc"><text x="140" y="197">×2</text><text x="140" y="159">×2</text><text x="140" y="84">×2</text></g>
+        <text class="lbl-b" x="110" y="256" text-anchor="middle">선형 축</text>
+
+        <line class="s-axis" x1="320" y1="30" x2="320" y2="230"/>
+        <g class="s-line"><line x1="314" y1="230" x2="326" y2="230"/><line x1="314" y1="163.3" x2="326" y2="163.3"/><line x1="314" y1="96.7" x2="326" y2="96.7"/><line x1="314" y1="30" x2="326" y2="30"/></g>
+        <g class="t-mono" text-anchor="end"><text x="308" y="234">1만</text><text x="308" y="167">2만</text><text x="308" y="101">4만</text><text x="308" y="34">8만</text></g>
+        <g class="s-acc2" stroke-width="1.6"><line x1="340" y1="228" x2="340" y2="165.3" marker-start="url(#lg-ar)" marker-end="url(#lg-ar)"/><line x1="340" y1="161.3" x2="340" y2="98.7" marker-start="url(#lg-ar)" marker-end="url(#lg-ar)"/><line x1="340" y1="94.7" x2="340" y2="32" marker-start="url(#lg-ar)" marker-end="url(#lg-ar)"/></g>
+        <g class="lbl-acc2"><text x="350" y="201">×2</text><text x="350" y="134">×2</text><text x="350" y="68">×2</text></g>
+        <text class="lbl-b" x="320" y="256" text-anchor="middle">로그 축</text>
+        <text class="lbl-dim" x="215" y="140" text-anchor="middle">같은</text>
+        <text class="lbl-dim" x="215" y="158" text-anchor="middle">두 배</text>
+      </svg>
+      <figcaption><b>그림 11-3. 같은 "두 배"의 높이.</b> 선형 축에서는 1만→2만, 2만→4만, 4만→8만이 점점 길어진다(1 : 2 : 4). 로그 축에서는 셋 다 같은 높이다. 로그 축의 높이는 금액이 아니라 수익률을 보여 준다.</figcaption>
+    </figure>
+
+    <p>로그 축에서 가격 P는 \(\log P\)에 비례하는 높이에 그려진다. 그래서 두 점의 높이 차이는 \(\log P_2 - \log P_1 = \log(P_2/P_1)\), 즉 비율에만 달려 있다. 이 성질 때문에 <b>일정한 비율로 꾸준히 크는 것은 로그 축에서 직선</b>이 된다. 선형 축에서는 같은 성장이 처음엔 납작하다가 끝에서 폭발하는 곡선으로 보인다.</p>
+
+    <div class="sim" id="sim-gr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>일정한 성장: 선형 축의 곡선, 로그 축의 직선</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gr-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>연 성장률 <output id="gr-r-out"></output></span><input type="range" id="gr-r" min="0.01" max="0.2" step="0.005" value="0.08"></label>
+          <label class="ctrl"><span>기간 <output id="gr-y-out"></output></span><input type="range" id="gr-y" min="10" max="50" step="1" value="40"></label>
+          <label class="check"><input type="checkbox" id="gr-shock" checked> 중간에 −40% 폭락 한 번 넣기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">최종 배수</span><span class="v" id="gr-o-m">—</span></div>
+        <div class="stat"><span class="k">두 배 걸리는 기간</span><span class="v" id="gr-o-d">—</span></div>
+        <div class="stat"><span class="k">폭락의 화면 높이 선형 / 로그</span><span class="v" id="gr-o-s">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 점은 두 배가 될 때마다 찍힌다. 왼쪽(선형)에서는 점 사이 높이가 매번 두 배로 벌어지고, 오른쪽(로그)에서는 같은 간격이다. ② 폭락을 켜고 같은 −40%가 두 축에서 얼마나 다르게 보이는지 본다. 선형 축에서는 언제 일어났느냐에 따라 크기가 달라진다. ③ 성장률을 높일수록 선형 축의 앞부분이 바닥에 더 납작하게 붙는다.</div>
+    </div>
+
+    <p>이제 한빛반도체 10년 차트를 두 축으로 비교하자. 10년 동안 21,150원에서 72,000원이 되었고, 그 사이 2018년 1월에는 8,840원까지 빠졌다(2016년 1월 고점 23,200원에서 약 −62%). 선형 축에서는 이 큰 하락이 바닥의 작은 주름으로 보인다. 차트 위를 가로로 끌면 그 구간의 변화율과 화면 높이가 나온다.</p>
+
+    <div class="sim" id="sim-lg">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>10년 차트: 선형 축과 로그 축 토글</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lg-cv"></canvas><span class="hint">가로로 끌어 구간 재기</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>세로축</span>
+            <div class="seg" id="lg-axis"><button data-value="lin" class="on">선형</button><button data-value="log">로그</button></div>
+          </div>
+          <div class="ctrl"><span>대상</span>
+            <div class="seg" id="lg-what"><button data-value="hanbit" class="on">한빛반도체</button><button data-value="byeol">별빛바이오</button><button data-value="index">SB 지수</button></div>
+          </div>
+          <label class="check"><input type="checkbox" id="lg-x2" checked> 처음과 마지막 "두 배" 표시</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">잰 구간</span><span class="v" id="lg-o-d" style="font-size:14px">—</span></div>
+        <div class="stat"><span class="k">변화율</span><span class="v" id="lg-o-r">—</span></div>
+        <div class="stat"><span class="k">화면 높이</span><span class="v" id="lg-o-h">—</span></div>
+        <div class="stat"><span class="k">두 "두 배"의 높이 (처음 : 마지막)</span><span class="v" id="lg-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 선형 축에서 처음과 마지막 "두 배" 화살표의 길이를 비교한 뒤 로그 축으로 바꾼다. ② 2016~2018년 하락 구간을 끌어 재고, 같은 구간이 두 축에서 화면 높이가 얼마나 다른지 본다. ③ 별빛바이오로 바꾸면 선형 축은 앞쪽 몇 년을 거의 읽을 수 없게 만든다.</div>
+    </div>
+
+    <p>선형 축은 최근의 움직임을 크게, 과거의 움직임을 작게 그린다. 가격이 많이 오른 종목일수록 이 왜곡이 심하다. <b>몇 년 이상의 차트는 로그 축으로 본다</b>는 것이 이 장의 첫 번째 규칙이다. 반대로 며칠~몇 달처럼 가격 폭이 좁은 기간에는 두 축이 거의 같아 보이므로 선형 축으로도 충분하다.</p>
+  </section>
+
+  <section id="adjusted">
+    <h2>수정주가: 끊긴 차트 이어 붙이기</h2>
+    <p>회사가 주식 1주를 2주로 쪼개는 <span class="term">액면분할</span><span class="en">(Stock split)</span>을 하면, 회사 가치는 그대로인데 주식 수가 두 배가 되므로 1주의 가격은 절반이 된다. 한결이 가진 10주는 20주가 되고 평가금액은 변하지 않는다(<a href="corporate.html">9장</a>). 그런데 실제로 거래된 가격을 그대로 이은 차트에는 분할일에 −50% 절벽이 생긴다. 이 가짜 폭락을 지우려고, 분할 이전의 가격을 모두 같은 비율로 나눠 이어 붙인 것이 <span class="term">수정주가</span><span class="en">(Adjusted price)</span>다.</p>
+    <p>아래는 <b>가정</b>이다. 한빛반도체가 2021년 5월 3일에 2:1 액면분할을 했고, 해마다 12월 말에 주가의 약 2%를 배당했다고 하자(이 절의 가상 시나리오). 지금까지 본 한빛 차트는 수정주가였고, 분할 전 실제 거래 가격은 그 두 배였던 셈이다.</p>
+
+    <div class="sim" id="sim-adj">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>원주가와 수정주가: 가상의 2:1 액면분할</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="adj-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>차트의 가격</span>
+            <div class="seg" id="adj-view"><button data-value="raw" class="on">원주가(실제 거래 가격)</button><button data-value="adj">수정주가</button></div>
+          </div>
+          <label class="check"><input type="checkbox" id="adj-tr"> 배당 재투자(총수익) 선 겹치기</label>
+          <label class="check"><input type="checkbox" id="adj-log"> 로그 축</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">분할일 하루 등락</span><span class="v" id="adj-o-s">—</span></div>
+        <div class="stat"><span class="k">10년 수익률</span><span class="v" id="adj-o-r">—</span></div>
+        <div class="stat"><span class="k">최대 낙폭</span><span class="v" id="adj-o-m">—</span></div>
+        <div class="stat"><span class="k">총수익(배당 재투자)</span><span class="v" id="adj-o-t">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 원주가에서 분할일의 절벽과 그날의 "등락률"을 본다. 아무도 돈을 잃지 않았다. ② 수정주가로 바꾸면 10년 수익률과 최대 낙폭이 어떻게 달라지는지 본다. 원주가로 잰 숫자는 둘 다 틀렸다. ③ 총수익 선을 켜면 배당을 받아 다시 샀을 때 수정주가 선보다 얼마나 위로 벌어지는지 보인다. (분할과 배당은 이 절의 가정)</div>
+    </div>
+
+    <p>원주가로 잰 10년 수익률과 최대 낙폭은 둘 다 틀린 숫자다. 분할로 생긴 −50%를 진짜 손실로 세기 때문이다. 한국 증권 앱의 수정주가는 대개 분할·병합·증자처럼 <b>주식 수가 바뀌는 일</b>을 반영하고, 보통의 현금배당은 반영하지 않는다(앱마다 다르다). 배당까지 다시 투자했다고 보고 계산한 것은 <span class="term">총수익</span><span class="en">(Total return)</span>이며, <a href="dividend.html">8장</a>에서 본 배당 재투자의 효과가 여기서 차트의 벌어짐으로 보인다. 오래된 차트나 남이 만든 그래프를 볼 때는 "이것이 수정주가인가, 배당은 들어갔나"를 먼저 묻는다.</p>
+  </section>
+
+  <section id="gap">
+    <h2>갭: 빈칸이 생긴 날</h2>
+    <p>오늘의 저가가 어제의 고가보다 높으면 두 캔들 사이에 아무 거래도 없었던 빈칸이 생긴다. 이것이 <span class="term">상승 갭</span><span class="en">(Gap up)</span>이다. 반대로 오늘의 고가가 어제의 저가보다 낮으면 <span class="term">하락 갭</span><span class="en">(Gap down)</span>이다. 장이 닫힌 밤사이 실적 발표나 해외 시장 급락 같은 뉴스가 쌓이면 다음 날 시가가 크게 뛰어 시작하면서 생긴다. 한국 시장에서는 하루 가격제한폭(±30%) 때문에 갭의 크기에도 상한이 있다.</p>
+    <p>아래 가상 종목의 60일 차트에서 갭이 생긴 날을 모두 눌러 찾아보자. 캔들 사이에 세로로 빈칸이 있는 날이다.</p>
+
+    <div class="sim" id="sim-gap">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>갭 찾기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gap-cv"></canvas><span class="hint">갭이 생긴 날의 캔들을 누른다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="gap-show">정답 보기</button><button class="btn" id="gap-new">새 차트</button></div>
+          <label class="check"><input type="checkbox" id="gap-close"> 종가만 잇는 선 겹치기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">찾은 갭</span><span class="v" id="gap-o-f">—</span></div>
+        <div class="stat"><span class="k">헛짚음</span><span class="v" id="gap-o-x">—</span></div>
+        <div class="stat"><span class="k">기간 안에 메워진 갭</span><span class="v" id="gap-o-m">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 시가가 전날 종가와 크게 다른 날이라도 장중에 전날 범위로 돌아왔다면 갭이 아니다. 꼬리까지 봐야 한다. ② 정답을 보면 갭이 색칠된 띠로 오른쪽으로 이어지다가, 나중 가격이 그 빈칸을 다시 지나가면 멈춘다. 이것을 "갭이 메워졌다"고 한다. ③ 종가 선을 겹치면 선 차트에서는 갭이 보이지 않는다는 것을 확인한다. (밤사이 뉴스가 약 14%의 날에 생기는 가상 종목)</div>
+    </div>
+
+    <p>갭이 언젠가 메워진다는 속설이 있지만, 메워지는 데 며칠이 걸릴지 몇 년이 걸릴지는 정해져 있지 않다. 갭은 "밤사이 정보가 한꺼번에 반영되었다"는 기록이다. 그 정보가 계속 유효하면 갭은 메워지지 않는다.</p>
+  </section>
+
+  <section id="high52">
+    <h2>52주 신고가와 신저가</h2>
+    <p>뉴스에 자주 나오는 <span class="term">52주 신고가</span><span class="en">(52-week high)</span>는 지난 1년(약 250거래일) 가운데 가장 높은 가격을 새로 쓴 날이다. <span class="term">52주 신저가</span>는 그 반대다. 지난 1년의 최고가와 최저가로 띠를 그리면, 지금 가격이 그 띠의 어디쯤인지 한눈에 보인다. 아래 차트에서 세로선을 끌어 날짜를 바꿔 보자.</p>
+
+    <div class="sim" id="sim-hl">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>52주 최고·최저 띠와 신고가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="hl-cv"></canvas><span class="hint">세로선을 끌어 날짜 이동</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>표시</span>
+            <div class="seg" id="hl-mark"><button data-value="high" class="on">신고가</button><button data-value="low">신저가</button><button data-value="none">없음</button></div>
+          </div>
+          <label class="check"><input type="checkbox" id="hl-log" checked> 로그 축</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">날짜 · 종가</span><span class="v" id="hl-o-d" style="font-size:14px">—</span></div>
+        <div class="stat"><span class="k">52주 최고 · 최저</span><span class="v" id="hl-o-b" style="font-size:14px">—</span></div>
+        <div class="stat"><span class="k">띠 안의 위치</span><span class="v" id="hl-o-p">—</span></div>
+        <div class="stat"><span class="k">그해 신고가 · 신저가 날 수</span><span class="v" id="hl-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 신고가 점이 몰려 있는 해와 하나도 없는 해를 찾는다. 신고가는 상승장에서 줄지어 나온다. ② 2018년 1월 바닥으로 세로선을 끌어 띠 안의 위치가 거의 0%인 것을 본다. ③ 띠의 폭(최고/최저)이 넓은 해와 좁은 해를 비교한다. 폭이 넓은 해는 변동성이 컸던 해다. (가상 시장의 한빛반도체, 고가·저가 기준 250거래일)</div>
+    </div>
+
+    <p>"52주 신고가 종목"이라는 말은 그 자체로 좋은 소식도 나쁜 소식도 아니다. 오른 종목이 더 오르는 경향(모멘텀, <a href="factor.html">16장</a>)을 근거로 신고가를 사는 사람도 있고, 고점이라 피하는 사람도 있다. 차트가 알려 주는 것은 "지난 1년 중 가장 비싸다"는 사실뿐이다.</p>
+  </section>
+
+  <section id="illusion">
+    <h2>축 범위의 착시</h2>
+    <p>차트를 만드는 사람은 세로축의 위아래 끝을 고를 수 있다. 가격이 70,000원대에서 움직였다면 0원부터 그릴 수도, 71,000원부터 그릴 수도 있다. 같은 데이터가 앞의 경우엔 평평한 선으로, 뒤의 경우엔 낭떠러지로 보인다. 아래는 한빛반도체의 40거래일(2025년 5~7월, 실제 하락은 약 −5%)이다. 왼쪽 축의 두 손잡이를 끌어 축 범위를 바꿔 보자.</p>
+
+    <div class="sim" id="sim-ax">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>같은 데이터를 '폭락'처럼, '평탄'처럼</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ax-cv"></canvas><span class="hint">축의 손잡이를 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn" id="ax-crash">폭락처럼</button><button class="btn" id="ax-flat">평탄하게</button><button class="btn primary" id="ax-honest">0부터</button></div>
+          <label class="check"><input type="checkbox" id="ax-hide"> 축 숫자 숨기기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">실제 변화율</span><span class="v" id="ax-o-r">—</span></div>
+        <div class="stat"><span class="k">화면 높이로 본 하락</span><span class="v" id="ax-o-v">—</span></div>
+        <div class="stat"><span class="k">과장 배율(0부터 대비)</span><span class="v" id="ax-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① "폭락처럼"을 누르고 축 숫자를 숨긴다. 숫자 없이 보면 −5%가 반토막처럼 보인다. ② "0부터"는 정직하지만 작은 움직임을 거의 지운다. 어느 쪽도 완벽하지 않다. ③ 위 손잡이를 아래 손잡이 가까이 끌어 과장 배율이 몇 배까지 커지는지 본다.</div>
+    </div>
+
+    <p>증권 앱은 대개 보이는 기간의 최고가·최저가에 맞춰 축을 자동으로 잡는다. 그래서 어떤 차트든 화면을 꽉 채우고, 1% 움직임도 큰 파도처럼 보인다. 차트를 보고 마음이 흔들릴 때는 <b>모양보다 축의 숫자를 먼저 읽는다</b>. 그리고 변화율로 다시 말해 본다. "화면 절반이 빠졌다"가 아니라 "5% 빠졌다"로.</p>
+  </section>
+
+  <section id="relative">
+    <h2>두 종목 비교: 100으로 맞추기</h2>
+    <p>72,000원짜리 한빛반도체와 13,500원짜리 다온은행을 같은 축에 그리면 다온은 바닥에 붙어 아무것도 보이지 않는다. 가격 수준이 다른 둘을 비교하려면 어떤 날(기준일)의 가격을 둘 다 100으로 맞추고, 그 뒤 움직임을 비율로 따라간다. 이렇게 맞춘 두 선의 비율을 <span class="term">상대 강도</span><span class="en">(Relative strength)</span>라 부른다. 아래에서 두 대상을 고르고, 차트를 눌러 기준일을 옮겨 보자.</p>
+
+    <div class="sim" id="sim-rs">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>기준일을 100으로: 두 종목 정규화 비교</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="rs-cv"></canvas><span class="hint">눌러서 기준일 이동</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>A</span>
+            <div class="seg" id="rs-a"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button><button data-value="index">지수</button></div>
+          </div>
+          <div class="ctrl"><span>B</span>
+            <div class="seg" id="rs-b"><button data-value="hanbit">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button><button data-value="index" class="on">지수</button></div>
+          </div>
+          <div class="btn-row"><button class="btn sm" id="rs-b0">기준일: 처음</button><button class="btn sm" id="rs-b1">기준일: 2019년 고점</button><button class="btn sm" id="rs-b2">기준일: 2024년 초</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">기준일</span><span class="v" id="rs-o-d">—</span></div>
+        <div class="stat"><span class="k">A 기준일 이후</span><span class="v" id="rs-o-a">—</span></div>
+        <div class="stat"><span class="k">B 기준일 이후</span><span class="v" id="rs-o-b">—</span></div>
+        <div class="stat"><span class="k">상대 강도 A/B</span><span class="v" id="rs-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한빛과 지수를 처음부터 비교한 뒤, 기준일을 2019년 고점으로 옮긴다. "누가 이겼나"의 답이 기준일에 따라 바뀐다. ② 아래 칸의 상대 강도 선이 오르면 그 기간에 A가 B보다 잘한 것이다. ③ 누리식품과 모아플랫폼을 비교하며 상대 강도 선이 몇 년씩 한 방향으로 가는 구간을 찾는다. (세로축은 로그, 가상 시장)</div>
+    </div>
+
+    <p>"이 종목은 지수보다 두 배 올랐다"는 문장에는 언제나 숨은 기준일이 있다. 기준일을 바닥 바로 뒤로 잡으면 어떤 종목이든 영웅처럼 보이고, 고점으로 잡으면 패배자처럼 보인다. 광고나 추천 글에서 비교 차트를 보면 <b>시작점이 왜 그날인지</b>를 묻는다. 이 질문은 <a href="backtest.html">17장</a>의 백테스트에서 다시 만난다.</p>
+  </section>
+
+  <section id="hangyeol">
+    <h2>한결의 10년 차트</h2>
+    <p>지금까지 만진 것을 한 화면에 모았다. 한결이 처음 본 한빛반도체 10년 차트를 축(선형·로그), 접는 단위(일·주·월봉), 이동평균, 국면 표시를 바꿔 가며 다시 본다. 오른쪽 아래 두 숫자를 보자. 하나는 <b>화면에서 가장 커 보이는 하락</b>, 다른 하나는 <b>실제로 가장 컸던 하락</b>(최대 낙폭)이다. 두 숫자가 같은 구간을 가리키는 설정은 무엇인가?</p>
+
+    <div class="sim" id="sim-hg">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>종합: 한결의 차트 설정 실험실</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="hg-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>세로축</span>
+            <div class="seg" id="hg-axis"><button data-value="lin" class="on">선형</button><button data-value="log">로그</button></div>
+          </div>
+          <div class="ctrl"><span>캔들 기간</span>
+            <div class="seg" id="hg-k"><button data-value="1" class="on">일봉</button><button data-value="5">주봉</button><button data-value="21">월봉</button></div>
+          </div>
+          <label class="check"><input type="checkbox" id="hg-ma"> 이동평균(20봉 · 60봉)</label>
+          <label class="check"><input type="checkbox" id="hg-reg"> 시장 국면 표시</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">캔들 수</span><span class="v" id="hg-o-n">—</span></div>
+        <div class="stat"><span class="k">화면에서 가장 커 보이는 하락</span><span class="v" id="hg-o-v" style="font-size:14px">—</span></div>
+        <div class="stat"><span class="k">실제 최대 낙폭</span><span class="v" id="hg-o-m" style="font-size:14px">—</span></div>
+        <div class="stat"><span class="k">짚은 캔들</span><span class="v" id="hg-o-h" style="font-size:14px">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 선형·일봉(앱의 기본값)에서 가장 커 보이는 하락이 언제인지 본다. 로그로 바꾸면 그 답이 바뀐다. ② 월봉으로 바꾸면 2,601개의 캔들이 124개가 되고 10년의 흐름이 읽힌다. ③ 국면 표시를 켜고 2019년 급락(시장 −34%)과 2021~2022년 약세장에서 한빛이 어떻게 움직였는지 본다. (가상 시장 데이터, 수정주가 기준)</div>
+    </div>
+
+    <div class="casefile">
+      <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 11장</span></div>
+      <h4>한빛반도체 10년 차트를 네 번 다시 그리다</h4>
+      <p>한결이 앱에서 처음 본 한빛반도체 10년 차트는 선형 축 일봉이었다. 2,601개의 캔들이 띠처럼 뭉개져 있었고, 앞쪽 8년은 바닥에 깔린 채 마지막 2년만 솟아 있었다. "최근에 대단한 일이 일어났구나"가 첫인상이었다.</p>
+      <p>로그 축으로 바꾸자 이야기가 달라졌다. 화면에서 가장 깊은 골짜기는 최근이 아니라 맨 앞, 2016년 1월 23,200원에서 2018년 1월 8,840원까지의 약 −62%였다. 선형 축에서는 1만 4천 원쯤의 작은 주름으로 보이던 구간이고, 선형 축에서 가장 커 보이던 하락은 2025년 2월~9월의 약 −34%였다. 2018년 1월 바닥에서 처음 두 배가 되는 데 약 4개월 반, 마지막 두 배(약 36,000원 → 72,000원)에는 약 1년 7개월이 걸렸는데, 선형 축에서는 뒤의 두 배가 앞의 것보다 네 배 길게 그려진다. 주봉(521개)과 월봉(124개)으로 접자 10년의 흐름이 비로소 읽혔다. 10년 전체로는 21,150원 → 72,000원, 약 +240%(연 약 12.6%)다.</p>
+      <p>같은 데이터가 설정 하나로 "로켓"도 되고 "롤러코스터"도 되었다. 한결은 차트를 볼 때의 습관을 적었다.</p>
+      <div class="clue">
+        <div><b>이 장에서 정한 것</b>몇 년 이상은 로그 축·주봉 이상으로 본다. 수정주가인지, 배당이 들어갔는지 확인한다. 축 숫자를 먼저 읽고 변화율로 말한다. 비교 차트는 기준일을 묻는다.</div>
+        <div><b>아직 남은 문제</b>차트에서 읽은 모양(골든크로스, 망치형, 신고가)이 다음 움직임을 알려 주는가? 동료가 보낸 유튜브 영상은 "20일선이 60일선을 뚫으면 사라"고 한다.</div>
+        <div><b>다음 단계</b><a href="technical.html">12장</a>에서 그 규칙을 한빛과 지수에 백테스트하고, 비용을 넣은 뒤 무엇이 남는지 본다.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>캔들은 한 기간의 시가·고가·저가·종가를 담는다. 몸통은 시가와 종가 사이, 꼬리는 고가·저가까지다. 경로에서 캔들은 하나로 정해지지만 캔들에서 경로는 정해지지 않는다.</li>
+      <li>양봉(빨강)은 종가가 <b>그날 시가</b>보다 높다는 뜻이다. 전일 대비 등락과는 다르다. 미국은 상승 초록, 하락 빨강으로 색이 반대다.</li>
+      <li>거래량은 얼마나 많이 거래되었는지를 말한다. 큰 가격 변화에는 대개 큰 거래량이 따르지만, 둘은 보통 같은 원인(뉴스)의 결과다.</li>
+      <li>주봉·월봉은 일봉을 더 큰 단위로 접은 것이다(<code>ST.resample</code>). 긴 기간일수록 큰 단위가 읽기 쉽다.</li>
+      <li>n일 단순 이동평균은 약 (n−1)/2일 늦다. 길수록 매끄럽지만 늦고, 짧을수록 빠르지만 시끄럽다.</li>
+      <li>로그 축은 같은 비율을 같은 높이로 그린다. 몇 년 이상의 차트는 로그 축으로 본다. 선형 축은 최근의 움직임을 과장한다.</li>
+      <li>수정주가는 액면분할 같은 주식 수 변화로 생긴 가짜 절벽을 지운다. 배당까지 재투자하면 총수익이다.</li>
+      <li>갭은 밤사이 정보가 한꺼번에 반영된 빈칸, 52주 신고가·신저가는 지난 1년 범위의 끝이다. 둘 다 사실의 기록이지 예측이 아니다.</li>
+      <li>y축 범위와 비교 기준일은 같은 데이터를 전혀 다른 이야기로 바꾼다. 축 숫자와 시작점을 먼저 확인한다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 어제 종가가 72,000원이다. 오늘 시가 69,000원, 고가 72,500원, 저가 68,500원, 종가 71,000원이었다. 한국 증권 앱에서 오늘의 캔들과 등락률은?</p>
+        <div class="opts">
+          <button class="opt">파란 음봉, 전일 대비 −1.4%</button>
+          <button class="opt" data-correct>빨간 양봉, 전일 대비 −1.4%</button>
+          <button class="opt">빨간 양봉, 전일 대비 +2.9%</button>
+          <button class="opt">파란 음봉, 전일 대비 +2.9%</button>
+        </div>
+        <div class="quiz-exp">캔들 색은 그날 시가(69,000)와 종가(71,000)를 비교하므로 양봉(빨강)이다. 등락률은 어제 종가와 비교하므로 71,000 / 72,000 − 1 ≈ −1.4%로 하락이다. 색과 등락률이 서로 다른 날이다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 로그 축 차트에서 두 구간의 세로 길이가 똑같다. 무엇이 같다는 뜻인가?</p>
+        <div class="opts">
+          <button class="opt">두 구간의 가격 변화 금액(원)</button>
+          <button class="opt">두 구간의 거래량</button>
+          <button class="opt" data-correct>두 구간의 가격 변화 비율(수익률)</button>
+          <button class="opt">두 구간의 기간(일수)</button>
+        </div>
+        <div class="quiz-exp">로그 축의 높이 차이는 log(P₂/P₁), 즉 비율에만 달려 있다. 1만→2만과 4만→8만은 로그 축에서 같은 높이다. 선형 축에서는 뒤의 것이 네 배 길다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 가격이 어느 날 바닥을 찍고 곧바로 오르기 시작했다. 20일 단순 이동평균선은 대략 언제 돌아서는가?</p>
+        <div class="opts">
+          <button class="opt">바닥 바로 다음 날</button>
+          <button class="opt" data-correct>바닥 뒤 약 10일쯤</button>
+          <button class="opt">바닥 뒤 정확히 20일</button>
+          <button class="opt">바닥보다 며칠 먼저</button>
+        </div>
+        <div class="quiz-exp">n일 단순 이동평균은 약 (n−1)/2일 늦다. 20일선이면 약 9.5일이다. 잡음이 있으면 앞뒤로 조금 달라진다. 이동평균은 지나간 가격의 평균이라 바닥을 먼저 알 수 없다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 어떤 종목의 원주가 차트에서 하루 만에 −50% 절벽이 보인다. 그날 2:1 액면분할이 있었다. 맞는 설명은?</p>
+        <div class="opts">
+          <button class="opt">주주는 그날 평가금액의 절반을 잃었다.</button>
+          <button class="opt">분할 이후의 가격을 두 배로 늘려야 수정주가가 된다.</button>
+          <button class="opt">하한가(−30%)를 넘었으므로 실제로는 일어날 수 없다.</button>
+          <button class="opt" data-correct>주식 수가 두 배가 되어 평가금액은 같다. 분할 이전 가격을 반으로 나눠 이은 것이 수정주가다.</button>
+        </div>
+        <div class="quiz-exp">액면분할은 회사 가치를 바꾸지 않는다. 1주가 2주가 되고 1주 가격이 반이 될 뿐이다. 수정주가는 보통 과거 가격을 분할 비율로 나눠 현재 가격 단위에 맞춘다. 원주가로 수익률이나 최대 낙폭을 재면 틀린다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 뉴스 화면의 차트에서 가격선이 위에서 바닥까지 떨어져 화면의 80%를 가로지른다. 가장 먼저 할 일은?</p>
+        <div class="opts">
+          <button class="opt" data-correct>세로축의 위아래 숫자를 읽고 실제 변화율을 계산한다.</button>
+          <button class="opt">화면의 80%만큼 떨어졌으니 −80%로 기억한다.</button>
+          <button class="opt">로그 축이면 −80%, 선형 축이면 −40%로 읽는다.</button>
+          <button class="opt">거래량이 함께 늘었는지만 보면 된다.</button>
+        </div>
+        <div class="quiz-exp">차트의 세로축은 자동으로 보이는 범위에 맞춰 잘리는 경우가 많다. 화면 높이는 변화율이 아니다. 축이 71,000~77,000원이라면 화면 80% 하락도 실제로는 약 −6%다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const M = ST.market(), DATES = M.dates, ND = M.days;
+  const HB = M.stocks.hanbit, HC = M.closes.hanbit;
+  const NAME = { hanbit: "한빛반도체", nuri: "누리식품", byeol: "별빛바이오", daon: "다온은행", moa: "모아플랫폼", index: ST.INDEX_NAME };
+  const closesOf = (k) => (k === "index" ? M.index : M.closes[k]);
+  const narrow = (id) => document.getElementById(id).parentElement.clientWidth < 560;
+  const ymd = (i) => DATES[i].slice(2).replace(/-/g, ".");
+  const ym = (i) => DATES[i].slice(2, 7).replace("-", ".");
+  const pr = (x) => MB.price(x, { short: true });
+  const tone = (x, s) => '<span class="' + MB.tone(x) + '">' + s + "</span>";
+  const chgT = (x) => tone(x, MB.chg(x));
+  const volFmt = (v) => (v >= 1e8 ? +(v / 1e8).toFixed(2) + "억주" : v >= 1e4 ? +(v / 1e4).toFixed(1) + "만주" : Math.round(v).toLocaleString("ko-KR") + "주");
+  const hm = (k) => { const m = 540 + k; return String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0"); };
+  const argmin = (a, s, e) => { let j = -1; for (let i = s; i < e; i++) if (a[i] != null && (j < 0 || a[i] < a[j])) j = i; return j; };
+
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function knob(ctx, x, y, P, r, col) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = col || P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke();
+    ctx.restore();
+  }
+  function rr(ctx, x, y, w, h, r) {
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  /** 글자 상자: 배경을 글자색으로 칠한 작은 꼬리표. 캔버스 밖으로 나가지 않게 맞춘다 */
+  function tagBox(ctx, s, x, y, P, o) {
+    o = o || {};
+    const size = o.size || 11;
+    ctx.save();
+    ctx.font = MB.font(size, o.mono !== false, 600);
+    const tw = ctx.measureText(s).width + 10, th = size + 7, W = ctx.canvas.width / (ctx.getTransform().a || 1);
+    let x0 = o.align === "right" ? x - tw : o.align === "center" ? x - tw / 2 : x;
+    x0 = MB.clamp(x0, 1, W - tw - 1);
+    ctx.globalAlpha = 0.94; ctx.fillStyle = o.bg || P.text; rr(ctx, x0, y - th / 2, tw, th, 4); ctx.fill(); ctx.globalAlpha = 1;
+    ctx.fillStyle = o.color || P.bg; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    ctx.fillText(s, x0 + tw / 2, y + 0.5);
+    ctx.restore();
+  }
+  /** 날짜 눈금: idx(i) → 전체 거래일 인덱스. mode "m" 월이 바뀔 때, "y" 해가 바뀔 때 */
+  function dateLab(idx, mode) {
+    return (i) => {
+      const a = DATES[idx(i)], b = i > 0 ? DATES[idx(i - 1)] : null;
+      if (mode === "y") return b && a.slice(0, 4) !== b.slice(0, 4) ? a.slice(0, 4) : null;
+      return b && a.slice(5, 7) !== b.slice(5, 7) ? a.slice(2, 4) + "." + a.slice(5, 7) : null;
+    };
+  }
+  /** 십자선 */
+  function cross(ctx, r, i, price, P, label) {
+    const x = Math.round(r.X(i)) + 0.5, y = r.Y(price);
+    const bottom = r.vbox && r.vbox.h ? r.vbox.y + r.vbox.h : r.box.y + r.box.h;
+    ctx.save();
+    ctx.strokeStyle = P.dim; ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, r.box.y); ctx.lineTo(x, bottom); ctx.moveTo(r.box.x, y); ctx.lineTo(r.box.x + r.box.w, y); ctx.stroke();
+    ctx.restore();
+    tagBox(ctx, pr(price), r.box.x - 2, y, P, { align: "right" });
+    if (label) tagBox(ctx, label, x, r.box.y + 10, P, { align: "center" });
+  }
+  /** 연도 눈금(선 그래프용): 해마다 첫 거래일 인덱스 */
+  const YEAR_IDX = DATES.map((d, i) => (i && d.slice(0, 4) !== DATES[i - 1].slice(0, 4) ? i : -1)).filter((i) => i > 0);
+  const yearTicks = (nar) => (nar ? YEAR_IDX.filter((_, k) => k % 2 === 1) : YEAR_IDX);
+  const yearFmt = (nar) => (i) => (nar ? "'" + DATES[Math.round(i)].slice(2, 4) : DATES[Math.round(i)].slice(0, 4));
+  /** 로그 축 눈금: 1·2·5 계열 */
+  function logTicks(lo, hi) {
+    const out = [];
+    for (let e = Math.floor(Math.log10(lo)) - 1; e <= Math.ceil(Math.log10(hi)); e++) [1, 2, 5].forEach((m) => { const v = m * Math.pow(10, e); if (v >= lo && v <= hi) out.push(v); });
+    return out;
+  }
+  /** 마우스가 캔버스를 떠나면 콜백 */
+  const onLeave = (cv, fn) => cv.canvas.addEventListener("pointerleave", fn);
+
+  /** MB.candles와 같은 배치(가격 칸 + 거래량 칸)를 만들되 캔들은 그리지 않는다 */
+  function frame(ctx, box, data, o) {
+    const P = MB.palette(), n = data.length, vf = o.volume === false ? 0 : 0.22;
+    const vh = box.h * vf, gap = vf ? 8 : 0;
+    const pb = { x: box.x, y: box.y, w: box.w, h: box.h - vh - gap }, vbox = { x: box.x, y: box.y + box.h - vh, w: box.w, h: vh };
+    const slot = pb.w / n, cw = Math.max(1, Math.min(18, slot * 0.68)), X = (i) => pb.x + slot * (i + 0.5);
+    const c = MB.chart(ctx, pb, { x: [0, n], y: o.y, yFmt: o.yFmt || pr, xTicks: [] });
+    if (vf) {
+      const vmax = Math.max(...data.map((d) => d.v || 0));
+      ctx.save();
+      ctx.strokeStyle = P.grid; ctx.beginPath(); ctx.moveTo(vbox.x, vbox.y + vbox.h + 0.5); ctx.lineTo(vbox.x + vbox.w, vbox.y + vbox.h + 0.5); ctx.stroke();
+      data.forEach((d, i) => { const hg = vmax ? (d.v / vmax) * vbox.h : 0; ctx.fillStyle = d.c >= d.o ? P.up : P.down; ctx.globalAlpha = 0.45; ctx.fillRect(X(i) - cw / 2, vbox.y + vbox.h - hg, cw, hg); });
+      ctx.globalAlpha = 1; ctx.fillStyle = P.faint; ctx.font = MB.font(10); ctx.textAlign = "right"; ctx.textBaseline = "top"; ctx.fillText("거래량", vbox.x - 6, vbox.y);
+      ctx.restore();
+    }
+    if (o.xLabel) {
+      ctx.save(); ctx.fillStyle = P.dim; ctx.font = MB.font(10.5, true); ctx.textAlign = "center"; ctx.textBaseline = "top";
+      let lastX = -1e9;
+      for (let i = 0; i < n; i++) { const s = o.xLabel(i); if (s == null) continue; const px = X(i); if (px - lastX < 44) continue; ctx.fillText(s, px, box.y + box.h + 6); lastX = px; }
+      ctx.restore();
+    }
+    return { X, Y: c.Y, box: pb, vbox, cw, idx: (px) => MB.clamp(Math.floor((px - pb.x) / slot), 0, n - 1) };
+  }
+
+  /** 하루 장중 경로(09:00~15:30, 1분 간격 391점). 하루 변동성 약 2.4% */
+  function dayPath(seed, prev) {
+    const g = ST.gauss(seed), r = ST.rng(seed * 13 + 5), N = 390, s = 0.024 / Math.sqrt(N);
+    const drift = ((r() - 0.5) * 0.03) / N;
+    let p = prev * Math.exp(0.007 * g());
+    const out = [ST.roundTick(p)];
+    for (let k = 1; k <= N; k++) {
+      const u = k < 30 ? 1.7 : k > 360 ? 1.3 : 0.9;
+      p *= Math.exp(drift + s * u * g());
+      out.push(ST.roundTick(p));
+    }
+    return out;
+  }
+  const ohlcOf = (path) => ({ o: path[0], h: Math.max(...path), l: Math.min(...path), c: path[path.length - 1] });
+
+  /* ---------------------------------------------------------- 1. 같은 60일을 네 가지로 */
+  (function () {
+    const i0 = ND - 60, data = HB.slice(i0), n = data.length;
+    const lo = Math.min(...data.map((d) => d.l)), hi = Math.max(...data.map((d) => d.h)), pad = (hi - lo) * 0.06;
+    const Yr = [lo - pad, hi + pad];
+    let hov = null;
+    const mode = MB.seg("lc-mode", () => cv.redraw());
+    let R = null;
+    const cv = MB.canvas("#lc-cv", (ctx, w, h) => {
+      const P = MB.palette(), m = mode();
+      const box = { x: 60, y: 14, w: w - 60 - 12, h: h - 14 - 30 };
+      const xl = dateLab((i) => i0 + i, "m");
+      if (m === "candle" || m === "hollow") R = MB.candles(ctx, box, data, { y: Yr, yFmt: pr, hollow: m === "hollow", xLabel: xl });
+      else {
+        R = frame(ctx, box, data, { y: Yr, xLabel: xl });
+        ctx.save(); ctx.beginPath(); ctx.rect(R.box.x, R.box.y, R.box.w, R.box.h); ctx.clip();
+        if (m === "line") {
+          ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.beginPath();
+          data.forEach((d, i) => (i ? ctx.lineTo(R.X(i), R.Y(d.c)) : ctx.moveTo(R.X(i), R.Y(d.c)))); ctx.stroke();
+        } else {
+          const t = Math.max(2, R.cw / 2);
+          data.forEach((d, i) => {
+            const x = Math.round(R.X(i)) + 0.5;
+            ctx.strokeStyle = d.c >= d.o ? P.up : P.down; ctx.lineWidth = 1.5; ctx.beginPath();
+            ctx.moveTo(x, R.Y(d.h)); ctx.lineTo(x, R.Y(d.l)); ctx.moveTo(x - t, R.Y(d.o)); ctx.lineTo(x, R.Y(d.o)); ctx.moveTo(x, R.Y(d.c)); ctx.lineTo(x + t, R.Y(d.c)); ctx.stroke();
+          });
+        }
+        ctx.restore();
+      }
+      const j = hov == null ? n - 1 : hov, d = data[j];
+      if (hov != null) cross(ctx, R, j, d.c, P, ymd(i0 + j));
+      MB.stat("lc-o-d", ymd(i0 + j));
+      MB.stat("lc-o-oc", pr(d.o) + " · " + tone(d.c - d.o, pr(d.c)));
+      MB.stat("lc-o-hl", pr(d.h) + " · " + pr(d.l));
+      const cs = data.map((x) => x.c), rc = Math.max(...cs) / Math.min(...cs) - 1, rh = hi / lo - 1;
+      MB.stat("lc-o-r", MB.pct(rc, 1) + " / " + MB.pct(rh, 1));
+    }, { get height() { return narrow("lc-cv") ? 280 : 330; } });
+    MB.drag(cv.canvas, { move(x) { hov = R.idx(x); cv.redraw(); }, hover(x) { hov = R.idx(x); cv.redraw(); } });
+    onLeave(cv, () => { hov = null; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 2. 하루가 캔들로 접힌다 */
+  (function () {
+    const PREV = 72000;
+    let seed = 7, path = dayPath(seed, PREV), t = 390, fold = 1, playing = false;
+    const speed = MB.seg("fd-speed");
+    const keep = document.getElementById("fd-keep");
+    const btn = document.getElementById("fd-play");
+    const ease = (x) => x * x * (3 - 2 * x);
+    const setBtn = () => (btn.textContent = playing ? "일시정지" : fold >= 1 ? "다시 재생" : "재생");
+    const cv = MB.canvas("#fd-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560;
+      const k = Math.floor(t), seen = path.slice(0, k + 1);
+      const all = ohlcOf(path), cur = ohlcOf(seen);
+      const pad = (all.h - all.l) * 0.12;
+      const candX = w - (nar ? 46 : 80);
+      const box = { x: 58, y: 16, w: candX - (nar ? 40 : 66) - 58, h: h - 16 - 34 };
+      const ticks = nar ? [0, 180, 390] : [0, 60, 120, 180, 240, 300, 390];
+      const c = MB.chart(ctx, box, { x: [0, 390], y: [all.l - pad, all.h + pad], yFmt: pr, xTicks: ticks, xFmt: hm });
+      // 캔들 칸
+      ctx.save();
+      ctx.strokeStyle = P.border; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(candX - (nar ? 26 : 40), box.y); ctx.lineTo(candX - (nar ? 26 : 40), box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+      ctx.restore();
+      text(ctx, "캔들", candX, box.y + box.h + 18, { color: P.dim, align: "center", size: 11 });
+      const Y = c.Y, fe = ease(fold);
+      // 시가 선
+      ctx.save(); ctx.strokeStyle = P.faint; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(box.x, Y(cur.o)); ctx.lineTo(candX, Y(cur.o)); ctx.stroke(); ctx.restore();
+      text(ctx, "시가", box.x + 4, Y(cur.o) - 4, { color: P.dim, size: 11 });
+      // 흐린 원래 경로
+      if (fold > 0 && keep.checked) {
+        ctx.save(); ctx.globalAlpha = 0.22; ctx.strokeStyle = P.accent; ctx.lineWidth = 1.2; ctx.beginPath();
+        seen.forEach((p, i) => (i ? ctx.lineTo(c.X(i), Y(p)) : ctx.moveTo(c.X(i), Y(p)))); ctx.stroke(); ctx.restore();
+      }
+      // 접히는 경로
+      ctx.save(); ctx.strokeStyle = P.accent; ctx.lineWidth = 1.6; ctx.globalAlpha = 1 - 0.5 * fe; ctx.beginPath();
+      seen.forEach((p, i) => { const x = MB.lerp(c.X(i), candX, fe); i ? ctx.lineTo(x, Y(p)) : ctx.moveTo(x, Y(p)); });
+      ctx.stroke(); ctx.restore();
+      // 고가·저가 점
+      if (fold < 1) {
+        const ih = seen.indexOf(cur.h), il = seen.indexOf(cur.l);
+        [[ih, cur.h, P.up], [il, cur.l, P.down]].forEach(([i, p, col]) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(MB.lerp(c.X(i), candX, fe), Y(p), 4, 0, TAU); ctx.fill(); });
+        ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(MB.lerp(c.X(k), candX, fe), Y(cur.c), 4.5, 0, TAU); ctx.fill();
+      }
+      // 자라는 캔들
+      const up = cur.c >= cur.o, col = up ? P.up : P.down, bw = nar ? 22 : 30;
+      ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(candX, Y(cur.h)); ctx.lineTo(candX, Y(cur.l)); ctx.stroke();
+      const y0 = Y(Math.max(cur.o, cur.c)), y1 = Y(Math.min(cur.o, cur.c));
+      ctx.fillRect(candX - bw / 2, y0, bw, Math.max(1.5, y1 - y0));
+      if (!nar) {
+        text(ctx, "고", candX + bw / 2 + 6, Y(cur.h) + 4, { color: P.dim, size: 11 });
+        text(ctx, "저", candX + bw / 2 + 6, Y(cur.l) + 4, { color: P.dim, size: 11 });
+      }
+      tagBox(ctx, hm(k), c.X(Math.min(k, 390)), box.y + 8, P, { align: "center" });
+      MB.stat("fd-o-t", hm(k));
+      MB.stat("fd-o-o", pr(cur.o));
+      MB.stat("fd-o-h", pr(cur.h) + " <small>" + hm(seen.indexOf(cur.h)) + "</small>");
+      MB.stat("fd-o-l", pr(cur.l) + " <small>" + hm(seen.indexOf(cur.l)) + "</small>");
+      MB.stat("fd-o-c", tone(cur.c - cur.o, pr(cur.c)) + " <small>" + (up ? "양봉" : "음봉") + "</small>");
+    }, { get height() { return narrow("fd-cv") ? 280 : 320; } });
+    btn.addEventListener("click", () => {
+      if (playing) playing = false;
+      else { if (fold >= 1) { t = 0; fold = 0; } playing = true; }
+      setBtn(); cv.redraw();
+    });
+    document.getElementById("fd-new").addEventListener("click", () => { seed++; path = dayPath(seed, PREV); t = 0; fold = 0; playing = true; setBtn(); cv.redraw(); });
+    keep.addEventListener("change", () => cv.redraw());
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return;
+      if (t < 390) t = Math.min(390, t + dt * 60 * Number(speed()));
+      else if (fold < 1) fold = Math.min(1, fold + dt * 0.9);
+      else { playing = false; setBtn(); }
+      cv.redraw();
+    });
+    setBtn();
+  })();
+
+  /* ---------------------------------------------------------- 3. 캔들 직접 만들기 */
+  const PREV = 72000;
+  function classify(o, h, l, c) {
+    const R = h - l, B = Math.abs(c - o), up = c >= o, U = h - Math.max(o, c), D = Math.min(o, c) - l;
+    if (R <= 0) return ["점 하나", "하루 종일 한 가격에서만 거래되었다. 거래가 거의 없었거나 상한가·하한가에 묶인 날이다."];
+    const b = B / R;
+    if (b < 0.1) {
+      if (U < R * 0.15) return ["잠자리형 도지", "장중에 크게 밀렸다가 시가 근처까지 되돌아와 끝났다. 아래에서 사려는 힘이 버텼다는 기록이다."];
+      if (D < R * 0.15) return ["비석형 도지", "장중에 크게 올랐다가 시가 근처까지 밀려 끝났다. 위에서 팔려는 힘이 이겼다는 기록이다."];
+      return ["십자형 도지", "위아래로 다녀왔지만 시작한 곳에서 끝났다. 사는 쪽과 파는 쪽이 비긴 날이다."];
+    }
+    if (b > 0.85) return up ? ["장대양봉", "저가 근처에서 시작해 고가 근처에서 끝났다. 하루 내내 거의 한 방향으로 올랐다."] : ["장대음봉", "고가 근처에서 시작해 저가 근처에서 끝났다. 하루 내내 거의 한 방향으로 내렸다."];
+    if (D >= 2 * B && U <= B * 0.5) return ["망치형", "아래꼬리가 몸통의 두 배가 넘는다. 장중에 크게 빠졌다가 대부분 되돌아왔다. 상승 추세 끝에서 같은 모양이 나오면 '교수형'이라 부른다."];
+    if (U >= 2 * B && D <= B * 0.5) return ["유성형", "위꼬리가 몸통의 두 배가 넘는다. 장중에 크게 올랐다가 대부분 밀려났다. 하락 추세 끝에서 같은 모양이 나오면 '역망치형'이라 부른다."];
+    if (b < 0.35) return ["팽이형", "몸통이 작고 위아래로 꼬리가 있다. 장중에 오갔지만 결론이 나지 않은 날이다."];
+    return up ? ["양봉", "시가보다 높게 끝났다."] : ["음봉", "시가보다 낮게 끝났다."];
+  }
+  (function () {
+    const PRESET = { long: [70000, 76600, 69800, 76400], doji: [72000, 74500, 69500, 72100], hammer: [71000, 72000, 66500, 71800], star: [72400, 77800, 72200, 73200], trap: [69000, 72500, 68500, 71000] };
+    const S = { o: 70000, h: 74200, l: 69000, c: 73000 };
+    const Yr = [64000, 80000];
+    const us = document.getElementById("mk-us");
+    let L = null, act = null;
+    const cv = MB.canvas("#mk-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560;
+      const box = { x: 62, y: 14, w: w - 62 - 12, h: h - 14 - 30 };
+      const c = MB.chart(ctx, box, { x: [0, 1], y: Yr, yFmt: pr, xTicks: [], hlines: [{ y: PREV, color: P.dim, label: nar ? "" : "전일 종가 72,000" }] });
+      if (nar) text(ctx, "전일 72,000", box.x + 4, c.Y(PREV) - 4, { color: P.dim, size: 10.5 });
+      const cx = box.x + box.w * (nar ? 0.42 : 0.32), bx = box.x + box.w * (nar ? 0.88 : 0.66), bw = nar ? 40 : 52, arm = bw / 2 + (nar ? 14 : 18);
+      const upC = us.checked ? P.ok : P.up, dnC = us.checked ? P.bad : P.down;
+      const up = S.c >= S.o, col = up ? upC : dnC, Y = c.Y;
+      // 캔들
+      ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(cx, Y(S.h)); ctx.lineTo(cx, Y(S.l)); ctx.stroke();
+      const y0 = Y(Math.max(S.o, S.c)), y1 = Y(Math.min(S.o, S.c));
+      ctx.fillRect(cx - bw / 2, y0, bw, Math.max(2, y1 - y0));
+      // 시가·종가 가지(손잡이까지)
+      ctx.strokeStyle = P.dim; ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(cx - arm, Y(S.o)); ctx.lineTo(cx - bw / 2, Y(S.o)); ctx.moveTo(cx + bw / 2, Y(S.c)); ctx.lineTo(cx + arm, Y(S.c)); ctx.stroke(); ctx.setLineDash([]);
+      // OHLC 막대
+      ctx.strokeStyle = col; ctx.lineWidth = 2.5; ctx.beginPath();
+      ctx.moveTo(bx, Y(S.h)); ctx.lineTo(bx, Y(S.l)); ctx.moveTo(bx - 12, Y(S.o)); ctx.lineTo(bx, Y(S.o)); ctx.moveTo(bx, Y(S.c)); ctx.lineTo(bx + 12, Y(S.c)); ctx.stroke();
+      text(ctx, "캔들", cx, box.y + box.h + 20, { color: P.dim, align: "center", size: 12 });
+      text(ctx, "OHLC 막대", bx, box.y + box.h + 20, { color: P.dim, align: "center", size: 12 });
+      // 손잡이와 이름표
+      L = { Y, box, hs: { h: [cx, Y(S.h)], l: [cx, Y(S.l)], o: [cx - arm, Y(S.o)], c: [cx + arm, Y(S.c)] } };
+      const lab = { h: "고가", l: "저가", o: "시가", c: "종가" };
+      ["h", "l", "o", "c"].forEach((k) => {
+        const [x, y] = L.hs[k];
+        knob(ctx, x, y, P, act === k ? 9 : 7);
+        const s = nar ? lab[k].slice(0, 1) : lab[k] + " " + pr(S[k]);
+        if (k === "o") text(ctx, s, x - 14, y + 4, { color: P.text, size: nar ? 11 : 12, align: "right", weight: 600 });
+        else text(ctx, s, x + 14, y + 4, { color: P.text, size: nar ? 11 : 12, weight: 600 });
+      });
+      const [nm, say] = classify(S.o, S.h, S.l, S.c), R = S.h - S.l, ch = S.c / PREV - 1;
+      let extra = "";
+      if (up && S.c < PREV) extra = " 그런데 종가가 전일 종가(72,000원)보다 낮다. <b>빨간 양봉이지만 등락률은 하락</b>이다.";
+      else if (!up && S.c > PREV) extra = " 그런데 종가가 전일 종가(72,000원)보다 높다. <b>파란 음봉이지만 등락률은 상승</b>이다.";
+      MB.stat("mk-say", "<b>" + nm + "</b> — " + say + extra);
+      MB.stat("mk-o-n", nm);
+      MB.stat("mk-o-b", R ? MB.pct(Math.abs(S.c - S.o) / R, 0) : "—");
+      MB.stat("mk-o-w", pr(S.h - Math.max(S.o, S.c)) + " · " + pr(Math.min(S.o, S.c) - S.l));
+      MB.stat("mk-o-c", chgT(ch));
+    }, { get height() { return narrow("mk-cv") ? 320 : 360; } });
+    const inv = (y) => Yr[0] + ((L.box.y + L.box.h - y) / L.box.h) * (Yr[1] - Yr[0]);
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        act = null; let best = 34;
+        Object.entries(L.hs).forEach(([k, [hx, hy]]) => { const d = Math.hypot(x - hx, y - hy); if (d < best) { best = d; act = k; } });
+      },
+      move(x, y) {
+        if (!act) return;
+        const v = MB.clamp(Math.round(inv(y) / 100) * 100, Yr[0], Yr[1]);
+        if (act === "h") S.h = Math.max(v, S.o, S.c);
+        else if (act === "l") S.l = Math.min(v, S.o, S.c);
+        else { S[act] = v; S.h = Math.max(S.h, v); S.l = Math.min(S.l, v); }
+        cv.redraw();
+      },
+      end() { act = null; cv.redraw(); },
+    });
+    document.querySelectorAll("#sim-mk [data-preset]").forEach((b) => b.addEventListener("click", () => { const [o, h, l, c] = PRESET[b.dataset.preset]; Object.assign(S, { o, h, l, c }); cv.redraw(); }));
+    us.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 4. 캔들 맞히기 게임 */
+  (function () {
+    let seed = 100, paths = [], target = 0, picked = -1, cells = [];
+    const sc = { right: 0, total: 0, streak: 0 };
+    const sig = (p) => { const k = ohlcOf(p); return [(k.c - k.o) / k.o, (k.h - Math.max(k.o, k.c)) / k.o, (Math.min(k.o, k.c) - k.l) / k.o]; };
+    function deal() {
+      for (let tries = 0; tries < 60; tries++) {
+        seed += 4;
+        paths = [0, 1, 2, 3].map((j) => dayPath(seed + j, PREV));
+        const s = paths.map(sig);
+        let ok = true;
+        for (let a = 0; a < 4 && ok; a++) for (let b = a + 1; b < 4; b++) if (Math.abs(s[a][0] - s[b][0]) + Math.abs(s[a][1] - s[b][1]) + Math.abs(s[a][2] - s[b][2]) < 0.014) { ok = false; break; }
+        if (ok) break;
+      }
+      target = Math.floor(ST.rng(seed)() * 4); picked = -1;
+      MB.stat("gm-say", "캔들을 만든 하루를 네 경로 가운데서 고른다.");
+    }
+    deal();
+    const cv = MB.canvas("#gm-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560;
+      const ks = paths.map(ohlcOf);
+      const lo = Math.min(...ks.map((k) => k.l)), hi = Math.max(...ks.map((k) => k.h)), pad = (hi - lo) * 0.08, Yr = [lo - pad, hi + pad];
+      const cb = nar ? { x: 60, y: 12, w: w - 72, h: 150 } : { x: 62, y: 16, w: Math.min(190, w * 0.26) - 62, h: h - 50 };
+      const c = MB.chart(ctx, cb, { x: [0, 1], y: Yr, yFmt: pr, xTicks: [] });
+      const k = ks[target], up = k.c >= k.o, col = up ? P.up : P.down, cx = cb.x + cb.w / 2, bw = 26;
+      ctx.strokeStyle = col; ctx.fillStyle = col; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cx, c.Y(k.h)); ctx.lineTo(cx, c.Y(k.l)); ctx.stroke();
+      ctx.fillRect(cx - bw / 2, c.Y(Math.max(k.o, k.c)), bw, Math.max(2, c.Y(Math.min(k.o, k.c)) - c.Y(Math.max(k.o, k.c))));
+      text(ctx, "이 캔들", cx, cb.y + cb.h + 18, { color: P.text, align: "center", size: 12, weight: 700 });
+      // 네 경로 칸
+      const gx = nar ? 8 : cb.x + cb.w + 28, gy = nar ? cb.y + cb.h + 30 : 10, gw = w - gx - 8, gh = h - gy - 8, gap = 10;
+      const cwid = (gw - gap) / 2, chei = (gh - gap) / 2;
+      cells = [];
+      paths.forEach((p, j) => {
+        const x0 = gx + (j % 2) * (cwid + gap), y0 = gy + Math.floor(j / 2) * (chei + gap);
+        cells.push([x0, y0, cwid, chei]);
+        const done = picked >= 0, isT = j === target;
+        ctx.fillStyle = P.surface; rr(ctx, x0, y0, cwid, chei, 8); ctx.fill();
+        ctx.lineWidth = done && (isT || j === picked) ? 2.5 : 1;
+        ctx.strokeStyle = done && isT ? P.ok : done && j === picked ? P.bad : P.border; rr(ctx, x0, y0, cwid, chei, 8); ctx.stroke();
+        const ix = x0 + 12, iw = cwid - (done ? 46 : 24), iy = y0 + 22, ih = chei - 30;
+        const Yc = (v) => iy + ih - ((v - Yr[0]) / (Yr[1] - Yr[0])) * ih;
+        ctx.strokeStyle = P.border; ctx.setLineDash([3, 3]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(ix, Yc(PREV)); ctx.lineTo(ix + iw, Yc(PREV)); ctx.stroke(); ctx.setLineDash([]);
+        ctx.strokeStyle = P.accent; ctx.lineWidth = 1.5; ctx.beginPath();
+        p.forEach((v, i) => { const x = ix + (i / 390) * iw; i ? ctx.lineTo(x, Yc(v)) : ctx.moveTo(x, Yc(v)); }); ctx.stroke();
+        text(ctx, "ABCD"[j], x0 + 10, y0 + 16, { color: P.text, size: 12, weight: 700 });
+        if (done) {
+          const kk = ks[j], cc = kk.c >= kk.o ? P.up : P.down, mx = x0 + cwid - 18;
+          ctx.strokeStyle = cc; ctx.fillStyle = cc; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.moveTo(mx, Yc(kk.h)); ctx.lineTo(mx, Yc(kk.l)); ctx.stroke();
+          ctx.fillRect(mx - 6, Yc(Math.max(kk.o, kk.c)), 12, Math.max(1.5, Yc(Math.min(kk.o, kk.c)) - Yc(Math.max(kk.o, kk.c))));
+          if (isT) text(ctx, "정답", x0 + cwid - 10, y0 + 16, { color: P.ok, size: 12, weight: 700, align: "right" });
+        }
+      });
+      MB.stat("gm-o-s", sc.right + " / " + sc.total);
+      MB.stat("gm-o-k", String(sc.streak));
+    }, { get height() { return narrow("gm-cv") ? 470 : 340; } });
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        if (picked >= 0) return;
+        const j = cells.findIndex(([x0, y0, cw, ch]) => x >= x0 && x <= x0 + cw && y >= y0 && y <= y0 + ch);
+        if (j < 0) return;
+        picked = j; sc.total++;
+        const k = ohlcOf(paths[target]), up = k.c >= k.o;
+        if (j === target) { sc.right++; sc.streak++; MB.stat("gm-say", '<span class="ok-t">정답이다.</span> 하루 ' + "ABCD"[j] + "의 처음·끝·최고·최저가 캔들의 네 값과 같다. 각 칸 오른쪽에 그 하루의 캔들이 나타났다."); }
+        else { sc.streak = 0; MB.stat("gm-say", '<span class="bad-t">아니다.</span> 정답은 ' + "ABCD"[target] + "다. 캔들이 " + (up ? "양봉이므로 끝이 처음보다 높은" : "음봉이므로 끝이 처음보다 낮은") + " 경로 중에서, 꼬리 길이(최고·최저가 처음·끝에서 떨어진 거리)가 맞는 것을 고른다."); }
+        cv.redraw();
+      },
+    });
+    document.getElementById("gm-next").addEventListener("click", () => { deal(); cv.redraw(); });
+    document.getElementById("gm-re").addEventListener("click", () => { sc.right = sc.total = sc.streak = 0; deal(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 5. 10년 탐색기 */
+  const VOL = HB.map((d) => d.v);
+  const VAVG = VOL.map((_, i) => (i < 20 ? null : ST.mean(VOL.slice(i - 20, i))));
+  const HEV = M.events.filter((e) => e.key === "hanbit");
+  (function () {
+    let end = ND - 1, hov = null, R = null, drag0 = null;
+    const ev = document.getElementById("ex-ev");
+    const span = MB.range("ex-n", (v) => v + "일", () => { end = Math.max(end, span() - 1); cv.redraw(); });
+    const cv = MB.canvas("#ex-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = span(), s = end - n + 1, data = HB.slice(s, end + 1);
+      const markers = ev.checked ? HEV.filter((e) => e.i >= s && e.i <= end).map((e) => ({ i: e.i - s, price: e.move > 0 ? data[e.i - s].l : data[e.i - s].h, shape: e.move > 0 ? "up" : "down" })) : [];
+      const box = { x: 60, y: 14, w: w - 60 - 12, h: h - 14 - 30 };
+      R = MB.candles(ctx, box, data, { yFmt: pr, xLabel: dateLab((i) => s + i, n > 300 ? "y" : "m"), markers });
+      R.s = s; R.n = n;
+      const j = hov == null ? n - 1 : MB.clamp(hov, 0, n - 1), g = s + j, d = HB[g];
+      if (hov != null) cross(ctx, R, j, d.c, P, ymd(g));
+      MB.stat("ex-o-d", ymd(g));
+      MB.stat("ex-o-p", pr(d.o) + " · " + pr(d.h) + "<br>" + pr(d.l) + " · " + pr(d.c));
+      MB.stat("ex-o-c", g ? chgT(d.c / HB[g - 1].c - 1) : "—");
+      MB.stat("ex-o-v", volFmt(d.v) + (VAVG[g] ? " <small>×" + (d.v / VAVG[g]).toFixed(1) + "</small>" : ""));
+      const e = HEV.find((x) => x.i === g);
+      MB.stat("ex-o-e", e ? tone(e.move, e.text) : "—");
+    }, { get height() { return narrow("ex-cv") ? 300 : 360; } });
+    MB.drag(cv.canvas, {
+      start(x) { drag0 = { x, end }; },
+      move(x) {
+        const slot = R.box.w / R.n, shift = Math.round((x - drag0.x) / slot);
+        end = MB.clamp(drag0.end - shift, R.n - 1, ND - 1);
+        hov = R.idx(x); cv.redraw();
+      },
+      hover(x) { hov = R.idx(x); cv.redraw(); },
+    });
+    onLeave(cv, () => { hov = null; cv.redraw(); });
+    const jump = (e) => { end = Math.max(e, span() - 1); hov = null; cv.redraw(); };
+    document.getElementById("ex-crash").addEventListener("click", () => jump(990));
+    document.getElementById("ex-2018").addEventListener("click", () => jump(620));
+    document.getElementById("ex-end").addEventListener("click", () => jump(ND - 1));
+    ev.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 6. 거래량 급증일 찾기 */
+  (function () {
+    const i0 = ND - 120, data = HB.slice(i0), n = data.length;
+    const mult = data.map((d, j) => d.v / VAVG[i0 + j]);
+    const spikes = mult.map((m, j) => (m >= 2 ? j : -1)).filter((j) => j >= 0);
+    const absRet = data.map((d, j) => Math.abs(d.c / HB[i0 + j - 1].c - 1));
+    const avgSp = ST.mean(spikes.map((j) => absRet[j])), avgNo = ST.mean(absRet.filter((_, j) => !spikes.includes(j)));
+    let found = new Set(), wrong = new Set(), last = null, shown = false, R = null;
+    const avg = document.getElementById("vs-avg");
+    const cv = MB.canvas("#vs-cv", (ctx, w, h) => {
+      const P = MB.palette(), soft = MB.color("accent-soft");
+      const bands = [...found].map((j) => ({ i0: j, i1: j, color: soft }));
+      const box = { x: 60, y: 14, w: w - 60 - 12, h: h - 14 - 30 };
+      R = MB.candles(ctx, box, data, { yFmt: pr, volFrac: 0.36, bands, xLabel: dateLab((i) => i0 + i, "m") });
+      const vb = R.vbox, vmax = Math.max(...data.map((d) => d.v)), VY = (v) => vb.y + vb.h - (v / vmax) * vb.h;
+      // 거래량 칸에도 찾은 날 표시
+      ctx.save();
+      [...found].forEach((j) => { ctx.fillStyle = soft; ctx.fillRect(R.X(j) - R.cw, vb.y, R.cw * 2, vb.h); });
+      if (avg.checked) {
+        ctx.strokeStyle = P.accent2; ctx.lineWidth = 1.5; ctx.setLineDash([4, 3]); ctx.beginPath();
+        data.forEach((_, j) => { const y = Math.max(vb.y, VY(2 * VAVG[i0 + j])); j ? ctx.lineTo(R.X(j), y) : ctx.moveTo(R.X(j), y); }); ctx.stroke(); ctx.setLineDash([]);
+        text(ctx, "20일 평균 × 2", vb.x + vb.w - 4, vb.y + 11, { color: P.accent2, size: 11, align: "right" });
+      }
+      spikes.forEach((j) => {
+        const y = VY(data[j].v) - 7;
+        if (found.has(j)) { ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(R.X(j), y, 4, 0, TAU); ctx.fill(); }
+        else if (shown) { ctx.strokeStyle = P.accent; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(R.X(j), y, 4.5, 0, TAU); ctx.stroke(); }
+      });
+      if (last) { ctx.strokeStyle = last.ok ? P.ok : P.bad; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(R.X(last.j), VY(data[last.j].v) - 7, 8, 0, TAU); ctx.stroke(); }
+      ctx.restore();
+      MB.stat("vs-o-f", found.size + " / " + spikes.length);
+      MB.stat("vs-o-x", String(wrong.size));
+      MB.stat("vs-o-m", last ? '<span class="' + (last.ok ? "ok-t" : "bad-t") + '">×' + mult[last.j].toFixed(1) + "</span> <small>" + ymd(i0 + last.j) + "</small>" : "—");
+      MB.stat("vs-o-r", shown || found.size === spikes.length ? MB.pct(avgSp, 1) + " / " + MB.pct(avgNo, 1) : "<small>다 찾거나 정답을 보면 공개</small>");
+    }, { get height() { return narrow("vs-cv") ? 320 : 360; } });
+    MB.drag(cv.canvas, {
+      start(x) {
+        const j = R.idx(x), ok = mult[j] >= 2;
+        if (ok) found.add(j); else wrong.add(j);
+        last = { j, ok }; cv.redraw();
+      },
+    });
+    document.getElementById("vs-show").addEventListener("click", () => { shown = true; cv.redraw(); });
+    document.getElementById("vs-re").addEventListener("click", () => { found = new Set(); wrong = new Set(); last = null; shown = false; cv.redraw(); });
+    avg.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 7. 일봉·주봉·월봉 */
+  (function () {
+    let hov = null, R = null, cur = null;
+    const k = MB.seg("tf-k", () => { hov = null; cv.redraw(); });
+    const span = MB.seg("tf-span", () => { hov = null; cv.redraw(); });
+    const cv = MB.canvas("#tf-cv", (ctx, w, h) => {
+      const P = MB.palette(), K = Number(k()), sp = Math.min(ND, Number(span())), s = ND - sp, arr = HB.slice(s);
+      const cs = K === 1 ? arr.map((d, i) => Object.assign({ i0: i }, d)) : ST.resample(arr, K);
+      cur = { cs, s, K, sp };
+      const box = { x: 60, y: 14, w: w - 60 - 12, h: h - 14 - 30 };
+      R = MB.candles(ctx, box, cs, { yFmt: pr, xLabel: dateLab((i) => s + cs[i].i0, sp > 600 ? "y" : "m") });
+      const slot = R.box.w / cs.length;
+      let big = 0; cs.forEach((d) => (big = Math.max(big, d.h / d.l - 1)));
+      MB.stat("tf-o-n", cs.length.toLocaleString("ko-KR") + " <small>개</small>");
+      MB.stat("tf-o-w", (slot < 10 ? slot.toFixed(1) : Math.round(slot)) + " <small>px</small>");
+      MB.stat("tf-o-r", chgT(arr[arr.length - 1].c / arr[0].c - 1));
+      MB.stat("tf-o-b", "+" + MB.pct(big, 1).replace("-", ""));
+      if (hov != null) {
+        const j = MB.clamp(hov, 0, cs.length - 1), d = cs[j], a = s + d.i0, b = Math.min(ND - 1, a + K - 1);
+        cross(ctx, R, j, d.c, P, K === 1 ? ymd(a) : ymd(a) + "~" + ymd(b));
+        MB.stat("tf-o-h", (K === 1 ? ymd(a) : ymd(a) + "~" + DATES[b].slice(5).replace("-", ".")) + " " + chgT(d.c / d.o - 1));
+      } else MB.stat("tf-o-h", "—");
+    }, { get height() { return narrow("tf-cv") ? 300 : 360; } });
+    MB.drag(cv.canvas, { move(x) { hov = R.idx(x); cv.redraw(); }, hover(x) { hov = R.idx(x); cv.redraw(); } });
+    onLeave(cv, () => { hov = null; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 8. 이동평균의 지연(가상의 V자) */
+  (function () {
+    const N = 160, noiseG = ST.gauss(31), noise = [];
+    let z = 0; for (let i = 0; i < N; i++) { z = 0.7 * z + 0.008 * noiseG(); noise.push(z); }
+    const S = { b: 70, d: 60 };
+    let L = null, act = false;
+    const useNoise = document.getElementById("lag-noise");
+    const nGet = MB.range("lag-n", (v) => v + "일", () => cv.redraw());
+    const kind = MB.seg("lag-kind", () => cv.redraw());
+    const path = () => {
+      const fall = Math.log(100 / S.d) / S.b, rise = Math.log(110 / S.d) / (N - 1 - S.b);
+      return Array.from({ length: N }, (_, t) => {
+        const base = t <= S.b ? Math.log(100) - fall * t : Math.log(S.d) + rise * (t - S.b);
+        return Math.exp(base + (useNoise.checked ? noise[t] : 0));
+      });
+    };
+    const cv = MB.canvas("#lag-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = nGet(), p = path(), ma = kind() === "sma" ? ST.sma(p, n) : ST.ema(p, n);
+      const box = { x: 50, y: 16, w: w - 50 - 14, h: h - 16 - 40 };
+      const pb = argmin(p, 0, N), mb = argmin(ma, 0, N);
+      const c = MB.chart(ctx, box, { x: [0, N - 1], y: [30, 125], xLabel: "날짜(일)", yFmt: (v) => String(Math.round(v)),
+        series: [{ data: p.map((v, i) => [i, v]), color: P.dim, width: 1.4 }, { data: ma.map((v, i) => [i, v == null ? NaN : v]), color: P.accent, width: 2.6 }] });
+      L = { c, box };
+      // 바닥 표시
+      const yA = box.y + box.h - 14;
+      ctx.save();
+      ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2;
+      ctx.strokeStyle = P.dim; ctx.beginPath(); ctx.moveTo(c.X(pb), c.Y(p[pb])); ctx.lineTo(c.X(pb), yA); ctx.stroke();
+      ctx.strokeStyle = P.accent; ctx.beginPath(); ctx.moveTo(c.X(mb), c.Y(ma[mb])); ctx.lineTo(c.X(mb), yA); ctx.stroke();
+      ctx.setLineDash([]);
+      if (mb > pb) {
+        ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(c.X(pb), yA); ctx.lineTo(c.X(mb), yA); ctx.stroke();
+        ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.moveTo(c.X(mb), yA); ctx.lineTo(c.X(mb) - 7, yA - 4); ctx.lineTo(c.X(mb) - 7, yA + 4); ctx.fill();
+        text(ctx, "지연 " + (mb - pb) + "일", (c.X(pb) + c.X(mb)) / 2, yA - 7, { color: P.accent2, size: 12, weight: 700, align: "center" });
+      }
+      ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(c.X(mb), c.Y(ma[mb]), 5, 0, TAU); ctx.fill();
+      ctx.restore();
+      knob(ctx, c.X(S.b), c.Y(S.d * Math.exp(useNoise.checked ? noise[S.b] : 0)), P, act ? 9 : 7, P.text);
+      text(ctx, "가격", box.x + 8, box.y + 14, { color: P.dim, size: 12, weight: 600 });
+      text(ctx, (kind() === "sma" ? "단순" : "지수") + " 이동평균 " + n + "일", box.x + 8, box.y + 30, { color: P.accent, size: 12, weight: 600 });
+      MB.stat("lag-o-p", pb + "<small>일째</small>");
+      MB.stat("lag-o-m", mb + "<small>일째</small>");
+      MB.stat("lag-o-l", (mb - pb) + "<small>일 (이론 " + ((n - 1) / 2).toFixed(1) + ")</small>");
+      MB.stat("lag-o-g", chgT(p[mb] / p[pb] - 1));
+    }, { get height() { return narrow("lag-cv") ? 290 : 330; } });
+    MB.drag(cv.canvas, {
+      start(x, y) { const c = L.c; act = Math.hypot(x - c.X(S.b), y - c.Y(S.d)) < 60; },
+      move(x, y) {
+        if (!act) return;
+        const { box } = L;
+        S.b = MB.clamp(Math.round(((x - box.x) / box.w) * (N - 1)), 30, 110);
+        S.d = MB.clamp(30 + ((box.y + box.h - y) / box.h) * 95, 40, 92);
+        cv.redraw();
+      },
+      end() { act = false; cv.redraw(); },
+    });
+    useNoise.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 9. 한빛 이동평균 5·20·60·120 */
+  (function () {
+    const A = 380, B = 700, data = HB.slice(A, B), NS = [5, 20, 60, 120];
+    const pb = argmin(HC, A, B);
+    const cache = { sma: {}, ema: {} };
+    NS.forEach((n) => { cache.sma[n] = ST.sma(HC, n); cache.ema[n] = ST.ema(HC, n); });
+    const box = {};
+    const chk = {}; NS.forEach((n) => { chk[n] = document.getElementById("ma-" + n); chk[n].addEventListener("change", () => cv.redraw()); });
+    let hov = null, R = null;
+    const kind = MB.seg("ma-kind", () => cv.redraw());
+    const colOf = (P) => ({ 5: P.warn, 20: P.accent, 60: P.accent2, 120: P.ok });
+    const cv = MB.canvas("#ma-cv", (ctx, w, h) => {
+      const P = MB.palette(), CO = colOf(P), K = kind();
+      const on = NS.filter((n) => chk[n].checked);
+      const overlays = on.map((n) => ({ data: cache[K][n].slice(A, B), color: CO[n], width: 1.8 }));
+      Object.assign(box, { x: 60, y: 14, w: w - 60 - 12, h: h - 14 - 30 });
+      R = MB.candles(ctx, box, data, { yFmt: pr, overlays, volFrac: 0.16, xLabel: dateLab((i) => A + i, "m"), markers: [{ i: pb - A, price: HB[pb].l, shape: "up", color: P.text }] });
+      text(ctx, "바닥 " + pr(HC[pb]), R.X(pb - A) + 10, R.Y(HB[pb].l) + 12, { color: P.text, size: 11, weight: 600 });
+      // 각 평균선의 바닥
+      on.forEach((n) => { const m = argmin(cache[K][n], A, B); ctx.fillStyle = CO[n]; ctx.beginPath(); ctx.arc(R.X(m - A), R.Y(cache[K][n][m]), 4.5, 0, TAU); ctx.fill(); });
+      // 범례
+      let lx = R.box.x + 8;
+      on.forEach((n) => { ctx.fillStyle = CO[n]; ctx.fillRect(lx, R.box.y + 8, 14, 3); text(ctx, n + "일", lx + 18, R.box.y + 14, { color: P.text, size: 11 }); lx += 54; });
+      NS.forEach((n) => {
+        const ma = cache[K][n], m = argmin(ma, A, B);
+        let x = 0; for (let i = A + 1; i < B; i++) if ((HC[i - 1] - ma[i - 1]) * (HC[i] - ma[i]) < 0) x++;
+        MB.stat("ma-o-" + n, (m - pb) + "<small>일</small> · " + x + "<small>회</small>");
+      });
+      if (hov != null) {
+        const j = MB.clamp(hov, 0, data.length - 1), g = A + j, m20 = cache[K][20][g];
+        cross(ctx, R, j, HC[g], P, ymd(g));
+        MB.stat("ma-o-h", ymd(g) + " · " + (m20 ? ((HC[g] / m20) * 100).toFixed(1) : "—"));
+      } else MB.stat("ma-o-h", "—");
+    }, { get height() { return narrow("ma-cv") ? 300 : 360; } });
+    MB.drag(cv.canvas, { move(x) { hov = R.idx(x); cv.redraw(); }, hover(x) { hov = R.idx(x); cv.redraw(); } });
+    onLeave(cv, () => { hov = null; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 10. 일정한 성장: 선형 vs 로그 */
+  (function () {
+    const shock = document.getElementById("gr-shock");
+    const rate = MB.range("gr-r", (v) => MB.pct(v, 1), () => cv.redraw());
+    const yrs = MB.range("gr-y", (v) => v + "년", () => cv.redraw());
+    const cv = MB.canvas("#gr-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560, r = rate(), Yn = yrs(), ts = Yn * 0.6;
+      const pts = [];
+      for (let m = 0; m <= Yn * 12; m++) { const t = m / 12; pts.push([t, Math.pow(1 + r, t) * (shock.checked && t >= ts ? 0.6 : 1)]); }
+      const vmax = Math.max(...pts.map((p) => p[1])), vmin = Math.min(...pts.map((p) => p[1]));
+      const dots = []; let k = 1;
+      pts.forEach(([t, v]) => { while (v >= Math.pow(2, k)) { dots.push([t, v]); k++; } });
+      const b1 = nar ? { x: 50, y: 30, w: w - 64, h: (h - 110) / 2 } : { x: 54, y: 30, w: w / 2 - 80, h: h - 76 };
+      const b2 = nar ? { x: 50, y: b1.y + b1.h + 62, w: w - 64, h: b1.h } : { x: w / 2 + 44, y: 30, w: w / 2 - 58, h: h - 76 };
+      const fmt = (v) => "×" + +v.toFixed(v < 10 ? 1 : 0);
+      const lt = []; for (let v = 1; v <= vmax * 1.3; v *= 2) lt.push(v);
+      const c1 = MB.chart(ctx, b1, { x: [0, Yn], y: [0, vmax * 1.08], yFmt: fmt, xFmt: (v) => v + "년", series: [{ data: pts, color: P.accent, width: 2.2 }] });
+      const c2 = MB.chart(ctx, b2, { x: [0, Yn], y: [Math.min(1, vmin) / 1.25, vmax * 1.25], logY: true, yTicks: lt, yFmt: fmt, xFmt: (v) => v + "년", series: [{ data: pts, color: P.accent2, width: 2.2 }] });
+      [[c1, P.accent], [c2, P.accent2]].forEach(([c, col]) => dots.forEach(([t, v]) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(c.X(t), c.Y(v), 3.5, 0, TAU); ctx.fill(); }));
+      text(ctx, "선형 축", b1.x, b1.y - 10, { color: P.text, size: 13, weight: 700 });
+      text(ctx, "로그 축", b2.x, b2.y - 10, { color: P.text, size: 13, weight: 700 });
+      let sh = "—";
+      if (shock.checked) {
+        const v0 = Math.pow(1 + r, ts), v1 = v0 * 0.6;
+        const h1 = c1.Y(v1) - c1.Y(v0), h2 = c2.Y(v1) - c2.Y(v0);
+        [[c1, h1], [c2, h2]].forEach(([c]) => tagBox(ctx, "−40%", c.X(ts) + 6, (c.Y(v0) + c.Y(v1)) / 2, P, { mono: true }));
+        sh = Math.round(h1) + " / " + Math.round(h2) + " <small>px</small>";
+      }
+      const final = pts[pts.length - 1][1];
+      MB.stat("gr-o-m", "×" + MB.fmt(final, 3));
+      MB.stat("gr-o-d", (Math.log(2) / Math.log(1 + r)).toFixed(1) + "<small>년 · 72법칙 " + (0.72 / r).toFixed(1) + "년</small>");
+      MB.stat("gr-o-s", sh);
+    }, { get height() { return narrow("gr-cv") ? 470 : 320; } });
+    shock.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 11. 10년 차트: 선형/로그 */
+  (function () {
+    const sel = [9, 527];
+    let L = null, drag0 = null;
+    const axis = MB.seg("lg-axis", () => cv.redraw());
+    const what = MB.seg("lg-what", () => cv.redraw());
+    const x2 = document.getElementById("lg-x2");
+    const doublings = (c) => {
+      const out = [], E = c.length - 1;
+      const m0 = argmin(c, 0, Math.floor(E * 0.6));
+      let j = m0; while (j <= E && c[j] < 2 * c[m0]) j++;
+      if (j <= E) out.push([m0, j]);
+      let k = E; while (k > 0 && c[k] > c[E] / 2) k--;
+      if (k > 0 && (!out.length || k > out[0][1])) out.push([k, E]);
+      return out;
+    };
+    const cv = MB.canvas("#lg-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560, key = what(), c = closesOf(key), log = axis() === "log";
+      const hi = Math.max(...c), lo = Math.min(...c);
+      const yFmt = key === "index" ? (v) => Math.round(v).toLocaleString("ko-KR") : MB.wonAxis;
+      const box = { x: 58, y: 16, w: w - 58 - 14, h: h - 16 - 30 };
+      const ch = MB.chart(ctx, box, { x: [0, ND - 1], y: log ? [lo / 1.15, hi * 1.15] : [0, hi * 1.06], logY: log, yTicks: log ? logTicks(lo / 1.15, hi * 1.15) : undefined, yFmt,
+        xTicks: yearTicks(nar), xFmt: yearFmt(nar), bands: [{ x0: Math.min(...sel), x1: Math.max(...sel), color: MB.color("accent-soft") }],
+        series: [{ data: c.map((v, i) => [i, v]), color: P.accent, width: 1.6 }] });
+      L = { ch, box };
+      const a = Math.min(...sel), b = Math.max(...sel), ha = Math.abs(ch.Y(c[b]) - ch.Y(c[a]));
+      [a, b].forEach((i) => { ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(ch.X(i), ch.Y(c[i]), 4, 0, TAU); ctx.fill(); });
+      ctx.save(); ctx.strokeStyle = P.text; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(ch.X(a), ch.Y(c[a])); ctx.lineTo(ch.X(b), ch.Y(c[a])); ctx.lineTo(ch.X(b), ch.Y(c[b])); ctx.stroke(); ctx.restore();
+      let xs = "—";
+      if (x2.checked) {
+        const ds = doublings(c), hs = [];
+        ds.forEach(([s, e], q) => {
+          const x = ch.X(e) - (q ? 8 : -8), y0 = ch.Y(c[s]), y1 = ch.Y(c[e]);
+          ctx.save(); ctx.strokeStyle = P.accent2; ctx.fillStyle = P.accent2; ctx.lineWidth = 2.2;
+          ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x - 5, y1 + 8); ctx.lineTo(x + 5, y1 + 8); ctx.fill();
+          ctx.restore();
+          tagBox(ctx, "×" + (c[e] / c[s]).toFixed(1), x + (q ? -6 : 6), (y0 + y1) / 2, P, { align: q ? "right" : "left", bg: P.accent2, color: "#fff", mono: false });
+          hs.push(Math.round(y0 - y1));
+        });
+        xs = hs.length === 2 ? hs[0] + " : " + hs[1] + " <small>px</small>" : hs.length ? hs[0] + " <small>px (하나뿐)</small>" : "<small>없음</small>";
+      }
+      MB.stat("lg-o-d", ymd(a) + " → " + ymd(b));
+      MB.stat("lg-o-r", chgT(c[b] / c[a] - 1));
+      MB.stat("lg-o-h", Math.round(ha) + " <small>px · 화면의 " + Math.round((ha / box.h) * 100) + "%</small>");
+      MB.stat("lg-o-x", xs);
+    }, { get height() { return narrow("lg-cv") ? 300 : 360; } });
+    const inv = (x) => MB.clamp(Math.round(((x - L.box.x) / L.box.w) * (ND - 1)), 0, ND - 1);
+    MB.drag(cv.canvas, {
+      start(x) { drag0 = inv(x); },
+      move(x) { const i = inv(x); if (i !== drag0) { sel[0] = drag0; sel[1] = i; cv.redraw(); } },
+    });
+    x2.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 12. 수정주가 */
+  (function () {
+    const S = DATES.findIndex((d) => d >= "2021-05-03");
+    const raw = HC.map((x, i) => (i < S ? x * 2 : x));
+    const div = HC.map((_, i) => (i > 0 && i < ND - 1 && DATES[i].slice(5, 7) === "12" && DATES[i + 1].slice(5, 7) === "01" ? 0.02 * HC[i - 1] : 0));
+    const tr = [1]; for (let i = 1; i < ND; i++) tr.push((tr[i - 1] * (HC[i] + div[i])) / HC[i - 1]);
+    const view = MB.seg("adj-view", () => cv.redraw());
+    const trc = document.getElementById("adj-tr"), lg = document.getElementById("adj-log");
+    const cv = MB.canvas("#adj-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560, isRaw = view() === "raw", c = isRaw ? raw : HC;
+      const tl = tr.map((v) => v * c[0]);
+      const all = trc.checked ? c.concat(tl) : c, hi = Math.max(...all), lo = Math.min(...all), log = lg.checked;
+      const box = { x: 58, y: 16, w: w - 58 - 14, h: h - 16 - 30 };
+      const series = [{ data: c.map((v, i) => [i, v]), color: P.accent, width: 1.6 }];
+      if (trc.checked) series.push({ data: tl.map((v, i) => [i, v]), color: P.accent2, width: 1.6 });
+      const ch = MB.chart(ctx, box, { x: [0, ND - 1], y: log ? [lo / 1.15, hi * 1.15] : [0, hi * 1.06], logY: log, yTicks: log ? logTicks(lo / 1.15, hi * 1.15) : undefined, yFmt: MB.wonAxis,
+        xTicks: yearTicks(nar), xFmt: yearFmt(nar), series, vlines: [{ x: S, color: P.warn, label: "2:1 분할(가정)" }] });
+      if (isRaw) tagBox(ctx, "분할일 " + MB.chg(raw[S] / raw[S - 1] - 1, 1), ch.X(S) + 6, ch.Y(raw[S - 1]) - 4, P, { bg: P.warn, color: "#fff" });
+      let lx = box.x + 8;
+      [[P.accent, isRaw ? "원주가" : "수정주가"]].concat(trc.checked ? [[P.accent2, "총수익(배당 재투자)"]] : []).forEach(([col, s]) => {
+        ctx.fillStyle = col; ctx.fillRect(lx, box.y + 30, 14, 3); text(ctx, s, lx + 18, box.y + 36, { color: P.text, size: 11 }); lx += 26 + ctx.measureText(s).width;
+      });
+      MB.stat("adj-o-s", chgT(c[S] / c[S - 1] - 1));
+      MB.stat("adj-o-r", chgT(c[ND - 1] / c[0] - 1));
+      MB.stat("adj-o-m", tone(-1, MB.pct(ST.maxDrawdown(c).mdd, 1).replace("-", "−")));
+      MB.stat("adj-o-t", chgT(tr[ND - 1] - 1));
+    }, { get height() { return narrow("adj-cv") ? 290 : 340; } });
+    trc.addEventListener("change", () => cv.redraw());
+    lg.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 13. 갭 찾기 */
+  (function () {
+    function series(seed) {
+      for (let s = seed; ; s++) {
+        const g = ST.gauss(s), r = ST.rng(s * 7 + 3), out = [];
+        let prev = 50000;
+        for (let i = 0; i < 60; i++) {
+          const news = r() < 0.14 ? (r() < 0.5 ? -1 : 1) * (0.025 + 0.035 * r()) : 0.003 * g();
+          const o = prev * Math.exp(news), c = o * Math.exp(0.016 * g());
+          const h = Math.max(o, c) * Math.exp(Math.abs(0.007 * g())), l = Math.min(o, c) * Math.exp(-Math.abs(0.007 * g()));
+          const d = { o: ST.roundTick(o), h: ST.roundTick(h, "up"), l: ST.roundTick(l, "down"), c: ST.roundTick(c), v: Math.round(4e5 * (1 + (3 * Math.abs(news)) / 0.03) * Math.exp(0.3 * g())) };
+          out.push(d); prev = d.c;
+        }
+        const gaps = [];
+        for (let i = 1; i < 60; i++) {
+          if (out[i].l > out[i - 1].h) gaps.push({ i, up: true, a: out[i - 1].h, b: out[i].l });
+          else if (out[i].h < out[i - 1].l) gaps.push({ i, up: false, a: out[i].h, b: out[i - 1].l });
+        }
+        if (gaps.length >= 4 && gaps.length <= 8) {
+          gaps.forEach((gp) => { gp.fill = -1; for (let j = gp.i + 1; j < 60; j++) if (gp.up ? out[j].l <= gp.a : out[j].h >= gp.b) { gp.fill = j; break; } });
+          return { data: out, gaps, seed: s };
+        }
+      }
+    }
+    let G = series(5), found = new Set(), wrong = new Set(), shown = false, last = null, R = null;
+    const closeLine = document.getElementById("gap-close");
+    const cv = MB.canvas("#gap-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = G.data;
+      const box = { x: 60, y: 14, w: w - 60 - 12, h: h - 14 - 30 };
+      const overlays = closeLine.checked ? [{ data: d.map((x) => x.c), color: P.text, width: 1.4 }] : [];
+      R = MB.candles(ctx, box, d, { yFmt: pr, volFrac: 0.16, overlays, xLabel: (i) => (i % 10 === 0 ? i + 1 + "일" : null) });
+      ctx.save(); ctx.beginPath(); ctx.rect(R.box.x, R.box.y, R.box.w, R.box.h); ctx.clip();
+      G.gaps.forEach((gp) => {
+        const vis = found.has(gp.i) || shown;
+        if (!vis) return;
+        const x0 = R.X(gp.i - 1) + R.cw / 2, x1 = gp.fill >= 0 ? R.X(gp.fill) : R.box.x + R.box.w;
+        ctx.fillStyle = gp.up ? P.upSoft : P.downSoft; ctx.fillRect(x0, R.Y(gp.b), x1 - x0, R.Y(gp.a) - R.Y(gp.b));
+        ctx.strokeStyle = gp.up ? P.up : P.down; ctx.lineWidth = 1; ctx.setLineDash([3, 3]); ctx.strokeRect(x0, R.Y(gp.b), x1 - x0, R.Y(gp.a) - R.Y(gp.b)); ctx.setLineDash([]);
+        if (!found.has(gp.i)) { ctx.strokeStyle = P.accent; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(R.X(gp.i), R.Y((d[gp.i].h + d[gp.i].l) / 2), 12, 0, TAU); ctx.stroke(); }
+      });
+      if (last) { ctx.strokeStyle = last.ok ? P.ok : P.bad; ctx.lineWidth = 2.2; ctx.beginPath(); ctx.arc(R.X(last.j), R.Y((d[last.j].h + d[last.j].l) / 2), 14, 0, TAU); ctx.stroke(); }
+      ctx.restore();
+      MB.stat("gap-o-f", found.size + " / " + G.gaps.length);
+      MB.stat("gap-o-x", String(wrong.size));
+      MB.stat("gap-o-m", shown || found.size === G.gaps.length ? G.gaps.filter((g) => g.fill >= 0).length + " / " + G.gaps.length : "<small>다 찾거나 정답을 보면 공개</small>");
+    }, { get height() { return narrow("gap-cv") ? 300 : 340; } });
+    MB.drag(cv.canvas, {
+      start(x) {
+        const j = R.idx(x), ok = G.gaps.some((g) => g.i === j);
+        if (ok) found.add(j); else wrong.add(j);
+        last = { j, ok }; cv.redraw();
+      },
+    });
+    document.getElementById("gap-show").addEventListener("click", () => { shown = true; cv.redraw(); });
+    document.getElementById("gap-new").addEventListener("click", () => { G = series(G.seed + 1); found = new Set(); wrong = new Set(); shown = false; last = null; cv.redraw(); });
+    closeLine.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 14. 52주 신고가·신저가 */
+  (function () {
+    const H = HB.map((d) => d.h), Lo = HB.map((d) => d.l), W = 250;
+    const hi52 = ST.highest(H, W), lo52 = ST.lowest(Lo, W);
+    const newH = H.map((v, i) => i >= W && v > hi52[i - 1]), newL = Lo.map((v, i) => i >= W && v < lo52[i - 1]);
+    let cur = 527, L = null, act = false;
+    const mark = MB.seg("hl-mark", () => cv.redraw());
+    const lg = document.getElementById("hl-log");
+    const cv = MB.canvas("#hl-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560, log = lg.checked;
+      const hi = Math.max(...H), lo = Math.min(...Lo);
+      const box = { x: 58, y: 22, w: w - 58 - 14, h: h - 22 - 30 };
+      const ch = MB.chart(ctx, box, { x: [0, ND - 1], y: log ? [lo / 1.12, hi * 1.12] : [0, hi * 1.06], logY: log, yTicks: log ? logTicks(lo / 1.12, hi * 1.12) : undefined, yFmt: MB.wonAxis, xTicks: yearTicks(nar), xFmt: yearFmt(nar) });
+      L = { ch, box };
+      ctx.save(); ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+      ctx.fillStyle = MB.color("accent-soft"); ctx.beginPath();
+      for (let i = W - 1; i < ND; i++) (i === W - 1 ? ctx.moveTo(ch.X(i), ch.Y(hi52[i])) : ctx.lineTo(ch.X(i), ch.Y(hi52[i])));
+      for (let i = ND - 1; i >= W - 1; i--) ctx.lineTo(ch.X(i), ch.Y(lo52[i]));
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 1.5; ctx.beginPath(); HC.forEach((v, i) => (i ? ctx.lineTo(ch.X(i), ch.Y(v)) : ctx.moveTo(ch.X(i), ch.Y(v)))); ctx.stroke();
+      const m = mark();
+      if (m !== "none") {
+        ctx.fillStyle = m === "high" ? P.up : P.down;
+        (m === "high" ? newH : newL).forEach((f, i) => { if (f) { ctx.beginPath(); ctx.arc(ch.X(i), ch.Y(m === "high" ? H[i] : Lo[i]), 2.4, 0, TAU); ctx.fill(); } });
+      }
+      ctx.restore();
+      const x = ch.X(cur);
+      ctx.save(); ctx.strokeStyle = P.text; ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x, box.y); ctx.lineTo(x, box.y + box.h); ctx.stroke(); ctx.restore();
+      if (cur >= W - 1) {
+        [[hi52[cur], P.up], [lo52[cur], P.down]].forEach(([v, col]) => { ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x, ch.Y(v), 4, 0, TAU); ctx.fill(); });
+      }
+      knob(ctx, x, box.y, P, act ? 9 : 7);
+      tagBox(ctx, ymd(cur), x, box.y + box.h - 10, P, { align: "center" });
+      MB.stat("hl-o-d", ymd(cur) + " · " + pr(HC[cur]));
+      const y = DATES[cur].slice(0, 4), yi = DATES.map((d, i) => (d.startsWith(y) ? i : -1)).filter((i) => i >= 0);
+      if (cur >= W - 1) {
+        MB.stat("hl-o-b", '<span class="up-t">' + pr(hi52[cur]) + '</span> · <span class="down-t">' + pr(lo52[cur]) + "</span>");
+        MB.stat("hl-o-p", MB.pct((HC[cur] - lo52[cur]) / (hi52[cur] - lo52[cur]), 0));
+      } else { MB.stat("hl-o-b", "<small>1년치가 쌓이기 전</small>"); MB.stat("hl-o-p", "—"); }
+      MB.stat("hl-o-n", y + " · " + '<span class="up-t">' + yi.filter((i) => newH[i]).length + "</span> · " + '<span class="down-t">' + yi.filter((i) => newL[i]).length + "</span>");
+    }, { get height() { return narrow("hl-cv") ? 300 : 350; } });
+    MB.drag(cv.canvas, {
+      start() { act = true; },
+      move(x) { cur = MB.clamp(Math.round(((x - L.box.x) / L.box.w) * (ND - 1)), 0, ND - 1); cv.redraw(); },
+      end() { act = false; cv.redraw(); },
+    });
+    lg.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 15. y축 착시 */
+  (function () {
+    const A = 2448, n = 40, c = HC.slice(A, A + n), cmax = Math.max(...c), cmin = Math.min(...c);
+    const GMAX = 100000, HONEST = [0, Math.ceil((cmax * 1.1) / 1000) * 1000];
+    const S = { lo: HONEST[0], hi: HONEST[1] };
+    let L = null, act = null;
+    const hide = document.getElementById("ax-hide");
+    const frac = (lo, hi) => (c[0] - c[n - 1]) / (hi - lo);
+    const cv = MB.canvas("#ax-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560;
+      const gx = 30, gy = 20, gh = h - 20 - 44, GY = (v) => gy + gh - (v / GMAX) * gh;
+      // 왼쪽 눈금자(0~10만원)와 손잡이
+      ctx.fillStyle = P.surface; rr(ctx, gx - 6, gy, 12, gh, 6); ctx.fill();
+      ctx.strokeStyle = P.border; rr(ctx, gx - 6, gy, 12, gh, 6); ctx.stroke();
+      ctx.fillStyle = MB.color("accent-soft"); ctx.fillRect(gx - 6, GY(S.hi), 12, GY(S.lo) - GY(S.hi));
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(gx, GY(cmax)); ctx.lineTo(gx, GY(cmin)); ctx.stroke();
+      text(ctx, "10만", gx, gy - 6, { color: P.dim, size: 10, align: "center" });
+      text(ctx, "0", gx, gy + gh + 14, { color: P.dim, size: 10, align: "center" });
+      const box = { x: nar ? 104 : 124, y: 34, w: w - (nar ? 104 : 124) - 34, h: h - 34 - 34 };
+      const ch = MB.chart(ctx, box, { x: [0, n - 1], y: [S.lo, S.hi], yFmt: (v) => (hide.checked ? "" : MB.wonAxis(v)), xTicks: [0, n - 1], xFmt: (i) => ymd(A + i),
+        series: [{ data: c.map((v, i) => [i, v]), color: P.down, width: 2.4, fill: MB.color("down-soft") }] });
+      ctx.strokeStyle = P.border; ctx.setLineDash([2, 3]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(gx + 8, GY(S.hi)); ctx.lineTo(box.x, box.y); ctx.moveTo(gx + 8, GY(S.lo)); ctx.lineTo(box.x, box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, gx, GY(S.hi), P, act === "hi" ? 9 : 7);
+      knob(ctx, gx, GY(S.lo), P, act === "lo" ? 9 : 7);
+      L = { GY, gy, gh };
+      const f = frac(S.lo, S.hi), fh = frac(HONEST[0], HONEST[1]);
+      const head = f > 0.3 ? ["한빛반도체, 급락", P.down] : f < 0.08 ? ["한빛반도체, 보합세", P.dim] : ["한빛반도체, 약세", P.text];
+      text(ctx, head[0], box.x, 22, { color: head[1], size: nar ? 15 : 18, weight: 800 });
+      MB.stat("ax-o-r", chgT(c[n - 1] / c[0] - 1));
+      MB.stat("ax-o-v", Math.round(f * 100) + "%<small>(화면 높이 대비)</small>");
+      MB.stat("ax-o-x", "×" + (f / fh).toFixed(1));
+    }, { get height() { return narrow("ax-cv") ? 300 : 340; } });
+    const inv = (y) => ((L.gy + L.gh - y) / L.gh) * GMAX;
+    MB.drag(cv.canvas, {
+      start(x, y) { act = Math.abs(y - L.GY(S.hi)) < Math.abs(y - L.GY(S.lo)) ? "hi" : "lo"; },
+      move(x, y) {
+        const v = MB.clamp(Math.round(inv(y) / 500) * 500, 0, GMAX);
+        if (act === "hi") S.hi = Math.max(v, Math.max(S.lo + 1000, cmax)); else S.lo = Math.min(v, Math.min(S.hi - 1000, cmin));
+        cv.redraw();
+      },
+      end() { act = null; cv.redraw(); },
+    });
+    const set = (lo, hi) => { S.lo = lo; S.hi = hi; cv.redraw(); };
+    document.getElementById("ax-crash").addEventListener("click", () => set(Math.floor(cmin / 500) * 500, Math.ceil(cmax / 500) * 500));
+    document.getElementById("ax-flat").addEventListener("click", () => set(0, GMAX));
+    document.getElementById("ax-honest").addEventListener("click", () => set(HONEST[0], HONEST[1]));
+    hide.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 16. 상대 강도 */
+  (function () {
+    const PEAK19 = M.index.indexOf(Math.max(...M.index.slice(700, 960)));
+    const Y24 = DATES.findIndex((d) => d >= "2024-01-01");
+    let base = 0, L = null;
+    const a = MB.seg("rs-a", () => cv.redraw()), b = MB.seg("rs-b", () => cv.redraw());
+    const RT = [3.125, 6.25, 12.5, 25, 50, 100, 200, 400, 800, 1600, 3200];
+    const cv = MB.canvas("#rs-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560;
+      const A = closesOf(a()), B = closesOf(b());
+      const na = A.map((v) => (100 * v) / A[base]), nb = B.map((v) => (100 * v) / B[base]), rs = na.map((v, i) => (100 * v) / nb[i]);
+      const all = na.concat(nb), hi = Math.max(...all) * 1.15, lo = Math.min(...all) / 1.15;
+      const rhi = Math.max(...rs) * 1.1, rlo = Math.min(...rs) / 1.1;
+      const top = { x: 54, y: 30, w: w - 54 - 14, h: (h - 30 - 30) * 0.68 - 10 };
+      const bot = { x: 54, y: top.y + top.h + 22, w: top.w, h: (h - 30 - 30) * 0.32 - 12 };
+      const fmt = (v) => String(+v.toFixed(1));
+      const pick = (lo_, hi_) => { const t = RT.filter((v) => v >= lo_ && v <= hi_); return t.length >= 2 ? t : undefined; };
+      const c1 = MB.chart(ctx, top, { x: [0, ND - 1], y: [lo, hi], logY: true, yTicks: pick(lo, hi), yFmt: fmt, xTicks: [],
+        hlines: [{ y: 100, color: P.faint }], series: [{ data: na.map((v, i) => [i, v]), color: P.accent, width: 1.6 }, { data: nb.map((v, i) => [i, v]), color: P.accent2, width: 1.6 }] });
+      const c2 = MB.chart(ctx, bot, { x: [0, ND - 1], y: [rlo, rhi], logY: true, yTicks: pick(rlo, rhi), yFmt: fmt, xTicks: yearTicks(nar), xFmt: yearFmt(nar),
+        hlines: [{ y: 100, color: P.faint }], series: [{ data: rs.map((v, i) => [i, v]), color: P.text, width: 1.4 }] });
+      L = { c1, top };
+      const x = c1.X(base);
+      ctx.save(); ctx.strokeStyle = P.text; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(x, top.y); ctx.lineTo(x, bot.y + bot.h); ctx.stroke(); ctx.restore();
+      knob(ctx, x, c1.Y(100), P, 6, P.text);
+      text(ctx, "상대 강도 A/B", bot.x + 6, bot.y + 12, { color: P.dim, size: 11 });
+      let lx = top.x;
+      [[P.accent, "A " + NAME[a()]], [P.accent2, "B " + NAME[b()]]].forEach(([col, s]) => {
+        ctx.fillStyle = col; ctx.fillRect(lx, 12, 14, 3); text(ctx, s, lx + 18, 18, { color: P.text, size: 12, weight: 600 }); lx += 30 + ctx.measureText(s).width;
+      });
+      const ra = A[ND - 1] / A[base] - 1, rb = B[ND - 1] / B[base] - 1, ratio = (1 + ra) / (1 + rb);
+      MB.stat("rs-o-d", ymd(base));
+      MB.stat("rs-o-a", chgT(ra));
+      MB.stat("rs-o-b", chgT(rb));
+      MB.stat("rs-o-r", ratio.toFixed(2) + "<small>배 · " + (ratio > 1.005 ? "A 우위" : ratio < 0.995 ? "B 우위" : "비김") + "</small>");
+    }, { get height() { return narrow("rs-cv") ? 330 : 380; } });
+    MB.drag(cv.canvas, { move(x) { base = MB.clamp(Math.round(((x - L.top.x) / L.top.w) * (ND - 1)), 0, ND - 2); cv.redraw(); } });
+    const go = (i) => { base = i; cv.redraw(); };
+    document.getElementById("rs-b0").addEventListener("click", () => go(0));
+    document.getElementById("rs-b1").addEventListener("click", () => go(PEAK19));
+    document.getElementById("rs-b2").addEventListener("click", () => go(Y24));
+  })();
+
+  /* ---------------------------------------------------------- 17. 종합: 한결의 차트 설정 실험실 */
+  (function () {
+    const SETS = { 1: HB.map((d, i) => Object.assign({ i0: i }, d)), 5: ST.resample(HB, 5), 21: ST.resample(HB, 21) };
+    let hov = null, R = null;
+    const axis = MB.seg("hg-axis", () => cv.redraw()), kk = MB.seg("hg-k", () => { hov = null; cv.redraw(); });
+    const ma = document.getElementById("hg-ma"), reg = document.getElementById("hg-reg");
+    /** 화면 픽셀로 잰 가장 큰 고점→저점 하락 */
+    function visualDrop(ys) {
+      let pk = 0, best = [0, 0, 0];
+      ys.forEach((y, i) => { if (y < ys[pk]) pk = i; if (y - ys[pk] > best[2]) best = [pk, i, y - ys[pk]]; });
+      return best;
+    }
+    const cv = MB.canvas("#hg-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 560, K = Number(kk()), cs = SETS[K], log = axis() === "log", n = cs.length;
+      const cl = cs.map((d) => d.c);
+      const overlays = ma.checked ? [{ data: ST.sma(cl, 20), color: P.accent, width: 1.6 }, { data: ST.sma(cl, 60), color: P.accent2, width: 1.6 }] : [];
+      const bands = reg.checked ? M.regimes.map((r) => ({ i0: Math.floor(r.from / K), i1: Math.min(n - 1, Math.floor((r.to - 1) / K)), color: r.ret >= 0 ? P.upSoft : P.downSoft })) : [];
+      const box = { x: 60, y: 14, w: w - 60 - 12, h: h - 14 - 30 };
+      R = MB.candles(ctx, box, cs, { logY: log, yFmt: MB.wonAxis, overlays, bands, volFrac: 0.16, xLabel: dateLab((i) => cs[i].i0, "y") });
+      if (reg.checked && !nar) M.regimes.forEach((r) => {
+        const x0 = R.X(Math.floor(r.from / K)), x1 = R.X(Math.min(n - 1, Math.floor((r.to - 1) / K)));
+        if (x1 - x0 > 46) text(ctx, r.name, (x0 + x1) / 2, R.box.y + R.box.h - 6, { color: P.dim, size: 10.5, align: "center" });
+      });
+      const vd = visualDrop(cl.map((c) => R.Y(c))), md = ST.maxDrawdown(cl);
+      const bracket = (i0, i1, col, lab, dy) => {
+        const x0 = R.X(i0), x1 = R.X(i1), y0 = R.Y(cl[i0]), y1 = R.Y(cl[i1]);
+        ctx.save(); ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash([5, 3]);
+        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 + dy, y0); ctx.lineTo(x1 + dy, y1); ctx.stroke(); ctx.restore();
+        ctx.fillStyle = col; [[x0, y0], [x1, y1]].forEach(([x, y]) => { ctx.beginPath(); ctx.arc(x, y, 4, 0, TAU); ctx.fill(); });
+        tagBox(ctx, lab, MB.clamp((x0 + x1) / 2, R.box.x + 40, R.box.x + R.box.w - 40), Math.max(R.box.y + 10, y0 - 11), P, { align: "center", bg: col, color: "#fff", mono: false });
+      };
+      const same = vd[0] === md.peak && vd[1] === md.trough;
+      bracket(md.peak, md.trough, P.accent, same ? "화면 최대 = 실제 최대" : "실제 최대 낙폭", 0);
+      if (!same) bracket(vd[0], vd[1], P.warn, "화면에서 가장 큰 하락", 0);
+      const dOf = (i) => DATES[cs[i].i0].slice(2, 7).replace("-", ".");
+      MB.stat("hg-o-n", n.toLocaleString("ko-KR") + " <small>개</small>");
+      MB.stat("hg-o-v", '<span class="warn-t">' + dOf(vd[0]) + "→" + dOf(vd[1]) + "</span> " + chgT(cl[vd[1]] / cl[vd[0]] - 1));
+      MB.stat("hg-o-m", dOf(md.peak) + "→" + dOf(md.trough) + " " + chgT(md.mdd));
+      if (hov != null) {
+        const j = MB.clamp(hov, 0, n - 1), d = cs[j];
+        cross(ctx, R, j, d.c, P, K === 1 ? ymd(d.i0) : dOf(j));
+        MB.stat("hg-o-h", (K === 1 ? ymd(d.i0) : ymd(d.i0) + "~") + " " + pr(d.c));
+      } else MB.stat("hg-o-h", "—");
+    }, { get height() { return narrow("hg-cv") ? 330 : 400; } });
+    MB.drag(cv.canvas, { move(x) { hov = R.idx(x); cv.redraw(); }, hover(x) { hov = R.idx(x); cv.redraw(); } });
+    onLeave(cv, () => { hov = null; cv.redraw(); });
+    ma.addEventListener("change", () => cv.redraw());
+    reg.addEventListener("change", () => cv.redraw());
+  })();
+})();
+</script>
+</body>
+</html>

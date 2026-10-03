@@ -1,0 +1,1381 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "주가는 무엇에 비해 비싼가. EPS·PER·PBR·ROE·PSR·EV/EBITDA·배당수익률을 다섯 가상 회사로 직접 계산하고, PBR = ROE × PER, 듀퐁 분해, 업종별 정상 범위, 경기민감주와 일회성 이익이 만드는 낮은 PER의 함정을 시뮬레이터로 확인한다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>투자 지표 · StockBook</title>
+<meta name="description" content="주가는 무엇에 비해 비싼가. EPS·PER·PBR·ROE·PSR·EV/EBITDA·배당수익률을 다섯 가상 회사로 직접 계산하고, PBR = ROE × PER, 듀퐁 분해, 업종별 정상 범위, 경기민감주와 일회성 이익이 만드는 낮은 PER의 함정을 시뮬레이터로 확인한다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/ratios.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="투자 지표 · StockBook">
+<meta property="og:description" content="주가는 무엇에 비해 비싼가. EPS·PER·PBR·ROE·PSR·EV/EBITDA·배당수익률을 다섯 가상 회사로 직접 계산하고, PBR = ROE × PER, 듀퐁 분해, 업종별 정상 범위, 경기민감주와 일회성 이익이 만드는 낮은 PER의 함정을 시뮬레이터로 확인한다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/ratios.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/ratios.html#chapter","name":"투자 지표","headline":"투자 지표 · StockBook","description":"주가는 무엇에 비해 비싼가. EPS·PER·PBR·ROE·PSR·EV/EBITDA·배당수익률을 다섯 가상 회사로 직접 계산하고, PBR = ROE × PER, 듀퐁 분해, 업종별 정상 범위, 경기민감주와 일회성 이익이 만드는 낮은 PER의 함정을 시뮬레이터로 확인한다.","url":"https://stockbook.euiyun.com/chapters/ratios.html","position":6,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"6. 투자 지표","item":"https://stockbook.euiyun.com/chapters/ratios.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  figure.diagram svg { max-width: 540px; margin: 0 auto; }
+  figure.diagram svg .t-mono { font-size: 12.5px; }
+  .ratio-strip { display: grid; gap: 1px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin: 22px 0; }
+  .ratio-strip div { background: var(--bg-elev); padding: 12px 14px; font-size: 14.5px; color: var(--text-dim); line-height: 1.55; }
+  .ratio-strip b { display: block; color: var(--text); font-size: 15.5px; margin-bottom: 2px; }
+  .gs-opts { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .gs-opts .btn { width: 100%; text-align: left; }
+  .gs-opts .btn.right { border-color: var(--ok); color: var(--ok); }
+  .gs-opts .btn.wrong { border-color: var(--bad); color: var(--bad); }
+  .sim-note.gs-msg { color: var(--text); font-size: 14.5px; }
+</style>
+</head>
+<body data-chapter="ratios">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 06</div>
+    <h1>투자 지표</h1>
+    <p class="lead">한빛반도체 1주는 72,000원, 다온은행 1주는 13,500원이다. 그렇다면 다온은행이 더 싼가? 1주의 가격만으로는 아무것도 알 수 없다. 회사마다 주식 수가 다르고, 버는 돈과 가진 재산이 다르기 때문이다. 이 장은 주가를 이익, 순자산, 매출, 현금흐름 같은 "분모"로 나누어 서로 견줄 수 있게 만드는 숫자들, 곧 투자 지표를 다룬다. 지표를 직접 계산하고, 지표끼리 어떻게 묶이는지 끌어 보고, 마지막에는 지표가 거짓말처럼 보이는 순간들을 시뮬레이터로 겪어 본다.</p>
+    <ul class="objectives">
+      <li>EPS·PER·PBR·PSR·EV/EBITDA·배당수익률을 정의하고, 다섯 가상 회사의 값을 직접 계산한다.</li>
+      <li>PER을 "이익으로 주가를 갚는 데 걸리는 햇수"와 이익수익률(1/PER)로 읽는다.</li>
+      <li>PBR = ROE × PER 관계와 듀퐁 분해로 ROE가 어디서 오는지, 레버리지로 올린 ROE가 왜 위험한지 설명한다.</li>
+      <li>업종마다 정상 범위가 다르다는 것, 일회성 이익과 경기 정점의 이익이 낮은 PER을 만드는 함정을 구별한다.</li>
+      <li>성장률과 PER의 관계(PEG)를 이해하고, 지표는 가격표일 뿐 가치 판단이 아니라는 결론에 이른다.</li>
+    </ul>
+  </header>
+
+  <section id="price-tag">
+    <h2>주가는 무엇에 비해 비싼가</h2>
+    <p>마트에서 600g 고기가 18,000원이고 1kg 고기가 25,000원이면, 우리는 자연스럽게 100g당 값을 계산한다. 포장 크기가 다르면 포장 가격만으로는 비교할 수 없기 때문이다. 주식도 같다. <a href="overview.html">1장</a>에서 본 것처럼 주식 1주는 회사의 작은 조각이고, 회사마다 조각을 몇 개로 나눴는지가 다르다. 한빛반도체는 1억 주, 다온은행은 4억 주, 누리식품은 2,000만 주로 나뉘어 있다. 그러니 "1주에 얼마"는 포장 가격일 뿐이다.</p>
+    <p>그래서 투자자는 주가를 회사의 무엇인가로 나눈다. 1주가 가져가는 이익, 1주에 해당하는 순자산, 1주에 해당하는 매출로 나누면 "이익 1원에 얼마를 내는가", "장부상 재산 1원에 얼마를 내는가"가 된다. 이렇게 가격을 무엇인가의 배수로 표현한 숫자를 <span class="term">멀티플</span><span class="en">(Multiple)</span>, 넓게는 <span class="term">투자 지표</span><span class="en">(Valuation ratio)</span>라고 부른다. 재료는 모두 <a href="statements.html">5장</a>의 재무제표에서 온다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 262" role="img" aria-label="한빛반도체 주가 72,000원을 네 가지 분모로 나누어 PER, PBR, PSR, 배당수익률을 얻는 그림">
+        <defs><marker id="rt-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-acc-soft" x="10" y="98" width="122" height="66" rx="10"/>
+        <text class="lbl-dim" x="71" y="124" text-anchor="middle">한빛반도체 주가</text>
+        <text class="lbl-b t-mono" x="71" y="148" text-anchor="middle">72,000원</text>
+        <path class="s-line" d="M132 131 C 160 131, 160 38, 184 38" fill="none" marker-end="url(#rt-ar)"/>
+        <path class="s-line" d="M132 131 C 162 131, 162 99, 184 99" fill="none" marker-end="url(#rt-ar)"/>
+        <path class="s-line" d="M132 131 C 162 131, 162 160, 184 160" fill="none" marker-end="url(#rt-ar)"/>
+        <path class="s-line" d="M132 131 C 160 131, 160 222, 184 222" fill="none" marker-end="url(#rt-ar)"/>
+        <rect class="f-surface" x="188" y="14" width="262" height="48" rx="8"/>
+        <text class="lbl" x="198" y="35">÷ 주당순이익(EPS)</text><text class="lbl-dim t-mono" x="198" y="53">7,200원</text>
+        <text class="lbl-acc" x="440" y="44" text-anchor="end">PER 10배</text>
+        <rect class="f-surface" x="188" y="75" width="262" height="48" rx="8"/>
+        <text class="lbl" x="198" y="96">÷ 주당순자산(BPS)</text><text class="lbl-dim t-mono" x="198" y="114">60,000원</text>
+        <text class="lbl-acc" x="440" y="105" text-anchor="end">PBR 1.2배</text>
+        <rect class="f-surface" x="188" y="136" width="262" height="48" rx="8"/>
+        <text class="lbl" x="198" y="157">÷ 주당매출(SPS)</text><text class="lbl-dim t-mono" x="198" y="175">60,000원</text>
+        <text class="lbl-acc" x="440" y="166" text-anchor="end">PSR 1.2배</text>
+        <rect class="f-surface" x="188" y="198" width="262" height="48" rx="8"/>
+        <text class="lbl" x="198" y="219">주당배당 ÷ 주가</text><text class="lbl-dim t-mono" x="198" y="237">1,440원</text>
+        <text class="lbl-acc2" x="440" y="228" text-anchor="end">배당수익률 2.0%</text>
+      </svg>
+      <figcaption><b>그림 6-1. 가격 하나, 분모 넷.</b> 같은 72,000원이 무엇으로 나누느냐에 따라 10배도, 1.2배도, 2%도 된다. 앞의 셋은 "가격이 분모의 몇 배인가"이고, 배당수익률만 거꾸로 "가격에 견주어 받는 돈이 몇 %인가"다. 숫자는 가상의 회사 한빛반도체의 2026년 10월 값이다.</figcaption>
+    </figure>
+
+    <p>이 장에서 쓰는 다섯 회사는 모두 가상이다. 실제 회사를 떠올릴 필요도 없고, 사라고 권하는 것도 아니다. 다섯은 일부러 성격이 서로 다르게 만들었다. 업황에 따라 이익이 출렁이는 반도체 회사, 느리지만 꾸준한 식품 회사, 아직 적자인 바이오 회사, 자산 대부분이 대출인 은행, 빠르게 크는 플랫폼 회사다. 같은 지표가 회사 성격에 따라 얼마나 다르게 읽히는지 보는 것이 이 장의 절반이다.</p>
+  </section>
+
+  <section id="per">
+    <h2>PER: 이익의 몇 년치를 내는가</h2>
+    <p>가장 많이 쓰는 지표부터 보자. 회사가 1년 동안 번 순이익을 주식 수로 나누면 1주가 가져가는 이익, <span class="term">주당순이익</span><span class="en">(EPS, Earnings per share)</span>이 나온다. 한빛반도체의 순이익은 7,200억원, 주식 수는 1억 주이므로 EPS는 7,200원이다. 이 EPS로 주가를 나눈 것이 <span class="term">주가수익비율</span><span class="en">(PER, Price-to-earnings ratio)</span>이다.</p>
+    <div class="formula">$$\text{PER} = \frac{\text{주가}}{\text{EPS}} = \frac{\text{시가총액}}{\text{순이익}}$$$$\text{이익수익률} = \frac{1}{\text{PER}} = \frac{\text{EPS}}{\text{주가}}$$<div class="where">한빛반도체: 72,000 ÷ 7,200 = 10배, 시가총액 7조 2,000억 ÷ 순이익 7,200억 = 10배. 이익수익률은 1 ÷ 10 = 10%. 분자와 분모에 똑같이 주식 수를 곱했을 뿐이라 두 계산은 같은 값이다.</div></div>
+    <p>PER 10배는 무슨 뜻일까. 가장 쉬운 해석은 <b>회수 기간</b>이다. 한빛반도체 1주를 72,000원에 사면, 그 1주 몫의 이익이 매년 7,200원씩 그대로 나온다고 할 때 10년이면 산 값만큼의 이익이 쌓인다. 거꾸로 뒤집은 <span class="term">이익수익률</span><span class="en">(Earnings yield)</span> 10%는 "산 값에 견주어 해마다 10%씩 이익이 생긴다"는 뜻이라서 예금 금리와 나란히 놓고 볼 수 있다. 물론 그 이익이 전부 내 통장에 들어오지는 않는다. 일부는 배당으로, 나머지는 회사 안에 남아 재투자된다. 그래도 그 이익은 주주의 몫이다.</p>
+    <p>아래에서 주가와 EPS를 움직여 회수 기간을 막대로 쌓아 보자. 막대 하나가 한 해의 이익이고, 가로선이 주가다. 이익이 해마다 자라면(성장률) 막대가 점점 커져서 더 빨리 가로선에 닿는다.</p>
+
+    <div class="sim" id="sim-pay">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>PER과 회수 기간: 이익으로 주가를 갚는 데 몇 년?</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="pay-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>회사 불러오기</span>
+            <div class="seg" id="pay-co"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="moa">모아</button></div>
+          </div>
+          <label class="ctrl"><span>주가 <output id="pay-p-out"></output></span><input type="range" id="pay-p" min="10000" max="200000" step="1000" value="72000"></label>
+          <label class="ctrl"><span>주당순이익(EPS) <output id="pay-e-out"></output></span><input type="range" id="pay-e" min="500" max="15000" step="100" value="7200"></label>
+          <label class="ctrl"><span>이익 성장률(연) <output id="pay-g-out"></output></span><input type="range" id="pay-g" min="-10" max="30" step="1" value="0"></label>
+          <div class="btn-row"><button class="btn" id="pay-re">다시 쌓기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">PER</span><span class="v" id="pay-o-per">—</span></div>
+        <div class="stat"><span class="k">이익수익률</span><span class="v" id="pay-o-ey">—</span></div>
+        <div class="stat"><span class="k">회수 기간</span><span class="v" id="pay-o-n">—</span></div>
+        <div class="stat"><span class="k">예금 3%와 차이</span><span class="v" id="pay-o-d">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한빛(PER 10)은 성장 없이 10년째에 가로선에 닿는다. ② 모아를 불러오면 PER 50, 성장이 없다면 50년이다. 성장률 20%를 넣으면 몇 년으로 줄어드는가. ③ 성장률을 −10%로 내리면 막대가 점점 작아져 영원히 닿지 못한다. (이익이 전부 주주 몫이고 매년 일정한 비율로 변한다고 가정한 단순 모형. 할인은 하지 않는다)</div>
+    </div>
+
+    <p>모아플랫폼의 PER 50배는 이익이 그대로라면 50년치 이익을 한꺼번에 내는 값이다. 이익수익률은 2%로 예금 금리보다 낮다. 그런데도 사람들이 이 값을 내는 이유는 모아의 이익이 빠르게 자랄 것이라고 기대하기 때문이다. 연 20%씩 자란다면 회수 기간은 14년으로 줄어든다. 즉 <b>높은 PER은 "비싸다"가 아니라 "성장을 많이 기대한다"는 뜻</b>이고, 그 기대가 어긋나면 비싼 값이 된다. 반대로 이익이 줄어드는 회사는 PER이 낮아도 회수가 끝나지 않을 수 있다.</p>
+    <div class="callout tip">
+      <strong>같은 PER이라도 어떤 이익인가</strong>
+      <p>보통 PER은 지난 1년(최근 4개 분기)의 실제 순이익으로 계산한다. 이것을 후행 PER이라 하고, 증권사가 예상한 내년 이익으로 계산한 것을 선행 PER<span class="en">(Forward PER)</span>이라 한다. 예상은 자주 빗나간다. 또 이익이 마이너스인 적자 회사는 PER을 계산할 수 없다. 별빛바이오가 그렇다. 순이익 −420억원을 5,000만 주로 나누면 EPS가 −840원이라서 PER은 "적자" 또는 "N/A"로 표시된다.</p>
+    </div>
+  </section>
+
+  <section id="pbr">
+    <h2>PBR과 PSR: 장부와 매출에 견주기</h2>
+    <p>이익 대신 회사가 가진 재산에 견줄 수도 있다. 재무상태표의 자본(자산 − 부채), 곧 순자산을 주식 수로 나눈 것이 <span class="term">주당순자산</span><span class="en">(BPS, Book value per share)</span>이고, 주가를 BPS로 나눈 것이 <span class="term">주가순자산비율</span><span class="en">(PBR, Price-to-book ratio)</span>이다. 한빛반도체는 자본 6조원을 1억 주로 나누어 BPS 60,000원, PBR은 72,000 ÷ 60,000 = 1.2배다.</p>
+    <p>PBR 1배는 "장부에 적힌 순자산만큼의 값"이다. 다온은행의 PBR은 0.3배다. 장부상 1주당 순자산이 45,000원인데 주가는 13,500원이다. 만약 은행을 지금 문 닫고 장부 값대로 정리할 수 있다면 주주는 45,000원을 받는다. 그런데 시장은 13,500원만 낸다. 장부가 틀렸다고 보거나(대출 일부를 못 돌려받을 수 있다), 이 순자산으로 버는 이익이 너무 적다고 보는 것이다. 어느 쪽인지는 다음 절의 ROE가 실마리를 준다.</p>
+    <p>이익이 없는 회사에는 매출을 쓴다. 시가총액을 매출로 나눈 것이 <span class="term">주가매출비율</span><span class="en">(PSR, Price-to-sales ratio)</span>이다. 별빛바이오는 매출 300억원에 시가총액 7,500억원이라 PSR이 25배다. 누리식품은 매출 1조 8,000억원에 시가총액 7,600억원이라 PSR 0.42배다. 매출 1원당 남기는 이익이 업종마다 크게 달라서(식품은 박하고 소프트웨어는 두툼하다) PSR은 같은 업종 안에서만 비교한다.</p>
+    <p>이제 다섯 회사를 여러 자로 재어 보자. 지표를 바꾸면 "싸 보이는 회사"의 순서가 바뀐다. 아래 슬라이더로 다섯 회사의 주가를 한꺼번에 올리거나 내려 보면, 어떤 지표는 따라 움직이고 어떤 지표는 꿈쩍하지 않는다.</p>
+
+    <div class="sim" id="sim-rulers">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>다섯 회사, 여러 개의 자</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ru-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>지표</span>
+            <div class="seg" id="ru-m"><button data-value="per" class="on">PER</button><button data-value="pbr">PBR</button><button data-value="psr">PSR</button><button data-value="evEbitda">EV/EBITDA</button><button data-value="dy">배당수익률</button><button data-value="roe">ROE</button></div>
+          </div>
+          <label class="ctrl"><span>다섯 회사 주가 변화 <output id="ru-s-out"></output></span><input type="range" id="ru-s" min="-50" max="100" step="5" value="0"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">가장 싸 보이는 회사</span><span class="v" id="ru-o-lo">—</span></div>
+        <div class="stat"><span class="k">가장 비싸 보이는 회사</span><span class="v" id="ru-o-hi">—</span></div>
+        <div class="stat"><span class="k">주가를 따라 움직이나</span><span class="v" id="ru-o-mv">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① PER로는 다온이 가장 싸고 모아가 가장 비싸다. PSR로 바꾸면 누가 가장 비싸 보이는가. ② 별빛은 PER과 EV/EBITDA를 계산할 수 없다. ③ 주가를 +100%로 올려도 ROE 막대는 그대로다. ROE에는 주가가 들어가지 않는다. (2026년 10월 가상 회사 값. 은행의 EV/EBITDA는 뜻이 없어 흐리게 표시)</div>
+    </div>
+
+    <p>지표마다 순위가 다르다는 것은 어느 하나로 "가장 싼 회사"를 정할 수 없다는 뜻이다. 그리고 가격이 들어간 지표(PER, PBR, PSR, EV/EBITDA, 배당수익률)는 주가가 오르내리면 매일 바뀌지만, ROE는 회사의 장사 실력만 잰다. 가격 지표는 "얼마를 내는가", ROE는 "무엇을 사는가"다. 둘을 함께 봐야 하는 이유가 다음 절이다.</p>
+  </section>
+
+  <section id="roe">
+    <h2>ROE: PER과 PBR을 잇는 다리</h2>
+    <p><span class="term">자기자본이익률</span><span class="en">(ROE, Return on equity)</span>은 순이익을 자본(순자산)으로 나눈 값이다. 주주가 맡긴 돈 1원으로 1년에 얼마를 벌었는지를 잰다. 한빛반도체는 순이익 7,200억원을 자본 6조원으로 나눠 12%, 다온은행은 9,000억원 ÷ 18조원 = 5%다. 예금 금리가 3%인 세상에서 ROE 5%는 초라하다. 주주가 은행에 맡긴 돈이 은행 예금보다 조금 더 버는 셈이다.</p>
+    <p>그런데 PER, PBR, ROE는 따로 노는 숫자가 아니다. 셋은 주가(P), 이익(E), 순자산(B) 세 꼭짓점을 잇는 세 변이다.</p>
+    <div class="formula">$$\text{PBR} = \frac{P}{B} = \frac{P}{E}\times\frac{E}{B} = \text{PER} \times \text{ROE}$$<div class="where">한빛반도체 10 × 12% = 1.2, 누리식품 9.5 × 12.5% ≈ 1.19, 다온은행 6 × 5% = 0.3, 모아플랫폼 50 × 6% = 3.0. 셋 중 둘을 알면 나머지 하나가 정해진다.</div></div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 440 262" role="img" aria-label="주가, 이익, 순자산 세 꼭짓점과 PER, PBR, ROE 세 변으로 이루어진 삼각형">
+        <polygon class="f-acc-soft" points="220,34 70,204 370,204"/>
+        <line class="s-acc" x1="220" y1="34" x2="70" y2="204"/>
+        <line class="s-acc" x1="220" y1="34" x2="370" y2="204"/>
+        <line class="s-acc2" x1="70" y1="204" x2="370" y2="204"/>
+        <circle class="f-elev s-line" cx="220" cy="34" r="22"/><text class="lbl-b" x="220" y="39" text-anchor="middle">주가 P</text>
+        <circle class="f-elev s-line" cx="70" cy="204" r="22"/><text class="lbl-b" x="70" y="209" text-anchor="middle">이익 E</text>
+        <circle class="f-elev s-line" cx="370" cy="204" r="22"/><text class="lbl-b" x="370" y="209" text-anchor="middle">자본 B</text>
+        <text class="lbl-acc" x="128" y="112" text-anchor="end">PER = P/E</text>
+        <text class="lbl-acc" x="312" y="112">PBR = P/B</text>
+        <text class="lbl-acc2" x="220" y="226" text-anchor="middle">ROE = E/B</text>
+        <text class="lbl-b" x="220" y="140" text-anchor="middle">PBR = PER × ROE</text>
+        <text class="lbl-dim" x="220" y="160" text-anchor="middle">가격 두 변 · 실력 한 변</text>
+        <text class="lbl-dim t-mono" x="220" y="252" text-anchor="middle">다온 6 × 5% = 0.3 · 모아 50 × 6% = 3.0</text>
+      </svg>
+      <figcaption><b>그림 6-2. 세 지표의 삼각형.</b> 위쪽 두 변(PER, PBR)에는 주가가 들어 있어 매일 바뀌고, 아래 변(ROE)은 회사가 자본으로 얼마나 버는지만 잰다. PBR이 낮다면 PER이 낮거나(이익에 비해 싸다), ROE가 낮거나(자본으로 버는 게 적다) 둘 중 하나다.</figcaption>
+    </figure>
+
+    <p>이 관계로 다온은행의 PBR 0.3배를 다시 읽으면, PER 6배는 이미 낮은 편인데 ROE가 5%라서 PBR이 더 낮아진다. 그렇다면 ROE가 얼마일 때 PBR이 1배가 "정당"할까. 주주가 이 회사에 바라는 수익률(<span class="term">요구수익률</span><span class="en">(Required return)</span>)을 \(r\), 회사가 영원히 일정하게 자란다고 볼 때의 성장률을 \(g\)라 하면, 간단한 모형에서 정당한 PBR은 \((\text{ROE} - g)/(r - g)\)이다. ROE가 요구수익률과 같으면 PBR 1배, 더 높으면 1배보다 크고, 더 낮으면 1배보다 작다. 자본 1원이 요구수익률보다 적게 번다면 그 1원은 1원어치 값을 받지 못한다.</p>
+    <p>아래 그림에서 가로축은 ROE, 세로축은 PBR이다. 선은 이 모형이 말하는 정당한 PBR이고, 점은 다섯 회사가 실제로 거래되는 PBR이다. 점을 좌우로 끌면 "그 회사의 ROE가 이만큼이라면"을 볼 수 있다. 점은 시장 가격이라 위아래로는 움직이지 않는다.</p>
+
+    <div class="sim" id="sim-pr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>ROE와 PBR: 선 위인가, 아래인가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="pr-cv"></canvas><span class="hint">회사 점을 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>요구수익률 r <output id="pr-r-out"></output></span><input type="range" id="pr-r" min="6" max="14" step="0.5" value="9"></label>
+          <label class="ctrl"><span>영구 성장률 g <output id="pr-g-out"></output></span><input type="range" id="pr-g" min="0" max="5" step="0.5" value="2"></label>
+          <div class="btn-row"><button class="btn" id="pr-re">ROE 원래대로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">선택한 회사</span><span class="v" id="pr-o-co">—</span></div>
+        <div class="stat"><span class="k">ROE</span><span class="v" id="pr-o-roe">—</span></div>
+        <div class="stat"><span class="k">실제 PBR</span><span class="v" id="pr-o-pbr">—</span></div>
+        <div class="stat"><span class="k">선이 말하는 PBR</span><span class="v" id="pr-o-fair">—</span></div>
+        <div class="stat"><span class="k">가격이 기대하는 ROE</span><span class="v" id="pr-o-imp">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 다온의 ROE 5%에서 선은 PBR 약 0.43을 말한다. 다온을 오른쪽으로 끌어 ROE가 몇 %일 때 PBR 1배가 되는지 찾는다. ② 모아의 PBR 3배를 정당화하려면 ROE가 약 23%여야 한다. 지금 6%와 그 차이가 "성장 기대"다. ③ 별빛은 ROE가 마이너스인데 PBR 3배다. 신약 하나의 기대가 지금의 실력과 상관없이 값을 매긴다. (이익의 일부를 같은 ROE로 재투자하며 영원히 일정하게 자란다는 단순 모형)</div>
+    </div>
+
+    <p>선은 정답이 아니다. 요구수익률과 성장률을 조금만 바꿔도 선이 크게 기운다. 그래도 이 그림이 주는 직관은 단단하다. <b>PBR이 낮은 회사는 대개 ROE가 낮은 회사이고, PBR이 높은 회사는 지금 또는 앞으로의 ROE가 높다고 기대되는 회사</b>다. "PBR 0.3배라서 싸다"는 말은 절반만 맞다. 장부가치보다 싼 이유가 ROE에 있다면, ROE가 오르지 않는 한 계속 싸게 남을 수 있다.</p>
+  </section>
+
+  <section id="dupont">
+    <h2>듀퐁 분해: ROE는 어디서 오는가</h2>
+    <p>ROE 12%라는 같은 숫자도 버는 방식은 전혀 다를 수 있다. 100년쯤 전 미국의 한 화학 회사가 쓰기 시작해 이름이 붙은 <span class="term">듀퐁 분해</span><span class="en">(DuPont analysis)</span>는 ROE를 세 개의 곱으로 쪼갠다.</p>
+    <div class="formula">$$\text{ROE} = \underbrace{\frac{\text{순이익}}{\text{매출}}}_{\text{순이익률}} \times \underbrace{\frac{\text{매출}}{\text{자산}}}_{\text{총자산회전율}} \times \underbrace{\frac{\text{자산}}{\text{자본}}}_{\text{레버리지}}$$<div class="where">분자와 분모의 매출, 자산이 서로 지워져 순이익 ÷ 자본만 남는다. 순이익률은 "하나 팔 때 얼마 남기나", 총자산회전율은 "가진 자산으로 얼마나 많이 파나", 레버리지는 "자본에 빚을 얼마나 얹었나"다.</div></div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 244" role="img" aria-label="누리식품, 한빛반도체, 다온은행의 ROE를 순이익률, 총자산회전율, 레버리지로 분해한 표">
+        <g class="lbl-dim">
+          <text x="148" y="24" text-anchor="middle">순이익률</text><text x="240" y="24" text-anchor="middle">회전율</text><text x="328" y="24" text-anchor="middle">레버리지</text><text x="414" y="24" text-anchor="middle">ROE</text>
+        </g>
+        <line class="s-axis" x1="10" y1="34" x2="450" y2="34"/>
+        <text class="lbl-b" x="12" y="72">누리식품</text>
+        <rect class="f-surface" x="112" y="52" width="72" height="30" rx="6"/><text class="t-mono lbl" x="148" y="72" text-anchor="middle">4.4%</text>
+        <text class="lbl-dim" x="194" y="72" text-anchor="middle">×</text>
+        <rect class="f-ok-soft" x="204" y="52" width="72" height="30" rx="6"/><text class="t-mono lbl-b" x="240" y="72" text-anchor="middle">1.73회</text>
+        <text class="lbl-dim" x="284" y="72" text-anchor="middle">×</text>
+        <rect class="f-surface" x="292" y="52" width="72" height="30" rx="6"/><text class="t-mono lbl" x="328" y="72" text-anchor="middle">1.63배</text>
+        <text class="lbl-dim" x="374" y="72" text-anchor="middle">=</text>
+        <text class="t-mono lbl-acc" x="414" y="72" text-anchor="middle">12.5%</text>
+        <text class="lbl-dim" x="112" y="100">적게 남기고 많이 판다</text>
+        <text class="lbl-b" x="12" y="142">한빛반도체</text>
+        <rect class="f-acc2-soft" x="112" y="122" width="72" height="30" rx="6"/><text class="t-mono lbl-b" x="148" y="142" text-anchor="middle">12.0%</text>
+        <text class="lbl-dim" x="194" y="142" text-anchor="middle">×</text>
+        <rect class="f-surface" x="204" y="122" width="72" height="30" rx="6"/><text class="t-mono lbl" x="240" y="142" text-anchor="middle">0.67회</text>
+        <text class="lbl-dim" x="284" y="142" text-anchor="middle">×</text>
+        <rect class="f-surface" x="292" y="122" width="72" height="30" rx="6"/><text class="t-mono lbl" x="328" y="142" text-anchor="middle">1.50배</text>
+        <text class="lbl-dim" x="374" y="142" text-anchor="middle">=</text>
+        <text class="t-mono lbl-acc" x="414" y="142" text-anchor="middle">12.0%</text>
+        <text class="lbl-dim" x="112" y="170">비싼 공장으로 많이 남긴다</text>
+        <text class="lbl-b" x="12" y="212">다온은행</text>
+        <rect class="f-surface" x="112" y="192" width="72" height="30" rx="6"/><text class="t-mono lbl" x="148" y="212" text-anchor="middle">22.5%</text>
+        <text class="lbl-dim" x="194" y="212" text-anchor="middle">×</text>
+        <rect class="f-surface" x="204" y="192" width="72" height="30" rx="6"/><text class="t-mono lbl" x="240" y="212" text-anchor="middle">0.011회</text>
+        <text class="lbl-dim" x="284" y="212" text-anchor="middle">×</text>
+        <rect class="f-bad-soft" x="292" y="192" width="72" height="30" rx="6"/><text class="t-mono lbl-b" x="328" y="212" text-anchor="middle">21.1배</text>
+        <text class="lbl-dim" x="374" y="212" text-anchor="middle">=</text>
+        <text class="t-mono lbl-acc" x="414" y="212" text-anchor="middle">5.0%</text>
+        <text class="lbl-dim" x="112" y="240">남의 돈(예금) 위에 장사한다</text>
+      </svg>
+      <figcaption><b>그림 6-3. 같은 ROE, 다른 길.</b> 누리식품과 한빛반도체의 ROE는 거의 같지만 누리는 회전율로, 한빛은 이익률로 번다. 다온은행은 이익률이 높아 보여도 자산 1원당 매출이 1원의 1%에 불과해서, 자본의 21배에 이르는 자산(대부분 예금으로 마련한 대출)을 굴려야 ROE 5%가 나온다.</figcaption>
+    </figure>
+
+    <p>아래 세 막대의 꼭대기를 위아래로 끌어 보자. 세 막대를 곱한 값이 오른쪽 ROE 막대다. 회전율과 레버리지 막대는 눈금이 로그(곱셈 눈금)라서, 한 칸 올리는 것이 "몇 배"가 된다.</p>
+
+    <div class="sim" id="sim-dp">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>듀퐁 세 막대: 곱하면 ROE</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dp-cv"></canvas><span class="hint">막대 꼭대기를 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>회사 불러오기</span>
+            <div class="seg" id="dp-co"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div>
+          </div>
+          <div class="btn-row"><button class="btn" id="dp-lev">레버리지만 두 배로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">순이익률</span><span class="v" id="dp-o-m">—</span></div>
+        <div class="stat"><span class="k">총자산회전율</span><span class="v" id="dp-o-t">—</span></div>
+        <div class="stat"><span class="k">레버리지(부채비율)</span><span class="v" id="dp-o-l">—</span></div>
+        <div class="stat"><span class="k">ROE</span><span class="v" id="dp-o-roe">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한빛의 순이익률을 12%에서 6%로 끌어내리면 ROE가 정확히 절반이 된다. ② 누리에서 회전율을 1.73회에서 1회로 낮추면 ROE는 얼마가 되는가. ③ "레버리지만 두 배로"를 누르면 ROE가 두 배가 된다. 아무것도 더 잘 팔지 않았는데. 그 대가가 다음 시뮬레이터다. (레버리지 = 자산 ÷ 자본 = 1 + 부채비율)</div>
+    </div>
+
+    <p>세 갈래 중 앞의 둘(이익률, 회전율)은 장사를 잘해서 오르는 ROE다. 마지막 레버리지는 빚을 얹어서 오르는 ROE다. 자본 100에 빚 100을 더해 자산 200으로 장사하면, 자산이 버는 수익률이 빚의 이자율보다 높은 한 남는 돈은 모두 주주 몫이라 ROE가 커진다. 문제는 자산 수익률이 이자율보다 낮아지는 해다. 그때는 빚이 손실도 똑같이 키운다.</p>
+    <p>아래는 자산 수익률(ROA, 이자 내기 전)이 호황 10%, 평년 6%, 불황 한 해 마이너스인 회사다. 세로선을 좌우로 끌어 부채비율(부채 ÷ 자본)을 바꿔 보자. 부채의 이자율과 불황의 깊이는 슬라이더로 바꾼다.</p>
+
+    <div class="sim" id="sim-lv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>레버리지로 올린 ROE의 대가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lv-cv"></canvas><span class="hint">세로선을 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>부채비율 <output id="lv-de-out"></output></span><input type="range" id="lv-de" min="0" max="1500" step="25" value="100"></label>
+          <label class="ctrl"><span>불황 때 자산 수익률 <output id="lv-bad-out"></output></span><input type="range" id="lv-bad" min="-10" max="0" step="0.5" value="-3"></label>
+          <label class="ctrl"><span>부채 이자율 <output id="lv-i-out"></output></span><input type="range" id="lv-i" min="2" max="10" step="0.5" value="5"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">ROE 호황</span><span class="v" id="lv-o-g">—</span></div>
+        <div class="stat"><span class="k">ROE 평년</span><span class="v" id="lv-o-n">—</span></div>
+        <div class="stat"><span class="k">ROE 불황</span><span class="v" id="lv-o-b">—</span></div>
+        <div class="stat"><span class="k">자본이 다 사라지는 부채비율</span><span class="v" id="lv-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 부채비율 0%에서 900%로 끌면 평년 ROE가 6%에서 15%로 오른다. ② 같은 900%에서 불황 ROE는 −75%다. 한 해에 자본의 4분의 3이 사라진다. ③ 불황을 −6%로 깊게 하면 자본이 다 사라지는(빨간 영역) 부채비율이 어디까지 내려오는가. (ROE = ROA + (ROA − 이자율) × 부채비율. 세금은 무시)</div>
+    </div>
+
+    <p>레버리지는 좋은 해의 ROE를 키우고, 나쁜 해의 ROE를 그보다 더 크게 깎는다. 그래서 ROE를 볼 때는 반드시 <span class="term">부채비율</span><span class="en">(Debt-to-equity ratio)</span>, 곧 부채 총계 ÷ 자본을 함께 본다. 한빛반도체는 50%, 누리식품은 62.5%, 모아플랫폼은 약 42%다. 다온은행은 약 2,011%다. 은행은 예금이라는 부채가 곧 장사 재료라서 부채비율이 높은 것이 정상이고, 그 대신 자본을 일정 비율 이상 쌓도록 규제를 받는다. 업종마다 "정상"이 다르다는 이야기는 조금 뒤에 다시 나온다. 빌린 돈으로 주식을 사는 투자자 쪽의 레버리지는 <a href="leverage.html">19장</a>에서 다룬다.</p>
+  </section>
+
+  <section id="ev">
+    <h2>EV/EBITDA: 부채와 현금까지 본 값</h2>
+    <p>시가총액은 주식 전부의 값이다. 그런데 회사를 통째로 산다고 생각해 보자. 주식을 다 사면 그 회사의 빚도 함께 떠안고, 금고 속 현금도 함께 갖는다. 그래서 회사 전체의 값은 시가총액에 이자 붙는 빚(차입금)을 더하고 현금을 뺀 것으로 본다. 이것이 <span class="term">기업가치</span><span class="en">(EV, Enterprise value)</span>다.</p>
+    <div class="formula">$$\text{EV} = \text{시가총액} + \text{차입금} - \text{현금}$$$$\text{EBITDA} = \text{영업이익} + \text{감가상각비}$$<div class="where">한빛반도체: 7조 2,000억 + 2조 − 1조 = 8조 2,000억. EBITDA는 영업이익 9,000억 + 감가상각비 6,000억 = 1조 5,000억. EV/EBITDA = 약 5.5배.</div></div>
+    <p>분모의 <span class="term">EBITDA</span><span class="en">(Earnings before interest, taxes, depreciation and amortization)</span>는 이자·세금·감가상각을 빼기 전 이익으로, 영업으로 벌어들이는 현금에 가깝다. 이자를 빼기 전 이익이라 빚이 많은 회사와 없는 회사를 같은 줄에 세울 수 있다. 분자에도 빚을 넣었으니 앞뒤가 맞는다. 공장 같은 설비가 많은 회사는 감가상각이 커서 순이익이 작게 잡히는데, EBITDA는 그 차이도 지운다. 다만 언젠가는 설비를 다시 사야 하므로 감가상각을 아예 없는 돈처럼 보면 안 된다.</p>
+    <p>아래 두 회사는 시가총액이 1조원으로 같고 EBITDA도 2,000억원으로 같다. 회사 A는 현금이 많고 빚이 적다. 회사 B의 빚과 현금을 바꿔 보자.</p>
+
+    <div class="sim" id="sim-ev">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>EV 계산기: 같은 시가총액, 다른 회사 값</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ev-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>회사 B 차입금 <output id="ev-d-out"></output></span><input type="range" id="ev-d" min="0" max="20000" step="500" value="8000"></label>
+          <label class="ctrl"><span>회사 B 현금 <output id="ev-c-out"></output></span><input type="range" id="ev-c" min="0" max="8000" step="500" value="1000"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">회사 A의 EV</span><span class="v" id="ev-o-a">—</span></div>
+        <div class="stat"><span class="k">회사 B의 EV</span><span class="v" id="ev-o-b">—</span></div>
+        <div class="stat"><span class="k">EV/EBITDA A</span><span class="v" id="ev-o-ma">—</span></div>
+        <div class="stat"><span class="k">EV/EBITDA B</span><span class="v" id="ev-o-mb">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 처음 상태에서 A는 3.5배, B는 8.5배다. 시가총액만 보면 똑같던 두 회사가 EV로는 두 배 넘게 차이 난다. ② B의 차입금을 0으로, 현금을 8,000억으로 하면 EV가 시가총액보다 훨씬 작아진다. 주식 값의 상당 부분이 금고 속 현금이다. ③ B의 차입금을 2조로 올리면 회사 값의 3분의 2 가까이가 빚이다. (가상 회사. 차입금은 이자 붙는 빚만, 현금은 바로 쓸 수 있는 현금성 자산만)</div>
+    </div>
+
+    <p>현금이 많은 회사는 PER로 보면 실제보다 비싸 보이고, 빚이 많은 회사는 실제보다 싸 보인다. EV/EBITDA는 그 착시를 줄인다. 다섯 회사로 보면 한빛반도체 약 5.5배, 누리식품 5.5배, 모아플랫폼 약 26.6배다. 모아는 시가총액 18조원에 현금 1조 5,000억원, 차입금 8,000억원이라 EV(17조 3,000억원)가 시가총액보다 조금 작다. 은행에는 이 지표를 쓰지 않는다. 은행에게 부채(예금)는 빚이라기보다 원재료여서, 시가총액에 더하면 회사 값이 터무니없이 커진다.</p>
+  </section>
+
+  <section id="dividend">
+    <h2>배당수익률과 배당성향</h2>
+    <p>주주가 실제로 현금으로 받는 돈은 배당이다. 1주당 배당금(DPS)을 주가로 나눈 것이 <span class="term">배당수익률</span><span class="en">(Dividend yield)</span>, 순이익 중 배당으로 나눠 준 비율이 <span class="term">배당성향</span><span class="en">(Payout ratio)</span>이다. 누리식품은 EPS 4,000원 중 1,900원을 배당해 배당성향 47.5%, 주가 38,000원에 견주면 배당수익률 5.0%다.</p>
+    <p>두 숫자와 PER은 한 줄로 이어진다. 배당수익률 = DPS/주가 = (DPS/EPS) × (EPS/주가) = 배당성향 ÷ PER. 누리식품은 47.5% ÷ 9.5 = 5.0%다. 그러니 배당수익률이 높은 이유는 셋 중 하나다. 이익을 많이 나눠 주거나(배당성향이 높다), 이익에 비해 주가가 싸거나(PER이 낮다), 둘 다다. 그리고 셋 다 아닌 경우가 있다. 이익이 줄었는데 배당을 그대로 둔 경우다.</p>
+
+    <div class="sim" id="sim-dv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>배당수익률 = 배당성향 ÷ PER, 그리고 이익이 줄면</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dv-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>배당성향 <output id="dv-pay-out"></output></span><input type="range" id="dv-pay" min="0" max="100" step="2.5" value="47.5"></label>
+          <label class="ctrl"><span>PER <output id="dv-per-out"></output></span><input type="range" id="dv-per" min="3" max="40" step="0.5" value="9.5"></label>
+          <label class="ctrl"><span>다음 해 이익 변화(배당은 그대로) <output id="dv-sh-out"></output></span><input type="range" id="dv-sh" min="-80" max="50" step="5" value="0"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">배당수익률</span><span class="v" id="dv-o-y">—</span></div>
+        <div class="stat"><span class="k">다음 해 배당성향</span><span class="v" id="dv-o-p">—</span></div>
+        <div class="stat"><span class="k">다음 해 주당 유보</span><span class="v" id="dv-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 누리식품 값(배당성향 47.5%, PER 9.5)에서 배당수익률 5.0%를 확인한다. ② 이익 변화를 −50%로 내리면 같은 배당을 주기 위해 배당성향이 95%가 된다. ③ −55% 아래로 내리면 번 돈보다 많이 나눠 준다. 모자란 돈은 쌓아 둔 현금이나 빚에서 나온다. (주당순이익 4,000원 회사, 주가는 PER × 4,000원으로 고정)</div>
+    </div>
+
+    <p>배당성향이 100%를 넘는 배당은 오래 가지 못한다. 주가가 떨어져서 배당수익률이 높아진 경우도 조심해야 한다. 시장이 배당이 줄어들 것을 먼저 보고 주가를 내렸을 수 있기 때문이다. 배당락, 세금, 배당 재투자의 복리는 <a href="dividend.html">8장</a>에서 자세히 본다.</p>
+  </section>
+
+  <section id="sector">
+    <h2>업종마다 다른 정상 범위</h2>
+    <p>지금까지 다섯 회사를 한 줄에 세웠지만, 사실 지표는 업종 안에서 견줄 때 가장 쓸모가 있다. 은행은 PBR 1배 아래가 흔하고, 바이오는 적자가 흔하며, 플랫폼 기업은 PER 30배가 평범하고, 식품 회사의 PER은 좁은 범위에 모여 있다. 업종마다 이익의 안정성, 성장 속도, 필요한 자본의 크기가 달라서 시장이 매기는 배수도 다르다.</p>
+    <p>아래 상자 그림은 가상의 업종별 40개 회사의 지표 분포다. 상자는 가운데 50%(25~75 백분위), 수염은 10~90 백분위, 상자 안의 선은 중앙값이다. 다이아몬드는 다섯 회사다.</p>
+
+    <div class="sim" id="sim-sb">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>업종별 정상 범위: 상자 그림</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sb-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>지표</span>
+            <div class="seg" id="sb-m"><button data-value="per" class="on">PER</button><button data-value="pbr">PBR</button><button data-value="roe">ROE</button><button data-value="dy">배당수익률</button></div>
+          </div>
+          <label class="check"><input type="checkbox" id="sb-dots"> 회사 하나하나를 점으로 보기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">한빛 · 반도체 안에서</span><span class="v" id="sb-o-hanbit">—</span></div>
+        <div class="stat"><span class="k">누리 · 음식료 안에서</span><span class="v" id="sb-o-nuri">—</span></div>
+        <div class="stat"><span class="k">별빛 · 바이오 안에서</span><span class="v" id="sb-o-byeol">—</span></div>
+        <div class="stat"><span class="k">다온 · 금융 안에서</span><span class="v" id="sb-o-daon">—</span></div>
+        <div class="stat"><span class="k">모아 · 인터넷 안에서</span><span class="v" id="sb-o-moa">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① PER로 보면 모아(50배)는 전체에서 가장 높은 편이지만, 인터넷 업종 안에서는 몇 번째쯤인가. ② PBR로 바꾸면 다온(0.3배)은 금융 업종 안에서 어디인가. ③ 바이오의 PER 상자는 흑자 회사만으로 그렸다. 몇 개 남는지 본다. (백분위: 같은 업종에서 그 회사보다 값이 낮은 회사의 비율. 가상의 업종 데이터)</div>
+    </div>
+
+    <p>"모아의 PER 50배는 높다"와 "모아의 PER은 인터넷 업종에서 위쪽이다"는 다른 말이다. 앞의 말은 업종을 가리지 않은 비교라 거의 아무것도 말해 주지 않는다. 지표는 <b>같은 업종의 다른 회사</b>, 그리고 <b>같은 회사의 과거</b>와 견줄 때 비로소 뜻이 생긴다. 그래도 업종 평균이 늘 옳은 것도 아니다. 업종 전체가 거품일 때도, 업종 전체가 사양길일 때도 있다.</p>
+  </section>
+
+  <section id="trap">
+    <h2>낮은 PER의 함정</h2>
+    <p>"PER이 낮으면 싸다"는 말이 틀리는 대표적인 두 경우가 있다. 첫째는 분모의 이익이 한 번뿐인 이익일 때다. 공장 부지를 팔아 생긴 차익, 소송에서 이겨 받은 배상금, 자회사 지분을 팔아 남긴 이익은 순이익에 들어가지만 내년에는 없다. 이런 이익을 <span class="term">일회성 이익</span><span class="en">(One-off gain)</span>이라 한다. 누리식품이 올해 물류센터를 팔아 일회성 이익을 냈다고 가정해 보자(가상의 상황).</p>
+
+    <div class="sim" id="sim-oo">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>일회성 이익이 만든 낮은 PER</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="oo-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>올해 일회성 이익 <output id="oo-x-out"></output></span><input type="range" id="oo-x" min="0" max="2000" step="100" value="800"></label>
+          <label class="check"><input type="checkbox" id="oo-adj"> 일회성 이익을 빼고 보기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">보고된 EPS</span><span class="v" id="oo-o-eps">—</span></div>
+        <div class="stat"><span class="k">보고된 PER</span><span class="v" id="oo-o-per">—</span></div>
+        <div class="stat"><span class="k">일회성 뺀 PER</span><span class="v" id="oo-o-adj">—</span></div>
+        <div class="stat"><span class="k">내년 PER(주가 그대로)</span><span class="v" id="oo-o-next">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 일회성 이익 800억원이면 순이익이 두 배가 되어 PER이 9.5에서 4.75로 반토막 난다. ② 체크하면 막대에서 일회성 부분이 빠지고 PER이 원래대로 돌아온다. ③ 내년(점선 막대)에는 일회성 이익이 없으니 주가가 그대로여도 PER이 다시 9배대로 오른다. (누리식품 주가 38,000원, 주식 2,000만 주. 과거 이익과 내년 이익은 가상)</div>
+    </div>
+
+    <p>그래서 이익이 갑자기 뛴 해에는 손익계산서에서 영업이익과 순이익을 나란히 본다(<a href="statements.html">5장</a>). 영업이익은 그대로인데 순이익만 뛰었다면 영업 밖의 일, 즉 일회성 이익일 가능성이 높다.</p>
+    <p>둘째 함정은 더 교묘하다. 반도체, 철강, 화학, 해운처럼 업황에 따라 이익이 크게 출렁이는 <span class="term">경기민감주</span><span class="en">(Cyclical stock)</span>는 이익이 정점일 때 PER이 가장 낮아 보이고, 이익이 바닥일 때 PER이 가장 높아 보인다. 주가는 앞날을 미리 반영해서 이익보다 먼저 움직이므로, 이익이 정점에 이르렀을 때는 주가가 이미 다음 내리막을 예상해 꺾이기 시작한다. 아래는 한빛반도체를 닮은 장난감 모형이다. 이익(분기 이익을 1년치로 환산)이 4년 주기로 출렁이고, 주가는 그보다 조금 앞서 덜 출렁인다.</p>
+
+    <div class="sim" id="sim-cy">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>경기 순환 속 한빛반도체: PER이 낮을 때 사면?</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cy-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>매매 표시</span>
+            <div class="seg" id="cy-s"><button data-value="low" class="on">PER 낮을 때 사기</button><button data-value="high">PER 높을 때 사기</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="cy-play">재생</button><button class="btn" id="cy-new">다른 경로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시점 · PER</span><span class="v" id="cy-o-t">—</span></div>
+        <div class="stat"><span class="k">낮은 PER에 사기</span><span class="v" id="cy-o-low">—</span></div>
+        <div class="stat"><span class="k">높은 PER에 사기</span><span class="v" id="cy-o-high">—</span></div>
+        <div class="stat"><span class="k">그냥 보유</span><span class="v" id="cy-o-hold">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 재생을 누르고, 위 그림에서 주가(보라)가 "이익 × 10" 선(금색) 아래로 내려가는 때가 바로 PER이 10보다 낮은 때임을 확인한다. ② PER이 가장 낮은 때(아래 그림의 초록 띠)는 이익의 꼭대기 근처다. 그때 산 결과를 본다. ③ "다른 경로"로 몇 번 바꿔도 결론이 같은지 본다. (낮은 PER에 사기: 7 아래에서 사서 14 위에서 판다. 높은 PER에 사기: 그 반대. 이익이 정확히 4년 주기로 도는 가상 모형이라 결과가 과장되어 있다. 실제 순환은 길이도 높이도 불규칙하다)</div>
+    </div>
+
+    <p>모형이 단순해서 결과가 극적이지만 방향은 현실과 같다. 경기민감주에는 "PER이 높을 때 사고 낮을 때 팔라"는 역설적인 격언이 있다. 그렇다고 이것이 규칙이 되는 것도 아니다. 실제 순환은 주기가 일정하지 않고, 업황이 바닥이 아니라 영원히 내려가는 경우도 있다. 기억할 것은 하나다. <b>경기민감주의 PER은 그해 이익이 순환의 어디쯤인지와 함께 읽는다.</b> 그래서 이런 회사는 여러 해 평균 이익으로 PER을 다시 계산해 보거나, 이익보다 덜 출렁이는 PBR을 함께 본다.</p>
+    <div class="callout">
+      <strong>가치 함정</strong>
+      <p>싸 보이는데 계속 싼 주식을 <span class="term">가치 함정</span><span class="en">(Value trap)</span>이라 부른다. 일회성 이익, 경기 정점의 이익 말고도, 산업 자체가 줄어들고 있어서(필름 카메라, 유선 전화를 떠올려 보자) 이익이 해마다 깎이는 회사는 PER이 낮은 것이 정상이다. 앞의 회수 기간 시뮬레이터에서 성장률을 마이너스로 내렸을 때처럼, 그런 회사는 낮은 PER로 사도 이익이 산 값을 갚지 못할 수 있다.</p>
+    </div>
+  </section>
+
+  <section id="growth">
+    <h2>성장률과 PER: PEG</h2>
+    <p>높은 PER은 성장을 기대한다는 뜻이라고 했다. 그러면 성장률이 얼마일 때 PER 몇 배가 "말이 되는가"? 정답은 <a href="valuation.html">7장</a>의 가치평가가 다루지만, 여기서는 아주 단순한 모형으로 감을 잡는다. 이익이 앞으로 10년 동안 해마다 g씩 자라고, 그동안 이익의 30%를 배당하며, 10년 뒤에는 성장이 멈춘 평범한 회사가 되어 PER 12배에 거래된다고 하자. 주주가 바라는 수익률이 연 9%라면, 오늘 낼 수 있는 PER은 성장률 0%에서 약 7배, 8%에서 약 14배, 20%에서 약 37배다.</p>
+    <p>투자자들이 간단히 쓰는 지표로 <span class="term">PEG</span><span class="en">(PER-to-growth ratio)</span>가 있다. PER을 이익 성장률(%)로 나눈 값으로, PER 20배에 연 20% 성장이면 PEG 1이다. "PEG 1 근처면 성장에 비해 적당하다"는 어림법이 널리 쓰인다. 아래에서 그 어림법(점선)과 단순 모형(곡선)을 겹쳐 보자.</p>
+
+    <div class="sim" id="sim-pg">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>성장률이 정당화하는 PER과 PEG</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="pg-cv"></canvas><span class="hint">곡선 위 손잡이를 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>10년 뒤 PER <output id="pg-t-out"></output></span><input type="range" id="pg-t" min="8" max="20" step="1" value="12"></label>
+          <label class="ctrl"><span>요구수익률 <output id="pg-r-out"></output></span><input type="range" id="pg-r" min="7" max="12" step="0.5" value="9"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">이익 성장률(10년)</span><span class="v" id="pg-o-g">—</span></div>
+        <div class="stat"><span class="k">모형이 말하는 PER</span><span class="v" id="pg-o-per">—</span></div>
+        <div class="stat"><span class="k">그 PER의 PEG</span><span class="v" id="pg-o-peg">—</span></div>
+        <div class="stat"><span class="k">모아 PER 50이 가정하는 성장률</span><span class="v" id="pg-o-moa">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 손잡이를 끌어 성장률 3%, 8%, 20%에서 PEG를 비교한다. 곡선 위에서도 PEG는 1이 아니고 일정하지도 않다. ② 모아의 PER 50배를 정당화하려면 10년 내내 연 약 24% 성장이 필요하다. ③ 요구수익률을 12%로 올리면 같은 성장률이 정당화하는 PER이 얼마나 줄어드는가. (단순 모형. 위험, 배당, 성장이 멈춘 뒤의 모습에 따라 결과가 크게 달라진다)</div>
+    </div>
+
+    <p>PEG는 성장이 느리고 배당이 많은 회사에 불리하다. 누리식품은 PER 9.5배에 성장률 3%라서 PEG가 약 3.2로 "비싸" 보이지만, 배당수익률 5%는 PEG에 들어가지 않는다. 반대로 성장이 빠른 회사에서는 그 성장률이 몇 년 이어지느냐가 PER보다 훨씬 중요하다. 연 24% 성장을 10년 동안 이어 가는 회사는 드물다. PEG는 성장과 가격을 한 숫자로 묶어 생각하게 해 주는 장점이 있지만, 위험과 기간을 지운다는 점에서 어림법 이상은 아니다.</p>
+  </section>
+
+  <section id="screen">
+    <h2>지표로 거르기: 스크리너와 그 한계</h2>
+    <p>증권사 앱에는 <span class="term">종목 스크리너</span><span class="en">(Stock screener)</span>가 있다. "PER 8배 이하, ROE 12% 이상, PBR 2배 이하"처럼 조건을 걸면 수천 종목 중 조건에 맞는 것만 남긴다. 빠르고 편하다. 다만 숫자 뒤의 사정은 거르지 못한다. 아래는 다섯 회사와 가상의 흑자 종목 50개다. 세로선(PER 상한)과 가로선(ROE 하한)을 끌고, PBR 상한은 슬라이더로 정한다.</p>
+
+    <div class="sim" id="sim-sc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>지표 스크리너: 조건에 걸린 종목의 속사정</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sc-cv"></canvas><span class="hint">세로선·가로선을 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>PER 상한 <output id="sc-per-out"></output></span><input type="range" id="sc-per" min="3" max="60" step="1" value="8"></label>
+          <label class="ctrl"><span>ROE 하한 <output id="sc-roe-out"></output></span><input type="range" id="sc-roe" min="0" max="30" step="1" value="12"></label>
+          <label class="ctrl"><span>PBR 상한 <output id="sc-pbr-out"></output></span><input type="range" id="sc-pbr" min="0.3" max="6" step="0.1" value="2"></label>
+          <label class="check"><input type="checkbox" id="sc-trap"> 숨은 사정 보기</label>
+          <div class="btn-row"><button class="btn" id="sc-new">다른 종목들</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">통과한 종목</span><span class="v" id="sc-o-n">—</span></div>
+        <div class="stat"><span class="k">그중 숨은 사정</span><span class="v" id="sc-o-t">—</span></div>
+        <div class="stat"><span class="k">다섯 회사 중 통과</span><span class="v" id="sc-o-co">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 처음 조건(PER 8 이하, ROE 12% 이상)으로 통과한 종목을 세고, "숨은 사정 보기"를 켠다. 일회성 이익, 경기 정점의 이익, 줄어드는 산업이 얼마나 섞여 있는가. ② PER 상한을 20으로 올리면 숨은 사정의 비율은 어떻게 되는가. ③ 별빛바이오는 적자라 그림에 없다. PER로 거르는 순간 적자 회사는 모두 사라진다. (가로축은 로그 눈금. 가상 종목)</div>
+    </div>
+
+    <p>지표가 가장 매력적으로 보이는 구석, 즉 PER은 아주 낮고 ROE는 아주 높은 곳에 숨은 사정이 몰려 있다. 지표가 극단적일수록 "왜 이렇게 싸지?"를 먼저 물어야 한다. 시장에는 같은 숫자를 보는 사람이 많고, 누구나 보는 숫자가 이상하게 좋다면 대개 숫자에 담기지 않은 이유가 있다. 스크리너는 후보를 줄이는 체이지, 고르는 손이 아니다.</p>
+    <p>반대로 지표 몇 개만 보고도 회사의 성격은 꽤 정확히 짐작할 수 있다. 아래 게임은 이름을 가린 회사의 지표 카드를 보여 준다. 어떤 종류의 회사인지 골라 보자.</p>
+
+    <div class="sim" id="sim-gs">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>어느 회사일까: 지표만 보고 성격 맞히기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gs-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="gs-opts" id="gs-opts">
+            <button class="btn" data-value="cyc">경기민감 제조업</button>
+            <button class="btn" data-value="def">방어적 소비재</button>
+            <button class="btn" data-value="bio">적자 바이오</button>
+            <button class="btn" data-value="bank">은행</button>
+            <button class="btn" data-value="grow">고성장 플랫폼</button>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="gs-next">다음 회사</button><button class="btn" id="gs-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">문제</span><span class="v" id="gs-o-n">—</span></div>
+        <div class="stat"><span class="k">맞힌 수</span><span class="v" id="gs-o-s">—</span></div>
+      </div>
+      <div class="sim-note gs-msg" id="gs-o-msg">카드를 보고 회사 종류를 고른다.</div>
+      <div class="sim-note">해볼 것: ① 10문제를 풀고 몇 개를 맞혔는지 본다. ② 가장 헷갈리는 짝은 무엇인가. 경기민감 제조업과 방어적 소비재는 PER만으로는 잘 구별되지 않는다. 어떤 지표가 둘을 가르는가. (업종별 전형적인 범위에서 무작위로 뽑은 가상 회사)</div>
+    </div>
+
+    <p>은행은 PBR과 부채비율만 보면 바로 보인다. 적자 바이오는 PER 칸이 비어 있다. 고성장 플랫폼은 PER이 높고 배당이 거의 없다. 경기민감 제조업과 방어적 소비재가 가장 헷갈리는데, 매출 성장률의 출렁임과 영업이익률, 배당수익률이 둘을 가른다. 지표가 할 수 있는 일은 이 정도다. <b>회사가 어떤 성격인지, 시장이 무엇을 기대하는지는 잘 알려 준다. 그 기대가 맞을지는 알려 주지 않는다.</b></p>
+  </section>
+
+  <section id="hangyeol">
+    <h2>한결의 지표표</h2>
+    <p>이제 한 화면에 모아 보자. 아래 대시보드는 회사를 고르면 여덟 개 지표를 한꺼번에 보여 준다. 띠는 그 회사가 속한 가상 업종의 10~90 백분위(앞의 상자 그림과 같은 데이터)이고, 점이 그 회사다. 주가나 이익을 바꿔 보면 지표가 어떻게 함께 움직이는지, 어떤 경고가 켜지는지 볼 수 있다.</p>
+
+    <div class="sim" id="sim-ds">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>다섯 회사 지표 대시보드</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ds-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>회사</span>
+            <div class="seg" id="ds-co"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div>
+          </div>
+          <label class="ctrl"><span>주가 변화 <output id="ds-p-out"></output></span><input type="range" id="ds-p" min="-50" max="100" step="5" value="0"></label>
+          <label class="ctrl"><span>이익 변화(영업·순이익) <output id="ds-e-out"></output></span><input type="range" id="ds-e" min="-100" max="200" step="10" value="0"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주가</span><span class="v" id="ds-o-p">—</span></div>
+        <div class="stat"><span class="k">PER</span><span class="v" id="ds-o-per">—</span></div>
+        <div class="stat"><span class="k">PBR</span><span class="v" id="ds-o-pbr">—</span></div>
+        <div class="stat"><span class="k">ROE</span><span class="v" id="ds-o-roe">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한빛의 이익을 +80% 올리면(업황 호황) PER이 약 5.6배로 내려가고 "경기 정점" 경고가 켜진다. ② 누리의 이익을 −60%로 내리면 배당성향이 100%를 넘는다. ③ 별빛의 이익 변화를 +200%로 올려 적자를 흑자로 바꾸면 PER이 처음으로 계산된다. (배당금, 자본, 부채는 고정. 이익 변화는 이익의 절댓값에 대한 비율이라 적자 회사는 오른쪽으로 갈수록 적자가 줄어든다)</div>
+    </div>
+
+    <div class="callout warn">
+      <strong>지표의 정의와 제도는 바뀐다</strong>
+      <p>이 장의 계산은 교육을 위해 단순하게 했다. 실제 지표는 데이터 제공처마다 조금씩 다르게 계산된다. 지배주주 순이익을 쓰는지, 연결 재무제표인지 별도 재무제표인지, 최근 4개 분기 합계인지 지난 회계연도인지에 따라 같은 회사의 PER이 몇 배씩 달라지기도 한다. 2026년 기준 한국 상장사는 국제회계기준(K-IFRS)으로 재무제표를 만들지만, 회계 기준과 공시 제도는 바뀐다. 여러 곳의 숫자를 비교할 때는 같은 정의인지부터 확인하자. 다섯 회사와 모든 수치는 가상이며 특정 종목을 권하지 않는다.</p>
+    </div>
+
+    <div class="casefile">
+      <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 6장</span></div>
+      <h4>다섯 회사 지표표: 숫자가 말하는 것과 말하지 않는 것</h4>
+      <p>별빛바이오의 재무제표를 덮은 한결은 다섯 회사를 한 장의 표로 정리했다. PER은 다온은행 6배, 누리식품 9.5배, 한빛반도체 10배, 모아플랫폼 50배, 별빛바이오는 적자라 빈칸이다. 처음에는 누리가 모아보다 다섯 배 싸다고 생각했다. 그러나 표를 다시 읽으니 두 숫자는 서로 다른 질문에 대한 답이었다. 누리의 9.5배는 "이익이 지금처럼만 나와도 9.5년이면 산 값만큼 번다"는 뜻이고, 이익의 47.5%를 배당해 배당수익률이 5%다. 모아의 50배는 이익이 그대로라면 50년이 걸린다는 뜻이고, 시장은 그 대신 빠른 성장을 기대한다. 단순 모형으로 보면 10년 내내 연 24% 가까이 커야 맞는 값이다.</p>
+      <p>다온은행의 PBR 0.3배도 처음에는 "장부가 45,000원인데 13,500원이라니, 반값도 안 된다"로 읽혔다. 하지만 PBR = ROE × PER로 풀어 보니 ROE가 5%였다. 주주의 돈 1원이 1년에 5원도 못 버는데 시장이 1원을 쳐줄 이유는 없다. 마지막으로 한빛반도체의 PER 10배가 남았다. 반도체는 경기민감주라서, 올해 이익이 순환의 꼭대기라면 10배는 싼 값이 아니라 이익이 줄어들 일만 남은 값일 수도 있다. 한결은 노트에 한 줄을 적었다. "낮은 PER이 늘 싼 것은 아니다. 높은 PER이 늘 비싼 것도 아니다."</p>
+      <div class="clue">
+        <div><b>이 장에서 정한 것</b>지표는 가격표로 쓴다. 한 지표로 사지 않고 PER·PBR·ROE·부채비율을 함께 보며, 같은 업종과 같은 회사의 과거와 견준다. 지표가 극단적이면 일회성 이익과 경기 정점부터 의심한다.</div>
+        <div><b>아직 남은 문제</b>그래서 한빛반도체 72,000원은 싼가, 비싼가. 가격표는 읽을 수 있게 되었지만 그 회사가 실제로 얼마의 가치가 있는지는 아직 모른다.</div>
+        <div><b>다음 단계</b>미래에 벌어들일 현금을 오늘 값으로 바꿔 회사의 가치를 직접 계산해 본다(<a href="valuation.html">7장</a>).</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>1주의 가격만으로는 비싼지 싼지 알 수 없다. 주가를 이익(PER), 순자산(PBR), 매출(PSR), EBITDA(EV/EBITDA)로 나누고, 배당을 주가로 나눠(배당수익률) 서로 견줄 수 있게 만든다.</li>
+      <li>PER은 이익으로 주가를 갚는 햇수로, 1/PER(이익수익률)은 산 값 대비 해마다 생기는 이익으로 읽는다. 높은 PER은 성장 기대, 낮은 PER은 낮은 기대이며, 기대가 맞는지는 지표가 말해 주지 않는다.</li>
+      <li>PBR = PER × ROE. PBR이 낮은 회사는 대개 ROE가 낮은 회사다. ROE가 요구수익률보다 낮으면 장부가치보다 싸게 거래되는 것이 자연스럽다.</li>
+      <li>ROE = 순이익률 × 총자산회전율 × 레버리지. 같은 ROE라도 버는 길이 다르고, 레버리지로 올린 ROE는 나쁜 해에 손실을 그보다 크게 키운다. ROE는 부채비율과 함께 본다.</li>
+      <li>EV = 시가총액 + 차입금 − 현금. EV/EBITDA는 빚과 현금이 다른 회사를 같은 줄에 세운다. 은행에는 쓰지 않는다.</li>
+      <li>배당수익률 = 배당성향 ÷ PER. 이익이 줄었는데 배당을 유지하면 배당성향이 치솟고, 100%를 넘는 배당은 오래 가지 못한다.</li>
+      <li>업종마다 정상 범위가 다르다. 지표는 같은 업종, 같은 회사의 과거와 견줄 때 뜻이 생긴다.</li>
+      <li>낮은 PER의 함정: 일회성 이익, 경기 정점의 이익, 줄어드는 산업. 경기민감주는 PER이 가장 낮을 때가 이익의 꼭대기일 수 있다. 지표는 가격표이지 가치 판단이 아니다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 주가가 50,000원이고 주당순이익(EPS)이 5,000원인 회사의 PER과 이익수익률은?</p>
+        <div class="opts">
+          <button class="opt">PER 0.1배, 이익수익률 10배</button>
+          <button class="opt">PER 10배, 이익수익률 1%</button>
+          <button class="opt" data-correct>PER 10배, 이익수익률 10%</button>
+          <button class="opt">PER 5배, 이익수익률 20%</button>
+        </div>
+        <div class="quiz-exp">PER = 50,000 ÷ 5,000 = 10배이고, 이익수익률은 그 역수인 1/10 = 10%다. 이익이 그대로라면 10년치 이익으로 산 값만큼을 번다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. ROE가 8%이고 PER이 15배인 회사의 PBR은?</p>
+        <div class="opts">
+          <button class="opt" data-correct>1.2배</button>
+          <button class="opt">0.53배</button>
+          <button class="opt">1.875배</button>
+          <button class="opt">23배</button>
+        </div>
+        <div class="quiz-exp">PBR = PER × ROE = 15 × 0.08 = 1.2배다. P/B = (P/E) × (E/B)라서 셋 중 둘을 알면 나머지가 정해진다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 반도체처럼 이익이 크게 출렁이는 회사의 PER이 지난 10년 중 가장 낮은 수준이다. 가장 알맞은 해석은?</p>
+        <div class="opts">
+          <button class="opt">PER이 가장 낮으니 지금이 가장 싸게 살 기회다.</button>
+          <button class="opt" data-correct>이익이 순환의 꼭대기 근처일 수 있다. 이익이 줄면 주가가 그대로여도 PER은 올라간다.</button>
+          <button class="opt">PER이 낮으면 ROE도 반드시 낮다.</button>
+          <button class="opt">경기민감주에는 PER을 계산할 수 없다.</button>
+        </div>
+        <div class="quiz-exp">경기민감주는 이익이 정점일 때 PER이 가장 낮아 보인다. 주가는 앞날을 미리 반영해 먼저 꺾이는 경우가 많다. 여러 해 평균 이익이나 PBR을 함께 본다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 회사 A와 B의 ROE는 모두 15%다. A는 순이익률이 높고 부채비율이 50%, B는 순이익률이 낮고 부채비율이 900%다. 불황이 와서 자산 수익률이 마이너스가 되면?</p>
+        <div class="opts">
+          <button class="opt">ROE가 같으니 두 회사의 손실도 같다.</button>
+          <button class="opt">부채가 많은 B가 이자를 많이 내므로 오히려 손실이 작다.</button>
+          <button class="opt">레버리지는 이익에만 작용하고 손실에는 작용하지 않는다.</button>
+          <button class="opt" data-correct>B의 ROE가 훨씬 크게 떨어진다. 레버리지는 손실도 같은 배수로 키운다.</button>
+        </div>
+        <div class="quiz-exp">ROE = ROA + (ROA − 이자율) × 부채비율이다. 자산 수익률이 이자율보다 낮아지면 부채비율만큼 손실이 커진다. 듀퐁 분해에서 레버리지로 만든 ROE는 이렇게 대가를 치른다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 시가총액 1조원, 차입금 5,000억원, 현금 2,000억원인 회사의 기업가치(EV)는?</p>
+        <div class="opts">
+          <button class="opt">1조원</button>
+          <button class="opt">1조 7,000억원</button>
+          <button class="opt" data-correct>1조 3,000억원</button>
+          <button class="opt">7,000억원</button>
+        </div>
+        <div class="quiz-exp">EV = 시가총액 + 차입금 − 현금 = 1조 + 5,000억 − 2,000억 = 1조 3,000억원. 회사를 통째로 사면 빚은 떠안고 현금은 가지기 때문이다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const CO = ST.CO, KEYS = ST.COKEYS, RT = {};
+  KEYS.forEach((k) => (RT[k] = ST.ratios(CO[k])));
+  const SHORT = { hanbit: "한빛", nuri: "누리", byeol: "별빛", daon: "다온", moa: "모아" };
+  const $ = (id) => document.getElementById(id);
+  const narrow = (id) => $(id).parentElement.clientWidth < 520;
+  const onScreen = (el) => { const r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < innerHeight; };
+  const xf = (v, d) => (isFinite(v) ? v.toFixed(d == null ? 1 : d) + "배" : "—");
+  const pc = (v, d) => (isFinite(v) ? (v < 0 ? "−" : "") + Math.abs(v * 100).toFixed(d == null ? 1 : d) + "%" : "—");
+  const sg = (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v);
+  const tone = (cls, s) => '<span class="' + cls + '">' + s + "</span>";
+  const coColor = (k, P) => ({ hanbit: P.accent, nuri: P.ok, byeol: P.warn, daon: P.dim, moa: P.blue })[k];
+  const invLin = (px, a, b, p0, p1) => a + ((px - p0) / (p1 - p0)) * (b - a);
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function wrap(ctx, s, maxW) {
+    const words = s.split(" "), lines = []; let cur = "";
+    for (const w of words) { const t = cur ? cur + " " + w : w; if (ctx.measureText(t).width > maxW && cur) { lines.push(cur); cur = w; } else cur = t; }
+    if (cur) lines.push(cur);
+    return lines;
+  }
+  function knob(ctx, x, y, P, r, color) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = color || P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = P.bg; ctx.stroke();
+    ctx.restore();
+  }
+  function diamond(ctx, x, y, s, color, P) {
+    ctx.save(); ctx.beginPath(); ctx.moveTo(x, y - s); ctx.lineTo(x + s, y); ctx.lineTo(x, y + s); ctx.lineTo(x - s, y); ctx.closePath();
+    ctx.fillStyle = color; ctx.fill(); ctx.lineWidth = 1.5; ctx.strokeStyle = P.bg; ctx.stroke(); ctx.restore();
+  }
+  function tri(ctx, x, y, up, color) {
+    ctx.save(); ctx.fillStyle = color; ctx.beginPath();
+    if (up) { ctx.moveTo(x, y - 6); ctx.lineTo(x + 5, y + 3); ctx.lineTo(x - 5, y + 3); }
+    else { ctx.moveTo(x, y + 6); ctx.lineTo(x + 5, y - 3); ctx.lineTo(x - 5, y - 3); }
+    ctx.closePath(); ctx.fill(); ctx.restore();
+  }
+
+  /* 가상의 업종 데이터: 업종마다 40개 회사 (상자 그림·대시보드 공용) */
+  const SECT = [
+    { name: "반도체", co: "hanbit", roe: [0.1, 0.07], per: [13, 0.45], payout: 0.22, lossPbr: [1.0, 0.3] },
+    { name: "음식료", co: "nuri", roe: [0.1, 0.03], per: [12, 0.22], payout: 0.4, lossPbr: [0.8, 0.3] },
+    { name: "바이오", co: "byeol", roe: [-0.08, 0.16], per: [40, 0.5], payout: 0.03, lossPbr: [3.2, 0.5] },
+    { name: "금융", co: "daon", roe: [0.07, 0.02], per: [6, 0.25], payout: 0.35, lossPbr: [0.3, 0.3] },
+    { name: "인터넷", co: "moa", roe: [0.08, 0.06], per: [30, 0.45], payout: 0.08, lossPbr: [2.5, 0.4] },
+  ];
+  const SDATA = SECT.map((s, si) => {
+    const g = ST.gauss(300 + si), r = ST.rng(400 + si), out = [];
+    for (let i = 0; i < 40; i++) {
+      const roe = s.roe[0] + s.roe[1] * g(); let per = NaN, pbr, dy = 0;
+      if (roe > 0.02) { per = s.per[0] * Math.exp(s.per[1] * g()); pbr = roe * per; dy = (s.payout * (0.4 + 1.2 * r())) / per; }
+      else pbr = s.lossPbr[0] * Math.exp(s.lossPbr[1] * g());
+      out.push({ roe, per, pbr, dy, jit: r() - 0.5 });
+    }
+    return out;
+  });
+  const sectOf = (k) => SECT.findIndex((s) => s.co === k);
+  const sectVals = (si, m) => SDATA[si].map((d) => d[m]).filter(isFinite);
+  const pctRank = (vals, v) => (vals.filter((x) => x < v).length / vals.length) * 100;
+
+  /* ---------------------------------------------------------- 1. PER과 회수 기간 */
+  (function () {
+    let shown = 99, cv;
+    const restart = () => { shown = cv && onScreen(cv.canvas) ? 0 : 99; if (cv) cv.redraw(); };
+    const pp = MB.range("pay-p", (v) => MB.price(v), restart);
+    const pe = MB.range("pay-e", (v) => MB.price(v), restart);
+    const pg = MB.range("pay-g", (v) => sg(v) + "%", restart);
+    MB.seg("pay-co", (k) => { const c = CO[k]; pp.set(c.price); pe.set(c.net / c.shares); pg.set(0); });
+    function calc() {
+      const P = pp(), E = pe(), g = pg() / 100, bars = []; let s = 0, hit = -1;
+      for (let t = 1; t <= 60; t++) { const e = E * Math.pow(1 + g, t - 1); bars.push({ e, s0: s }); s += e; if (s >= P) { hit = t; break; } }
+      return { P, E, g, bars, hit, total: s };
+    }
+    cv = MB.canvas("#pay-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = calc(), n = d.bars.length;
+      const xMax = Math.max(12, n + 1), yMax = Math.max(d.P * 1.3, d.total * 1.08);
+      const c = MB.chart(ctx, { x: 58, y: 18, w: w - 72, h: h - 64 }, { x: [0, xMax], y: [0, yMax], yFmt: MB.wonAxis, xLabel: "산 뒤 햇수(년)",
+        hlines: [{ y: d.P, color: P.text, dash: [6, 4] }] });
+      text(ctx, "주가 " + MB.price(d.P), c.box.x + 6, c.Y(d.P) - 6, { color: P.text, size: 11.5, weight: 600 });
+      const slot = c.box.w / xMax, bw = Math.max(1.5, slot * 0.74);
+      for (let i = 0; i < Math.min(n, Math.ceil(shown)); i++) {
+        const b = d.bars[i], f = MB.clamp(shown - i, 0, 1), x = c.X(i + 0.5) - bw / 2 + slot / 2;
+        ctx.globalAlpha = 0.28; ctx.fillStyle = P.accent;
+        ctx.fillRect(x, c.Y(b.s0), bw, c.Y(0) - c.Y(b.s0));
+        ctx.globalAlpha = 1; ctx.fillStyle = i + 1 === d.hit ? P.ok : P.accent;
+        ctx.fillRect(x, c.Y(b.s0 + b.e * f), bw, c.Y(b.s0) - c.Y(b.s0 + b.e * f));
+      }
+      if (shown >= n) {
+        if (d.hit > 0) {
+          const xx = c.X(d.hit), right = xx > c.box.x + c.box.w * 0.6;
+          text(ctx, d.hit + "년째에 주가만큼 벌었다", right ? xx - 4 : xx + 4, c.box.y + 28, { color: P.ok, align: right ? "right" : "left", weight: 600 });
+        } else text(ctx, "60년이 지나도 이익 합이 주가에 못 미친다", c.box.x + 8, c.box.y + 28, { color: P.warn, weight: 600 });
+      }
+      text(ctx, narrow("pay-cv") ? "옅은: 쌓인 이익 · 진한: 그해 이익" : "옅은 부분: 지난 해까지 쌓인 이익 · 진한 부분: 그해 이익", c.box.x + 4, c.box.y + 10, { color: P.dim, size: 11 });
+      const per = d.P / d.E, ey = d.E / d.P, df = ey - 0.03;
+      MB.stat("pay-o-per", xf(per));
+      MB.stat("pay-o-ey", pc(ey));
+      MB.stat("pay-o-n", d.hit > 0 ? d.hit + " <small>년</small>" : "60년 넘게");
+      MB.stat("pay-o-d", tone(df >= 0 ? "up-t" : "down-t", (df >= 0 ? "+" : "−") + Math.abs(df * 100).toFixed(1) + "%p"));
+    }, { get height() { return narrow("pay-cv") ? 290 : 320; } });
+    $("pay-re").addEventListener("click", restart);
+    MB.loop(cv.canvas, (dt) => {
+      const n = calc().bars.length;
+      if (shown < n) { shown = Math.min(n, shown + dt * Math.max(5, n / 2.5)); cv.redraw(); }
+    });
+  })();
+
+  /* ---------------------------------------------------------- 2. 다섯 회사, 여러 개의 자 */
+  (function () {
+    const PRICE_FREE = { roe: true };
+    const m = MB.seg("ru-m", () => cv.redraw());
+    const s = MB.range("ru-s", (v) => sg(v) + "%", () => cv.redraw());
+    const val = (k, key) => { const c = CO[k]; return ST.ratios(Object.assign({}, c, { price: c.price * (1 + s() / 100) }))[key]; };
+    const fmt = (key, v) => (key === "dy" || key === "roe" ? pc(v) : xf(v, key === "pbr" ? 2 : 1));
+    const cv = MB.canvas("#ru-cv", (ctx, w, h) => {
+      const P = MB.palette(), key = m();
+      const vals = KEYS.map((k) => ({ k, v: val(k, key), skip: key === "evEbitda" && k === "daon" }));
+      const fin = vals.filter((o) => isFinite(o.v) && !o.skip).map((o) => o.v);
+      const lo = Math.min(0, ...fin), hi = Math.max(...fin, 0) * 1.12 || 1;
+      const L = 80, R = w - 64, top = 14, rowH = (h - top - 12) / 5;
+      const X = (v) => L + ((v - lo) / (hi - lo)) * (R - L);
+      ctx.strokeStyle = P.axis; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(0), top - 4); ctx.lineTo(X(0), h - 8); ctx.stroke();
+      vals.forEach((o, i) => {
+        const y = top + rowH * i, bh = Math.min(24, rowH * 0.56), cy = y + rowH / 2;
+        text(ctx, CO[o.k].name, 4, cy, { color: P.text, base: "middle", size: 12, weight: 600 });
+        if (o.skip) { text(ctx, "은행: 쓰지 않는다", X(0) + 6, cy, { color: P.faint, base: "middle", size: 11.5 }); return; }
+        if (!isFinite(o.v)) { text(ctx, "적자: 계산할 수 없다", X(0) + 6, cy, { color: P.warn, base: "middle", size: 11.5 }); return; }
+        const x0 = X(Math.min(0, o.v)), x1 = X(Math.max(0, o.v));
+        ctx.fillStyle = coColor(o.k, P); ctx.globalAlpha = 0.85; ctx.fillRect(x0, cy - bh / 2, Math.max(2, x1 - x0), bh); ctx.globalAlpha = 1;
+        const neg = o.v < 0;
+        text(ctx, fmt(key, o.v), neg ? X(0) + 5 : x1 + 5, cy, { color: P.text, base: "middle", align: "left", mono: true, size: 11.5 });
+      });
+      const ok = vals.filter((o) => isFinite(o.v) && !o.skip);
+      if (key === "roe") { MB.stat("ru-o-lo", "—"); MB.stat("ru-o-hi", "—"); }
+      else {
+        const sorted = ok.slice().sort((a, b) => a.v - b.v), cheapFirst = key !== "dy";
+        const lo1 = cheapFirst ? sorted[0] : sorted[sorted.length - 1], hi1 = cheapFirst ? sorted[sorted.length - 1] : sorted[0];
+        MB.stat("ru-o-lo", CO[lo1.k].name + " <small>" + fmt(key, lo1.v) + "</small>");
+        MB.stat("ru-o-hi", CO[hi1.k].name + " <small>" + fmt(key, hi1.v) + "</small>");
+      }
+      MB.stat("ru-o-mv", PRICE_FREE[key] ? "아니오" : "예");
+    }, { get height() { return narrow("ru-cv") ? 240 : 260; } });
+  })();
+
+  /* ---------------------------------------------------------- 3. ROE와 PBR */
+  (function () {
+    const roe = {}, reset = () => KEYS.forEach((k) => (roe[k] = RT[k].roe));
+    reset();
+    let sel = "daon", lay = null, drag = null;
+    const r = MB.range("pr-r", (v) => v + "%", () => cv.redraw());
+    const g = MB.range("pr-g", (v) => v + "%", () => cv.redraw());
+    const X0 = -0.25, X1 = 0.35, Y1 = 4;
+    const fair = (e) => (e - g() / 100) / (r() / 100 - g() / 100);
+    const cv = MB.canvas("#pr-cv", (ctx, w, h) => {
+      const P = MB.palette(), rr = r() / 100, gg = g() / 100;
+      const line = []; for (let e = gg; e <= X1 + 1e-9; e += 0.005) line.push([e, fair(e)]);
+      const c = MB.chart(ctx, { x: 52, y: 14, w: w - 66, h: h - 84 }, { x: [X0, X1], y: [0, Y1], xFmt: (v) => Math.round(v * 100) + "%", yFmt: (v) => v + "배",
+        xTicks: [-0.2, -0.1, 0, 0.1, 0.2, 0.3], yTicks: [0, 1, 2, 3, 4], xLabel: "ROE(자기자본이익률)", yLabel: "PBR",
+        series: [{ data: line, color: P.accent2, width: 2.5 }], hlines: [{ y: 1, color: P.faint }], vlines: [{ x: 0, color: P.faint, dash: [2, 3] }] });
+      lay = c;
+      const lx = Math.min(X1, gg + 3.4 * (rr - gg));
+      text(ctx, "정당한 PBR 선", c.X(lx) - 6, c.Y(fair(lx)) - 8, { color: P.accent2, align: "right", size: 11.5, weight: 600 });
+      text(ctx, "PBR 1배", c.box.x + c.box.w - 4, c.Y(1) + 14, { color: P.faint, align: "right", size: 11 });
+      const s = RT[sel].pbr, imp = s * (rr - gg) + gg;
+      if (imp <= X1 + 0.05) {
+        ctx.save(); ctx.strokeStyle = P.accent2; ctx.setLineDash([4, 4]); ctx.lineWidth = 1.3; ctx.beginPath();
+        ctx.moveTo(c.X(roe[sel]), c.Y(s)); ctx.lineTo(c.X(Math.min(imp, X1)), c.Y(s)); ctx.stroke(); ctx.restore();
+        if (imp <= X1) { ctx.beginPath(); ctx.arc(c.X(imp), c.Y(s), 4, 0, TAU); ctx.fillStyle = P.accent2; ctx.fill(); }
+      }
+      if (Math.abs(roe[sel] - RT[sel].roe) > 1e-4) {
+        ctx.save(); ctx.globalAlpha = 0.35; ctx.beginPath(); ctx.arc(c.X(RT[sel].roe), c.Y(s), 6, 0, TAU); ctx.fillStyle = coColor(sel, P); ctx.fill(); ctx.restore();
+      }
+      KEYS.forEach((k) => {
+        const x = c.X(roe[k]), y = c.Y(RT[k].pbr);
+        if (k === sel) knob(ctx, x, y, P, 8, coColor(k, P));
+        else { ctx.beginPath(); ctx.arc(x, y, 6.5, 0, TAU); ctx.fillStyle = coColor(k, P); ctx.fill(); }
+        const below = k === "nuri";
+        text(ctx, SHORT[k], x + 10, y + (below ? 16 : -8), { color: P.text, size: 12, weight: k === sel ? 700 : 500 });
+      });
+      const fv = fair(roe[sel]);
+      MB.stat("pr-o-co", CO[sel].name);
+      MB.stat("pr-o-roe", pc(roe[sel]));
+      MB.stat("pr-o-pbr", xf(s, 2));
+      MB.stat("pr-o-fair", roe[sel] <= gg ? "0배 아래(모형 밖)" : xf(fv, 2));
+      MB.stat("pr-o-imp", pc(imp));
+    }, { get height() { return narrow("pr-cv") ? 320 : 360; } });
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        if (!lay) return; drag = null; let best = 30;
+        KEYS.forEach((k) => { const d = Math.hypot(lay.X(roe[k]) - x, lay.Y(RT[k].pbr) - y); if (d < best) { best = d; drag = k; } });
+        if (drag) sel = drag;
+      },
+      move(x) { if (!drag || !lay) return; roe[drag] = MB.clamp(invLin(x, X0, X1, lay.box.x, lay.box.x + lay.box.w), X0 + 0.01, X1 - 0.005); cv.redraw(); },
+      end() { drag = null; },
+    });
+    $("pr-re").addEventListener("click", () => { reset(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 4. 듀퐁 세 막대 */
+  (function () {
+    const SC = [
+      { name: "순이익률", lo: 0.0, hi: 0.3, log: false, ticks: [0, 0.1, 0.2, 0.3], tf: (v) => Math.round(v * 100) + "%", fmt: (v) => pc(v) },
+      { name: "회전율", lo: 0.01, hi: 3, log: true, ticks: [0.01, 0.1, 1, 3], tf: (v) => String(v), fmt: (v) => v.toFixed(v < 0.1 ? 3 : 2) + "회" },
+      { name: "레버리지", lo: 1, hi: 30, log: true, ticks: [1, 3, 10, 30], tf: (v) => String(v), fmt: (v) => v.toFixed(2) + "배" },
+    ];
+    const frac = (s, v) => (s.log ? Math.log(v / s.lo) / Math.log(s.hi / s.lo) : (v - s.lo) / (s.hi - s.lo));
+    const unfrac = (s, f) => (s.log ? s.lo * Math.pow(s.hi / s.lo, f) : s.lo + f * (s.hi - s.lo));
+    let vals = [0, 0, 0], lay = null, act = -1;
+    const load = (k) => { const d = ST.dupont(CO[k]); vals = [d.margin, d.turnover, d.leverage]; };
+    load("hanbit");
+    MB.seg("dp-co", (k) => { load(k); cv.redraw(); });
+    const cv = MB.canvas("#dp-cv", (ctx, w, h) => {
+      const P = MB.palette(), roe = vals[0] * vals[1] * vals[2];
+      const top = 30, bot = h - 70, colW = (w - 16) / 4, tw = Math.min(34, colW * 0.36);
+      const roeMax = Math.max(0.3, roe * 1.15);
+      lay = { top, bot, colW, tw };
+      for (let i = 0; i < 4; i++) {
+        const cx = 8 + colW * (i + 0.5) + 6, s = SC[i];
+        const f = i < 3 ? MB.clamp(frac(s, vals[i]), 0, 1) : MB.clamp(roe / roeMax, 0, 1);
+        const y = bot - f * (bot - top);
+        ctx.fillStyle = P.grid; ctx.fillRect(cx - tw / 2, top, tw, bot - top);
+        ctx.fillStyle = i < 3 ? (i === 2 && vals[2] > 6 ? P.warn : P.accent) : P.accent2;
+        ctx.globalAlpha = i < 3 ? 0.8 : 1; ctx.fillRect(cx - tw / 2, y, tw, bot - y); ctx.globalAlpha = 1;
+        if (i < 3) {
+          s.ticks.forEach((t) => { const ty = bot - frac(s, t) * (bot - top); ctx.fillStyle = P.axis; ctx.fillRect(cx - tw / 2 - 4, ty, 4, 1); text(ctx, s.tf(t), cx - tw / 2 - 6, ty, { color: P.faint, size: 10, align: "right", base: "middle", mono: true }); });
+          knob(ctx, cx, y, P, 7);
+        } else {
+          [0, roeMax / 2, roeMax].forEach((t) => { const ty = bot - (t / roeMax) * (bot - top); ctx.fillStyle = P.axis; ctx.fillRect(cx - tw / 2 - 4, ty, 4, 1); text(ctx, Math.round(t * 100) + "%", cx - tw / 2 - 6, ty, { color: P.faint, size: 10, align: "right", base: "middle", mono: true }); });
+        }
+        text(ctx, i < 3 ? s.name : "ROE", cx, top - 12, { color: i < 3 ? P.dim : P.text, align: "center", size: 12, weight: i < 3 ? 500 : 700 });
+        text(ctx, i < 3 ? s.fmt(vals[i]) : pc(roe), cx, bot + 20, { color: i < 3 ? P.text : P.accent2, align: "center", size: 12.5, mono: true, weight: 600 });
+        if (i < 3) text(ctx, i < 2 ? "×" : "=", 8 + colW * (i + 1) + 6, top - 16, { color: P.dim, align: "center", base: "middle", size: 15 });
+      }
+      MB.stat("dp-o-m", pc(vals[0]));
+      MB.stat("dp-o-t", SC[1].fmt(vals[1]));
+      MB.stat("dp-o-l", tone(vals[2] > 6 ? "warn-t" : "", vals[2].toFixed(2) + "배") + " <small>(" + Math.round((vals[2] - 1) * 100).toLocaleString("ko-KR") + "%)</small>");
+      MB.stat("dp-o-roe", pc(roe));
+    }, { get height() { return narrow("dp-cv") ? 300 : 320; } });
+    MB.drag(cv.canvas, {
+      start(x) { if (!lay) return; const i = Math.floor((x - 8) / lay.colW); act = i >= 0 && i < 3 ? i : -1; },
+      move(x, y) {
+        if (act < 0 || !lay) return;
+        const f = MB.clamp((lay.bot - y) / (lay.bot - lay.top), 0, 1);
+        vals[act] = Math.max(act === 0 ? 0.001 : SC[act].lo, unfrac(SC[act], f));
+        cv.redraw();
+      },
+      end() { act = -1; },
+    });
+    $("dp-lev").addEventListener("click", () => { vals[2] = Math.min(30, vals[2] * 2); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 5. 레버리지의 대가 */
+  (function () {
+    let lay = null;
+    const de = MB.range("lv-de", (v) => v.toLocaleString("ko-KR") + "%", () => cv.redraw());
+    const bad = MB.range("lv-bad", (v) => sg(v) + "%", () => cv.redraw());
+    const ir = MB.range("lv-i", (v) => v + "%", () => cv.redraw());
+    const roeAt = (roa, x) => roa + (roa - ir() / 100) * x;
+    const cv = MB.canvas("#lv-cv", (ctx, w, h) => {
+      const P = MB.palette(), b = bad() / 100, x = de() / 100;
+      const S = [{ roa: 0.1, name: "호황", color: P.up }, { roa: 0.06, name: "평년", color: P.accent }, { roa: b, name: "불황", color: P.down }];
+      const box = { x: 54, y: 14, w: w - 84, h: h - 84 };
+      const c = MB.chart(ctx, box, { x: [0, 15], y: [-1.5, 1.5], xTicks: narrow("lv-cv") ? [0, 5, 10, 15] : [0, 3, 6, 9, 12, 15], yTicks: [-1.5, -1, -0.5, 0, 0.5, 1, 1.5],
+        xFmt: (v) => (v * 100).toLocaleString("ko-KR") + "%", yFmt: (v) => Math.round(v * 100) + "%", xLabel: "부채비율(부채 ÷ 자본)",
+        series: S.map((s) => ({ data: [[0, roeAt(s.roa, 0)], [15, roeAt(s.roa, 15)]], color: s.color, width: 2.2 })) });
+      lay = c;
+      ctx.save(); ctx.fillStyle = P.bad; ctx.globalAlpha = 0.1; ctx.fillRect(box.x, c.Y(-1), box.w, c.Y(-1.5) - c.Y(-1)); ctx.restore();
+      ctx.strokeStyle = P.bad; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(box.x, c.Y(-1)); ctx.lineTo(box.x + box.w, c.Y(-1)); ctx.stroke();
+      text(ctx, narrow("lv-cv") ? "자본 잠식(ROE −100% 아래)" : "자본이 모두 사라지는 영역(ROE −100% 아래)", box.x + 6, c.Y(-1) + 15, { color: P.bad, size: 11.5, weight: 600 });
+      S.forEach((s) => {
+        const yEnd = MB.clamp(roeAt(s.roa, 15), -1.45, 1.45);
+        text(ctx, s.name, box.x + box.w - 4, c.Y(yEnd) + (yEnd > 0 ? 14 : -6), { color: s.color, align: "right", size: 11.5, weight: 600 });
+      });
+      const px = c.X(x);
+      ctx.strokeStyle = P.text; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(px, box.y); ctx.lineTo(px, box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+      S.forEach((s) => { const v = roeAt(s.roa, x); if (v > -1.5 && v < 1.5) { ctx.beginPath(); ctx.arc(px, c.Y(v), 4.5, 0, TAU); ctx.fillStyle = s.color; ctx.fill(); } });
+      knob(ctx, px, box.y + 10, P, 7);
+      const wipe = (1 + b) / (ir() / 100 - b);
+      if (wipe <= 15) { ctx.beginPath(); ctx.arc(c.X(wipe), c.Y(-1), 4, 0, TAU); ctx.fillStyle = P.bad; ctx.fill(); }
+      const show = (id, v) => MB.stat(id, v <= -1 ? tone("bad-t", "자본 잠식") : tone(MB.tone(v), pc(v)));
+      show("lv-o-g", roeAt(0.1, x)); show("lv-o-n", roeAt(0.06, x)); show("lv-o-b", roeAt(b, x));
+      MB.stat("lv-o-x", Math.round(wipe * 100).toLocaleString("ko-KR") + "%");
+    }, { get height() { return narrow("lv-cv") ? 320 : 350; } });
+    MB.drag(cv.canvas, {
+      move(x) { if (!lay) return; const v = MB.clamp(invLin(x, 0, 15, lay.box.x, lay.box.x + lay.box.w), 0, 15); de.set(Math.round((v * 100) / 25) * 25); },
+    });
+  })();
+
+  /* ---------------------------------------------------------- 6. 경기 순환과 PER */
+  (function () {
+    const N = 64, LO = 7, HI = 14;
+    function make(seed) {
+      const g = ST.gauss(seed), eps = [], px = [], per = [];
+      for (let t = 0; t <= N; t++) {
+        const th = (TAU * t) / 16, tr = Math.pow(1.05, t / 4);
+        const e = 7200 * tr * (1 + 0.65 * Math.sin(th) + 0.05 * g());
+        const p = 72000 * tr * (1 + 0.28 * Math.sin(th + 1.3) + 0.04 * g());
+        eps.push(e); px.push(p); per.push(p / e);
+      }
+      return { eps, px, per, ymax: Math.max(...px, ...eps.map((e) => e * 10)) * 1.05 };
+    }
+    function run(D, mode, upto) {
+      let pos = 0, v = 1; const tr = [];
+      for (let t = 0; t <= upto; t++) {
+        if (t > 0 && pos) v *= D.px[t] / D.px[t - 1];
+        const p = D.per[t], buy = mode === "low" ? p < LO : p > HI, sell = mode === "low" ? p > HI : p < LO;
+        if (!pos && buy) { pos = 1; tr.push({ i: t, buy: true }); } else if (pos && sell) { pos = 0; tr.push({ i: t, buy: false }); }
+      }
+      return { v, tr };
+    }
+    let seed = 7, D = make(seed), cur = N, playing = false;
+    const mode = MB.seg("cy-s", () => cv.redraw());
+    const playBtn = $("cy-play");
+    const cv = MB.canvas("#cy-cv", (ctx, w, h) => {
+      const P = MB.palette(), k = Math.floor(cur);
+      const topH = Math.round((h - 70) * 0.6), A = { x: 56, y: 22, w: w - 70, h: topH }, B = { x: 56, y: 22 + topH + 26, w: w - 70, h: h - topH - 22 - 26 - 40 };
+      const xs = (a, f) => a.slice(0, k + 1).map((v, i) => [i / 4, f ? f(v) : v]);
+      const c1 = MB.chart(ctx, A, { x: [0, 16], y: [0, D.ymax], xTicks: [], yFmt: MB.wonAxis,
+        series: [{ data: xs(D.eps, (e) => e * 10), color: P.accent2, width: 2, dash: [5, 3] }, { data: xs(D.px), color: P.accent, width: 2.2 }] });
+      text(ctx, "주가", A.x + 6, A.y - 8, { color: P.accent, size: 11.5, weight: 700 });
+      text(ctx, "이익 × 10 (주가가 이 선 아래면 PER < 10)", A.x + 36, A.y - 8, { color: P.accent2, size: 11.5 });
+      const tr = run(D, mode(), k).tr;
+      tr.forEach((t) => tri(ctx, c1.X(t.i / 4), c1.Y(D.px[t.i]) + (t.buy ? 12 : -12), t.buy, t.buy ? P.up : P.down));
+      const c2 = MB.chart(ctx, B, { x: [0, 16], y: [0, 40], yTicks: [0, 7, 14, 30], xTicks: [0, 4, 8, 12, 16], xFmt: (v) => v + "년", xLabel: "",
+        series: [{ data: xs(D.per, (p) => Math.min(p, 40)), color: P.text, width: 1.8 }] });
+      ctx.save();
+      ctx.globalAlpha = 0.14; ctx.fillStyle = P.ok; ctx.fillRect(B.x, c2.Y(LO), B.w, c2.Y(0) - c2.Y(LO));
+      ctx.fillStyle = P.warn; ctx.fillRect(B.x, c2.Y(40), B.w, c2.Y(HI) - c2.Y(40));
+      ctx.restore();
+      text(ctx, "PER", B.x + 6, B.y - 8, { color: P.text, size: 11.5, weight: 700 });
+      text(ctx, "7 아래: 싸 보인다 · 14 위: 비싸 보인다", B.x + 36, B.y - 8, { color: P.dim, size: 11.5 });
+      if (k < N) { const xx = c2.X(k / 4); ctx.strokeStyle = P.faint; ctx.beginPath(); ctx.moveTo(xx, A.y); ctx.lineTo(xx, B.y + B.h); ctx.stroke(); }
+      MB.stat("cy-o-t", xf(D.per[k]) + " <small>" + (k / 4).toFixed(1) + "년</small>");
+      const lo = run(D, "low", k).v, hi = run(D, "high", k).v, hold = D.px[k] / D.px[0];
+      MB.stat("cy-o-low", tone(MB.tone(lo - 1), MB.chg(lo - 1, 0)));
+      MB.stat("cy-o-high", tone(MB.tone(hi - 1), MB.chg(hi - 1, 0)));
+      MB.stat("cy-o-hold", tone(MB.tone(hold - 1), MB.chg(hold - 1, 0)));
+    }, { get height() { return narrow("cy-cv") ? 400 : 420; } });
+    const setPlay = (v) => { playing = v; playBtn.textContent = v ? "멈춤" : "재생"; };
+    playBtn.addEventListener("click", () => { if (playing) setPlay(false); else { if (cur >= N) cur = 0; setPlay(true); } });
+    $("cy-new").addEventListener("click", () => { seed++; D = make(seed); cur = N; setPlay(false); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return;
+      cur = Math.min(N, cur + dt * 5);
+      if (cur >= N) setPlay(false);
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 7. 일회성 이익 */
+  (function () {
+    const base = [700, 730, 760, 780, 800, 820], LBL = ["4년 전", "3년 전", "2년 전", "1년 전", "최근 1년", "내년(예상)"];
+    const PX = CO.nuri.price;
+    const x = MB.range("oo-x", (v) => MB.won(v * 1e8), () => cv.redraw());
+    const adj = $("oo-adj"); adj.addEventListener("change", () => cv.redraw());
+    const cv = MB.canvas("#oo-cv", (ctx, w, h) => {
+      const P = MB.palette(), one = x(), hide = adj.checked;
+      const nar = narrow("oo-cv");
+      const c = MB.bars(ctx, { x: 52, y: 40, w: w - 64, h: h - 76 }, {
+        labels: nar ? ["−4년", "−3년", "−2년", "−1년", "최근", "내년"] : LBL, y: [0, 3000], yFmt: (v) => v.toLocaleString("ko-KR") + "억", gap: 0.32,
+        stacks: [
+          { label: "영업에서 번 이익", color: (i) => (i === 5 ? P.faint : P.accent), data: base },
+          { label: "일회성", color: P.accent2, data: [0, 0, 0, 0, hide ? 0 : one, 0] },
+        ],
+        valueFmt: (v) => Math.round(v).toLocaleString("ko-KR") + "억",
+      });
+      const repNet = base[4] + one, shownNet = base[4] + (hide ? 0 : one);
+      const per4 = PX / ((shownNet * 1e8) / CO.nuri.shares), per5 = PX / ((base[5] * 1e8) / CO.nuri.shares);
+      [[4, per4, base[4] + (hide ? 0 : one)], [5, per5, base[5]]].forEach(([i, p, v]) => {
+        text(ctx, "PER " + p.toFixed(2), c.X(i), c.Y(v) - 22, { color: i === 4 && !hide && one > 0 ? P.accent2 : P.text, align: "center", size: 12.5, weight: 700 });
+      });
+      ctx.fillStyle = P.accent; ctx.fillRect(56, 10, 10, 10); text(ctx, "영업에서 번 순이익", 70, 19, { color: P.dim, size: 11.5 });
+      ctx.fillStyle = P.accent2; ctx.fillRect(nar ? 56 : 190, nar ? 26 : 10, 10, 10); text(ctx, "일회성 이익(물류센터 매각)", nar ? 70 : 204, nar ? 35 : 19, { color: P.dim, size: 11.5 });
+      const eps = (repNet * 1e8) / CO.nuri.shares;
+      MB.stat("oo-o-eps", MB.price(eps));
+      MB.stat("oo-o-per", xf(PX / eps, 2));
+      MB.stat("oo-o-adj", xf(PX / ((base[4] * 1e8) / CO.nuri.shares), 2));
+      MB.stat("oo-o-next", xf(per5, 2));
+    }, { get height() { return narrow("oo-cv") ? 290 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 8. EV 계산기 */
+  (function () {
+    const MC = 10000, EB = 2000, A = { d: 1000, c: 4000 };
+    const d = MB.range("ev-d", (v) => MB.won(v * 1e8), () => cv.redraw());
+    const cc = MB.range("ev-c", (v) => MB.won(v * 1e8), () => cv.redraw());
+    const cv = MB.canvas("#ev-cv", (ctx, w, h) => {
+      const P = MB.palette(), B = { d: d(), c: cc() };
+      const evA = MC + A.d - A.c, evB = MC + B.d - B.c;
+      const ymax = Math.max(MC + A.d, MC + B.d) * 1.15;
+      const nar = narrow("ev-cv");
+      const c = MB.chart(ctx, { x: 50, y: 14, w: w - 60, h: h - 70 }, { x: [0, 9], y: [0, ymax], xTicks: [], yFmt: (v) => MB.wonAxis(v * 1e8) });
+      const slot = c.box.w / 9, bw = slot * 0.66;
+      [[0, A, evA, "회사 A"], [5, B, evB, "회사 B"]].forEach(([o, s, ev, nm]) => {
+        const steps = [
+          { a: 0, b: MC, color: P.accent, lab: "시총" },
+          { a: MC, b: MC + s.d, color: P.warn, lab: "+빚" },
+          { a: MC + s.d - s.c, b: MC + s.d, color: P.ok, lab: "−현금" },
+          { a: 0, b: ev, color: P.accent2, lab: "EV" },
+        ];
+        steps.forEach((st, j) => {
+          const cx = c.X(o + j + 0.5), y0 = c.Y(Math.max(st.a, st.b)), y1 = c.Y(Math.min(st.a, st.b));
+          ctx.fillStyle = st.color; ctx.globalAlpha = j === 2 ? 0.55 : 0.9; ctx.fillRect(cx - bw / 2, y0, bw, Math.max(1.5, y1 - y0)); ctx.globalAlpha = 1;
+          if (j < 3) { const nx = c.X(o + j + 1.5), ty = j === 0 ? MC : j === 1 ? MC + s.d : MC + s.d - s.c; ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(cx + bw / 2, c.Y(ty)); ctx.lineTo(nx - bw / 2, c.Y(ty)); ctx.stroke(); ctx.setLineDash([]); }
+          const v = j === 0 ? MC : j === 1 ? s.d : j === 2 ? s.c : ev;
+          text(ctx, nar ? +(v / 10000).toFixed(v % 10000 ? 1 : 0) + "조" : MB.wonAxis(v * 1e8), cx, y0 - 5, { color: P.text, align: "center", size: nar ? 10 : 11, mono: true });
+          text(ctx, st.lab, cx, c.box.y + c.box.h + 15, { color: P.dim, align: "center", size: nar ? 10.5 : 11.5 });
+        });
+        text(ctx, nm + " · EV/EBITDA " + (ev / EB).toFixed(1) + "배", c.X(o + 2), c.box.y + c.box.h + 36, { color: P.text, align: "center", size: nar ? 11 : 12, weight: 700 });
+      });
+      MB.stat("ev-o-a", MB.won(evA * 1e8));
+      MB.stat("ev-o-b", MB.won(evB * 1e8));
+      MB.stat("ev-o-ma", xf(evA / EB));
+      MB.stat("ev-o-mb", xf(evB / EB));
+    }, { get height() { return narrow("ev-cv") ? 290 : 310; } });
+  })();
+
+  /* ---------------------------------------------------------- 9. 배당수익률과 배당성향 */
+  (function () {
+    const E0 = 4000;
+    const pay = MB.range("dv-pay", (v) => v + "%", () => cv.redraw());
+    const per = MB.range("dv-per", (v) => v + "배", () => cv.redraw());
+    const sh = MB.range("dv-sh", (v) => sg(v) + "%", () => cv.redraw());
+    const cv = MB.canvas("#dv-cv", (ctx, w, h) => {
+      const P = MB.palette(), dps = (pay() / 100) * E0, E1 = E0 * (1 + sh() / 100), y = pay() / 100 / per();
+      const L = 92, R = w - 14, sMax = Math.max(6000, dps) * 1.04, X = (v) => L + (v / sMax) * (R - L);
+      const rows = [["올해", E0], ["다음 해", E1]];
+      rows.forEach(([nm, E], i) => {
+        const yy = 26 + i * 44, bh = 22;
+        text(ctx, nm + " EPS", 4, yy + bh / 2, { color: P.text, base: "middle", size: 12, weight: 600 });
+        ctx.fillStyle = P.accent; ctx.globalAlpha = 0.22; ctx.fillRect(X(0), yy, X(E) - X(0), bh); ctx.globalAlpha = 1;
+        ctx.strokeStyle = P.accent; ctx.lineWidth = 1.2; ctx.strokeRect(X(0), yy, X(E) - X(0), bh);
+        ctx.fillStyle = P.accent2; ctx.fillRect(X(0), yy + 4, X(Math.min(dps, E)) - X(0), bh - 8);
+        if (dps > E) { ctx.fillStyle = P.bad; ctx.fillRect(X(E), yy + 4, X(dps) - X(E), bh - 8); }
+        const lab = dps > E ? "배당 " + MB.price(dps) + " > 이익 " + MB.price(E) : "이익 " + MB.price(E) + " 중 배당 " + MB.price(dps);
+        text(ctx, lab, X(0) + 2, yy + bh + 12, { color: dps > E ? P.bad : P.dim, size: 11 });
+      });
+      text(ctx, "4,000원 기준 · 금색: 배당 · 빨강: 이익을 넘는 배당", 4, 12, { color: P.faint, size: 10.5 });
+      const box = { x: 54, y: 136, w: w - 68, h: h - 136 - 46 };
+      const curve = []; for (let p = 3; p <= 40; p += 0.25) curve.push([p, pay() / 100 / p]);
+      const c = MB.chart(ctx, box, { x: [3, 40], y: [0, 0.15], xTicks: [5, 10, 20, 30, 40], yTicks: [0, 0.05, 0.1, 0.15], yFmt: (v) => Math.round(v * 100) + "%", xLabel: "PER(배)",
+        series: [{ data: curve, color: P.accent2, width: 2.2 }], hlines: [{ y: 0.03, color: P.faint, label: "예금 3%" }] });
+      if (y <= 0.15) knob(ctx, c.X(per()), c.Y(y), P, 6, P.accent2);
+      text(ctx, "배당수익률 = 배당성향 ÷ PER", box.x + box.w - 4, box.y + 12, { color: P.dim, size: 11, align: "right" });
+      const p1 = E1 > 0 ? dps / E1 : Infinity;
+      MB.stat("dv-o-y", pc(y));
+      MB.stat("dv-o-p", p1 > 1 ? tone("bad-t", isFinite(p1) ? pc(p1, 0) : "이익 없음") : pc(p1));
+      MB.stat("dv-o-r", tone(E1 - dps >= 0 ? "" : "bad-t", (E1 - dps < 0 ? "−" : "") + MB.price(Math.abs(E1 - dps))));
+    }, { get height() { return narrow("dv-cv") ? 350 : 340; } });
+  })();
+
+  /* ---------------------------------------------------------- 10. 업종별 상자 그림 */
+  (function () {
+    const MS = {
+      per: { log: true, y: [2, 200], ticks: [2, 5, 10, 20, 50, 100, 200], f: (v) => v + "배" },
+      pbr: { log: true, y: [0.1, 20], ticks: [0.1, 0.3, 1, 3, 10], f: (v) => v + "배" },
+      roe: { log: false, y: [-0.5, 0.4], ticks: [-0.4, -0.2, 0, 0.2, 0.4], f: (v) => Math.round(v * 100) + "%" },
+      dy: { log: false, y: [0, 0.1], ticks: [0, 0.02, 0.04, 0.06, 0.08, 0.1], f: (v) => Math.round(v * 100) + "%" },
+    };
+    const m = MB.seg("sb-m", () => cv.redraw());
+    const dots = $("sb-dots"); dots.addEventListener("change", () => cv.redraw());
+    const cv = MB.canvas("#sb-cv", (ctx, w, h) => {
+      const P = MB.palette(), key = m(), ms = MS[key], nar = narrow("sb-cv");
+      const c = MB.chart(ctx, { x: 50, y: 14, w: w - 60, h: h - 64 }, { x: [0, 5], y: ms.y, logY: ms.log, xTicks: [], yTicks: ms.ticks, yFmt: ms.f });
+      const slot = c.box.w / 5, bw = Math.min(46, slot * 0.46);
+      const clampY = (v) => MB.clamp(v, ms.y[0], ms.y[1]);
+      SECT.forEach((s, i) => {
+        const vals = sectVals(i, key), cx = c.X(i + 0.5);
+        const q = (p) => ST.percentile(vals, p);
+        if (dots.checked) {
+          ctx.fillStyle = P.dim; ctx.globalAlpha = 0.5;
+          SDATA[i].forEach((d) => { if (!isFinite(d[key])) return; ctx.beginPath(); ctx.arc(cx + d.jit * slot * 0.7, c.Y(clampY(d[key])), 2.4, 0, TAU); ctx.fill(); });
+          ctx.globalAlpha = 1;
+        }
+        ctx.strokeStyle = P.accent; ctx.lineWidth = 1.3;
+        ctx.beginPath(); ctx.moveTo(cx, c.Y(clampY(q(0.1)))); ctx.lineTo(cx, c.Y(clampY(q(0.25)))); ctx.moveTo(cx, c.Y(clampY(q(0.75)))); ctx.lineTo(cx, c.Y(clampY(q(0.9)))); ctx.stroke();
+        [0.1, 0.9].forEach((p) => { ctx.beginPath(); ctx.moveTo(cx - bw / 4, c.Y(clampY(q(p)))); ctx.lineTo(cx + bw / 4, c.Y(clampY(q(p)))); ctx.stroke(); });
+        const y25 = c.Y(clampY(q(0.25))), y75 = c.Y(clampY(q(0.75)));
+        ctx.fillStyle = P.accent; ctx.globalAlpha = dots.checked ? 0.12 : 0.2; ctx.fillRect(cx - bw / 2, y75, bw, y25 - y75); ctx.globalAlpha = 1;
+        ctx.strokeRect(cx - bw / 2, y75, bw, y25 - y75);
+        ctx.strokeStyle = P.text; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx - bw / 2, c.Y(clampY(q(0.5)))); ctx.lineTo(cx + bw / 2, c.Y(clampY(q(0.5)))); ctx.stroke();
+        text(ctx, s.name, cx, c.box.y + c.box.h + 16, { color: P.text, align: "center", size: nar ? 11 : 12, weight: 600 });
+        if (key === "per") text(ctx, "흑자 " + vals.length + "개", cx, c.box.y + c.box.h + 32, { color: P.faint, align: "center", size: 10.5 });
+        const v = RT[s.co][key];
+        if (isFinite(v)) {
+          const yy = c.Y(clampY(v)); diamond(ctx, cx + bw / 2 + 9, yy, 6.5, coColor(s.co, P), P);
+          if (!nar) text(ctx, SHORT[s.co], cx + bw / 2 + 18, yy, { color: P.text, base: "middle", size: 11.5, weight: 600 });
+        } else text(ctx, SHORT[s.co] + " 적자", cx, c.box.y + 12, { color: P.warn, align: "center", size: 11 });
+        const sid = "sb-o-" + s.co;
+        MB.stat(sid, isFinite(v) ? Math.round(pctRank(vals, v)) + " <small>백분위</small>" : "적자 <small>(계산 불가)</small>");
+      });
+    }, { get height() { return narrow("sb-cv") ? 320 : 340; } });
+  })();
+
+  /* ---------------------------------------------------------- 11. 성장률과 PEG */
+  (function () {
+    let gSel = 0.12, lay = null;
+    const pt = MB.range("pg-t", (v) => v + "배", () => cv.redraw());
+    const pr = MB.range("pg-r", (v) => v + "%", () => cv.redraw());
+    const jper = (g) => { const r = pr() / 100; let v = 0, e = 1; for (let t = 1; t <= 10; t++) { e *= 1 + g; v += (0.3 * e) / Math.pow(1 + r, t); } return v + (pt() * e) / Math.pow(1 + r, 10); };
+    const solve = (target) => { let lo = -0.3, hi = 0.8; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (jper(m) > target) hi = m; else lo = m; } return lo; };
+    const PTS = [["hanbit", 0.08, 10], ["nuri", 0.03, 9.5], ["daon", 0.02, 6], ["moa", 0.2, 50]];
+    const cv = MB.canvas("#pg-cv", (ctx, w, h) => {
+      const P = MB.palette(), curve = [];
+      for (let g = 0; g <= 0.35001; g += 0.005) curve.push([g, jper(g)]);
+      const c = MB.chart(ctx, { x: 50, y: 14, w: w - 66, h: h - 84 }, { x: [0, 0.35], y: [0, 80], xTicks: [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35], yTicks: [0, 20, 40, 60, 80],
+        xFmt: (v) => Math.round(v * 100) + "%", yFmt: (v) => v + "배", xLabel: "앞으로 10년 이익 성장률(연)",
+        series: [{ data: [[0, 0], [0.35, 35]], color: P.dim, width: 1.5, dash: [5, 4] }, { data: curve, color: P.accent, width: 2.6 }] });
+      lay = c;
+      text(ctx, narrow("pg-cv") ? "점선: PEG 1" : "점선: PEG 1 어림법(PER = 성장률×100)", c.X(0.345), c.Y(narrow("pg-cv") ? 8 : 14), { color: P.dim, size: 11, align: "right" });
+      text(ctx, "곡선: 단순 모형의 PER", c.X(0.15) - 8, c.Y(Math.min(76, jper(0.15))) - 8, { color: P.accent, size: 11.5, align: "right", weight: 600 });
+      const gm = solve(50);
+      if (gm <= 0.35) {
+        ctx.save(); ctx.strokeStyle = P.blue; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(c.X(0.2), c.Y(50)); ctx.lineTo(c.X(gm), c.Y(50)); ctx.stroke(); ctx.restore();
+        ctx.beginPath(); ctx.arc(c.X(gm), c.Y(50), 4, 0, TAU); ctx.fillStyle = P.blue; ctx.fill();
+      }
+      PTS.forEach(([k, g, p]) => {
+        ctx.beginPath(); ctx.arc(c.X(g), c.Y(p), 6, 0, TAU); ctx.fillStyle = coColor(k, P); ctx.fill();
+        text(ctx, SHORT[k], c.X(g) + (k === "nuri" ? -8 : 8), c.Y(p) + (k === "daon" ? 14 : k === "nuri" ? -8 : -8), { color: P.text, size: 11.5, weight: 600, align: k === "nuri" ? "right" : "left" });
+      });
+      const jp = jper(gSel), ky = c.Y(Math.min(80, jp));
+      ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(gSel), ky); ctx.lineTo(c.X(gSel), c.box.y + c.box.h); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, c.X(gSel), ky, P, 8);
+      MB.stat("pg-o-g", pc(gSel, 1));
+      MB.stat("pg-o-per", xf(jp));
+      MB.stat("pg-o-peg", gSel >= 0.005 ? (jp / (gSel * 100)).toFixed(2) : "—");
+      MB.stat("pg-o-moa", gm <= 0.8 ? pc(gm, 1) : "—");
+    }, { get height() { return narrow("pg-cv") ? 320 : 350; } });
+    MB.drag(cv.canvas, { move(x) { if (!lay) return; gSel = Math.round(MB.clamp(invLin(x, 0, 0.35, lay.box.x, lay.box.x + lay.box.w), 0, 0.35) * 200) / 200; cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 12. 지표 스크리너 */
+  (function () {
+    let seed = 31, U = gen(seed), lay = null, act = null;
+    function gen(sd) {
+      const r = ST.rng(sd), g = ST.gauss(sd + 7), out = [];
+      for (let i = 0; i < 50; i++) {
+        const u = r(); let per, roe, trap = null;
+        if (u < 0.08) { trap = "일회성 이익"; per = 2.5 + 3 * r(); roe = 0.16 + 0.16 * r(); }
+        else if (u < 0.16) { trap = "경기 정점 이익"; per = 3 + 3.5 * r(); roe = 0.18 + 0.12 * r(); }
+        else if (u < 0.22) { trap = "줄어드는 산업"; per = 3 + 4 * r(); roe = 0.05 + 0.09 * r(); }
+        else { per = 14 * Math.exp(0.55 * g()); roe = Math.max(0.01, 0.09 + 0.05 * g()); }
+        per = MB.clamp(per, 2.2, 95);
+        out.push({ per, roe, pbr: per * roe, trap });
+      }
+      return out;
+    }
+    const sp = MB.range("sc-per", (v) => v + "배 이하", () => cv.redraw());
+    const sr = MB.range("sc-roe", (v) => v + "% 이상", () => cv.redraw());
+    const sb = MB.range("sc-pbr", (v) => v.toFixed(1) + "배 이하", () => cv.redraw());
+    const tr = $("sc-trap"); tr.addEventListener("change", () => cv.redraw());
+    const cv = MB.canvas("#sc-cv", (ctx, w, h) => {
+      const P = MB.palette(), pm = sp(), rm = sr() / 100, bm = sb();
+      const pass = (s) => s.per <= pm && s.roe >= rm && s.pbr <= bm;
+      const c = MB.chart(ctx, { x: 50, y: 14, w: w - 74, h: h - 84 }, { x: [2, 100], y: [0, 0.4], logX: true, xTicks: [2, 5, 10, 20, 50, 100], yTicks: [0, 0.1, 0.2, 0.3, 0.4],
+        xFmt: (v) => v + "배", yFmt: (v) => Math.round(v * 100) + "%", xLabel: "PER(로그 눈금)", yLabel: "ROE" });
+      lay = c;
+      const bx = c.box, xL = c.X(Math.max(2, Math.min(100, pm))), yL = c.Y(rm);
+      ctx.save(); ctx.fillStyle = P.accent; ctx.globalAlpha = 0.07; ctx.fillRect(bx.x, bx.y, xL - bx.x, yL - bx.y); ctx.restore();
+      U.forEach((s) => {
+        const x = c.X(s.per), y = c.Y(Math.min(0.4, s.roe)), ok = pass(s);
+        ctx.beginPath(); ctx.arc(x, y, ok ? 4.5 : 3.5, 0, TAU);
+        if (ok) { ctx.fillStyle = P.accent; ctx.fill(); } else { ctx.strokeStyle = P.faint; ctx.lineWidth = 1.2; ctx.stroke(); }
+        if (tr.checked && s.trap) { ctx.beginPath(); ctx.arc(x, y, 8, 0, TAU); ctx.strokeStyle = P.bad; ctx.lineWidth = 1.6; ctx.stroke(); }
+      });
+      const five = KEYS.filter((k) => isFinite(RT[k].per));
+      five.forEach((k) => { const x = c.X(RT[k].per), y = c.Y(RT[k].roe); diamond(ctx, x, y, 6.5, coColor(k, P), P); text(ctx, SHORT[k], x + 9, y + (k === "hanbit" ? 15 : -6), { color: P.text, size: 11.5, weight: 600 }); });
+      ctx.strokeStyle = P.text; ctx.lineWidth = 1.4; ctx.setLineDash([5, 3]);
+      ctx.beginPath(); ctx.moveTo(xL, bx.y); ctx.lineTo(xL, bx.y + bx.h); ctx.moveTo(bx.x, yL); ctx.lineTo(bx.x + bx.w, yL); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, xL, bx.y + bx.h - 12, P, 6); knob(ctx, bx.x + bx.w - 12, yL, P, 6);
+      if (tr.checked) { ctx.beginPath(); ctx.arc(bx.x + bx.w - 150, bx.y + 12, 6, 0, TAU); ctx.strokeStyle = P.bad; ctx.lineWidth = 1.6; ctx.stroke(); text(ctx, "숨은 사정이 있는 종목", bx.x + bx.w - 140, bx.y + 12, { color: P.bad, size: 11, base: "middle" }); }
+      const passed = U.filter(pass), traps = passed.filter((s) => s.trap);
+      MB.stat("sc-o-n", passed.length + " <small>/ 50개</small>");
+      if (!tr.checked) MB.stat("sc-o-t", "? <small>체크하면 보인다</small>");
+      else {
+        const kinds = {}; traps.forEach((s) => (kinds[s.trap] = (kinds[s.trap] || 0) + 1));
+        const SHORTT = { "일회성 이익": "일회성", "경기 정점 이익": "경기 정점", "줄어드는 산업": "쇠퇴 산업" };
+        const ks = Object.keys(kinds).map((k) => SHORTT[k] + " " + kinds[k]).join(" · ");
+        MB.stat("sc-o-t", tone(traps.length ? "bad-t" : "", traps.length + "개") + (traps.length ? " <small>" + ks + "</small>" : ""));
+      }
+      const fp = five.filter((k) => RT[k].per <= pm && RT[k].roe >= rm && RT[k].pbr <= bm).map((k) => SHORT[k]);
+      MB.stat("sc-o-co", fp.length ? fp.join(", ") : "없음");
+    }, { get height() { return narrow("sc-cv") ? 340 : 370; } });
+    const invLog = (px) => Math.pow(10, invLin(px, Math.log10(2), 2, lay.box.x, lay.box.x + lay.box.w));
+    MB.drag(cv.canvas, {
+      start(x, y) { if (!lay) return; const dx = Math.abs(x - lay.X(sp())), dy = Math.abs(y - lay.Y(sr() / 100)); act = dx < dy ? "per" : "roe"; },
+      move(x, y) {
+        if (!lay || !act) return;
+        if (act === "per") sp.set(MB.clamp(Math.round(invLog(x)), 3, 60));
+        else sr.set(MB.clamp(Math.round(invLin(y, 0.4, 0, lay.box.y, lay.box.y + lay.box.h) * 100), 0, 30));
+      },
+      end() { act = null; },
+    });
+    $("sc-new").addEventListener("click", () => { seed++; U = gen(seed); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 13. 어느 회사일까 */
+  (function () {
+    const ARCH = {
+      cyc: { name: "경기민감 제조업", per: [5, 15], roe: [0.06, 0.2], dy: [0.008, 0.03], debt: [0.4, 1.1], opm: [0.1, 0.28], grow: [-0.25, 0.4], clue: ["opm", "grow"],
+        why: "영업이익률이 두툼하고 매출 성장률이 크게 출렁인다(마이너스이거나 아주 크거나). 배당은 적당하다." },
+      def: { name: "방어적 소비재", per: [9, 17], roe: [0.08, 0.15], dy: [0.03, 0.06], debt: [0.4, 0.9], opm: [0.04, 0.09], grow: [0.01, 0.06], clue: ["dy", "grow", "opm"],
+        why: "매출 성장률이 낮지만 꾸준하고, 영업이익률은 얇으며, 배당수익률이 높은 편이다." },
+      bio: { name: "적자 바이오", per: null, roe: [-0.4, -0.05], pbr: [2, 7], dy: [0, 0], debt: [0.1, 0.5], opm: [-3, -0.3], grow: [-0.2, 0.9], clue: ["per", "roe", "opm"],
+        why: "PER이 비어 있다(적자). ROE와 영업이익률이 크게 마이너스인데도 PBR은 높다. 미래 기대에 값이 매겨진다." },
+      bank: { name: "은행", per: [4, 8], roe: [0.04, 0.09], dy: [0.05, 0.08], debt: [10, 16], opm: [0.25, 0.4], grow: [0, 0.06], clue: ["pbr", "debt"],
+        why: "부채비율이 1,000%를 넘는데 멀쩡하다(예금이 부채). PBR이 1배보다 훨씬 낮고 배당수익률이 높다." },
+      grow: { name: "고성장 플랫폼", per: [35, 90], roe: [0.04, 0.12], dy: [0, 0.004], debt: [0.3, 0.8], opm: [0.05, 0.15], grow: [0.15, 0.4], clue: ["per", "dy", "grow"],
+        why: "PER이 아주 높고 배당이 거의 없으며 매출이 빠르게 자란다. 지금 이익보다 성장 기대에 값이 매겨진다." },
+    };
+    const TYPES = Object.keys(ARCH);
+    const ROWS = [
+      { k: "per", name: "PER", log: true, lo: 3, hi: 100, band: [8, 20], f: (v) => (isFinite(v) ? v.toFixed(1) + "배" : "적자") },
+      { k: "pbr", name: "PBR", log: true, lo: 0.1, hi: 10, band: [0.7, 2], f: (v) => v.toFixed(2) + "배" },
+      { k: "roe", name: "ROE", lo: -0.4, hi: 0.3, band: [0.05, 0.15], f: (v) => pc(v) },
+      { k: "dy", name: "배당수익률", lo: 0, hi: 0.08, band: [0.01, 0.04], f: (v) => pc(v) },
+      { k: "debt", name: "부채비율", log: true, lo: 0.1, hi: 20, band: [0.5, 2], f: (v) => Math.round(v * 100).toLocaleString("ko-KR") + "%" },
+      { k: "opm", name: "영업이익률", lo: -1, hi: 0.4, band: [0.05, 0.15], f: (v) => pc(v) },
+      { k: "grow", name: "매출 성장률", lo: -0.3, hi: 0.6, band: [0, 0.1], f: (v) => pc(v) },
+    ];
+    let seed = 21, rnd, round, score, ans, card;
+    const U = (a) => a[0] + (a[1] - a[0]) * rnd();
+    function deal() {
+      const t = TYPES[Math.floor(rnd() * TYPES.length)], A = ARCH[t];
+      const roe = U(A.roe), per = A.per ? U(A.per) : NaN;
+      card = { t, per, roe, pbr: A.per ? roe * per : U(A.pbr), dy: U(A.dy), debt: U(A.debt), opm: U(A.opm), grow: U(A.grow) };
+      ans = null;
+      document.querySelectorAll("#gs-opts .btn").forEach((b) => b.classList.remove("right", "wrong"));
+    }
+    function reset() { rnd = ST.rng(seed); round = 1; score = 0; deal(); }
+    reset();
+    const cv = MB.canvas("#gs-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("gs-cv"), clue = ans ? ARCH[card.t].clue : [];
+      text(ctx, "회사 #" + round + " (이름은 가렸다)", 6, 18, { color: P.text, size: 13, weight: 700 });
+      text(ctx, "회색 띠: 시장에서 흔한 범위", w - 6, 18, { color: P.faint, size: 11, align: "right" });
+      const L = nar ? 76 : 96, V = nar ? 70 : 84, top = 34, rh = (h - top - 8) / ROWS.length;
+      const tx0 = L + V + 8, tx1 = w - 12;
+      ROWS.forEach((r, i) => {
+        const y = top + rh * i, cy = y + rh / 2, v = card[r.k];
+        if (clue.indexOf(r.k) >= 0) { ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.14; ctx.fillRect(2, y + 2, w - 4, rh - 4); ctx.globalAlpha = 1; }
+        text(ctx, r.name, 6, cy, { color: P.dim, size: 12, base: "middle" });
+        text(ctx, r.f(v), L + V - 4, cy, { color: isFinite(v) ? P.text : P.warn, size: 12.5, base: "middle", align: "right", mono: isFinite(v), weight: 600 });
+        const fx = (x) => { const f = r.log ? Math.log(x / r.lo) / Math.log(r.hi / r.lo) : (x - r.lo) / (r.hi - r.lo); return tx0 + MB.clamp(f, 0, 1) * (tx1 - tx0); };
+        ctx.fillStyle = P.grid; ctx.fillRect(tx0, cy - 2, tx1 - tx0, 4);
+        ctx.fillStyle = P.faint; ctx.globalAlpha = 0.45; ctx.fillRect(fx(r.band[0]), cy - 6, fx(r.band[1]) - fx(r.band[0]), 12); ctx.globalAlpha = 1;
+        if (isFinite(v)) { ctx.beginPath(); ctx.arc(fx(v), cy, 6, 0, TAU); ctx.fillStyle = P.accent; ctx.fill(); }
+      });
+    }, { get height() { return narrow("gs-cv") ? 270 : 280; } });
+    function info(msg) {
+      MB.stat("gs-o-n", Math.min(round, 10) + " <small>/ 10</small>");
+      MB.stat("gs-o-s", score + " <small>개</small>");
+      if (msg != null) MB.stat("gs-o-msg", msg);
+    }
+    info();
+    document.querySelectorAll("#gs-opts .btn").forEach((b) => b.addEventListener("click", () => {
+      if (ans) return;
+      ans = b.dataset.value;
+      const ok = ans === card.t;
+      if (ok) score++;
+      b.classList.add(ok ? "right" : "wrong");
+      if (!ok) document.querySelector('#gs-opts .btn[data-value="' + card.t + '"]').classList.add("right");
+      let msg = (ok ? tone("ok-t", "정답. ") : tone("bad-t", "아니다. 정답은 " + ARCH[card.t].name + ". ")) + ARCH[card.t].why;
+      if (round >= 10) msg += " <b>10문제 끝: " + score + "개 맞힘.</b>";
+      info(msg); cv.redraw();
+    }));
+    $("gs-next").addEventListener("click", () => {
+      if (round >= 10 && ans) { seed++; reset(); }
+      else if (ans) { round++; deal(); }
+      else return;
+      info("카드를 보고 회사 종류를 고른다."); cv.redraw();
+    });
+    $("gs-re").addEventListener("click", () => { seed++; reset(); info("카드를 보고 회사 종류를 고른다."); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 14. 다섯 회사 지표 대시보드 */
+  (function () {
+    const ROWS = [
+      { k: "per", name: "PER", log: true, lo: 2, hi: 100, f: (v) => xf(v) },
+      { k: "pbr", name: "PBR", log: true, lo: 0.1, hi: 10, f: (v) => xf(v, 2) },
+      { k: "psr", name: "PSR", log: true, lo: 0.1, hi: 50, f: (v) => xf(v, 2) },
+      { k: "roe", name: "ROE", lo: -0.3, hi: 0.4, f: (v) => pc(v) },
+      { k: "evEbitda", name: "EV/EBITDA", log: true, lo: 1, hi: 100, f: (v) => xf(v) },
+      { k: "dy", name: "배당수익률", lo: 0, hi: 0.1, f: (v) => pc(v) },
+      { k: "payout", name: "배당성향", lo: 0, hi: 1.5, f: (v) => pc(v, 0) },
+      { k: "debtRatio", name: "부채비율", log: true, lo: 0.1, hi: 30, f: (v) => Math.round(v * 100).toLocaleString("ko-KR") + "%" },
+    ];
+    const co = MB.seg("ds-co", () => cv.redraw());
+    const dp = MB.range("ds-p", (v) => sg(v) + "%", () => cv.redraw());
+    const de = MB.range("ds-e", (v) => sg(v) + "%", () => cv.redraw());
+    function calc() {
+      const c = CO[co()], e = de() / 100;
+      const c2 = Object.assign({}, c, { price: c.price * (1 + dp() / 100), net: c.net + e * Math.abs(c.net), op: c.op + e * Math.abs(c.op) });
+      const r = ST.ratios(c2);
+      if (c.sector === "금융") r.evEbitda = NaN;
+      return { c, c2, r };
+    }
+    function flags(c, r) {
+      const F = [];
+      if (!isFinite(r.per)) F.push(["warn", "적자: PER을 계산할 수 없다. PSR과 현금 소진 속도(5장)로 본다."]);
+      if (c.sector === "반도체" && r.per < 7) F.push(["warn", "경기 정점 의심: 경기민감주의 낮은 PER은 이익이 꼭대기라는 신호일 수 있다."]);
+      if (r.pbr < 1) F.push(["dim", "PBR 1배 미만: 자본이 요구수익률만큼 벌지 못한다고 시장이 보는 것일 수 있다."]);
+      if (r.per > 40) F.push(["warn", "PER 40배 초과: 높은 성장이 오래 이어져야 정당화되는 값이다."]);
+      if (r.payout > 1) F.push(["bad", "배당성향 100% 초과: 번 돈보다 많이 나눠 준다. 오래 가기 어렵다."]);
+      if (r.dy >= 0.0599) F.push(["warn", "배당수익률 6% 이상: 주가 하락이나 배당 축소 위험 때문은 아닌지 본다."]);
+      if (r.debtRatio > 3) F.push(["dim", c.sector === "금융" ? "부채비율이 매우 높지만 은행은 예금이 부채라 정상 범위가 다르다. EV/EBITDA도 쓰지 않는다." : "부채비율 300% 초과: 불황에 손실이 크게 불어난다."]);
+      if (!F.length) F.push(["ok", "눈에 띄는 경고 없음. 그래도 지표는 가격표일 뿐 가치 판단이 아니다."]);
+      return F;
+    }
+    const cv = MB.canvas("#ds-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ds-cv"), { c, c2, r } = calc(), si = sectOf(co());
+      const L = nar ? 74 : 86, V = nar ? 64 : 78, rh = 28, top = 26, tx0 = L, tx1 = w - V - 10;
+      text(ctx, c.name + " · " + c.sector + " · 띠: 업종 10~90 백분위", 4, 14, { color: P.dim, size: 11.5 });
+      ROWS.forEach((row, i) => {
+        const cy = top + rh * i + rh / 2, v = r[row.k];
+        const fx = (x) => { const f = row.log ? Math.log(x / row.lo) / Math.log(row.hi / row.lo) : (x - row.lo) / (row.hi - row.lo); return tx0 + MB.clamp(f, 0, 1) * (tx1 - tx0); };
+        text(ctx, row.name, 4, cy, { color: P.text, size: 12, base: "middle", weight: 600 });
+        ctx.fillStyle = P.grid; ctx.fillRect(tx0, cy - 2, tx1 - tx0, 4);
+        if (["per", "pbr", "roe", "dy"].indexOf(row.k) >= 0) {
+          const vals = sectVals(si, row.k);
+          const a = ST.percentile(vals, 0.1), b = ST.percentile(vals, 0.9);
+          ctx.fillStyle = P.accent; ctx.globalAlpha = 0.18; ctx.fillRect(fx(a), cy - 7, Math.max(2, fx(b) - fx(a)), 14); ctx.globalAlpha = 1;
+        }
+        if (isFinite(v)) {
+          const out = row.log ? v < row.lo || v > row.hi : v < row.lo || v > row.hi;
+          knob(ctx, fx(v), cy, P, 6, out ? P.warn : coColor(co(), P));
+          text(ctx, row.f(v), w - 4, cy, { color: P.text, size: 12, base: "middle", align: "right", mono: true, weight: 600 });
+        } else text(ctx, row.k === "evEbitda" && c.sector === "금융" ? "쓰지 않음" : row.k === "payout" ? "—" : "적자", w - 4, cy, { color: P.warn, size: 11.5, base: "middle", align: "right" });
+      });
+      let y = top + rh * ROWS.length + 14;
+      ctx.font = MB.font(12);
+      flags(c, r).forEach(([t, s]) => {
+        const col = t === "bad" ? P.bad : t === "warn" ? P.warn : t === "ok" ? P.ok : P.dim;
+        wrap(ctx, s, w - 22).forEach((ln, j) => { if (y > h - 4) return; if (!j) { ctx.beginPath(); ctx.arc(8, y - 4, 3, 0, TAU); ctx.fillStyle = col; ctx.fill(); } text(ctx, ln, 18, y, { color: t === "dim" ? P.dim : col, size: 12 }); y += 17; });
+        y += 3;
+      });
+      MB.stat("ds-o-p", MB.price(c2.price));
+      MB.stat("ds-o-per", isFinite(r.per) ? xf(r.per) : tone("warn-t", "적자"));
+      MB.stat("ds-o-pbr", xf(r.pbr, 2));
+      MB.stat("ds-o-roe", tone(MB.tone(r.roe), pc(r.roe)));
+    }, { get height() { return narrow("ds-cv") ? 380 : 350; } });
+  })();
+})();
+</script>
+</body>
+</html>

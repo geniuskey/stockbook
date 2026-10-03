@@ -1,0 +1,1345 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "기업의 값은 미래 현금흐름의 현재가치다. 할인 사다리, CAPM과 WACC, 잉여현금흐름, DCF와 터미널 가치, 민감도 히트맵, 고든 성장 모형, 역DCF, 멀티플 비교, 몬테카를로와 시나리오, 안전마진을 직접 움직이며 한빛반도체의 가치를 점이 아니라 범위로 구한다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>가치평가 · StockBook</title>
+<meta name="description" content="기업의 값은 미래 현금흐름의 현재가치다. 할인 사다리, CAPM과 WACC, 잉여현금흐름, DCF와 터미널 가치, 민감도 히트맵, 고든 성장 모형, 역DCF, 멀티플 비교, 몬테카를로와 시나리오, 안전마진을 직접 움직이며 한빛반도체의 가치를 점이 아니라 범위로 구한다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/valuation.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="가치평가 · StockBook">
+<meta property="og:description" content="기업의 값은 미래 현금흐름의 현재가치다. 할인 사다리, CAPM과 WACC, 잉여현금흐름, DCF와 터미널 가치, 민감도 히트맵, 고든 성장 모형, 역DCF, 멀티플 비교, 몬테카를로와 시나리오, 안전마진을 직접 움직이며 한빛반도체의 가치를 점이 아니라 범위로 구한다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/valuation.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/valuation.html#chapter","name":"가치평가","headline":"가치평가 · StockBook","description":"기업의 값은 미래 현금흐름의 현재가치다. 할인 사다리, CAPM과 WACC, 잉여현금흐름, DCF와 터미널 가치, 민감도 히트맵, 고든 성장 모형, 역DCF, 멀티플 비교, 몬테카를로와 시나리오, 안전마진을 직접 움직이며 한빛반도체의 가치를 점이 아니라 범위로 구한다.","url":"https://stockbook.euiyun.com/chapters/valuation.html","position":7,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"7. 가치평가","item":"https://stockbook.euiyun.com/chapters/valuation.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  figure.diagram svg { max-width: 520px; margin: 0 auto; }
+  figure.diagram svg .t-mono { font-size: 12px; }
+</style>
+</head>
+<body data-chapter="valuation">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 07</div>
+    <h1>가치평가</h1>
+    <p class="lead">한빛반도체 한 주는 오늘 72,000원에 거래된다. 이 숫자는 가격이다. 그렇다면 이 한 주는 얼마<b>짜리</b>인가? 가격은 화면에 뜨지만 가치는 어디에도 쓰여 있지 않다. 이 장은 가치를 직접 계산한다. 회사가 앞으로 벌어들일 현금을 하나씩 오늘의 돈으로 바꿔 더하는 방법, 그 계산이 어떤 가정 몇 개에 얼마나 크게 흔들리는지, 그리고 그 흔들림을 숨기지 않고 "가치는 이 정도 범위"라고 말하는 법을 손으로 익힌다.</p>
+    <ul class="objectives">
+      <li>가치를 "미래 현금흐름의 현재가치"로 정의하고, 할인율이 먼 미래의 돈을 얼마나 줄이는지 감각으로 익힌다.</li>
+      <li>할인율을 요구수익률로 이해하고 CAPM과 WACC로 어림한다.</li>
+      <li>잉여현금흐름(FCF)을 만들고, 예측 기간과 터미널 가치로 나눈 DCF로 한빛반도체의 주당 가치를 구한다.</li>
+      <li>터미널 가치가 전체 가치의 대부분이라는 사실과, 영구성장률이 할인율에 다가갈수록 가치가 폭발하는 이유를 설명한다.</li>
+      <li>고든 성장 모형과 2단계 배당할인, 역DCF, 멀티플 평가를 쓰고 서로 비교한다.</li>
+      <li>시나리오·몬테카를로·민감도로 가치를 범위로 표현하고, 안전마진으로 "살 가격"을 정한다.</li>
+    </ul>
+  </header>
+
+  <section id="price-value">
+    <h2>가격과 가치는 다르다</h2>
+    <p><a href="ratios.html">6장</a>에서 한빛반도체의 PER이 10이라는 것을 보았다. 주가 72,000원이 한 주당 이익 7,200원의 10배라는 뜻이다. 하지만 PER 10이 싼지 비싼지는 PER만으로는 알 수 없었다. 이익이 앞으로 두 배가 될 회사라면 PER 10은 헐값이고, 이익이 반토막 날 회사라면 비싸다. 결국 질문은 <b>앞으로</b> 이 회사가 얼마를 벌어 주느냐로 돌아온다.</p>
+    <p>주식을 산다는 것은 회사가 앞으로 만들어 낼 현금에 대한 몫을 사는 것이다(<a href="overview.html">1장</a>). 그러니 한 주의 <span class="term">내재가치</span><span class="en">(Intrinsic value)</span>는 그 몫으로 앞으로 받을 현금을 모두 더한 값이어야 한다. 다만 그냥 더하면 안 된다. 10년 뒤의 100만원은 오늘의 100만원보다 덜 귀하다. 오늘 100만원이 있으면 예금에만 넣어도 10년 뒤에는 그보다 많아지기 때문이다. <a href="https://moneybook.euiyun.com/chapters/interest.html">MoneyBook 4장</a>에서 본 복리를 거꾸로 돌리는 셈이다. 미래의 돈을 오늘의 돈으로 바꾸는 일을 <span class="term">할인</span><span class="en">(Discounting)</span>이라 하고, 바꾼 값을 <span class="term">현재가치</span><span class="en">(Present value)</span>라 한다.</p>
+    <div class="callout">
+      <strong>이 장의 한 문장</strong>
+      <p>가치 = 앞으로 받을 현금흐름을 각각 할인해서 더한 값. 이 장의 모든 시뮬레이터는 이 한 문장의 부품을 하나씩 움직여 본다. 무엇을 현금흐름으로 볼지, 얼마로 할인할지, 얼마나 먼 미래까지 셀지.</p>
+    </div>
+  </section>
+
+  <section id="discount">
+    <h2>할인: 내일의 돈을 오늘의 돈으로</h2>
+    <p>연 9%를 벌 수 있는 사람에게 1년 뒤의 100만원은 오늘의 약 91.7만원과 같다. 오늘 91.7만원을 9%로 1년 굴리면 100만원이 되기 때문이다. 2년 뒤라면 두 번 나눠 약 84.2만원, t년 뒤라면 \((1+r)^t\)로 나눈다. 앞으로 받을 현금흐름이 여러 해에 걸쳐 있으면 각각 이렇게 줄인 다음 더한다.</p>
+    <div class="formula">$$PV = \frac{CF_1}{1+r} + \frac{CF_2}{(1+r)^2} + \cdots + \frac{CF_N}{(1+r)^N} = \sum_{t=1}^{N} \frac{CF_t}{(1+r)^t}$$<div class="where">\(CF_t\)는 t년 뒤에 받는 현금흐름, \(r\)은 할인율(1년에 요구하는 수익률)이다. 할인율이 클수록, 받는 날이 멀수록 현재가치는 작아진다.</div></div>
+    <p>아래는 앞으로 10년 동안 해마다 100만원씩 받는 약속이다. 점선 상자가 명목 금액, 채운 막대가 오늘의 가치다. "할인 재생"을 누르면 막대가 한 해씩 줄어든다. 할인율 슬라이더를 0%에서 20%까지 움직여 먼 해의 막대가 얼마나 더 빨리 녹는지 보자.</p>
+
+    <div class="sim" id="sim-ladder">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>할인 사다리: 해마다 받는 100만원의 오늘 가치</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ld-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>할인율 <output id="ld-r-out"></output></span><input type="range" id="ld-r" min="0" max="0.2" step="0.005" value="0.09"></label>
+          <div class="btn-row"><button class="btn primary" id="ld-play">할인 재생</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">명목 합계</span><span class="v" id="ld-o-nom">—</span></div>
+        <div class="stat"><span class="k">현재가치 합계</span><span class="v" id="ld-o-pv">—</span></div>
+        <div class="stat"><span class="k">10년 뒤 100만원</span><span class="v" id="ld-o-10">—</span></div>
+        <div class="stat"><span class="k">가치가 반이 되는 해</span><span class="v" id="ld-o-half">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 할인율 0%에서는 막대가 줄지 않는다. 시간이 공짜인 세상이다. ② 9%에서 10년째 막대가 약 42만원으로 줄어드는 것을 본다. ③ 20%로 올리면 10년째 100만원이 약 16만원밖에 되지 않는다. 할인율이 높으면 먼 미래는 거의 0이 된다. (매년 말에 한 번 받는다고 가정)</div>
+    </div>
+
+    <p>할인율 9%에서 10년 동안 받는 1,000만원의 현재가치는 약 642만원이다. 10년째 받는 100만원은 약 42만원, 30년째 받는 100만원은 약 7.5만원에 불과하다. 두 가지를 기억하자. 첫째, <b>할인율이 조금만 바뀌어도 먼 미래의 가치가 크게 바뀐다.</b> 둘째, 그런데도 먼 미래는 0이 아니다. 회사는 10년 뒤에도, 30년 뒤에도 돈을 벌 수 있고, 그 꼬리를 모두 합치면 생각보다 크다. 이 두 사실이 이 장 내내 다시 나온다.</p>
+  </section>
+
+  <section id="rate">
+    <h2>할인율은 어디서 오는가</h2>
+    <p>할인율은 "이 돈을 여기에 묶어 두는 대가로 최소한 이만큼은 벌어야 한다"는 <span class="term">요구수익률</span><span class="en">(Required return)</span>이다. 다른 데 넣었으면 벌었을 수익, 즉 기회비용이다. 떼일 걱정이 거의 없는 국채가 연 3.5%를 준다면, 그보다 훨씬 흔들리는 주식에는 그 이상을 요구하는 것이 당연하다. 얼마나 더 요구할지는 그 주식이 얼마나 위험한지에 달렸다.</p>
+    <p>가장 널리 쓰는 어림법이 <span class="term">CAPM</span><span class="en">(Capital Asset Pricing Model, 자본자산가격결정모형)</span>이다. 주식의 위험 가운데 여러 종목을 섞어도 사라지지 않는 시장 전체의 흔들림만 보상받는다고 보고, 그 크기를 <span class="term">베타</span><span class="en">(Beta, β)</span>로 잰다. 베타는 시장이 1% 움직일 때 그 주식이 평균 몇 % 움직이는지다. 베타 1.3인 한빛반도체는 시장보다 30% 더 크게 출렁인다. 베타를 재는 법은 <a href="risk.html">13장</a>, CAPM이 나오는 이론은 <a href="portfolio.html">14장</a>에서 다시 다룬다.</p>
+    <div class="formula">$$r_E = r_f + \beta \times (r_M - r_f)$$<div class="where">\(r_f\)는 무위험 수익률(국채 금리), \(r_M - r_f\)는 시장 위험 프리미엄(주식시장 전체가 국채보다 더 벌 것으로 기대하는 몫)이다. 이 장은 교육용 가정으로 \(r_f\) = 3.5%, 시장 위험 프리미엄 = 5.5%를 쓴다. 한빛반도체는 3.5% + 1.3 × 5.5% = 10.65%다.</div></div>
+    <p>아래 그림의 선이 <span class="term">증권시장선</span><span class="en">(Security Market Line)</span>이다. 다섯 회사의 베타를 이 선 위에 찍으면 각자의 요구수익률이 나온다. 슬라이더로 국채 금리를 올리거나, 시장 점(β = 1)을 위아래로 끌어 위험 프리미엄을 바꿔 보자.</p>
+
+    <div class="sim" id="sim-capm">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>증권시장선 위의 다섯 회사</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cp-cv"></canvas><span class="hint">위아래로 끌어 위험 프리미엄을 바꾼다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>무위험 수익률(국채) <output id="cp-rf-out"></output></span><input type="range" id="cp-rf" min="0.01" max="0.06" step="0.0025" value="0.035"></label>
+          <label class="ctrl"><span>시장 위험 프리미엄 <output id="cp-mrp-out"></output></span><input type="range" id="cp-mrp" min="0.02" max="0.09" step="0.0025" value="0.055"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">누리식품 β0.6</span><span class="v" id="cp-o-nuri">—</span></div>
+        <div class="stat"><span class="k">다온은행 β0.9</span><span class="v" id="cp-o-daon">—</span></div>
+        <div class="stat"><span class="k">모아플랫폼 β1.2</span><span class="v" id="cp-o-moa">—</span></div>
+        <div class="stat"><span class="k">한빛반도체 β1.3</span><span class="v" id="cp-o-hanbit">—</span></div>
+        <div class="stat"><span class="k">별빛바이오 β1.5</span><span class="v" id="cp-o-byeol">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 국채 금리를 1%p 올리면 다섯 회사의 요구수익률이 모두 1%p씩 오른다(선 전체가 위로 평행 이동). ② 위험 프리미엄을 키우면 선이 가팔라지고, 베타가 큰 회사일수록 요구수익률이 더 크게 오른다. ③ 별빛바이오와 누리식품의 차이가 프리미엄에 따라 얼마나 벌어지는지 본다. (베타는 엔진의 가상값, 금리와 프리미엄은 교육용 가정)</div>
+    </div>
+
+    <p>회사는 주주 돈만 쓰지 않는다. 한빛반도체는 은행과 채권자에게서 2조원을 빌렸다. 회사 전체가 벌어들이는 현금은 주주와 채권자가 나눠 가지므로, 회사 전체의 현금흐름을 할인할 때는 두 사람의 요구수익률을 각자의 몫만큼 섞은 <span class="term">가중평균자본비용</span><span class="en">(WACC, Weighted Average Cost of Capital)</span>을 쓴다. 이자는 비용으로 처리되어 세금을 줄여 주므로 부채의 비용에는 \((1-t)\)를 곱한다.</p>
+    <div class="formula">$$\text{WACC} = w_E\, r_E + w_D\, r_D\,(1-t)$$<div class="where">\(w_E = E/(D+E)\)와 \(w_D = D/(D+E)\)는 자기자본과 부채의 비중이다. E는 자기자본의 시장가치(시가총액 7.2조원), D는 부채 2조원, \(r_D\)는 빌린 돈의 이자율(가정 5%), t는 법인세율(가정 24%)이다. 한빛반도체는 0.783 × 10.65% + 0.217 × 5% × 0.76 ≈ 9.16%, 이 장에서는 반올림해 <b>9%</b>를 쓴다.</div></div>
+    <p>아래 그림에서 사각형의 폭은 자본의 비중, 높이는 그 자본의 비용이다. WACC는 두 사각형의 넓이를 합해 폭 전체로 나눈 높이, 곧 평균 높이다.</p>
+
+    <div class="sim" id="sim-wacc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>WACC: 두 자본 비용의 넓이 평균</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="wc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>부채 비중 D/(D+E) <output id="wc-d-out"></output></span><input type="range" id="wc-d" min="0" max="0.7" step="0.001" value="0.217"></label>
+          <label class="ctrl"><span><span>자기자본 비용 r<sub>E</sub></span> <output id="wc-re-out"></output></span><input type="range" id="wc-re" min="0.06" max="0.16" step="0.0005" value="0.1065"></label>
+          <label class="ctrl"><span><span>부채 이자율 r<sub>D</sub></span> <output id="wc-rd-out"></output></span><input type="range" id="wc-rd" min="0.02" max="0.1" step="0.0025" value="0.05"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">WACC</span><span class="v" id="wc-o-w">—</span></div>
+        <div class="stat"><span class="k">세후 부채 비용</span><span class="v" id="wc-o-rd">—</span></div>
+        <div class="stat"><span class="k">자기자본 몫</span><span class="v" id="wc-o-e">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 부채 비중을 0으로 내리면 WACC가 자기자본 비용 10.65%와 같아진다. ② 부채 비중을 키우면 싼 부채 덕에 WACC가 내려가는 것처럼 보인다. ③ 하지만 실제로는 빚이 많을수록 주주가 지는 위험이 커져 자기자본 비용과 이자율이 함께 오른다. 부채 비중을 60%로 올리면서 r<sub>E</sub>를 14%, r<sub>D</sub>를 8%로 올려 보면 WACC가 다시 올라간다. (법인세율 24% 가정)</div>
+    </div>
+
+    <p>빚이 공짜 점심처럼 보이는 것은 착시다. 부채가 늘면 회사가 망할 위험이 커지고, 주주와 채권자 모두 더 많은 보상을 요구한다. 그래서 실무에서는 회사의 실제 자본 구조를 그대로 쓰고, WACC를 0.5%p나 1%p 바꿔 가며 결과가 얼마나 흔들리는지를 함께 본다. 이 장도 그렇게 한다.</p>
+  </section>
+
+  <section id="fcf">
+    <h2>무엇을 할인하는가: 잉여현금흐름</h2>
+    <p>할인할 현금흐름으로 순이익을 쓰면 안 될까? 회계 이익은 실제 현금과 다르다(<a href="statements.html">5장</a>). 반도체 회사는 공장 설비를 계속 사야 이익을 낼 수 있다. 설비투자에 쓴 돈은 주주에게 돌아갈 수 없는 돈이다. 회사가 사업을 유지하고 키우는 데 필요한 돈을 모두 쓰고 나서 주주와 채권자에게 <b>자유롭게 나눠 줄 수 있는 현금</b>을 <span class="term">잉여현금흐름</span><span class="en">(FCF, Free Cash Flow)</span>이라 한다.</p>
+    <p>한빛반도체의 영업이익 9,000억원에서 출발해 한 단계씩 FCF를 만들어 보자. "다음 단계"를 눌러 막대를 하나씩 세우고, 설비투자와 운전자본을 움직여 FCF가 어떻게 바뀌는지 본다.</p>
+
+    <div class="sim" id="sim-fcf">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>영업이익에서 잉여현금흐름까지</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="fc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>설비투자 <output id="fc-capex-out"></output></span><input type="range" id="fc-capex" min="4000" max="11000" step="100" value="7700"></label>
+          <label class="ctrl"><span>운전자본 증가 <output id="fc-wc-out"></output></span><input type="range" id="fc-wc" min="-1000" max="2000" step="100" value="500"></label>
+          <div class="btn-row"><button class="btn primary" id="fc-next">다음 단계</button><button class="btn" id="fc-all">한 번에</button><button class="btn" id="fc-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">잉여현금흐름</span><span class="v" id="fc-o-f">—</span></div>
+        <div class="stat"><span class="k">순이익 대비</span><span class="v" id="fc-o-r">—</span></div>
+        <div class="stat"><span class="k">FCF 수익률(시총 대비)</span><span class="v" id="fc-o-y">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 감가상각 6,000억원은 장부에서는 비용이지만 현금이 나가지 않으므로 다시 더한다. ② 설비투자를 1조 1,000억원으로 늘리면 순이익은 그대로인데 FCF가 크게 준다. 성장을 위해 투자하는 해의 모습이다. ③ 운전자본(재고·매출채권)이 늘면 이익은 났어도 현금은 묶인다. (세금은 영업이익의 20%로 단순화)</div>
+    </div>
+
+    <p>기본값에서 한빛반도체의 FCF는 9,000 − 1,800 + 6,000 − 7,700 − 500 = <b>5,000억원</b>이다. 시가총액 7.2조원 대비 약 6.9%다. 순이익(7,200억원)보다 작은 것은 설비를 사는 데 돈이 계속 들어가기 때문이다. 이제 이 5,000억원이 앞으로 어떻게 자랄지를 가정하고, 각각을 9%로 할인해 더하면 회사의 가치가 나온다.</p>
+  </section>
+
+  <section id="dcf">
+    <h2>DCF: 몇 년은 예측하고, 나머지는 한 줄로</h2>
+    <p><span class="term">현금흐름할인법</span><span class="en">(DCF, Discounted Cash Flow)</span>은 이렇게 진행한다. 첫째, 앞으로 몇 년(<span class="term">예측 기간</span>, 보통 5~10년)의 FCF를 한 해씩 예측한다. 둘째, 그 뒤로는 해마다 일정한 비율로 영원히 자란다고 보고 한꺼번에 값을 매긴다. 이것이 <span class="term">터미널 가치</span><span class="en">(Terminal value, 잔존가치)</span>다. 셋째, 모두 WACC로 할인해 더하면 회사 전체의 값인 <span class="term">기업가치</span><span class="en">(EV, Enterprise value)</span>가 나온다. 넷째, 여기서 채권자 몫인 순부채를 빼고 주식 수로 나누면 주당 가치다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 300" role="img" aria-label="DCF 계산의 흐름: 미래 현금흐름과 터미널 가치를 할인해 기업가치를 만들고 순부채를 빼서 주당 가치를 구한다">
+        <defs><marker id="vl-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <text class="lbl-dim" x="14" y="20">미래의 돈(명목)</text>
+        <line class="s-axis" x1="14" y1="112" x2="282" y2="112"/>
+        <rect class="f-acc-soft" x="20" y="66" width="30" height="46"/>
+        <rect class="f-acc-soft" x="56" y="62" width="30" height="50"/>
+        <rect class="f-acc-soft" x="92" y="58" width="30" height="54"/>
+        <rect class="f-acc-soft" x="128" y="54" width="30" height="58"/>
+        <rect class="f-acc-soft" x="164" y="50" width="30" height="62"/>
+        <rect class="f-acc2-soft" x="214" y="28" width="62" height="84"/>
+        <path class="s-dash" d="M214 40 L222 34 L230 40 L238 34 L246 40 L254 34 L262 40 L270 34 L276 38" fill="none"/>
+        <g class="t-mono"><text x="35" y="128" text-anchor="middle">1</text><text x="71" y="128" text-anchor="middle">2</text><text x="107" y="128" text-anchor="middle">3</text><text x="143" y="128" text-anchor="middle">4</text><text x="179" y="128" text-anchor="middle">5년</text></g>
+        <text class="lbl-acc2" x="245" y="76" text-anchor="middle">터미널</text>
+        <text class="lbl-dim" x="245" y="128" text-anchor="middle">6년 이후 전부</text>
+        <line class="s-acc" x1="148" y1="138" x2="148" y2="164" marker-end="url(#vl-ar)"/>
+        <text class="lbl-acc" x="158" y="156">÷ (1 + WACC)ᵗ 로 할인</text>
+        <text class="lbl-dim" x="14" y="184">오늘의 돈(현재가치)</text>
+        <line class="s-axis" x1="14" y1="262" x2="282" y2="262"/>
+        <rect class="f-acc" x="20" y="222" width="30" height="40"/>
+        <rect class="f-acc" x="56" y="223" width="30" height="39"/>
+        <rect class="f-acc" x="92" y="224" width="30" height="38"/>
+        <rect class="f-acc" x="128" y="224" width="30" height="38"/>
+        <rect class="f-acc" x="164" y="225" width="30" height="37"/>
+        <rect class="f-acc2" x="214" y="198" width="62" height="64"/>
+        <text class="lbl-dim" x="107" y="282" text-anchor="middle">예측 기간 합 2.4조</text>
+        <text class="lbl-dim" x="245" y="282" text-anchor="middle">6.96조</text>
+        <line class="s-line" x1="288" y1="230" x2="318" y2="230" marker-end="url(#vl-ar)"/>
+        <rect class="f-elev" x="324" y="24" width="128" height="40" rx="6"/>
+        <text class="lbl-b" x="388" y="42" text-anchor="middle">기업가치(EV)</text>
+        <text class="t-mono" x="388" y="57" text-anchor="middle">9.39조</text>
+        <rect class="f-elev" x="324" y="84" width="128" height="40" rx="6"/>
+        <text class="lbl" x="388" y="102" text-anchor="middle">− 순부채</text>
+        <text class="t-mono" x="388" y="117" text-anchor="middle">1조</text>
+        <rect class="f-elev" x="324" y="144" width="128" height="40" rx="6"/>
+        <text class="lbl-b" x="388" y="162" text-anchor="middle">주주가치</text>
+        <text class="t-mono" x="388" y="177" text-anchor="middle">8.39조</text>
+        <rect class="f-elev" x="324" y="204" width="128" height="40" rx="6"/>
+        <text class="lbl" x="388" y="222" text-anchor="middle">÷ 주식 수</text>
+        <text class="t-mono" x="388" y="237" text-anchor="middle">1억 주</text>
+        <rect class="f-acc-soft" x="324" y="256" width="128" height="34" rx="6"/>
+        <text class="lbl-acc" x="388" y="278" text-anchor="middle">주당 약 8.4만원</text>
+        <line class="s-line" x1="388" y1="64" x2="388" y2="82" marker-end="url(#vl-ar)"/>
+        <line class="s-line" x1="388" y1="124" x2="388" y2="142" marker-end="url(#vl-ar)"/>
+        <line class="s-line" x1="388" y1="184" x2="388" y2="202" marker-end="url(#vl-ar)"/>
+        <line class="s-line" x1="388" y1="244" x2="388" y2="254" marker-end="url(#vl-ar)"/>
+        <path class="s-line" d="M318 230 Q306 44 322 44" fill="none" marker-end="url(#vl-ar)"/>
+      </svg>
+      <figcaption><b>그림 7-1. DCF의 흐름.</b> 5년 동안의 FCF는 해마다 8%씩 자라지만 할인하면 거의 같은 높이가 된다. 터미널 가치는 명목으로 약 10.7조원이고, 할인해도 6.96조원으로 다섯 해를 합친 것(2.43조원)의 세 배에 가깝다. 둘을 더한 기업가치에서 순부채를 빼고 주식 수로 나눈다.</figcaption>
+    </figure>
+
+    <p>왜 순부채를 빼는가? 집으로 생각하면 쉽다. 5억원짜리 집에 대출이 2억원 끼어 있으면 집주인의 몫은 3억원이다. 기업가치는 집값, 주주가치는 대출을 뺀 집주인의 몫이다. 한빛반도체의 차입금은 2조원, 가진 현금은 1조원이므로 <span class="term">순부채</span><span class="en">(Net debt)</span>는 1조원이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 440 240" role="img" aria-label="집값과 기업가치의 비유: 집값은 집주인 몫과 대출, 기업가치는 주주가치와 순부채로 나뉜다">
+        <text class="lbl-b" x="110" y="20" text-anchor="middle">집</text>
+        <text class="lbl-b" x="330" y="20" text-anchor="middle">한빛반도체</text>
+        <rect class="f-acc-soft" x="70" y="34" width="80" height="108"/>
+        <rect class="f-down-soft" x="70" y="142" width="80" height="72"/>
+        <text class="lbl" x="110" y="84" text-anchor="middle">내 몫</text>
+        <text class="t-mono" x="110" y="102" text-anchor="middle">3억</text>
+        <text class="lbl" x="110" y="174" text-anchor="middle">대출</text>
+        <text class="t-mono" x="110" y="192" text-anchor="middle">2억</text>
+        <line class="s-dash" x1="60" y1="34" x2="40" y2="34"/><line class="s-dash" x1="60" y1="214" x2="40" y2="214"/>
+        <line class="s-line" x1="48" y1="36" x2="48" y2="212" marker-start="url(#vl-ar)" marker-end="url(#vl-ar)"/>
+        <text class="lbl-dim" x="36" y="128" text-anchor="middle" transform="rotate(-90 36 128)">집값 5억</text>
+        <rect class="f-acc-soft" x="290" y="34" width="80" height="160"/>
+        <rect class="f-down-soft" x="290" y="194" width="80" height="20"/>
+        <text class="lbl" x="330" y="104" text-anchor="middle">주주가치</text>
+        <text class="t-mono" x="330" y="122" text-anchor="middle">8.39조</text>
+        <text class="lbl" x="384" y="208">순부채 1조</text>
+        <line class="s-dash" x1="280" y1="34" x2="260" y2="34"/><line class="s-dash" x1="280" y1="214" x2="260" y2="214"/>
+        <line class="s-line" x1="268" y1="36" x2="268" y2="212" marker-start="url(#vl-ar)" marker-end="url(#vl-ar)"/>
+        <text class="lbl-dim" x="256" y="124" text-anchor="middle" transform="rotate(-90 256 124)">기업가치 9.39조</text>
+        <text class="lbl-dim" x="220" y="234" text-anchor="middle">주식을 사는 사람은 위쪽 칸만 산다</text>
+      </svg>
+      <figcaption><b>그림 7-2. 기업가치와 주주가치.</b> 회사가 버는 현금은 먼저 채권자에게 가고 나머지가 주주에게 간다. 같은 기업가치라도 빚이 많으면 주주 몫이 작다. 반대로 빚보다 현금이 많은 회사(모아플랫폼, 순현금 7,000억원)는 그 현금이 주주 몫에 더해진다.</figcaption>
+    </figure>
+
+    <p>터미널 가치는 예측 기간 마지막 해의 FCF가 이듬해부터 해마다 g씩 영원히 자란다고 보고 계산한다. 영원히 이어지는 등비수열의 합이라 식이 짧다.</p>
+    <div class="formula">$$TV_N = \frac{FCF_N \times (1+g)}{\text{WACC} - g}$$<div class="where">\(FCF_N\)은 예측 기간 마지막 해(N년)의 FCF, g는 <span class="term">영구성장률</span><span class="en">(Terminal growth)</span>이다. 회사가 경제 전체보다 영원히 빨리 클 수는 없으므로 보통 장기 물가상승률이나 경제성장률 근처(1~3%)로 잡는다. 이렇게 구한 \(TV_N\)은 N년 시점의 값이므로 다시 \((1+\text{WACC})^N\)으로 할인한다.</div></div>
+    <p>이제 한빛반도체를 직접 평가해 보자. 기본값은 FCF 5,000억원, 5년 동안 연 8% 성장, WACC 9%, 영구성장률 2%다. 위쪽 막대는 할인한 현금흐름이 쌓여 주주가치가 되는 과정이고, 아래 띠는 그 결과인 주당 가치를 현재가 72,000원과 비교한다.</p>
+
+    <div class="sim" id="sim-dcf">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>한빛반도체 DCF 계산기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dc-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>올해 FCF</span>
+            <div class="seg" id="dc-f"><button data-value="4000">4,000억</button><button data-value="5000" class="on">5,000억</button><button data-value="6000">6,000억</button></div>
+          </div>
+          <label class="ctrl"><span>5년 성장률 <output id="dc-g-out"></output></span><input type="range" id="dc-g" min="-0.05" max="0.2" step="0.005" value="0.08"></label>
+          <label class="ctrl"><span>WACC <output id="dc-w-out"></output></span><input type="range" id="dc-w" min="0.06" max="0.14" step="0.0025" value="0.09"></label>
+          <label class="ctrl"><span>영구성장률 <output id="dc-tg-out"></output></span><input type="range" id="dc-tg" min="0" max="0.04" step="0.0025" value="0.02"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주당 가치</span><span class="v" id="dc-o-v">—</span></div>
+        <div class="stat"><span class="k">현재가 72,000원 대비</span><span class="v" id="dc-o-d">—</span></div>
+        <div class="stat"><span class="k">터미널 가치 비중</span><span class="v" id="dc-o-tv">—</span></div>
+        <div class="stat"><span class="k">기업가치</span><span class="v" id="dc-o-ev">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값에서 주당 가치가 약 83,900원, 현재가보다 약 17% 높은 것을 확인한다. ② 성장률을 0%로 내리면 얼마가 되는가? ③ WACC를 1%p만 올려 10%로 해 본다. 성장률 4%p를 바꾼 것과 비슷한 효과다. ④ 어느 막대가 가장 큰지 본다. (순부채 1조원, 주식 1억 주. 세금·투자 계획은 FCF 안에 들어 있다고 가정)</div>
+    </div>
+
+    <p>기본값의 계산을 따라가면 이렇다. 1~5년 FCF는 5,400억원에서 7,347억원까지 자라고, 할인한 합은 약 2조 4,320억원이다. 5년째 FCF에 1.02를 곱해 7%(= 9% − 2%)로 나눈 터미널 가치는 약 10조 7,051억원이고, 이를 5년 할인하면 약 6조 9,576억원이다. 더하면 기업가치 약 9조 3,896억원, 순부채 1조원을 빼면 주주가치 약 8조 3,896억원, 1억 주로 나누면 <b>주당 약 83,896원</b>이다. 현재가 72,000원보다 약 16.5% 높다.</p>
+    <p>그런데 막대를 보면 이상한 점이 있다. 공들여 한 해씩 예측한 다섯 해를 모두 합쳐도, 한 줄짜리 식으로 구한 터미널 가치보다 훨씬 작다. 얼마나 작은지 도넛으로 보자. 예측 기간을 늘리면 비중이 어떻게 바뀌는지도 본다.</p>
+
+    <div class="sim" id="sim-tv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>가치의 몇 %가 터미널 가치인가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="tv-cv"></canvas><span class="hint">도넛 조각에 마우스를 올린다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>예측 기간 <output id="tv-n-out"></output></span><input type="range" id="tv-n" min="3" max="20" step="1" value="5"></label>
+          <label class="ctrl"><span>영구성장률 <output id="tv-tg-out"></output></span><input type="range" id="tv-tg" min="0" max="0.04" step="0.0025" value="0.02"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">터미널 비중</span><span class="v" id="tv-o-s">—</span></div>
+        <div class="stat"><span class="k">예측 기간 현재가치</span><span class="v" id="tv-o-a">—</span></div>
+        <div class="stat"><span class="k">터미널 현재가치</span><span class="v" id="tv-o-b">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본(5년, 2%)에서 터미널 비중이 약 74%다. ② 예측 기간을 10년으로 늘려도 여전히 절반 이상(약 58%)이다. ③ 영구성장률을 3%, 4%로 올리면 터미널 비중이 어떻게 되는가? 선 그래프는 영구성장률을 고정했을 때 예측 기간별 비중이다. (예측 기간 내내 성장률 8%, WACC 9%)</div>
+    </div>
+
+    <p>기본 가정에서 한빛반도체 가치의 약 <b>74%</b>가 6년째 이후, 즉 아무도 구체적으로 예측하지 않은 먼 미래에서 나온다. 예측 기간을 3년으로 줄이면 83%, 20년으로 늘려도 40%다. DCF는 정밀한 계산처럼 보이지만, 실제로는 "이 회사가 먼 미래에 얼마나 꾸준히 자랄 것인가"라는 한 가지 믿음이 결과의 대부분을 정한다. 그 믿음이 숫자로는 영구성장률 g와 할인율 r이다.</p>
+  </section>
+
+  <section id="gordon">
+    <h2>g가 r에 다가갈 때: 고든 성장 모형</h2>
+    <p>터미널 가치 식은 사실 오래된 식 하나를 빌려 온 것이다. 내년에 배당 \(D_1\)을 주고 그 뒤로 해마다 g씩 늘리는 주식의 가치는 \(D_1 / (r - g)\)이다. 이를 <span class="term">고든 성장 모형</span><span class="en">(Gordon growth model)</span>이라 한다. 성장이 거의 끝난, 꾸준히 배당하는 회사에 잘 맞는다. 누리식품이 그런 회사다. 올해 주당 배당이 1,900원, 요구수익률을 7%로 보자.</p>
+    <p>분모 \(r - g\)를 보라. g가 r에 가까워지면 분모가 0에 가까워지고, 가치는 끝없이 커진다. 아래 곡선 위의 점을 오른쪽으로 끌어 g를 r 쪽으로 밀어 보자.</p>
+
+    <div class="sim" id="sim-gordon">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>고든 곡선: 누리식품의 성장률을 끌어 보기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gd-cv"></canvas><span class="hint">점을 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>요구수익률 r <output id="gd-r-out"></output></span><input type="range" id="gd-r" min="0.05" max="0.1" step="0.0025" value="0.07"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">영구성장률 g</span><span class="v" id="gd-o-g">—</span></div>
+        <div class="stat"><span class="k">r − g</span><span class="v" id="gd-o-s">—</span></div>
+        <div class="stat"><span class="k">주당 가치</span><span class="v" id="gd-o-v">—</span></div>
+        <div class="stat"><span class="k">현재가 38,000원의</span><span class="v" id="gd-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① g = 2%에서 가치가 약 38,760원으로 현재가와 거의 같다. 시장은 누리식품이 배당을 해마다 2%쯤 늘린다고 보는 셈이다. ② g를 3%, 4%, 5%로 한 칸씩 올리면 가치가 4.9만, 6.6만, 10만원으로 뛴다. ③ g를 6%까지 밀면 20만원을 넘는다. ④ r을 바꾸면 벽(g = r)의 위치가 움직인다. (내년 배당 = 1,900원 × (1 + g))</div>
+    </div>
+
+    <p>g를 2%에서 3%로 1%p만 올렸을 뿐인데 가치는 약 26% 오른다. 6%에서는 다섯 배가 된다. 수학적으로는 g가 r과 같거나 크면 가치가 무한대다. 현실에서 이것은 "영원히 요구수익률보다 빨리 자라는 회사"라는 뜻인데, 그런 회사는 언젠가 경제 전체보다 커져야 하므로 존재할 수 없다. 영구성장률을 높게 잡은 DCF가 터무니없는 값을 내는 이유가 이것이다. <b>g는 r에서 충분히 멀리, 보통 경제성장률 이하로</b> 잡는다.</p>
+    <p>한빛반도체로 돌아가자. 할인율(WACC)과 영구성장률을 함께 바꾸면 주당 가치는 어떻게 될까? 아래 격자의 칸마다 DCF를 한 번씩 돌린 결과를 적었다. 빨간 칸은 현재가보다 가치가 높고, 파란 칸은 낮다. 칸 위에 마우스를 올리거나 눌러서 값을 확인하자.</p>
+
+    <div class="sim" id="sim-heat">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>민감도 히트맵: WACC × 영구성장률</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="hm-cv"></canvas><span class="hint">칸을 가리킨다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>5년 성장률</span>
+            <div class="seg" id="hm-g"><button data-value="0.04">4%</button><button data-value="0.08" class="on">8%</button><button data-value="0.12">12%</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">고른 칸(WACC/영구)</span><span class="v" id="hm-o-c">—</span></div>
+        <div class="stat"><span class="k">주당 가치</span><span class="v" id="hm-o-v">—</span></div>
+        <div class="stat"><span class="k">현재가 대비</span><span class="v" id="hm-o-d">—</span></div>
+        <div class="stat"><span class="k">격자 전체 범위</span><span class="v" id="hm-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 굵은 테두리 칸이 기본값(WACC 9%, 영구 2%)이다. ② 왼쪽 위 모서리(낮은 WACC, 높은 g)로 갈수록 숫자가 빠르게 커진다. 오른쪽 아래보다 훨씬 가파르다. ③ 같은 칸이 대각선으로 이어지는 곳을 찾는다. r − g가 같으면 비슷한 값이다. ④ 성장률을 4%로 바꾸면 빨간 칸이 얼마나 남는가? (숫자는 만원 단위)</div>
+    </div>
+
+    <p>현실적으로 그럴듯한 범위, WACC 8~11%와 영구성장률 1~3%만 움직여도 주당 가치는 약 5.7만원에서 11.8만원까지 두 배 넘게 벌어진다. 그리고 그 변화는 대칭이 아니다. 할인율을 낮추고 성장률을 높이는 쪽(왼쪽 위)은 가치가 폭발적으로 커지고, 반대쪽은 천천히 줄어든다. 낙관적인 가정 하나가 비관적인 가정 하나보다 결과를 더 크게 움직인다는 뜻이다. 가치평가에서 늘 조심해야 할 쪽은 낙관이다.</p>
+  </section>
+
+  <section id="guess">
+    <h2>감 잡기: 이 가정이면 얼마일까</h2>
+    <p>지금까지 만진 것으로 감을 시험해 보자. 무작위로 정한 가정이 주어지면, 계산하지 말고 주당 가치를 어림해 수직선 위에 점을 끌어 놓는다. 기준점은 하나다. FCF 5,000억원, 성장 8%, WACC 9%, 영구 2%면 약 8.4만원. 여기서 무엇이 얼마나 바뀌었는지만 따져 보면 된다.</p>
+
+    <div class="sim" id="sim-guess">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>주당 가치 맞히기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gs-cv"></canvas><span class="hint">수직선 위 점을 끈다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="gs-go">정답 공개</button><button class="btn" id="gs-next">다음 문제</button></div>
+          <p style="margin:0;font-size:13.5px;color:var(--text-dim)">FCF가 20% 크면 가치도 대략 20% 남짓 크다. WACC 1%p는 약 15~20%, 영구성장률 1%p는 약 11~15%, 성장률 4%p는 약 17~20%를 움직인다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">푼 문제</span><span class="v" id="gs-o-n">—</span></div>
+        <div class="stat"><span class="k">이번 오차</span><span class="v" id="gs-o-e">—</span></div>
+        <div class="stat"><span class="k">평균 오차</span><span class="v" id="gs-o-a">—</span></div>
+        <div class="stat"><span class="k">10% 안에 맞힌 횟수</span><span class="v" id="gs-o-h">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 다섯 문제를 풀어 평균 오차를 15% 안으로 줄여 본다. ② 가정 두 개가 같은 방향으로 바뀌면 효과가 곱해진다. ③ WACC와 영구성장률의 차이(r − g)가 작은 문제일수록 어림이 어렵다. 그 문제가 바로 계산이 가장 불안정한 문제다. (순부채 1조원, 주식 1억 주, 예측 5년 고정)</div>
+    </div>
+  </section>
+
+  <section id="ddm">
+    <h2>배당으로 보는 가치: 2단계 배당할인</h2>
+    <p>주주가 실제로 손에 쥐는 현금은 배당이다. 그래서 FCF 대신 배당을 할인하는 <span class="term">배당할인모형</span><span class="en">(DDM, Dividend Discount Model)</span>도 쓴다. 배당을 꾸준히 주는 누리식품에 잘 맞는다. 고든 모형은 처음부터 끝까지 같은 성장률을 가정했지만, 현실의 회사는 한동안 빠르게 자라다가 점점 느려진다. 그래서 몇 년은 높은 성장률 g₁, 그 뒤로는 낮은 영구성장률 g₂를 쓰는 <b>2단계</b> 모형을 쓴다.</p>
+    <p>누리식품의 요구수익률은 CAPM으로 3.5% + 0.6 × 5.5% = 6.8%다. 여기서는 반올림해 7%로 시작한다. 첫 단계가 끝난 뒤의 영구성장률은 2%로 고정했다. 막대는 해마다 받는 배당(점선은 명목, 채운 것은 현재가치)이고, 오른쪽은 두 단계의 몫을 쌓은 값과 현재가 38,000원이다.</p>
+
+    <div class="sim" id="sim-ddm">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>누리식품 2단계 배당할인</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dd-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>1단계 배당 성장률 g₁ <output id="dd-g1-out"></output></span><input type="range" id="dd-g1" min="0" max="0.1" step="0.005" value="0.04"></label>
+          <label class="ctrl"><span>1단계 기간 <output id="dd-n-out"></output></span><input type="range" id="dd-n" min="1" max="15" step="1" value="5"></label>
+          <label class="ctrl"><span>요구수익률 r <output id="dd-r-out"></output></span><input type="range" id="dd-r" min="0.05" max="0.1" step="0.0025" value="0.07"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주당 가치</span><span class="v" id="dd-o-v">—</span></div>
+        <div class="stat"><span class="k">1단계 몫</span><span class="v" id="dd-o-a">—</span></div>
+        <div class="stat"><span class="k">2단계(터미널) 몫</span><span class="v" id="dd-o-b">—</span></div>
+        <div class="stat"><span class="k">현재가 대비</span><span class="v" id="dd-o-d">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값(5년 4%, 이후 2%, r 7%)에서 가치는 약 42,350원, 그중 약 79%가 터미널 몫이다. ② r을 7.5%로 올리면 약 38,470원으로 현재가와 거의 같아진다. 요구수익률 0.5%p가 10%의 가치 차이다. ③ 1단계를 15년으로 늘리면 고성장 기간이 길어져 가치가 오른다. (올해 배당 1,900원, 2단계 성장률 2% 고정)</div>
+    </div>
+
+    <p>배당이든 FCF든 구조는 같다. 가까운 미래는 한 해씩, 먼 미래는 한 줄로 계산하고, 결과의 대부분은 그 한 줄에서 나온다. 배당할인은 배당성향이 안정적인 회사에는 직관적이지만, 배당을 거의 주지 않는 모아플랫폼이나 적자인 별빛바이오에는 쓸 수 없다. 배당 자체가 어떻게 정해지고 주가에 어떤 일이 일어나는지는 <a href="dividend.html">8장</a>에서 다룬다.</p>
+  </section>
+
+  <section id="reverse">
+    <h2>역DCF: 지금 가격은 무엇을 믿고 있는가</h2>
+    <p>DCF의 약점은 분명하다. 가정을 조금만 바꿔도 결과가 크게 바뀌니, 원하는 답을 정해 놓고 가정을 맞추기 쉽다. 그래서 질문을 뒤집는다. "이 회사의 가치는 얼마인가" 대신 "<b>지금 가격이 맞으려면 회사가 얼마나 자라야 하는가</b>"를 묻는 것이다. 이를 <span class="term">역DCF</span><span class="en">(Reverse DCF)</span>라 한다. 할인율과 영구성장률은 그대로 두고, DCF 결과가 현재가와 같아지는 성장률을 찾는다.</p>
+    <p>아래 곡선은 앞으로 10년 성장률에 따른 주당 가치다(WACC 9%, 영구 2%). 가로선이 지금 가격이다. 가격선을 위아래로 끌면 곡선과 만나는 곳, 곧 그 가격이 가정하는 성장률이 바뀐다. 한빛반도체와 모아플랫폼을 바꿔 가며 보자.</p>
+
+    <div class="sim" id="sim-rev">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>역DCF: 가격이 가정하는 성장률</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="rv-cv"></canvas><span class="hint">가격선을 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>회사</span>
+            <div class="seg" id="rv-co"><button data-value="hanbit" class="on">한빛반도체</button><button data-value="moa">모아플랫폼</button></div>
+          </div>
+          <label class="ctrl"><span>가격(현재가의 배수) <output id="rv-p-out"></output></span><input type="range" id="rv-p" min="0.4" max="2" step="0.02" value="1"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">가격</span><span class="v" id="rv-o-p">—</span></div>
+        <div class="stat"><span class="k">내포 성장률(10년)</span><span class="v" id="rv-o-g">—</span></div>
+        <div class="stat"><span class="k">10년 뒤 FCF</span><span class="v" id="rv-o-f">—</span></div>
+        <div class="stat"><span class="k">지금의 몇 배</span><span class="v" id="rv-o-x">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한빛반도체의 72,000원은 FCF가 10년 동안 연 약 3.6%씩 자란다는 가정과 같다. ② 모아플랫폼으로 바꾸면 120,000원(PER 50)이 연 약 20.5% 성장을 10년 내내 요구한다. FCF가 3,000억원에서 약 1.9조원, 6배 넘게 커져야 한다. ③ 모아의 가격을 절반으로 내려도 내포 성장률이 아직 높은지 본다. (모아는 순현금 7,000억원, 주식 1억 5,000만 주)</div>
+    </div>
+
+    <p>역DCF는 "얼마짜리인가"라는 답 없는 질문을 "이 성장이 그럴듯한가"라는 판단할 수 있는 질문으로 바꾼다. 한빛반도체의 현재가는 연 3.6% 성장이면 정당화된다. 위의 DCF에서 가정한 5년 8%보다 훨씬 낮은 기대다. 반대로 모아플랫폼의 주가는 10년 연속 20% 넘는 성장을 이미 가격에 넣었다. 그런 성장을 이루는 회사는 드물고, 이루더라도 주가는 "예상대로"일 뿐이다. <a href="ratios.html">6장</a>에서 본 PER 50의 뜻이 이것이다. 높은 PER이 틀렸다는 뜻은 아니지만, <b>시장이 이미 무엇을 믿고 있는지</b>를 알고 사야 한다.</p>
+  </section>
+
+  <section id="multiples">
+    <h2>상대가치: 비슷한 회사와 비교하기</h2>
+    <p>실무에서 더 자주 쓰는 방법은 <span class="term">상대가치 평가</span><span class="en">(Relative valuation, 멀티플 평가)</span>다. 비슷한 회사들이 이익의 몇 배(PER), 순자산의 몇 배(PBR), EBITDA의 몇 배(EV/EBITDA)에 거래되는지 보고 그 배수를 우리 회사에 곱한다. 동네 아파트 시세로 우리 집 값을 어림하는 것과 같다. 한빛반도체의 주당순이익(EPS)은 7,200원, 주당순자산(BPS)은 60,000원, EBITDA는 1.5조원이다.</p>
+    <p>아래 그림은 방법마다 나오는 가치 범위를 가로 막대로 늘어놓은 것이다. 모양 때문에 흔히 축구장 차트라 부른다. 비교 대상 회사들의 PER 범위를 바꿔 보고, "업종 전체가 비싸게 거래되는 시기"를 켜 보자.</p>
+
+    <div class="sim" id="sim-field">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>멀티플 평가와 DCF 비교(축구장 차트)</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ff-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>동종 회사 PER 중심 <output id="ff-per-out"></output></span><input type="range" id="ff-per" min="5" max="20" step="0.5" value="10"></label>
+          <label class="ctrl"><span>PER 범위 폭(±) <output id="ff-wid-out"></output></span><input type="range" id="ff-wid" min="0.5" max="5" step="0.5" value="2"></label>
+          <label class="check"><input type="checkbox" id="ff-hot"> 업종 전체가 50% 비싸게 거래되는 시기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">PER 방식</span><span class="v" id="ff-o-per">—</span></div>
+        <div class="stat"><span class="k">멀티플 세 방식의 겹침</span><span class="v" id="ff-o-mul">—</span></div>
+        <div class="stat"><span class="k">DCF 방식</span><span class="v" id="ff-o-dcf">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값에서 PER 8~12배면 57,600~86,400원으로 DCF 범위와 상당히 겹친다. ② "비싸게 거래되는 시기"를 켜면 멀티플 막대는 모두 오른쪽으로 밀리는데 DCF 막대는 그대로다. ③ PER 범위 폭을 넓히면 막대가 길어진다. 비교 대상을 어떻게 고르느냐가 결과를 정한다. (PBR 0.9~1.6배, EV/EBITDA 4.5~7배, DCF는 WACC 8~10%·영구 2%)</div>
+    </div>
+
+    <p>멀티플은 빠르고, 시장이 지금 비슷한 회사에 매기는 값을 그대로 반영한다는 장점이 있다. 그 장점이 곧 약점이다. 업종 전체가 거품이면 멀티플로 구한 가치도 거품이다. 닷컴 버블 때 인터넷 회사들은 서로를 비교하며 수십, 수백 배의 PER을 정당화했다. DCF는 느리고 가정에 민감하지만 시장 분위기와 독립적이다. 두 방법이 비슷한 범위를 가리키면 안심할 근거가 생기고, 크게 다르면 어느 쪽 가정이 이상한지 따져 볼 신호가 된다.</p>
+  </section>
+
+  <section id="range">
+    <h2>가치는 점이 아니라 범위다</h2>
+    <p>여기까지 오면 결론이 보인다. 가치를 "83,896원"처럼 원 단위까지 말하는 것은 정밀해 보이지만 정확하지 않다. 가정마다 그럴듯한 범위가 있고, 그 범위가 결과를 몇 만원씩 흔든다. 그렇다면 가치를 처음부터 범위로 다루면 된다. 세 가지 방법을 차례로 써 본다.</p>
+    <p>첫째, <span class="term">시나리오 분석</span><span class="en">(Scenario analysis)</span>이다. 몇 개의 일관된 이야기를 만들고 각각에 확률을 매긴다. 반도체 호황이 이어지는 <b>낙관</b>(성장 12%, WACC 8.5%, 영구 2.5%), 지금 그대로의 <b>기본</b>(8%, 9%, 2%), 업황이 꺾이는 <b>비관</b>(2%, 10%, 1%). 아래 확률 막대의 경계를 끌어 확률을 나눠 보자.</p>
+
+    <div class="sim" id="sim-scen">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>시나리오 트리: 확률을 끌어 기대 가치 구하기</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="sc-cv"></canvas><span class="hint">아래 막대의 경계를 끈다</span></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">확률 (낙관/기본/비관)</span><span class="v" id="sc-o-p">—</span></div>
+        <div class="stat"><span class="k">기대 가치</span><span class="v" id="sc-o-v">—</span></div>
+        <div class="stat"><span class="k">현재가 대비</span><span class="v" id="sc-o-d">—</span></div>
+        <div class="stat"><span class="k">비관이면 현재가에서</span><span class="v" id="sc-o-l">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 25/50/25로 나누면 기대 가치는 약 83,500원으로 기본 시나리오와 비슷하다. ② 비관 확률을 50%로 올리면 기대 가치가 현재가 아래로 내려가는지 본다. ③ 기대 가치가 현재가보다 높아도, 비관 시나리오가 오면 현재가에서 약 33% 손실이다. 기대값과 최악의 경우는 따로 본다. (각 시나리오의 값은 위 DCF 계산기로 구했다)</div>
+    </div>
+
+    <p>둘째, <span class="term">몬테카를로 시뮬레이션</span><span class="en">(Monte Carlo simulation)</span>이다. 시나리오 세 개 대신 가정마다 불확실성의 분포를 주고, 컴퓨터로 수천 번 무작위로 뽑아 DCF를 돌린다. 성장률은 평균 8%에 표준편차 4%p, WACC는 평균 9%에 0.75%p로 흩어진다고 하자(영구성장률도 2% 근처에서 조금 흔들린다).</p>
+
+    <div class="sim" id="sim-mc">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>몬테카를로 DCF: 가치의 분포</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="mc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>성장률 불확실성(σ) <output id="mc-sg-out"></output></span><input type="range" id="mc-sg" min="0" max="0.08" step="0.005" value="0.04"></label>
+          <label class="ctrl"><span>WACC 불확실성(σ) <output id="mc-sw-out"></output></span><input type="range" id="mc-sw" min="0" max="0.02" step="0.0025" value="0.0075"></label>
+          <div class="btn-row"><button class="btn primary" id="mc-run">2,000번 돌리기</button><button class="btn" id="mc-re">다시 뽑기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시행</span><span class="v" id="mc-o-n">—</span></div>
+        <div class="stat"><span class="k">중앙값</span><span class="v" id="mc-o-m">—</span></div>
+        <div class="stat"><span class="k">가운데 80%</span><span class="v" id="mc-o-r">—</span></div>
+        <div class="stat"><span class="k">현재가보다 높을 확률</span><span class="v" id="mc-o-p">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값에서 가치의 가운데 80%가 약 6.3만~11.4만원에 퍼지고, 현재가보다 높을 확률은 약 75%다. ② WACC 불확실성을 2%p로 키우면 오른쪽 꼬리가 길어진다. 할인율이 낮게 뽑힌 경우가 가치를 크게 끌어올리기 때문이다. ③ 불확실성을 모두 0으로 하면 막대가 한 칸에 몰린다. 그게 우리가 처음 계산한 "한 점"이다. (성장률·WACC·영구성장률은 정규분포, 영구성장률은 WACC보다 2%p 이상 낮게 자른다)</div>
+    </div>
+
+    <p>분포는 왼쪽보다 오른쪽 꼬리가 길다. 히트맵에서 본 비대칭과 같은 이유다. 그래서 평균은 중앙값보다 높고, 평균만 보면 가치를 과대평가하기 쉽다. "현재가보다 높을 확률 75%"는 "네 번 중 한 번은 지금 가격도 비싸다"는 뜻이기도 하다.</p>
+    <p>셋째, <span class="term">안전마진</span><span class="en">(Margin of safety)</span>이다. 가치를 범위로밖에 알 수 없다면, 추정한 가치보다 충분히 싸게 살 때만 산다. 추정이 틀려도 손실을 피할 여유를 가격에서 미리 확보하는 것이다. 다리를 설계할 때 예상 하중보다 몇 배 튼튼하게 짓는 것과 같다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 200" role="img" aria-label="가치 범위와 안전마진: 가치 범위 5만에서 12만원, 기본 추정 8.4만원, 현재가 7.2만원, 안전마진 30%를 둔 살 가격 5.9만원">
+        <defs><marker id="vl-ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <text class="lbl-acc2" x="114" y="20" text-anchor="middle">살 가격 5.9만</text>
+        <line class="s-acc2" x1="114" y1="28" x2="114" y2="130" stroke-width="3"/>
+        <line class="s-acc2" x1="118" y1="50" x2="222" y2="50" marker-start="url(#vl-ar3)" marker-end="url(#vl-ar3)"/>
+        <text class="lbl-acc2" x="170" y="42" text-anchor="middle">안전마진 30%</text>
+        <text class="lbl-acc" x="236" y="92">가정에 따른 가치 범위 약 5만~12만원</text>
+        <rect class="f-acc-soft" x="70" y="104" width="322" height="26"/>
+        <line class="s-acc" x1="226" y1="40" x2="226" y2="130" stroke-width="3"/>
+        <text class="lbl-acc" x="232" y="64">기본 추정 8.4만</text>
+        <line class="s-line" x1="171" y1="96" x2="171" y2="130" stroke-width="2"/>
+        <line class="s-axis" x1="24" y1="130" x2="440" y2="130"/>
+        <g class="t-mono">
+          <text x="24" y="148" text-anchor="middle">4만</text><text x="70" y="148" text-anchor="middle">5만</text><text x="116" y="148" text-anchor="middle">6만</text><text x="162" y="148" text-anchor="middle">7만</text><text x="208" y="148" text-anchor="middle">8만</text><text x="254" y="148" text-anchor="middle">9만</text><text x="300" y="148" text-anchor="middle">10만</text><text x="346" y="148" text-anchor="middle">11만</text><text x="392" y="148" text-anchor="middle">12만</text><text x="438" y="148" text-anchor="end">13만</text>
+        </g>
+        <path class="s-line" d="M171 156 L171 166" fill="none"/>
+        <text class="lbl" x="171" y="182" text-anchor="middle">현재가 7.2만</text>
+      </svg>
+      <figcaption><b>그림 7-3. 범위와 안전마진.</b> 기본 추정 8.4만원에서 30%를 깎은 약 5.9만원이 살 가격이다. 현재가 7.2만원은 기본 추정 대비 약 14%의 안전마진밖에 없다. 같은 범위를 보고도 사람마다 요구하는 안전마진이 다르고, 그것은 추정을 얼마나 믿는지에 달렸다.</figcaption>
+    </figure>
+
+    <p>아래에서 안전마진을 정하면 "살 가격"이 나온다. 그리고 실제 가치(아무도 미리 알 수 없다)를 끌어서, 추정이 틀렸을 때 그 가격에 산 결과가 어떻게 되는지 확인해 보자.</p>
+
+    <div class="sim" id="sim-mos">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>안전마진과 살 가격</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ms-cv"></canvas><span class="hint">실제 가치 점을 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>요구하는 안전마진 <output id="ms-m-out"></output></span><input type="range" id="ms-m" min="0" max="0.5" step="0.01" value="0.3"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">살 가격</span><span class="v" id="ms-o-b">—</span></div>
+        <div class="stat"><span class="k">현재가의 안전마진</span><span class="v" id="ms-o-c">—</span></div>
+        <div class="stat"><span class="k">추정 오차</span><span class="v" id="ms-o-e">—</span></div>
+        <div class="stat"><span class="k">살 가격에 샀다면</span><span class="v" id="ms-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 안전마진 30%면 살 가격은 약 58,700원이다. 실제 가치를 추정보다 25% 낮게 끌어도 이익이다. ② 안전마진을 0으로 두면 추정이 조금만 틀려도 손실이다. ③ 안전마진을 50%로 올리면 안전하지만, 그 가격이 오지 않으면 영영 사지 못한다. 안전마진의 대가는 기회를 놓치는 것이다. (추정 가치는 기본 DCF 83,896원)</div>
+    </div>
+
+    <p>마지막으로 이 장의 모든 것을 한 그림에 모은다. 가정마다 "그럴듯한 오차"를 정하면, 그 가정 하나만 좋은 쪽과 나쁜 쪽으로 바꿨을 때의 가치를 막대로 그린다. 막대를 긴 순서로 쌓으면 회오리 모양이 되어 <span class="term">토네이도 차트</span><span class="en">(Tornado chart)</span>라 부른다. 맨 아래 막대는 모든 가정이 한꺼번에 나쁘게, 또는 좋게 갈 때다.</p>
+
+    <div class="sim" id="sim-tornado">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>종합: 한빛반도체 가치의 범위 만들기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="td-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>성장률 오차 ± <output id="td-g-out"></output></span><input type="range" id="td-g" min="0" max="0.06" step="0.005" value="0.04"></label>
+          <label class="ctrl"><span>WACC 오차 ± <output id="td-w-out"></output></span><input type="range" id="td-w" min="0" max="0.02" step="0.0025" value="0.01"></label>
+          <label class="ctrl"><span>영구성장률 오차 ± <output id="td-t-out"></output></span><input type="range" id="td-t" min="0" max="0.015" step="0.0025" value="0.01"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">가장 민감한 가정</span><span class="v" id="td-o-top">—</span></div>
+        <div class="stat"><span class="k">하나씩 바꿀 때</span><span class="v" id="td-o-one">—</span></div>
+        <div class="stat"><span class="k">모두 겹칠 때</span><span class="v" id="td-o-all">—</span></div>
+        <div class="stat"><span class="k">현재가의 위치</span><span class="v" id="td-o-pos">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본 오차에서 가정 하나씩만 바꾸면 가치는 약 6.5만~10.3만원이다. ② 모두 나쁜 쪽으로 겹치면 약 4.1만원, 모두 좋은 쪽이면 약 17만원이다. 가정 하나하나는 그럴듯해도 겹치면 범위가 네 배로 벌어진다. ③ 오차를 0으로 줄이면 막대가 사라지고 한 점만 남는다. 그 점이 얼마나 믿을 만한지는 막대 길이가 말해 준다. (기준 FCF 오차는 ±20%로 고정)</div>
+    </div>
+
+    <p>현재가 72,000원은 범위의 아래쪽에 있다. 기본 추정보다 싸고, 시나리오 기대값보다도 싸다. 그렇다고 "싸니까 사라"는 결론은 나오지 않는다. 비관 시나리오, 모든 가정이 나쁘게 겹치는 경우에는 지금 가격도 비싸다. 가치평가가 주는 것은 정답이 아니라 <b>지금 가격이 어떤 미래를 가정하고 있는지, 그 가정이 틀리면 얼마나 아픈지</b>에 대한 지도다.</p>
+
+    <div class="callout warn">
+      <strong>숫자와 가정은 바뀐다</strong>
+      <p>이 장의 무위험 수익률 3.5%, 시장 위험 프리미엄 5.5%, 법인세율 24%, 회사의 FCF·베타·부채는 모두 2026년 기준의 교육용 가정이거나 가상의 값이다. 실제 금리와 세율, 회계 기준은 해마다 바뀌고, 금리가 오르면 할인율이 올라 같은 회사의 가치가 내려간다(<a href="macro.html">21장</a>). 실제 분석에서는 증권사 보고서나 공시의 가정을 그대로 믿지 말고, 어떤 할인율과 성장률을 썼는지 먼저 확인한다. 이 장의 계산은 특정 종목을 사거나 팔라는 권유가 아니며, 과거의 성장이 미래의 성장을 보장하지 않는다.</p>
+    </div>
+
+    <div class="casefile">
+      <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 7장</span></div>
+      <h4>한빛반도체는 얼마짜리인가: 8.4만원, 그러나 5만~12만원</h4>
+      <p>한결은 첫 주식으로 산 한빛반도체가 정말 싼지 확인하고 싶었다. 6장의 PER 10만으로는 알 수 없었다. 그래서 DCF를 직접 돌렸다. 올해 FCF 5,000억원, 앞으로 5년 연 8% 성장, WACC 9%, 영구성장률 2%, 순부채 1조원, 주식 1억 주. 결과는 주당 <b>약 8.4만원</b>(83,896원)이었다. 현재가 72,000원보다 약 16% 높다.</p>
+      <p>기뻐하기 전에 가정을 하나씩 흔들어 보았다. WACC를 8~11%, 영구성장률을 1~3%로만 바꿔도 약 5.7만~11.8만원, 낙관과 비관 시나리오를 넣으면 약 4.9만~11.8만원이었다. 가정을 조금씩 바꾸면 <b>대략 5만~12만원</b>, 두 배가 넘는 범위다. 그다음 질문을 뒤집었다. 72,000원이 맞으려면 한빛반도체는 얼마나 자라야 하는가? 역DCF의 답은 <b>앞으로 10년 동안 연 약 3.6%</b>였다. 한결이 처음 가정한 8%보다 훨씬 낮은 기대다. 한결이 내린 결론은 "지금 가격은 크게 무리한 미래를 가정하지 않는다. 하지만 안전마진은 약 14%뿐이라 추정이 조금만 틀려도 사라진다"였다.</p>
+      <div class="clue">
+        <div><b>이 장에서 정한 것</b>가치는 점이 아니라 범위로 적는다. 한빛반도체: 기본 약 8.4만원, 범위 약 5만~12만원, 현재가가 가정하는 성장률 약 3.6%.</div>
+        <div><b>아직 남은 문제</b>가치는 언젠가 현금으로 돌아와야 한다. 주주가 실제로 받는 현금, 배당은 어떻게 정해지고 세금을 떼면 얼마가 남는가.</div>
+        <div><b>다음 단계</b>누리식품 100주의 배당과 배당락, 배당 재투자의 30년(<a href="dividend.html">8장</a>).</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>가치는 앞으로 받을 현금흐름을 각각 할인해 더한 값이다. 할인율 9%에서 10년 뒤 100만원은 오늘 약 42만원이다. 할인율이 클수록, 멀수록 작아진다.</li>
+      <li>할인율은 요구수익률(기회비용)이다. CAPM은 무위험 수익률 + 베타 × 시장 위험 프리미엄으로, WACC는 자기자본과 부채의 비용을 몫만큼 섞어 어림한다. 한빛반도체는 약 9%.</li>
+      <li>DCF는 FCF(설비투자까지 쓰고 남는 현금)를 몇 년 예측하고, 그 뒤는 터미널 가치 FCF×(1+g)/(r−g)로 묶는다. 기업가치에서 순부채를 빼고 주식 수로 나누면 주당 가치다. 한빛반도체는 약 8.4만원.</li>
+      <li>터미널 가치가 가치의 대부분(기본 가정에서 약 74%)이다. g가 r에 다가갈수록 가치는 폭발하고, 낙관적 가정은 비관적 가정보다 결과를 더 크게 움직인다.</li>
+      <li>역DCF는 현재가가 가정하는 성장률을 찾는다. 한빛반도체 72,000원은 10년 연 약 3.6%, 모아플랫폼 120,000원(PER 50)은 연 약 20%를 요구한다.</li>
+      <li>멀티플 평가는 빠르지만 업종 전체의 거품까지 따라간다. DCF와 함께 보고 서로 다른 이유를 따진다.</li>
+      <li>가치는 범위로 적는다(시나리오, 몬테카를로, 토네이도). 추정이 틀릴 것에 대비해 추정 가치보다 충분히 싼 가격, 곧 안전마진이 있을 때만 산다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 할인율이 연 9%일 때, 10년 뒤에 받는 100만원의 현재가치에 가장 가까운 것은?</p>
+        <div class="opts">
+          <button class="opt">약 91만원</button>
+          <button class="opt">약 10만원</button>
+          <button class="opt" data-correct>약 42만원</button>
+          <button class="opt">약 64만원</button>
+        </div>
+        <div class="quiz-exp">100만원 ÷ 1.09¹⁰ ≈ 100만원 ÷ 2.367 ≈ 42.2만원이다. 약 91.7만원은 1년 뒤 100만원의 현재가치이고, 약 64만원은 10년 동안 해마다 100만원씩 받을 때 그 합(1,000만원)의 현재가치를 10으로 나눈 값이다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. DCF에서 터미널 가치가 전체 기업가치의 약 74%를 차지한다. 이것이 뜻하는 것으로 가장 알맞은 것은?</p>
+        <div class="opts">
+          <button class="opt" data-correct>결과가 먼 미래에 대한 가정(영구성장률과 할인율)에 크게 좌우된다</button>
+          <button class="opt">예측 기간 5년의 FCF를 더 정밀하게 예측하면 결과가 안정된다</button>
+          <button class="opt">회사가 5년 안에 망할 위험이 크다</button>
+          <button class="opt">터미널 가치는 할인하지 않아도 된다</button>
+        </div>
+        <div class="quiz-exp">가치의 4분의 3이 예측 기간 이후에서 나오므로, 한 해 한 해의 예측보다 영구성장률 g와 할인율 r이라는 두 숫자가 결과를 정한다. 그래서 DCF를 볼 때는 이 두 가정을 먼저 확인하고, 민감도 표로 흔들어 본다. 터미널 가치도 N년 시점의 값이므로 반드시 할인한다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 내년 배당 2,000원, 요구수익률 7%인 주식을 고든 성장 모형으로 평가한다. 영구성장률을 2%에서 6%로 올리면 가치는 어떻게 되는가?</p>
+        <div class="opts">
+          <button class="opt">40,000원에서 약 13,300원으로 준다</button>
+          <button class="opt">40,000원에서 약 52,000원으로 30% 오른다</button>
+          <button class="opt">변하지 않는다. 배당이 같기 때문이다</button>
+          <button class="opt" data-correct>40,000원에서 200,000원으로 다섯 배가 된다</button>
+        </div>
+        <div class="quiz-exp">2,000 / (0.07 − 0.02) = 40,000원, 2,000 / (0.07 − 0.06) = 200,000원이다. 분모 r − g가 5%에서 1%로 줄었기 때문이다. g가 r에 다가갈수록 가치는 폭발하므로 영구성장률은 할인율에서 충분히 멀리, 경제성장률 이하로 잡는다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 역DCF에 대한 설명으로 옳은 것은?</p>
+        <div class="opts">
+          <button class="opt">미래 현금흐름을 거꾸로 과거로 할인하는 방법이다</button>
+          <button class="opt" data-correct>현재 주가가 정당화되려면 필요한 성장률을 거꾸로 찾는 방법이다</button>
+          <button class="opt">DCF 결과에서 시장 가격을 빼서 안전마진을 구하는 방법이다</button>
+          <button class="opt">PER의 역수로 할인율을 구하는 방법이다</button>
+        </div>
+        <div class="quiz-exp">역DCF는 할인율과 영구성장률을 고정하고, DCF 결과가 현재가와 같아지는 성장률을 찾는다. 한빛반도체 72,000원은 10년 연 약 3.6%, 모아플랫폼 120,000원은 연 약 20% 성장을 가정한다. "얼마짜리인가" 대신 "이 성장이 그럴듯한가"를 묻게 해 준다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 어떤 주식의 가치를 100,000원으로 추정했고, 30%의 안전마진을 요구한다. 살 가격은?</p>
+        <div class="opts">
+          <button class="opt">130,000원 이하</button>
+          <button class="opt">100,000원 이하</button>
+          <button class="opt" data-correct>70,000원 이하</button>
+          <button class="opt">30,000원 이하</button>
+        </div>
+        <div class="quiz-exp">추정 가치에서 30%를 깎은 100,000 × (1 − 0.3) = 70,000원 이하에서만 산다. 그러면 실제 가치가 추정보다 30% 낮아도 산 가격 아래로 떨어지지 않는다. 안전마진이 클수록 안전하지만 그 가격이 오지 않아 사지 못할 가능성도 커진다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const HB = ST.CO.hanbit, NU = ST.CO.nuri;
+  const PRICE = HB.price;
+  const BASE = { fcf0: HB.fcf, growth: 0.08, years: 5, wacc: 0.09, tg: 0.02, netDebt: HB.debt - HB.cash, shares: HB.shares };
+  const dcf = (o) => ST.dcf(Object.assign({}, BASE, o));
+  const val = (o) => dcf(o).perShare;
+  const BASEV = val({});
+  const narrow = (id) => document.getElementById(id).parentElement.clientWidth < 560;
+  const pc = (x, d) => (x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%";
+  const man = (x) => (x ? (x < 0 ? "−" : "") + +(Math.abs(x) / 1e4).toFixed(1) + "만" : "0");
+  const eok = (x) => MB.won(x);
+  const tone = (x, s) => '<span class="' + MB.tone(x) + '">' + s + "</span>";
+  const invX = (c, px, a, b) => a + ((px - c.box.x) / c.box.w) * (b - a);
+  const invY = (c, py, a, b) => a + ((c.box.y + c.box.h - py) / c.box.h) * (b - a);
+  function knob(ctx, x, y, P, color) {
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, 10, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, 7, 0, TAU); ctx.fillStyle = color || P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke();
+    ctx.restore();
+  }
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function vmark(ctx, x, y0, y1, color, dash) {
+    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 1.5; ctx.setLineDash(dash || []);
+    ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x, y1); ctx.stroke(); ctx.restore();
+  }
+  /* 폭포 막대: items [{label, v, total, color}] (total이면 v 생략 시 누적값) */
+  function waterfall(ctx, box, items, o) {
+    const P = MB.palette(), n = items.length, reveal = o.reveal == null ? n : o.reveal;
+    const c = MB.chart(ctx, box, { x: [0, n], y: o.y, xTicks: [], yFmt: o.yFmt || MB.wonAxis });
+    const slot = c.box.w / n, bw = slot * 0.62;
+    let run = 0, prevX = null, prevY = null;
+    items.forEach((it, i) => {
+      const cx = c.box.x + slot * (i + 0.5);
+      text(ctx, it.label, cx, c.box.y + c.box.h + 6, { color: i < reveal ? P.text : P.faint, align: "center", base: "top", size: o.labelSize || 11 });
+      if (i >= reveal) return;
+      const k = i === reveal - 1 && o.grow != null ? o.grow : 1;
+      let a, b;
+      if (it.total) { a = 0; b = it.v != null ? it.v : run; run = b; }
+      else { a = run; b = run + it.v; run = b; }
+      const bb = a + (b - a) * k;
+      if (prevX != null) { ctx.save(); ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(prevX, c.Y(prevY)); ctx.lineTo(cx - bw / 2, c.Y(prevY)); ctx.stroke(); ctx.restore(); }
+      ctx.fillStyle = it.color || (it.total ? P.accent : it.v >= 0 ? P.up : P.down);
+      const y0 = c.Y(a), y1 = c.Y(bb);
+      ctx.fillRect(cx - bw / 2, Math.min(y0, y1), bw, Math.max(1, Math.abs(y1 - y0)));
+      if (k >= 1 && o.valueFmt && (it.total || !o.totalsOnly)) {
+        const s = it.total ? o.valueFmt(b) : (it.v >= 0 ? "+" : "−") + o.valueFmt(Math.abs(it.v));
+        text(ctx, s, cx, Math.min(y0, y1) - 4, { color: P.text, align: "center", size: o.valueSize || 11, mono: true });
+      }
+      prevX = cx + bw / 2; prevY = b;
+    });
+    return c;
+  }
+
+  /* ---------------------------------------------------------- 1. 할인 사다리 */
+  (function () {
+    let phase = 0;
+    const R = MB.range("ld-r", (v) => pc(v, 1), () => { phase = 1; cv.redraw(); });
+    const cv = MB.canvas("#ld-cv", (ctx, w, h) => {
+      const P = MB.palette(), r = R(), nar = w < 520;
+      const c = MB.chart(ctx, { x: 56, y: 30, w: w - 72, h: h - 76 }, {
+        x: [0.4, 10.6], y: [0, 1.1e6], xTicks: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], xFmt: (v) => v + (nar ? "" : "년"),
+        yFmt: MB.wonAxis, xLabel: "돈을 받는 해" });
+      const bw = (c.box.w / 10.2) * 0.62;
+      let sum = 0;
+      const tops = [];
+      for (let t = 1; t <= 10; t++) {
+        const pv = 1e6 / Math.pow(1 + r, t), p = MB.clamp(phase * 11 - (t - 1), 0, 1), e = 1 - Math.pow(1 - p, 3);
+        const cur = MB.lerp(1e6, pv, e), x = c.X(t);
+        sum += pv;
+        ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = P.faint; ctx.strokeRect(x - bw / 2, c.Y(1e6), bw, c.Y(0) - c.Y(1e6)); ctx.restore();
+        ctx.fillStyle = P.accent; ctx.globalAlpha = 0.85; ctx.fillRect(x - bw / 2, c.Y(cur), bw, c.Y(0) - c.Y(cur)); ctx.globalAlpha = 1;
+        tops.push([t, cur]);
+        if (bw > 20) text(ctx, Math.round(cur / 1e4) + "만", x, c.Y(cur) - 4, { color: P.text, align: "center", size: 11, mono: true });
+      }
+      if (phase >= 1) {
+        ctx.save(); ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.beginPath();
+        tops.forEach(([t, v], i) => (i ? ctx.lineTo(c.X(t), c.Y(v)) : ctx.moveTo(c.X(t), c.Y(v))));
+        ctx.stroke(); ctx.restore();
+      }
+      text(ctx, "점선 상자: 명목 100만원 · 채운 막대: 오늘의 가치", c.box.x + c.box.w, 16, { color: P.dim, align: "right", size: 11 });
+      MB.stat("ld-o-nom", MB.won(1e7));
+      MB.stat("ld-o-pv", MB.won(sum));
+      MB.stat("ld-o-10", MB.won(1e6 / Math.pow(1 + r, 10)));
+      MB.stat("ld-o-half", r > 0 ? (Math.log(2) / Math.log(1 + r)).toFixed(1) + " <small>년</small>" : "없음");
+    }, { get height() { return narrow("ld-cv") ? 280 : 320; } });
+    document.getElementById("ld-play").addEventListener("click", () => { phase = 0; });
+    MB.loop(cv.canvas, (dt) => { if (phase < 1) { phase = Math.min(1, phase + dt / 3.2); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 2. 증권시장선 */
+  (function () {
+    const SIDE = { nuri: "r", daon: "l", moa: "l", hanbit: "r", byeol: "l" };
+    let C = null, YM = 0.2;
+    const RF = MB.range("cp-rf", (v) => pc(v, 2), () => cv.redraw());
+    const MRP = MB.range("cp-mrp", (v) => pc(v, 2), () => cv.redraw());
+    const cv = MB.canvas("#cp-cv", (ctx, w, h) => {
+      const P = MB.palette(), rf = RF(), mrp = MRP(), nar = w < 520;
+      YM = Math.max(0.16, Math.ceil((rf + 2.2 * mrp) * 1.08 * 50) / 50);
+      const c = MB.chart(ctx, { x: 56, y: 18, w: w - 74, h: h - 96 }, {
+        x: [0, 2.2], y: [0, YM], xTicks: [0, 0.5, 1, 1.5, 2], xFmt: (v) => (nar ? "" : "β ") + v, yFmt: (v) => Math.round(v * 100) + "%",
+        xLabel: "베타(시장 대비 흔들림)", yLabel: "요구수익률",
+        series: [{ data: [[0, rf], [2.2, rf + 2.2 * mrp]], color: P.accent, width: 2.5 }],
+        hlines: [{ y: rf, color: P.faint, label: "무위험 " + pc(rf, 1) }] });
+      C = c;
+      vmark(ctx, c.X(1), c.Y(rf + mrp), c.box.y + c.box.h, P.faint, [4, 4]);
+      ST.COKEYS.forEach((k) => {
+        const co = ST.CO[k], r = ST.capm(rf, co.beta, mrp), x = c.X(co.beta), y = c.Y(r), b = k === "hanbit" ? 700 : 400;
+        ctx.fillStyle = k === "hanbit" ? P.accent2 : P.text; ctx.beginPath(); ctx.arc(x, y, 5, 0, TAU); ctx.fill();
+        const s = co.name + " " + pc(r, 1), sz = nar ? 11 : 12;
+        if (SIDE[k] === "l") text(ctx, s, x - 9, y - 8, { color: P.text, align: "right", size: sz, weight: b });
+        else text(ctx, s, x + 9, y + 17, { color: P.text, size: sz, weight: b });
+        MB.stat("cp-o-" + k, pc(r, 2));
+      });
+      knob(ctx, c.X(1), c.Y(rf + mrp), P);
+      text(ctx, "시장", c.X(1) + 13, c.Y(rf + mrp) + 16, { color: P.accent, size: 12, weight: 700 });
+    }, { get height() { return narrow("cp-cv") ? 350 : 360; } });
+    MB.drag(cv.canvas, { move(x, y) { if (C) MRP.set(MB.clamp(invY(C, y, 0, YM) - RF(), 0.02, 0.09)); } });
+  })();
+
+  /* ---------------------------------------------------------- 3. WACC */
+  (function () {
+    const TAX = 0.24;
+    const D = MB.range("wc-d", (v) => (v * 100).toFixed(1) + "%", () => cv.redraw());
+    const RE = MB.range("wc-re", (v) => pc(v, 2), () => cv.redraw());
+    const RD = MB.range("wc-rd", (v) => pc(v, 2), () => cv.redraw());
+    const cv = MB.canvas("#wc-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = D(), e = 1 - d, re = RE(), rd = RD(), rdt = rd * (1 - TAX), nar = w < 520;
+      const wacc = ST.wacc({ E: e, D: d, re, rd, tax: TAX });
+      const c = MB.chart(ctx, { x: 56, y: 18, w: w - 74, h: h - 64 }, {
+        x: [0, 1], y: [0, 0.17], xTicks: [0, 0.25, 0.5, 0.75, 1], xFmt: (v) => Math.round(v * 100) + "%", yFmt: (v) => Math.round(v * 100) + "%",
+        xLabel: "자본의 비중(왼쪽 자기자본, 오른쪽 부채)", yLabel: "비용(연)" });
+      const by = c.Y(0);
+      ctx.fillStyle = P.accent; ctx.globalAlpha = 0.25; ctx.fillRect(c.X(0), c.Y(re), c.X(e) - c.X(0), by - c.Y(re)); ctx.globalAlpha = 1;
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.strokeRect(c.X(0), c.Y(re), c.X(e) - c.X(0), by - c.Y(re));
+      if (d > 0) {
+        ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = P.faint; ctx.lineWidth = 1.2; ctx.strokeRect(c.X(e), c.Y(rd), c.X(1) - c.X(e), by - c.Y(rd)); ctx.restore();
+        ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.35; ctx.fillRect(c.X(e), c.Y(rdt), c.X(1) - c.X(e), by - c.Y(rdt)); ctx.globalAlpha = 1;
+        ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.strokeRect(c.X(e), c.Y(rdt), c.X(1) - c.X(e), by - c.Y(rdt));
+      }
+      if (c.X(e) - c.X(0) > 80) text(ctx, "자기자본 " + pc(re, 1), (c.X(0) + c.X(e)) / 2, by - 10, { color: P.text, align: "center", size: nar ? 11 : 12, weight: 700 });
+      if (d > 0 && c.X(1) - c.X(e) > (nar ? 56 : 80)) text(ctx, (nar ? "부채 " : "부채(세후) ") + pc(rdt, 1), (c.X(e) + c.X(1)) / 2, by - 10, { color: P.text, align: "center", size: nar ? 11 : 12, weight: 700 });
+      ctx.save(); ctx.strokeStyle = P.text; ctx.lineWidth = 2; ctx.setLineDash([7, 4]); ctx.beginPath(); ctx.moveTo(c.box.x, c.Y(wacc)); ctx.lineTo(c.box.x + c.box.w, c.Y(wacc)); ctx.stroke(); ctx.restore();
+      text(ctx, "WACC " + pc(wacc, 2), c.box.x + c.box.w - 4, c.Y(wacc) - 6, { color: P.text, align: "right", size: 13, weight: 700 });
+      MB.stat("wc-o-w", pc(wacc, 2));
+      MB.stat("wc-o-rd", pc(rdt, 2));
+      MB.stat("wc-o-e", (e * 100).toFixed(1) + "%");
+    }, { get height() { return narrow("wc-cv") ? 280 : 320; } });
+  })();
+
+  /* ---------------------------------------------------------- 4. FCF 폭포 */
+  (function () {
+    let shown = 1, grow = 1;
+    const CX = MB.range("fc-capex", (v) => v.toLocaleString("ko-KR") + "억", () => cv.redraw());
+    const WC = MB.range("fc-wc", (v) => (v < 0 ? "−" : "") + Math.abs(v).toLocaleString("ko-KR") + "억", () => cv.redraw());
+    const cv = MB.canvas("#fc-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 520, capex = CX(), wc = WC();
+      const fcf = HB.op / 1e8 - 1800 + HB.da / 1e8 - capex - wc;
+      const items = [
+        { label: "영업이익", v: HB.op / 1e8, total: true, color: P.accent },
+        { label: "세금", v: -1800 },
+        { label: "감가상각", v: HB.da / 1e8 },
+        { label: "설비투자", v: -capex },
+        { label: "운전자본", v: -wc },
+        { label: "FCF", total: true, color: P.accent2 },
+      ];
+      waterfall(ctx, { x: nar ? 50 : 62, y: 24, w: w - (nar ? 58 : 80), h: h - 58 }, items, {
+        y: [0, 15000], yFmt: (v) => MB.wonAxis(v * 1e8), reveal: shown, grow,
+        valueFmt: (x) => Math.round(x).toLocaleString("ko-KR"), labelSize: nar ? 10 : 12, valueSize: nar ? 10 : 11 });
+      text(ctx, "단위: 억원", w - 12, 14, { color: P.dim, align: "right", size: 11 });
+      MB.stat("fc-o-f", tone(fcf, fcf.toLocaleString("ko-KR") + "<small>억원</small>"));
+      MB.stat("fc-o-r", pc(fcf / (HB.net / 1e8), 0));
+      MB.stat("fc-o-y", pc((fcf * 1e8) / (HB.price * HB.shares), 1));
+    }, { get height() { return narrow("fc-cv") ? 280 : 320; } });
+    document.getElementById("fc-next").addEventListener("click", () => { if (shown < 6) { shown++; grow = 0; } });
+    document.getElementById("fc-all").addEventListener("click", () => { shown = 6; grow = 1; cv.redraw(); });
+    document.getElementById("fc-re").addEventListener("click", () => { shown = 1; grow = 1; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (grow < 1) { grow = Math.min(1, grow + dt / 0.5); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 5. DCF 계산기 */
+  (function () {
+    const F = MB.seg("dc-f", () => cv.redraw());
+    const G = MB.range("dc-g", (v) => pc(v, 1), () => cv.redraw());
+    const W = MB.range("dc-w", (v) => pc(v, 2), () => cv.redraw());
+    const T = MB.range("dc-tg", (v) => pc(v, 2), () => cv.redraw());
+    const cv = MB.canvas("#dc-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 520;
+      const d = dcf({ fcf0: Number(F()) * 1e8, growth: G(), wacc: W(), tg: T() });
+      const items = d.flows.map((f) => ({ label: f.t + (nar ? "" : "년"), v: f.pv, color: P.accent }));
+      items.push({ label: nar ? "TV" : "터미널", v: d.pvTv, color: P.accent2 });
+      items.push({ label: nar ? "EV" : "기업가치", total: true, color: P.dim });
+      items.push({ label: nar ? "부채" : "순부채", v: -BASE.netDebt, color: P.down });
+      items.push({ label: nar ? "주주" : "주주가치", total: true, color: P.accent });
+      waterfall(ctx, { x: 56, y: 22, w: w - 72, h: h - 22 - 112 }, items, {
+        y: [0, d.ev * 1.16], yFmt: MB.wonAxis, totalsOnly: nar,
+        valueFmt: (x) => (x / 1e12).toFixed(nar ? 1 : 2) + "조", labelSize: nar ? 10 : 11, valueSize: nar ? 10 : 11 });
+      const sy = h - 40, x0 = 56, x1 = w - 24, v = d.perShare;
+      const S = Math.max(160000, Math.min(400000, (isFinite(v) ? v : 4e5) * 1.15));
+      const X = (u) => x0 + (MB.clamp(u, 0, S) / S) * (x1 - x0);
+      text(ctx, "주당", 8, sy + 4, { color: P.dim, size: 12 });
+      ctx.fillStyle = P.grid; ctx.fillRect(x0, sy - 8, x1 - x0, 16);
+      ctx.fillStyle = MB.toneColor(v - PRICE); ctx.globalAlpha = 0.85; ctx.fillRect(x0, sy - 8, X(v) - x0, 16); ctx.globalAlpha = 1;
+      vmark(ctx, X(PRICE), sy - 14, sy + 14, P.text);
+      text(ctx, "현재가 72,000", X(PRICE), sy + 28, { color: P.text, align: "center", size: 11 });
+      const lab = MB.price(Math.round(v)), lx = MB.clamp(X(v), x0 + 44, x1 - 44);
+      text(ctx, lab, lx, sy - 14, { color: P.text, align: "center", size: 12, mono: true, weight: 700 });
+      MB.stat("dc-o-v", MB.price(Math.round(v)));
+      MB.stat("dc-o-d", tone(v - PRICE, MB.chg(v / PRICE - 1)));
+      MB.stat("dc-o-tv", pc(d.tvShare, 0));
+      MB.stat("dc-o-ev", MB.won(d.ev));
+    }, { get height() { return narrow("dc-cv") ? 380 : 400; } });
+  })();
+
+  /* ---------------------------------------------------------- 6. 터미널 비중 도넛 */
+  (function () {
+    let hl = -1, D = null;
+    const N = MB.range("tv-n", (v) => v + "년", () => cv.redraw());
+    const TG = MB.range("tv-tg", (v) => pc(v, 2), () => cv.redraw());
+    const cv = MB.canvas("#tv-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("tv-cv"), n = N(), tg = TG();
+      const d = dcf({ years: n, tg });
+      let cx, cy, R, B;
+      if (nar) { cx = w / 2; cy = 104; R = 82; B = { x: 52, y: 240, w: w - 70, h: h - 240 - 78 }; }
+      else { cx = w * 0.24; cy = h / 2 - 14; R = Math.min(h * 0.34, w * 0.18); B = { x: w * 0.5 + 34, y: 20, w: w * 0.5 - 52, h: h - 88 }; }
+      D = MB.donut(ctx, cx, cy, R, [{ label: "예측 기간", value: d.pvSum, color: P.accent }, { label: "터미널", value: d.pvTv, color: P.accent2 }],
+        { inner: 0.58, highlight: hl, center: { big: pc(d.tvShare, 0), small: "터미널 비중" } });
+      const ly = cy + R + 22;
+      ctx.fillStyle = P.accent; ctx.fillRect(cx - 104, ly - 9, 10, 10);
+      text(ctx, "예측 " + n + "년", cx - 90, ly, { color: hl === 0 ? P.accent : P.text, size: 12, weight: hl === 0 ? 700 : 400 });
+      ctx.fillStyle = P.accent2; ctx.fillRect(cx + 4, ly - 9, 10, 10);
+      text(ctx, "터미널(이후 전부)", cx + 18, ly, { color: hl === 1 ? P.accent2 : P.text, size: 12, weight: hl === 1 ? 700 : 400 });
+      const data = []; for (let k = 1; k <= 20; k++) data.push([k, dcf({ years: k, tg }).tvShare]);
+      MB.chart(ctx, B, { x: [1, 20], y: [0, 1], xTicks: [1, 5, 10, 15, 20], xFmt: (v) => v + "년", yFmt: (v) => Math.round(v * 100) + "%",
+        xLabel: "예측 기간", series: [{ data, color: P.accent2, width: 2 }], points: [{ x: n, y: d.tvShare, color: P.accent2, r: 5 }],
+        hlines: [{ y: 0.5, color: P.faint, label: "절반" }] });
+      MB.stat("tv-o-s", pc(d.tvShare, 0));
+      MB.stat("tv-o-a", MB.won(d.pvSum));
+      MB.stat("tv-o-b", MB.won(d.pvTv));
+    }, { get height() { return narrow("tv-cv") ? 460 : 310; } });
+    const pick = (x, y) => { const k = D ? D.hit(x, y) : -1; if (k !== hl) { hl = k; cv.redraw(); } };
+    MB.drag(cv.canvas, { hover: pick, start: pick });
+  })();
+
+  /* ---------------------------------------------------------- 7. 고든 곡선 */
+  (function () {
+    const YM = 250000, D0 = NU.dps;
+    let g = 0.02, C = null;
+    const gv = (x, r) => (r > x ? (D0 * (1 + x)) / (r - x) : Infinity);
+    const R = MB.range("gd-r", (v) => pc(v, 2), () => { g = Math.min(g, R() - 0.0025); cv.redraw(); });
+    const cv = MB.canvas("#gd-cv", (ctx, w, h) => {
+      const P = MB.palette(), r = R(), v = gv(g, r);
+      const data = []; for (let x = -0.02; x < r - 0.0002; x += 0.0005) data.push([x, gv(x, r)]);
+      const c = MB.chart(ctx, { x: 60, y: 20, w: w - 78, h: h - 96 }, {
+        x: [-0.02, 0.11], y: [0, YM], xTicks: [-0.02, 0, 0.02, 0.04, 0.06, 0.08, 0.1], xFmt: (u) => pc(u, 0), yFmt: man,
+        xLabel: "영구성장률 g", yLabel: "주당 가치",
+        series: [{ data, color: P.accent, width: 2.5 }], hlines: [{ y: NU.price, color: P.text, label: "현재가 38,000" }] });
+      C = c;
+      vmark(ctx, c.X(r), c.box.y, c.box.y + c.box.h, P.bad, [5, 4]);
+      const wr = c.X(r) + 66 < c.box.x + c.box.w;
+      text(ctx, "g = r 벽", c.X(r) + (wr ? 6 : -6), c.box.y + 14, { color: P.bad, align: wr ? "left" : "right", size: 12, weight: 700 });
+      const ky = v > YM ? c.box.y + 4 : c.Y(v);
+      vmark(ctx, c.X(g), ky, c.box.y + c.box.h, P.faint, [3, 3]);
+      knob(ctx, c.X(g), ky, P);
+      const s = v > YM ? "화면 위로 " + man(v) + "원" : MB.price(Math.round(v));
+      text(ctx, s, c.X(g) - 14, ky + (v > YM ? 22 : -10), { color: P.text, align: "right", size: 12, mono: v <= YM, weight: 700 });
+      MB.stat("gd-o-g", pc(g, 2));
+      MB.stat("gd-o-s", pc(r - g, 2));
+      MB.stat("gd-o-v", MB.price(Math.round(v)));
+      MB.stat("gd-o-x", (v / NU.price).toFixed(2) + "<small>배</small>");
+    }, { get height() { return narrow("gd-cv") ? 320 : 350; } });
+    MB.drag(cv.canvas, { move(x) { if (!C) return; g = MB.clamp(Math.round(invX(C, x, -0.02, 0.11) / 0.0005) * 0.0005, -0.02, R() - 0.0025); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 8. 민감도 히트맵 */
+  (function () {
+    const WS = [], TS = [];
+    for (let i = 0; i <= 8; i++) { WS.push(0.07 + i * 0.005); TS.push(i * 0.005); }
+    let hov = [4, 4], L = null;
+    const G = MB.seg("hm-g", () => cv.redraw());
+    const cv = MB.canvas("#hm-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 520, g = Number(G());
+      const B = { x: nar ? 50 : 70, y: 12, w: w - (nar ? 60 : 88), h: h - 84 };
+      const cw = B.w / 9, ch = B.h / 9;
+      L = { B, cw, ch };
+      const V = WS.map((wc) => TS.map((t) => val({ growth: g, wacc: wc, tg: t })));
+      let lo = Infinity, hi = -Infinity;
+      for (let i = 0; i < 9; i++) for (let j = 0; j < 9; j++) {
+        const v = V[i][j], x = B.x + i * cw, y = B.y + (8 - j) * ch;
+        lo = Math.min(lo, v); hi = Math.max(hi, v);
+        const a = MB.clamp(0.1 + Math.abs(Math.log(v / PRICE)) * 0.9, 0.1, 0.88);
+        ctx.fillStyle = v >= PRICE ? P.up : P.down; ctx.globalAlpha = a; ctx.fillRect(x + 1, y + 1, cw - 2, ch - 2); ctx.globalAlpha = 1;
+        text(ctx, (v / 1e4).toFixed(v >= 1e6 ? 0 : 1), x + cw / 2, y + ch / 2, { color: a > 0.5 ? "#fff" : P.text, align: "center", base: "middle", size: nar ? 10 : 12, mono: true });
+      }
+      const box = (i, j, col, lw) => { ctx.strokeStyle = col; ctx.lineWidth = lw; ctx.strokeRect(B.x + i * cw + 1, B.y + (8 - j) * ch + 1, cw - 2, ch - 2); };
+      box(4, 4, P.text, 2.5);
+      if (hov) box(hov[0], hov[1], P.accent2, 3);
+      for (let i = 0; i < 9; i++) if (!nar || i % 2 === 0) text(ctx, pc(WS[i], 1), B.x + (i + 0.5) * cw, B.y + B.h + 6, { color: P.dim, align: "center", base: "top", size: nar ? 10 : 11, mono: true });
+      for (let j = 0; j < 9; j++) text(ctx, pc(TS[j], 1), B.x - 6, B.y + (8.5 - j) * ch, { color: P.dim, align: "right", base: "middle", size: nar ? 10 : 11, mono: true });
+      text(ctx, "WACC(할인율) →", B.x + B.w / 2, B.y + B.h + 40, { color: P.dim, align: "center", size: 12 });
+      ctx.save(); ctx.translate(12, B.y + B.h / 2); ctx.rotate(-Math.PI / 2); text(ctx, "영구성장률 →", 0, 0, { color: P.dim, align: "center", base: "middle", size: 12 }); ctx.restore();
+      if (hov) {
+        const v = V[hov[0]][hov[1]];
+        MB.stat("hm-o-c", pc(WS[hov[0]], 1) + " / " + pc(TS[hov[1]], 1));
+        MB.stat("hm-o-v", MB.price(Math.round(v)));
+        MB.stat("hm-o-d", tone(v - PRICE, MB.chg(v / PRICE - 1)));
+      }
+      MB.stat("hm-o-r", man(lo) + "~" + man(hi));
+    }, { get height() { return narrow("hm-cv") ? 350 : 410; } });
+    const pick = (x, y) => {
+      if (!L) return;
+      const i = Math.floor((x - L.B.x) / L.cw), j = 8 - Math.floor((y - L.B.y) / L.ch);
+      if (i < 0 || i > 8 || j < 0 || j > 8) return;
+      if (!hov || hov[0] !== i || hov[1] !== j) { hov = [i, j]; cv.redraw(); }
+    };
+    MB.drag(cv.canvas, { hover: pick, move: pick });
+  })();
+
+  /* ---------------------------------------------------------- 9. 2단계 배당할인 */
+  (function () {
+    const G2 = 0.02, TMAX = 20;
+    const G1 = MB.range("dd-g1", (v) => pc(v, 1), () => cv.redraw());
+    const N = MB.range("dd-n", (v) => v + "년", () => cv.redraw());
+    const R = MB.range("dd-r", (v) => pc(v, 2), () => cv.redraw());
+    const cv = MB.canvas("#dd-cv", (ctx, w, h) => {
+      const P = MB.palette(), g1 = G1(), n = N(), r = R(), nar = w < 520;
+      const res = ST.ddm2({ d0: NU.dps, g1, n, g2: G2, r });
+      const divs = []; let dv = NU.dps;
+      for (let t = 1; t <= TMAX; t++) { dv *= 1 + (t <= n ? g1 : G2); divs.push(dv); }
+      const split = nar ? 0.6 : 0.66;
+      const LB = { x: 52, y: 28, w: w * split - 62, h: h - 74 };
+      const c = MB.chart(ctx, LB, { x: [0.4, TMAX + 0.6], y: [0, Math.max.apply(null, divs) * 1.15], xTicks: [1, 5, 10, 15, 20], xFmt: (v) => v + (nar ? "" : "년"),
+        yFmt: (v) => Math.round(v).toLocaleString("ko-KR"), xLabel: "배당을 받는 해" });
+      const bw = (c.box.w / (TMAX + 0.2)) * 0.62;
+      divs.forEach((d, i) => {
+        const t = i + 1, pv = d / Math.pow(1 + r, t), x = c.X(t);
+        ctx.save(); ctx.setLineDash([2, 2]); ctx.strokeStyle = P.faint; ctx.strokeRect(x - bw / 2, c.Y(d), bw, c.Y(0) - c.Y(d)); ctx.restore();
+        ctx.fillStyle = t <= n ? P.accent : P.accent2; ctx.globalAlpha = t <= n ? 0.85 : 0.6;
+        ctx.fillRect(x - bw / 2, c.Y(pv), bw, c.Y(0) - c.Y(pv)); ctx.globalAlpha = 1;
+      });
+      if (n < TMAX) vmark(ctx, c.X(n + 0.5), c.box.y, c.box.y + c.box.h, P.dim, [4, 3]);
+      text(ctx, "1단계 " + n + "년", c.X(n + 0.5) - 4, c.box.y + 12, { color: P.accent, align: "right", size: 11, weight: 700 });
+      if (n < TMAX - 2) text(ctx, "2단계", c.X(n + 0.5) + 4, c.box.y + 12, { color: P.accent2, size: 11, weight: 700 });
+      text(ctx, "점선: 명목 배당 · 채움: 현재가치", 8, 14, { color: P.dim, size: 11 });
+      const RB = { x: w * split + 40, y: 28, w: w * (1 - split) - 52, h: h - 74 };
+      MB.bars(ctx, RB, { labels: ["가치", "주가"], y: [0, Math.max(res.value, NU.price) * 1.2], yFmt: man, valueFmt: (v) => man(v),
+        stacks: [{ label: "1단계", color: P.accent, data: [res.pvStage1, 0] }, { label: "터미널", color: P.accent2, data: [res.pvTerminal, 0] }, { label: "주가", color: P.dim, data: [0, NU.price] }] });
+      MB.stat("dd-o-v", MB.price(Math.round(res.value)));
+      MB.stat("dd-o-a", MB.price(Math.round(res.pvStage1)) + " <small>" + pc(res.pvStage1 / res.value, 0) + "</small>");
+      MB.stat("dd-o-b", MB.price(Math.round(res.pvTerminal)) + " <small>" + pc(res.pvTerminal / res.value, 0) + "</small>");
+      MB.stat("dd-o-d", tone(res.value - NU.price, MB.chg(res.value / NU.price - 1)));
+    }, { get height() { return narrow("dd-cv") ? 290 : 310; } });
+  })();
+
+  /* ---------------------------------------------------------- 10. 역DCF */
+  (function () {
+    const YM = 300000;
+    let C = null;
+    const CO = MB.seg("rv-co", () => PX.set(PX()));
+    const priceOf = (m) => Math.round((ST.CO[CO()].price * m) / 100) * 100;
+    const PX = MB.range("rv-p", (v) => MB.price(priceOf(v)), () => cv.redraw());
+    const params = (co) => ({ fcf0: co.fcf, years: 10, wacc: 0.09, tg: 0.02, netDebt: co.debt - co.cash, shares: co.shares });
+    const cv = MB.canvas("#rv-cv", (ctx, w, h) => {
+      const P = MB.palette(), co = ST.CO[CO()], pr = priceOf(PX()), prm = params(co);
+      const data = []; for (let g = -0.05; g <= 0.3001; g += 0.005) data.push([g, ST.dcf(Object.assign({ growth: g }, prm)).perShare]);
+      const gi = ST.reverseDcf(Object.assign({ price: pr }, prm));
+      const c = MB.chart(ctx, { x: 60, y: 20, w: w - 78, h: h - 96 }, {
+        x: [-0.05, 0.3], y: [0, YM], xTicks: [-0.05, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3], xFmt: (u) => pc(u, 0), yFmt: man,
+        xLabel: "앞으로 10년 연 성장률", yLabel: "주당 가치", series: [{ data, color: P.accent, width: 2.5 }] });
+      C = c;
+      ctx.save(); ctx.strokeStyle = P.text; ctx.lineWidth = 1.5; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(c.box.x, c.Y(pr)); ctx.lineTo(c.box.x + c.box.w, c.Y(pr)); ctx.stroke(); ctx.restore();
+      knob(ctx, c.box.x + c.box.w - 12, c.Y(pr), P, P.text);
+      text(ctx, "가격 " + MB.price(pr), c.box.x + 6, c.Y(pr) - 7, { color: P.text, size: 12, weight: 700 });
+      if (gi > -0.05 && gi < 0.3) {
+        vmark(ctx, c.X(gi), c.Y(pr), c.box.y + c.box.h, P.accent2, [3, 3]);
+        ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.arc(c.X(gi), c.Y(pr), 6, 0, TAU); ctx.fill();
+        text(ctx, "연 " + pc(gi, 1), c.X(gi) + 8, c.Y(pr) + 18, { color: P.accent2, size: 13, weight: 700 });
+      }
+      MB.stat("rv-o-p", MB.price(pr));
+      MB.stat("rv-o-g", pc(gi, 1));
+      MB.stat("rv-o-f", MB.won(co.fcf * Math.pow(1 + gi, 10)));
+      MB.stat("rv-o-x", Math.pow(1 + gi, 10).toFixed(1) + "<small>배</small>");
+    }, { get height() { return narrow("rv-cv") ? 320 : 350; } });
+    MB.drag(cv.canvas, { move(x, y) { if (C) PX.set(MB.clamp(invY(C, y, 0, YM) / ST.CO[CO()].price, 0.4, 2)); } });
+  })();
+
+  /* ---------------------------------------------------------- 11. 가치 맞히기 */
+  (function () {
+    const XM = 200000;
+    let seed = 7, q = null, guess = 80000, shown = false, n = 0, hits = 0, last = null, C = null;
+    const errs = [];
+    function newQ() {
+      const r = MB.rng(seed++);
+      for (let k = 0; k < 60; k++) {
+        const o = { fcf0: (4000 + Math.floor(r() * 5) * 500) * 1e8, growth: Math.floor(r() * 15) / 100, wacc: 0.075 + Math.floor(r() * 8) * 0.005, tg: 0.01 + Math.floor(r() * 5) * 0.005 };
+        const v = val(o);
+        if (v > 30000 && v < 190000) { q = { o, v }; break; }
+      }
+      shown = false; guess = 80000; last = null;
+    }
+    newQ();
+    const cv = MB.canvas("#gs-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 520, o = q.o;
+      const rows = [["올해 FCF", MB.won(o.fcf0)], ["5년 성장률", pc(o.growth, 0)], ["WACC", pc(o.wacc, 1)], ["영구성장률", pc(o.tg, 1)]];
+      const cols = nar ? 2 : 4, cwid = (w - 24) / cols;
+      rows.forEach(([k, v], i) => {
+        const x = 12 + (i % cols) * cwid, y = 12 + Math.floor(i / cols) * 54;
+        ctx.fillStyle = P.surface; ctx.fillRect(x + 4, y, cwid - 8, 46);
+        ctx.strokeStyle = P.border; ctx.lineWidth = 1; ctx.strokeRect(x + 4.5, y + 0.5, cwid - 9, 45);
+        text(ctx, k, x + 14, y + 17, { color: P.dim, size: 12 });
+        text(ctx, v, x + 14, y + 38, { color: P.text, size: 16, mono: true, weight: 700 });
+      });
+      const ch = 12 + Math.ceil(4 / cols) * 54;
+      text(ctx, "기준 5,000억 · 8% · 9% · 2% → 약 8.4만원", 16, ch + 14, { color: P.dim, size: 11 });
+      const ly = h - 64, x0 = 28, x1 = w - 28, X = (v) => x0 + (MB.clamp(v, 0, XM) / XM) * (x1 - x0);
+      C = { x0, x1 };
+      ctx.strokeStyle = P.axis; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, ly); ctx.lineTo(x1, ly); ctx.stroke();
+      for (let v = 0; v <= XM; v += 20000) {
+        ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(X(v), ly - 4); ctx.lineTo(X(v), ly + 4); ctx.stroke();
+        if (!nar || v % 40000 === 0) text(ctx, man(v), X(v), ly + 10, { color: P.dim, align: "center", base: "top", size: 10, mono: true });
+      }
+      vmark(ctx, X(BASEV), ly - 10, ly + 10, P.faint);
+      const lab = (s, x, y, col) => { ctx.font = MB.font(12, false, 700); const tw = ctx.measureText(s).width; text(ctx, s, MB.clamp(x, x0 + tw / 2, x1 - tw / 2), y, { color: col, align: "center", size: 12, weight: 700 }); };
+      if (shown) {
+        const err = Math.abs(guess / q.v - 1);
+        ctx.fillStyle = err <= 0.1 ? P.ok : P.warn; ctx.globalAlpha = 0.3;
+        ctx.fillRect(Math.min(X(guess), X(q.v)), ly - 9, Math.abs(X(guess) - X(q.v)), 18); ctx.globalAlpha = 1;
+        ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.moveTo(X(q.v), ly - 9); ctx.lineTo(X(q.v) + 7, ly); ctx.lineTo(X(q.v), ly + 9); ctx.lineTo(X(q.v) - 7, ly); ctx.closePath(); ctx.fill();
+        lab("정답 " + MB.price(Math.round(q.v)), X(q.v), ly - 40, P.accent2);
+      }
+      knob(ctx, X(guess), ly, P);
+      lab("내 답 " + man(guess), X(guess), ly - 18, P.accent);
+      MB.stat("gs-o-n", n + " <small>문제</small>");
+      MB.stat("gs-o-e", last == null ? "—" : '<span class="' + (Math.abs(last) <= 0.1 ? "ok-t" : "warn-t") + '">' + MB.chg(last, 1) + "</span>");
+      MB.stat("gs-o-a", errs.length ? pc(ST.mean(errs), 1) : "—");
+      MB.stat("gs-o-h", hits + " <small>번</small>");
+    }, { get height() { return narrow("gs-cv") ? 290 : 240; } });
+    MB.drag(cv.canvas, { move(x) { if (!C || shown) return; guess = Math.round(MB.clamp(((x - C.x0) / (C.x1 - C.x0)) * XM, 0, XM) / 500) * 500; cv.redraw(); } });
+    document.getElementById("gs-go").addEventListener("click", () => {
+      if (shown) return;
+      shown = true; n++; last = guess / q.v - 1; errs.push(Math.abs(last)); if (Math.abs(last) <= 0.1) hits++;
+      cv.redraw();
+    });
+    document.getElementById("gs-next").addEventListener("click", () => { newQ(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 12. 축구장 차트 */
+  (function () {
+    const RT = ST.ratios(HB), DCFR = [val({ wacc: 0.1 }), val({ wacc: 0.08 })];
+    const PER = MB.range("ff-per", (v) => v.toFixed(1) + "배", () => cv.redraw());
+    const WID = MB.range("ff-wid", (v) => "±" + v.toFixed(1) + "배", () => cv.redraw());
+    const HOT = document.getElementById("ff-hot");
+    HOT.addEventListener("change", () => cv.redraw());
+    const cv = MB.canvas("#ff-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 520, k = HOT.checked ? 1.5 : 1;
+      const pl = Math.max(1, PER() - WID()) * k, ph = (PER() + WID()) * k;
+      const rows = [
+        { name: "PER", sub: pl.toFixed(1) + "~" + ph.toFixed(1) + "배", lo: RT.eps * pl, hi: RT.eps * ph, color: P.accent },
+        { name: "PBR", sub: (0.9 * k).toFixed(2) + "~" + (1.6 * k).toFixed(2) + "배", lo: RT.bps * 0.9 * k, hi: RT.bps * 1.6 * k, color: P.accent },
+        { name: "EV/EBITDA", sub: (4.5 * k).toFixed(1) + "~" + (7 * k).toFixed(1) + "배", lo: (RT.ebitda * 4.5 * k - BASE.netDebt) / HB.shares, hi: (RT.ebitda * 7 * k - BASE.netDebt) / HB.shares, color: P.accent },
+        { name: "DCF", sub: "WACC 8~10%", lo: DCFR[0], hi: DCFR[1], color: P.accent2 },
+      ];
+      const XM = Math.max(200000, Math.ceil((Math.max.apply(null, rows.map((x) => x.hi)) * 1.1) / 50000) * 50000);
+      const Lw = nar ? 84 : 120;
+      const c = MB.chart(ctx, { x: Lw, y: 28, w: w - Lw - 20, h: h - 74 }, { x: [0, XM], y: [0, 1], yTicks: [], xFmt: man, xLabel: "주당 가치(원)" });
+      const rh = c.box.h / rows.length, bh = Math.min(22, rh * 0.42);
+      vmark(ctx, c.X(PRICE), c.box.y - 6, c.box.y + c.box.h, P.text, [5, 4]);
+      const tag = (s, x, y, al) => { ctx.font = MB.font(nar ? 10 : 11, true); const tw = ctx.measureText(s).width; ctx.fillStyle = P.bg; ctx.fillRect(al === "right" ? x - tw - 2 : x - 2, y - 8, tw + 4, 16); text(ctx, s, x, y, { color: P.dim, align: al, base: "middle", size: nar ? 10 : 11, mono: true }); };
+      rows.forEach((ro, i) => {
+        const cy = c.box.y + rh * (i + 0.5);
+        text(ctx, ro.name, Lw - 10, cy - 1, { color: P.text, align: "right", size: nar ? 11 : 13, weight: 700 });
+        text(ctx, ro.sub, Lw - 10, cy + 14, { color: P.dim, align: "right", size: nar ? 10 : 11 });
+        ctx.fillStyle = ro.color; ctx.globalAlpha = 0.85; ctx.fillRect(c.X(ro.lo), cy + 4 - bh / 2, c.X(ro.hi) - c.X(ro.lo), bh); ctx.globalAlpha = 1;
+        tag(man(ro.lo), c.X(ro.lo) - 4, cy + 4, "right");
+        tag(man(ro.hi), c.X(ro.hi) + 4, cy + 4, "left");
+      });
+      text(ctx, "현재가 7.2만", c.X(PRICE), 14, { color: P.text, align: "center", size: 12, weight: 700 });
+      const mlo = Math.max(rows[0].lo, rows[1].lo, rows[2].lo), mhi = Math.min(rows[0].hi, rows[1].hi, rows[2].hi);
+      MB.stat("ff-o-per", man(rows[0].lo) + "~" + man(rows[0].hi));
+      MB.stat("ff-o-mul", mlo < mhi ? man(mlo) + "~" + man(mhi) : "겹침 없음");
+      MB.stat("ff-o-dcf", man(DCFR[0]) + "~" + man(DCFR[1]));
+    }, { get height() { return narrow("ff-cv") ? 300 : 310; } });
+  })();
+
+  /* ---------------------------------------------------------- 13. 시나리오 트리 */
+  (function () {
+    const SC = [
+      { name: "낙관", o: { growth: 0.12, wacc: 0.085, tg: 0.025 } },
+      { name: "기본", o: {} },
+      { name: "비관", o: { growth: 0.02, wacc: 0.1, tg: 0.01 } },
+    ];
+    SC.forEach((s) => (s.v = val(s.o)));
+    let p = [0.25, 0.5, 0.25], dragI = -1, L = null;
+    const cv = MB.canvas("#sc-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 520, cols = [P.up, P.accent, P.down];
+      const ev = p[0] * SC[0].v + p[1] * SC[1].v + p[2] * SC[2].v;
+      const top = 34, bot = h - 140;
+      const rootX = nar ? 22 : 50, leafX = nar ? 104 : w * 0.28;
+      const ax0 = leafX + (nar ? 46 : 70), ax1 = w - (nar ? 26 : 40), XM = 140000;
+      const XA = (v) => ax0 + (MB.clamp(v, 0, XM) / XM) * (ax1 - ax0);
+      const ys = [top, (top + bot) / 2, bot], ry = ys[1], axY = bot + 40;
+      vmark(ctx, XA(PRICE), top - 14, axY, P.text, [5, 4]);
+      text(ctx, "현재가", XA(PRICE), 12, { color: P.text, align: "center", size: 11, weight: 700 });
+      SC.forEach((s, i) => {
+        ctx.strokeStyle = cols[i]; ctx.globalAlpha = 0.75; ctx.lineWidth = 1.5 + 12 * p[i];
+        ctx.beginPath(); ctx.moveTo(rootX, ry); ctx.lineTo(leafX, ys[i]); ctx.stroke(); ctx.globalAlpha = 1;
+        const mx = (rootX + leafX) / 2, my = (ry + ys[i]) / 2;
+        text(ctx, Math.round(p[i] * 100) + "%", mx + (i === 1 ? 0 : 12), my + (i === 0 ? -10 : i === 1 ? -10 : 16), { color: cols[i], align: "center", size: 12, weight: 700, mono: true });
+        ctx.fillStyle = cols[i]; ctx.beginPath(); ctx.arc(leafX, ys[i], 6, 0, TAU); ctx.fill();
+        text(ctx, s.name, leafX + 11, ys[i] + 4, { color: P.text, size: 13, weight: 700 });
+        ctx.save(); ctx.strokeStyle = P.faint; ctx.lineWidth = 1; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(leafX + 44, ys[i]); ctx.lineTo(XA(s.v), ys[i]); ctx.stroke(); ctx.restore();
+        ctx.fillStyle = cols[i]; ctx.beginPath(); ctx.arc(XA(s.v), ys[i], 5, 0, TAU); ctx.fill();
+        text(ctx, man(s.v), XA(s.v), ys[i] - 10, { color: P.text, align: "center", size: 11, mono: true });
+      });
+      ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(rootX, ry, 6, 0, TAU); ctx.fill();
+      text(ctx, "지금", rootX, ry + 22, { color: P.dim, align: "center", size: 11 });
+      ctx.strokeStyle = P.axis; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(ax0, axY); ctx.lineTo(ax1, axY); ctx.stroke();
+      for (let v = 0; v <= XM; v += 20000) if (!nar || v % 40000 === 0) text(ctx, man(v), XA(v), axY + 6, { color: P.dim, align: "center", base: "top", size: 10, mono: true });
+      const ex = XA(ev), ey = axY - 12;
+      ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.moveTo(ex, ey - 8); ctx.lineTo(ex + 7, ey); ctx.lineTo(ex, ey + 8); ctx.lineTo(ex - 7, ey); ctx.closePath(); ctx.fill();
+      ctx.font = MB.font(12, false, 700);
+      const evs = "기대 가치 " + man(ev), evr = ex + 10 + ctx.measureText(evs).width > w - 4;
+      text(ctx, evs, ex + (evr ? -10 : 10), ey + 4, { color: P.accent2, align: evr ? "right" : "left", size: 12, weight: 700 });
+      const bx0 = 16, bx1 = w - 16, bw = bx1 - bx0, by = h - 58, bh = 22;
+      L = { bx0, bw, by };
+      let acc = 0;
+      SC.forEach((s, i) => {
+        const x = bx0 + acc * bw, ww = p[i] * bw;
+        ctx.fillStyle = cols[i]; ctx.globalAlpha = 0.85; ctx.fillRect(x, by, ww, bh); ctx.globalAlpha = 1;
+        const lab = ww > 76 ? s.name + " " + Math.round(p[i] * 100) + "%" : ww > 30 ? Math.round(p[i] * 100) + "%" : "";
+        if (lab) text(ctx, lab, x + ww / 2, by + bh / 2, { color: "#fff", align: "center", base: "middle", size: 12, weight: 700 });
+        acc += p[i];
+      });
+      text(ctx, "확률", bx0, by - 6, { color: P.dim, size: 11 });
+      knob(ctx, bx0 + p[0] * bw, by + bh / 2, P, P.text);
+      knob(ctx, bx0 + (p[0] + p[1]) * bw, by + bh / 2, P, P.text);
+      MB.stat("sc-o-p", p.map((x) => Math.round(x * 100)).join("/"));
+      MB.stat("sc-o-v", MB.price(Math.round(ev / 100) * 100));
+      MB.stat("sc-o-d", tone(ev - PRICE, MB.chg(ev / PRICE - 1)));
+      MB.stat("sc-o-l", tone(SC[2].v - PRICE, MB.chg(SC[2].v / PRICE - 1)));
+    }, { height: 360 });
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        if (!L || y < L.by - 24) { dragI = -1; return; }
+        const d0 = L.bx0 + p[0] * L.bw, d1 = L.bx0 + (p[0] + p[1]) * L.bw;
+        dragI = Math.abs(x - d0) < Math.abs(x - d1) ? 0 : Math.abs(x - d0) > Math.abs(x - d1) ? 1 : x < d0 ? 0 : 1;
+      },
+      move(x) {
+        if (dragI < 0) return;
+        const u = Math.round(MB.clamp((x - L.bx0) / L.bw, 0, 1) * 100) / 100;
+        if (dragI === 0) { const s = p[0] + p[1]; p[0] = Math.min(u, s); p[1] = Math.round((s - p[0]) * 100) / 100; }
+        else { const s = Math.max(u, p[0]); p[1] = Math.round((s - p[0]) * 100) / 100; p[2] = Math.round((1 - s) * 100) / 100; }
+        cv.redraw();
+      },
+      end() { dragI = -1; },
+    });
+  })();
+
+  /* ---------------------------------------------------------- 14. 몬테카를로 DCF */
+  (function () {
+    const XM = 200000, NB = 40;
+    let seed = 7, gen = null, xs = [], target = 2000;
+    function reset() { gen = ST.gauss(seed); xs = []; target = 2000; sample(2000); }
+    const SG = MB.range("mc-sg", (v) => pc(v, 1) + "p", () => { reset(); cv.redraw(); });
+    const SW = MB.range("mc-sw", (v) => pc(v, 2) + "p", () => { reset(); cv.redraw(); });
+    function sample(k) {
+      const sg = SG(), sw = SW();
+      for (let i = 0; i < k && xs.length < target; i++) {
+        const gr = 0.08 + sg * gen(), wc = 0.09 + sw * gen();
+        const t = Math.min(0.02 + 0.005 * gen(), wc - 0.02);
+        xs.push(val({ growth: gr, wacc: wc, tg: t }));
+      }
+    }
+    reset();
+    const cv = MB.canvas("#mc-cv", (ctx, w, h) => {
+      const P = MB.palette(), cnt = new Array(NB).fill(0), bwid = XM / NB;
+      xs.forEach((v) => cnt[MB.clamp(Math.floor(v / bwid), 0, NB - 1)]++);
+      const ym = Math.max(10, Math.max.apply(null, cnt)) * 1.18;
+      const n = xs.length, med = n ? ST.percentile(xs, 0.5) : NaN, p10 = n ? ST.percentile(xs, 0.1) : NaN, p90 = n ? ST.percentile(xs, 0.9) : NaN;
+      const c = MB.chart(ctx, { x: 52, y: 24, w: w - 70, h: h - 70 }, {
+        x: [0, XM], y: [0, ym], xFmt: man, yFmt: (v) => String(Math.round(v)), xLabel: "주당 가치(마지막 칸은 20만원 이상)", yLabel: "횟수",
+        bands: n > 20 ? [{ x0: p10, x1: Math.min(p90, XM), color: MB.color("accent-soft") }] : [] });
+      for (let b = 0; b < NB; b++) {
+        if (!cnt[b]) continue;
+        const x0 = c.X(b * bwid) + 1, x1 = c.X((b + 1) * bwid) - 1, mid = (b + 0.5) * bwid;
+        ctx.fillStyle = mid >= PRICE ? P.up : P.down; ctx.globalAlpha = 0.75;
+        ctx.fillRect(x0, c.Y(cnt[b]), x1 - x0, c.Y(0) - c.Y(cnt[b])); ctx.globalAlpha = 1;
+      }
+      vmark(ctx, c.X(PRICE), c.box.y, c.box.y + c.box.h, P.text, [5, 4]);
+      text(ctx, "현재가", c.X(PRICE) - 5, c.box.y + 10, { color: P.text, align: "right", size: 12, weight: 700 });
+      if (n) {
+        vmark(ctx, c.X(med), c.box.y, c.box.y + c.box.h, P.accent2);
+        text(ctx, "중앙값", c.X(med) + 5, c.box.y + 10, { color: P.accent2, size: 12, weight: 700 });
+      }
+      text(ctx, "옅은 띠: 가운데 80%", c.box.x + c.box.w, 12, { color: P.dim, align: "right", size: 11 });
+      MB.stat("mc-o-n", n.toLocaleString("ko-KR") + " <small>번</small>");
+      MB.stat("mc-o-m", n ? MB.price(Math.round(med / 100) * 100) : "—");
+      MB.stat("mc-o-r", n ? man(p10) + "~" + man(p90) : "—");
+      MB.stat("mc-o-p", n ? pc(xs.filter((v) => v > PRICE).length / n, 0) : "—");
+    }, { get height() { return narrow("mc-cv") ? 280 : 310; } });
+    document.getElementById("mc-run").addEventListener("click", () => { if (xs.length >= target) target = Math.min(10000, xs.length + 2000); });
+    document.getElementById("mc-re").addEventListener("click", () => { seed++; reset(); cv.redraw(); });
+    MB.loop(cv.canvas, () => { if (xs.length < target) { sample(100); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 15. 안전마진 */
+  (function () {
+    const LO = 30000, HI = 150000;
+    let err = -0.1, C = null;
+    const M = MB.range("ms-m", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    const cv = MB.canvas("#ms-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 520, m = M(), est = BASEV, buy = est * (1 - m), tru = est * (1 + err);
+      const x0 = 24, x1 = w - 24, X = (v) => x0 + ((MB.clamp(v, LO, HI) - LO) / (HI - LO)) * (x1 - x0);
+      const ay = 112, ty = h - 50;
+      C = { x0, x1 };
+      const lab = (s, x, y, col, size) => { ctx.font = MB.font(size || 12, false, 700); const tw = ctx.measureText(s).width; text(ctx, s, MB.clamp(x, x0 + tw / 2, x1 - tw / 2), y, { color: col, align: "center", size: size || 12, weight: 700 }); };
+      ctx.fillStyle = MB.color("accent-2-soft"); ctx.fillRect(X(buy), ay - 26, X(est) - X(buy), 26);
+      if (X(est) - X(buy) > 70) text(ctx, "안전마진", (X(buy) + X(est)) / 2, ay - 9, { color: P.accent2, align: "center", size: 11, weight: 700 });
+      ctx.strokeStyle = P.axis; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(x0, ay); ctx.lineTo(x1, ay); ctx.stroke();
+      for (let v = LO; v <= HI; v += 10000) {
+        ctx.strokeStyle = P.axis; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(X(v), ay - 3); ctx.lineTo(X(v), ay + 3); ctx.stroke();
+        if (!nar || v % 20000 === 0) text(ctx, man(v), X(v), ay + 8, { color: P.dim, align: "center", base: "top", size: 10, mono: true });
+      }
+      vmark(ctx, X(est), ay - 56, ay + 4, P.accent);
+      lab("추정 가치 " + man(est), X(est), ay - 62, P.accent);
+      vmark(ctx, X(buy), ay - 32, ay + 4, P.accent2);
+      lab("살 가격 " + man(buy), X(buy), ay - 38, P.accent2);
+      vmark(ctx, X(PRICE), ay + 26, ay + 40, P.text);
+      lab("현재가 7.2만", X(PRICE), ay + 54, P.text, 11);
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 6; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(x0, ty); ctx.lineTo(x1, ty); ctx.stroke();
+      ctx.strokeStyle = MB.toneColor(tru - buy); ctx.beginPath(); ctx.moveTo(X(buy), ty); ctx.lineTo(X(tru), ty); ctx.stroke(); ctx.lineCap = "butt";
+      vmark(ctx, X(buy), ay + 4, ty, P.accent2, [2, 3]);
+      knob(ctx, X(tru), ty, P, P.text);
+      lab("실제 가치 " + man(tru) + " (" + MB.chg(tru / buy - 1, 0) + ")", X(tru), ty - 16, MB.toneColor(tru - buy));
+      MB.stat("ms-o-b", MB.price(Math.round(buy / 100) * 100));
+      MB.stat("ms-o-c", pc(1 - PRICE / est, 1));
+      MB.stat("ms-o-e", MB.chg(err, 0));
+      MB.stat("ms-o-r", tone(tru - buy, MB.chg(tru / buy - 1, 1)));
+    }, { get height() { return narrow("ms-cv") ? 270 : 260; } });
+    MB.drag(cv.canvas, { move(x) { if (!C) return; const v = LO + ((x - C.x0) / (C.x1 - C.x0)) * (HI - LO); err = Math.round(MB.clamp(v / BASEV - 1, -0.6, 0.75) * 100) / 100; cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 16. 종합: 토네이도 */
+  (function () {
+    const DG = MB.range("td-g", (v) => pc(v, 1) + "p", () => cv.redraw());
+    const DW = MB.range("td-w", (v) => pc(v, 2) + "p", () => cv.redraw());
+    const DT = MB.range("td-t", (v) => pc(v, 2) + "p", () => cv.redraw());
+    const cv = MB.canvas("#td-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = w < 520, dg = DG(), dw = DW(), dt = DT();
+      const rows = [
+        { name: "성장률", sub: "8% ± " + pc(dg, 1) + "p", lo: val({ growth: 0.08 - dg }), hi: val({ growth: 0.08 + dg }) },
+        { name: "WACC", sub: "9% ± " + pc(dw, 2) + "p", lo: val({ wacc: 0.09 + dw }), hi: val({ wacc: 0.09 - dw }) },
+        { name: "영구성장률", sub: "2% ± " + pc(dt, 2) + "p", lo: val({ tg: 0.02 - dt }), hi: val({ tg: 0.02 + dt }) },
+        { name: "기준 FCF", sub: "± 20%", lo: val({ fcf0: BASE.fcf0 * 0.8 }), hi: val({ fcf0: BASE.fcf0 * 1.2 }) },
+      ].sort((a, b) => b.hi - b.lo - (a.hi - a.lo));
+      const all = { name: "모두 겹치면", sub: "나쁜 쪽~좋은 쪽",
+        lo: val({ fcf0: BASE.fcf0 * 0.8, growth: 0.08 - dg, wacc: 0.09 + dw, tg: 0.02 - dt }),
+        hi: val({ fcf0: BASE.fcf0 * 1.2, growth: 0.08 + dg, wacc: 0.09 - dw, tg: 0.02 + dt }) };
+      const XM = Math.max(160000, Math.ceil((all.hi * 1.08) / 20000) * 20000);
+      const Lw = nar ? 84 : 124;
+      const c = MB.chart(ctx, { x: Lw, y: 30, w: w - Lw - 20, h: h - 76 }, { x: [0, XM], y: [0, 1], yTicks: [], xFmt: man, xLabel: "주당 가치(원)" });
+      const rh = c.box.h / 5.4, bh = Math.min(22, rh * 0.5);
+      const bar = (ro, cy) => {
+        text(ctx, ro.name, Lw - 10, cy - 1, { color: P.text, align: "right", size: nar ? 11 : 13, weight: 700 });
+        text(ctx, ro.sub, Lw - 10, cy + 14, { color: P.dim, align: "right", size: nar ? 10 : 11 });
+        const by = cy + 5 - bh / 2;
+        ctx.globalAlpha = 0.85;
+        ctx.fillStyle = P.down; ctx.fillRect(c.X(ro.lo), by, c.X(BASEV) - c.X(ro.lo), bh);
+        ctx.fillStyle = P.up; ctx.fillRect(c.X(BASEV), by, c.X(ro.hi) - c.X(BASEV), bh);
+        ctx.globalAlpha = 1;
+        if (ro.hi - ro.lo > 1) {
+          text(ctx, man(ro.lo), c.X(ro.lo) - 4, cy + 5, { color: P.dim, align: "right", base: "middle", size: nar ? 10 : 11, mono: true });
+          text(ctx, man(ro.hi), c.X(ro.hi) + 4, cy + 5, { color: P.dim, base: "middle", size: nar ? 10 : 11, mono: true });
+        }
+      };
+      rows.forEach((ro, i) => bar(ro, c.box.y + rh * (i + 0.5)));
+      ctx.save(); ctx.strokeStyle = P.border; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(8, c.box.y + rh * 4.2); ctx.lineTo(w - 8, c.box.y + rh * 4.2); ctx.stroke(); ctx.restore();
+      bar(all, c.box.y + rh * 4.85);
+      vmark(ctx, c.X(BASEV), c.box.y - 8, c.box.y + c.box.h, P.accent);
+      vmark(ctx, c.X(PRICE), c.box.y - 8, c.box.y + c.box.h, P.text, [5, 4]);
+      text(ctx, "기본 " + man(BASEV), c.X(BASEV) + 4, 16, { color: P.accent, size: 12, weight: 700 });
+      text(ctx, "현재가 " + man(PRICE), c.X(PRICE) - 4, 16, { color: P.text, align: "right", size: 12, weight: 700 });
+      const lo1 = Math.min.apply(null, rows.map((r) => r.lo)), hi1 = Math.max.apply(null, rows.map((r) => r.hi));
+      MB.stat("td-o-top", rows[0].name);
+      MB.stat("td-o-one", man(lo1) + "~" + man(hi1));
+      MB.stat("td-o-all", man(all.lo) + "~" + man(all.hi));
+      MB.stat("td-o-pos", "아래에서 " + pc((PRICE - all.lo) / (all.hi - all.lo), 0));
+    }, { height: 340 });
+  })();
+})();
+</script>
+</body>
+</html>

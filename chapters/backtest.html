@@ -1,0 +1,1530 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "규칙을 과거 데이터에 돌려 보는 백테스트를 직접 돌리고, 미래 참조·생존 편향·비용 누락·과최적화·데이터 스누핑이 수익 곡선을 얼마나 부풀리는지 하나씩 걷어 낸다. 표본 밖 검증과 워크포워드, 샤프 비율의 통계적 불확실성까지."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>백테스트의 함정 · StockBook</title>
+<meta name="description" content="규칙을 과거 데이터에 돌려 보는 백테스트를 직접 돌리고, 미래 참조·생존 편향·비용 누락·과최적화·데이터 스누핑이 수익 곡선을 얼마나 부풀리는지 하나씩 걷어 낸다. 표본 밖 검증과 워크포워드, 샤프 비율의 통계적 불확실성까지.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/backtest.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="백테스트의 함정 · StockBook">
+<meta property="og:description" content="규칙을 과거 데이터에 돌려 보는 백테스트를 직접 돌리고, 미래 참조·생존 편향·비용 누락·과최적화·데이터 스누핑이 수익 곡선을 얼마나 부풀리는지 하나씩 걷어 낸다. 표본 밖 검증과 워크포워드, 샤프 비율의 통계적 불확실성까지.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/backtest.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/backtest.html#chapter","name":"백테스트의 함정","headline":"백테스트의 함정 · StockBook","description":"규칙을 과거 데이터에 돌려 보는 백테스트를 직접 돌리고, 미래 참조·생존 편향·비용 누락·과최적화·데이터 스누핑이 수익 곡선을 얼마나 부풀리는지 하나씩 걷어 낸다. 표본 밖 검증과 워크포워드, 샤프 비율의 통계적 불확실성까지.","url":"https://stockbook.euiyun.com/chapters/backtest.html","position":17,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"17. 백테스트의 함정","item":"https://stockbook.euiyun.com/chapters/backtest.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  figure.diagram svg { max-width: 520px; margin: 0 auto; }
+  figure.diagram svg .t-mono { font-size: 12px; }
+  .bt-check { display: grid; gap: 1px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin: 22px 0; }
+  .bt-check div { background: var(--bg-elev); padding: 12px 14px; font-size: 14.5px; color: var(--text-dim); line-height: 1.55; }
+  .bt-check b { display: block; color: var(--text); font-size: 15px; margin-bottom: 2px; }
+  .ad-box { border: 1px dashed var(--border); border-radius: var(--radius-sm); background: var(--surface); padding: 14px 16px; margin: 18px 0; font-size: 15px; }
+  .ad-box .big { font-size: 26px; font-weight: 800; color: var(--up); font-family: var(--mono); }
+  .ad-box small { color: var(--text-faint); display: block; margin-top: 6px; }
+</style>
+</head>
+<body data-chapter="backtest">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 17</div>
+    <h1>백테스트의 함정</h1>
+    <p class="lead">"10년 백테스트 연평균 40%." 이런 광고는 그래프까지 붙어 있어서 그럴듯해 보인다. 그래프는 거짓말을 하지 않는다. 다만 그 그래프를 만든 과정이 거짓말을 할 수 있다. 이 장에서는 규칙을 과거 가격에 돌려 보는 백테스트를 직접 돌려 보고, 수익 곡선을 부풀리는 함정을 하나씩 일부러 밟았다가 걷어 낸다. 마지막에는 그 "연 40%"를 해부해서 무엇이 남는지 본다.</p>
+    <ul class="objectives">
+      <li>백테스트가 "신호 → 다음 날 체결 → 비용 → 자산 곡선"의 순서로 돌아간다는 것을 알고, 그 순서가 어긋나는 미래 참조를 찾아낸다.</li>
+      <li>생존 편향, 거래 비용·슬리피지 누락, 체결 가능성, 표본 기간 의존이 결과를 어느 방향으로 얼마나 바꾸는지 숫자로 본다.</li>
+      <li>파라미터를 많이 맞출수록 표본 안 성과는 좋아지고 표본 밖 성과는 나빠지는 과최적화와, 많이 시험하면 하나는 맞는 데이터 스누핑을 구분한다.</li>
+      <li>샤프 비율 0.5짜리 전략도 10년 데이터로는 운과 가려내기 어렵다는 것을 표준오차로 설명한다.</li>
+      <li>훈련·검증 분리, 워크포워드, 파라미터 안정성(봉우리보다 고원), 단순한 규칙, 다중 검정 보정으로 백테스트를 의심하는 습관을 만든다.</li>
+    </ul>
+  </header>
+
+  <section id="what">
+    <h2>백테스트란: 규칙을 과거에 돌려 보기</h2>
+    <p><a href="technical.html">12장</a>에서 한결은 유튜브에서 본 골든크로스 규칙을 지수에 시험해 보았다. 그것이 <span class="term">백테스트</span><span class="en">(Backtest)</span>다. 매매 규칙을 미리 정해 두고, 그 규칙을 과거의 가격 위에서 하루씩 따라가며 "그때 이 규칙대로 샀다면 지금 얼마가 되었을까"를 계산하는 일이다. 결과는 보통 하나의 선, <span class="term">자산 곡선</span><span class="en">(Equity curve)</span>으로 나온다.</p>
+    <p>백테스트는 실제 돈을 걸기 전에 아이디어를 거르는 값싼 체다. 문제는 이 체가 너무 쉽게 만들어진다는 데 있다. 컴퓨터는 수천 개의 규칙을 몇 초 만에 돌릴 수 있고, 그중 가장 멋진 선 하나만 골라 보여 주면 광고가 된다. 그래서 백테스트를 읽는 사람이 알아야 할 것은 "수익이 얼마인가"보다 "<b>이 선이 어떻게 만들어졌는가</b>"다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 -22 460 308" role="img" aria-label="백테스트의 흐름과 각 단계에서 생기는 함정">
+        <defs><marker id="bt-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-surface s-line" x="8" y="28" width="92" height="58" rx="8"/>
+        <text class="lbl-b" x="54" y="52" text-anchor="middle">과거 데이터</text>
+        <text class="lbl-dim" x="54" y="72" text-anchor="middle">가격·재무</text>
+        <rect class="f-acc-soft s-acc" x="124" y="28" width="92" height="58" rx="8"/>
+        <text class="lbl-b" x="170" y="52" text-anchor="middle">신호 계산</text>
+        <text class="lbl-dim" x="170" y="72" text-anchor="middle">i일까지 정보</text>
+        <rect class="f-acc-soft s-acc" x="240" y="28" width="92" height="58" rx="8"/>
+        <text class="lbl-b" x="286" y="52" text-anchor="middle">가상 체결</text>
+        <text class="lbl-dim" x="286" y="72" text-anchor="middle">i+1일, 비용</text>
+        <rect class="f-acc2-soft s-acc2" x="356" y="28" width="96" height="58" rx="8"/>
+        <text class="lbl-b" x="404" y="52" text-anchor="middle">자산 곡선</text>
+        <text class="lbl-dim" x="404" y="72" text-anchor="middle">수익·샤프·낙폭</text>
+        <line class="s-line" x1="100" y1="57" x2="122" y2="57" marker-end="url(#bt-ar)"/>
+        <line class="s-line" x1="216" y1="57" x2="238" y2="57" marker-end="url(#bt-ar)"/>
+        <line class="s-line" x1="332" y1="57" x2="354" y2="57" marker-end="url(#bt-ar)"/>
+        <path class="s-dash" d="M404 28 V4 H170 V24" fill="none" marker-end="url(#bt-ar)"/>
+        <text class="lbl-dim" x="287" y="-4" text-anchor="middle">결과를 보고 규칙을 고친다(반복)</text>
+        <line class="s-bad" x1="54" y1="150" x2="54" y2="92" marker-end="url(#bt-ar)"/>
+        <line class="s-bad" x1="170" y1="150" x2="170" y2="92" marker-end="url(#bt-ar)"/>
+        <line class="s-bad" x1="286" y1="150" x2="286" y2="92" marker-end="url(#bt-ar)"/>
+        <line class="s-bad" x1="404" y1="150" x2="404" y2="92" marker-end="url(#bt-ar)"/>
+        <rect class="f-bad-soft" x="8" y="152" width="92" height="74" rx="8"/>
+        <text class="lbl-bad" x="54" y="172" text-anchor="middle">생존 편향</text>
+        <text class="lbl-dim" x="54" y="192" text-anchor="middle">사라진 종목이</text>
+        <text class="lbl-dim" x="54" y="210" text-anchor="middle">빠진 데이터</text>
+        <rect class="f-bad-soft" x="124" y="152" width="92" height="74" rx="8"/>
+        <text class="lbl-bad" x="170" y="172" text-anchor="middle">미래 참조</text>
+        <text class="lbl-dim" x="170" y="192" text-anchor="middle">그날 몰랐던</text>
+        <text class="lbl-dim" x="170" y="210" text-anchor="middle">정보를 씀</text>
+        <rect class="f-bad-soft" x="240" y="152" width="92" height="74" rx="8"/>
+        <text class="lbl-bad" x="286" y="172" text-anchor="middle">비용 누락</text>
+        <text class="lbl-dim" x="286" y="192" text-anchor="middle">수수료·세금·</text>
+        <text class="lbl-dim" x="286" y="210" text-anchor="middle">슬리피지·유동성</text>
+        <rect class="f-bad-soft" x="356" y="152" width="96" height="74" rx="8"/>
+        <text class="lbl-bad" x="404" y="172" text-anchor="middle">과최적화</text>
+        <text class="lbl-dim" x="404" y="192" text-anchor="middle">반복할수록</text>
+        <text class="lbl-dim" x="404" y="210" text-anchor="middle">과거에 맞춰짐</text>
+        <text class="lbl-dim" x="230" y="256" text-anchor="middle">기간 고르기(표본 기간 의존)는 이 전체를 감싸는 함정이다.</text>
+        <text class="lbl-dim" x="230" y="276" text-anchor="middle">어느 구간을 돌렸는지에 따라 같은 규칙이 영웅도, 바보도 된다.</text>
+      </svg>
+      <figcaption><b>그림 17-1. 백테스트의 흐름과 함정이 끼어드는 자리.</b> 위 줄은 백테스트가 하루하루 하는 일이고, 아래 줄은 각 단계에서 결과를 실제보다 좋게 만드는 함정이다. 네 함정 모두 수익을 <b>부풀리는</b> 쪽으로 작용한다는 점이 무섭다.</figcaption>
+    </figure>
+
+    <p>먼저 엔진을 돌려 보자. 아래는 이 책의 <b>가상의 시장</b>(교육용으로 만든 가짜 가격) SB 종합지수 10년에 <a href="technical.html">12장</a>의 이동평균 교차 규칙을 돌린 결과다. 단기 이동평균이 장기 이동평균보다 위에 있으면 지수를 전부 들고, 아래에 있으면 전부 현금으로 둔다. 두 기간을 바꿔 보면서 매매 표시(▲ 매수, ▼ 매도)와 아래쪽 자산 곡선이 어떻게 바뀌는지 보자.</p>
+
+    <div class="sim" id="sim-engine">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>백테스트 엔진: 이동평균 교차 규칙</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="en-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>단기 이동평균 <output id="en-s-out"></output></span><input type="range" id="en-s" min="3" max="60" step="1" value="20"></label>
+          <label class="ctrl"><span>장기 이동평균 <output id="en-l-out"></output></span><input type="range" id="en-l" min="20" max="250" step="5" value="60"></label>
+          <label class="check"><input type="checkbox" id="en-ma" checked> 이동평균선 보기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">연평균 수익(CAGR)</span><span class="v" id="en-o-cagr">—</span></div>
+        <div class="stat"><span class="k">샤프 비율</span><span class="v" id="en-o-sh">—</span></div>
+        <div class="stat"><span class="k">최대 낙폭</span><span class="v" id="en-o-mdd">—</span></div>
+        <div class="stat"><span class="k">매매 횟수</span><span class="v" id="en-o-tr">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값(20일·60일)에서 전략이 지수 보유보다 낫다. 이것만 보면 규칙을 믿고 싶어진다. ② 단기를 5일로 줄이면 매매가 몇 배로 늘고 수익이 줄어든다. ③ 50일·200일로 바꾸면 이번에는 보유보다 못하다. 같은 "골든크로스"인데 숫자 두 개로 결론이 뒤집힌다. (지수를 전부 사거나 전부 파는 규칙, 편도 비용은 수수료+거래세 절반 약 0.115%, 현금 이자 0)</div>
+    </div>
+
+    <p>기본값에서 전략의 연평균 수익은 약 7.1%로, 그냥 들고 있었을 때의 약 5.8%보다 높고 최대 낙폭도 −42%에서 −31%로 얕다. 그런데 단기 5일·장기 20일로 바꾸면 약 2.2%, 50일·200일이면 약 2.2%로 떨어진다. 이 장의 거의 모든 함정은 이 한 장면에서 출발한다. <b>어떤 숫자 조합이 과거에 잘 맞았다는 사실은, 그 조합이 앞으로도 잘 맞는다는 증거가 되기 어렵다.</b></p>
+
+    <h3>엔진이 하루에 하는 일</h3>
+    <p>백테스트 엔진이 정직하려면 한 가지 순서를 지켜야 한다. i일 장이 끝나고 종가가 나오면 그 종가까지의 정보로 신호를 계산한다. 그 신호로 주문을 낼 수 있는 가장 이른 때는 다음 거래일이다. 이 책의 엔진(<code>ST.backtest</code>)은 보수적으로 <b>i일의 신호를 i+1일 종가에 체결</b>한다. 아래에서 하루씩 넘기며 그 순서를 눈으로 따라가 보자. 오른쪽의 어두운 부분은 아직 오지 않은 날이다. 엔진도 그 안을 볼 수 없어야 한다.</p>
+
+    <div class="sim" id="sim-step">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>하루씩 넘기는 백테스트: 신호는 오늘, 체결은 내일</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sp-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="sp-next">다음 날</button><button class="btn" id="sp-five">5일 넘기기</button></div>
+          <div class="btn-row"><button class="btn" id="sp-play">자동 진행</button><button class="btn" id="sp-re">처음으로</button></div>
+          <div class="legend"><span><i style="background:var(--accent)"></i>5일선</span><span><i style="background:var(--accent-2)"></i>20일선</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">오늘</span><span class="v" id="sp-o-d">—</span></div>
+        <div class="stat"><span class="k">오늘 종가로 낸 신호</span><span class="v" id="sp-o-sig">—</span></div>
+        <div class="stat"><span class="k">지금 비중</span><span class="v" id="sp-o-pos">—</span></div>
+        <div class="stat"><span class="k">자산(1,000만원 시작)</span><span class="v" id="sp-o-eq">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 5일선이 20일선을 뚫고 올라가는 날(● 신호)을 찾고, 실제 매수(▲)가 하루 뒤에 찍히는지 본다. ② 급락 구간에서 하루 늦은 체결 때문에 얼마나 더 잃는지 본다. ③ 신호와 체결 사이의 하루를 없애면 어떻게 될지 예상해 본다. 다음 절의 주제다. (SB 종합지수 일봉, 5일·20일 이동평균 교차)</div>
+    </div>
+
+    <p>신호(●)와 체결(▲·▼) 사이에는 늘 하루가 있다. 급락이 시작된 날 신호가 나와도 실제로 파는 것은 다음 날이라서, 그 하루치 하락은 고스란히 맞는다. 이 하루가 귀찮다고 지워 버리면 결과가 좋아진다. 그리고 그것이 가장 흔한 실수다.</p>
+  </section>
+
+  <section id="conditions">
+    <h2>좋은 백테스트의 조건</h2>
+    <p>함정을 하나씩 보기 전에, 믿을 만한 백테스트가 갖춰야 할 것을 먼저 적어 둔다. 광고나 보고서에서 백테스트를 볼 때 이 목록으로 하나씩 물어보면 된다. 이 장의 나머지는 각 줄을 어겼을 때 무슨 일이 생기는지 보여 주는 실험이다.</p>
+    <div class="bt-check">
+      <div><b>그날 알 수 있던 정보만</b>신호는 그 시점에 실제로 공개된 데이터로만 계산했는가. 체결은 신호 다음이었는가.</div>
+      <div><b>그날 있던 종목 전부</b>지금은 사라진 상장폐지 종목까지 포함한 데이터인가.</div>
+      <div><b>현실의 비용</b>수수료, 거래세, 호가 차이, 내 주문이 가격을 미는 효과까지 넣었는가. 그 양을 실제로 살 수 있었는가.</div>
+      <div><b>여러 국면</b>상승장만이 아니라 급락·약세·횡보가 섞인 충분히 긴 기간인가.</div>
+      <div><b>적은 손잡이</b>맞춘 파라미터와 조건이 적은가. 이웃한 값에서도 비슷한 결과가 나오는가.</div>
+      <div><b>시험한 횟수의 공개</b>이 결과가 몇 번째 시도에서 나온 것인가. 표본 밖에서 다시 확인했는가.</div>
+    </div>
+  </section>
+
+  <section id="lookahead">
+    <h2>미래 참조: 그날 몰랐던 것을 쓰기</h2>
+    <p><span class="term">미래 참조 편향</span><span class="en">(Look-ahead bias)</span>은 백테스트 속의 내가 그 시점에는 알 수 없었던 정보를 쓰는 것이다. 대놓고 미래 가격을 보는 사람은 없다. 미래 참조는 거의 언제나 <b>날짜가 하루, 몇 주 어긋나는 실수</b>로 숨어 들어온다.</p>
+    <ul>
+      <li><b>종가 보고 종가에 사기.</b> 종가는 장이 끝나야 확정된다. 그 종가로 계산한 신호로 같은 종가에 샀다고 기록하면, 실제로는 불가능한 거래를 한 셈이다.</li>
+      <li><b>나중에 발표된 실적 쓰기.</b> 3월 31일로 끝나는 분기의 실적은 5월 중순쯤 공시된다(분기보고서 제출 기한은 분기 말 후 45일). 데이터베이스에 "1분기 실적"이 3월 31일 날짜로 저장되어 있으면, 백테스트는 6주 먼저 실적을 안 셈이 된다.</li>
+      <li><b>나중에 고쳐진 데이터.</b> 경제 지표나 재무 수치가 뒤에 정정되면, 지금 내려받은 데이터에는 정정된 값이 들어 있다. 그 당시 사람들이 본 값은 아니다.</li>
+      <li><b>지금의 구성 종목으로 과거 지수 만들기.</b> 다음 절의 생존 편향과도 겹친다.</li>
+    </ul>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="정보가 생기는 날과 쓸 수 있는 날의 차이">
+        <defs><marker id="la-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <text class="lbl-b" x="14" y="24">① 실적 데이터</text>
+        <line class="s-axis" x1="20" y1="70" x2="446" y2="70"/>
+        <circle class="f-acc" cx="70" cy="70" r="6"/>
+        <text class="lbl" x="70" y="96" text-anchor="middle">3/31</text>
+        <text class="lbl-dim" x="70" y="114" text-anchor="middle">분기 끝</text>
+        <circle class="f-acc2" cx="300" cy="70" r="6"/>
+        <text class="lbl" x="300" y="96" text-anchor="middle">5/15 무렵</text>
+        <text class="lbl-dim" x="300" y="114" text-anchor="middle">실적 공시</text>
+        <rect class="f-bad-soft" x="76" y="58" width="218" height="24" rx="4"/>
+        <text class="lbl-bad" x="185" y="52" text-anchor="middle">이 6주 동안 쓰면 미래 참조</text>
+        <line class="s-ok" x1="306" y1="70" x2="440" y2="70" marker-end="url(#la-ar)"/>
+        <text class="lbl-dim" x="378" y="52" text-anchor="middle">여기부터 사용 가능</text>
+        <text class="lbl-b" x="14" y="150">② 종가 신호</text>
+        <line class="s-axis" x1="20" y1="196" x2="446" y2="196"/>
+        <circle class="f-acc" cx="120" cy="196" r="6"/>
+        <text class="lbl" x="120" y="222" text-anchor="middle">i일 15:30</text>
+        <text class="lbl-dim" x="120" y="240" text-anchor="middle">종가 확정·신호</text>
+        <circle class="f-acc2" cx="340" cy="196" r="6"/>
+        <text class="lbl" x="340" y="222" text-anchor="middle">i+1일</text>
+        <text class="lbl-dim" x="340" y="240" text-anchor="middle">실제 체결</text>
+        <path class="s-bad" d="M120 186 C 112 160, 140 160, 128 186" fill="none" marker-end="url(#la-ar)"/>
+        <text class="lbl-bad" x="150" y="150">같은 종가에 체결(불가능)</text>
+        <path class="s-ok" d="M126 190 C 200 158, 270 158, 334 190" fill="none" marker-end="url(#la-ar)"/>
+      </svg>
+      <figcaption><b>그림 17-2. 정보가 생긴 날과 쓸 수 있는 날.</b> 데이터에 찍힌 날짜는 그 정보를 <b>알게 된</b> 날이 아니다. 백테스트는 "그날 누가 이것을 알 수 있었나"를 기준으로 날짜를 다시 맞춰야 한다. (공시 기한은 2026년 기준 대표값이며 회사·보고서 종류에 따라 다르다)</figcaption>
+    </figure>
+
+    <p>미래 참조가 결과를 얼마나 바꾸는지 직접 켜 보자. 규칙 세 가지에 세 단계의 "엿보기"를 붙였다. <b>정상</b>은 앞 시뮬레이터처럼 신호 다음 날 체결한다. <b>종가 체결</b>은 신호를 낸 그 종가에 샀다고 기록한다. <b>내일 종가 섞임</b>은 신호를 계산할 때 내일 종가가 실수로 하나 섞여 들어간 경우다. 데이터 배열에서 인덱스 하나가 밀리면 실제로 이렇게 된다.</p>
+
+    <div class="sim" id="sim-look">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>미래 참조 스위치: 하루를 엿보면 생기는 일</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lk-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>규칙</span>
+            <div class="seg" id="lk-rule"><button data-value="ma" class="on">이평 20·60</button><button data-value="brk">20일 신고가</button><button data-value="up">오른 날 사기</button></div>
+          </div>
+          <div class="ctrl"><span>엿보기</span>
+            <div class="seg" id="lk-lv"><button data-value="0" class="on">정상</button><button data-value="1">종가 체결</button><button data-value="2">내일 종가 섞임</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">연평균 수익</span><span class="v" id="lk-o-cagr">—</span></div>
+        <div class="stat"><span class="k">정상일 때</span><span class="v" id="lk-o-base">—</span></div>
+        <div class="stat"><span class="k">샤프 비율</span><span class="v" id="lk-o-sh">—</span></div>
+        <div class="stat"><span class="k">최대 낙폭</span><span class="v" id="lk-o-mdd">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 이평 20·60에서 "종가 체결"만 켜도 연 수익이 1.7%p쯤 오른다. ② "20일 신고가"에 "내일 종가 섞임"을 켜면 손실 나던 규칙이 연 19%짜리 전략으로 바뀐다. ③ "오른 날 사기"에 내일 종가를 섞으면 곡선이 세로축을 뚫고 나간다. 이렇게 비현실적인 곡선은 버그의 신호다. (세로축은 로그 눈금, 편도 비용 약 0.115%)</div>
+    </div>
+
+    <p>마지막 경우는 우스워 보이지만 실제로 흔하다. 내일 종가가 섞인 규칙은 "내일 오를 날만 골라 들고 있는" 규칙이 되므로 비용을 내고도 곡선이 하늘로 솟는다. 반대로 미래 참조가 <b>조금만</b> 섞이면 곡선은 "조금 더 좋은" 정도라서 눈치채기 어렵다. 20일 신고가 규칙이 정확히 그렇다. 정상일 때는 연 −0.7%로 쓸모없던 규칙이, 하루치 엿보기로 연 약 19%, 최대 낙폭 −9%의 꿈같은 전략이 된다. <b>결과가 너무 좋으면 먼저 날짜부터 의심한다.</b></p>
+  </section>
+
+  <section id="survivor">
+    <h2>생존 편향: 사라진 종목이 빠진 데이터</h2>
+    <p>오늘 증권사 앱에서 내려받을 수 있는 종목 목록은 "오늘까지 살아남은" 종목들이다. 10년 사이 상장폐지된 회사는 목록에 없다. 이 목록으로 10년 전부터 백테스트를 하면, 10년 전의 나는 어느 회사가 망할지 미리 알고 그 회사들만 피해 간 셈이 된다. 이것이 <span class="term">생존 편향</span><span class="en">(Survivorship bias)</span>이다. 생존 편향은 미래 참조의 한 종류이기도 하다. "앞으로 살아남을 것"이라는 미래 정보를 쓴 것이기 때문이다.</p>
+    <p>아래는 이 책의 <b>가상 유니버스</b>(월간 수익률 10년, 가상의 300종목)다. 그중 일부는 주가가 무너지거나 부실해져 중간에 상장폐지된다. 매달 모든 종목을 같은 비중으로 사는 단순한 전략을, 상장폐지 종목까지 포함한 전체 데이터와 오늘 살아남은 종목만 있는 데이터로 각각 돌려 보자. 차트 위를 끌면 그 달까지 사라진 종목 수가 보인다.</p>
+
+    <div class="sim" id="sim-surv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>생존 편향: 살아남은 종목만으로 돌린 백테스트</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sv-cv"></canvas><span class="hint">차트를 끌어 달을 고른다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>종목 범위</span>
+            <div class="seg" id="sv-pool"><button data-value="all" class="on">전체 300종목</button><button data-value="small">소형주만</button></div>
+          </div>
+          <div class="legend"><span><i style="background:var(--accent-2)"></i>살아남은 종목만</span><span><i style="background:var(--accent)"></i>상장폐지 포함 전체</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">살아남은 종목만(연)</span><span class="v" id="sv-o-s">—</span></div>
+        <div class="stat"><span class="k">전체(연)</span><span class="v" id="sv-o-a">—</span></div>
+        <div class="stat"><span class="k">부풀려진 몫</span><span class="v" id="sv-o-d">—</span></div>
+        <div class="stat"><span class="k">고른 달까지 상장폐지</span><span class="v" id="sv-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 두 곡선이 처음에는 붙어 있다가 상장폐지가 하나둘 생길 때마다 벌어지는 것을 본다. ② 소형주만으로 바꾸면 차이가 더 커진다. 사라지는 회사는 대개 작은 회사다. ③ 소형주 전략을 백테스트한 결과라면 이 차이가 고스란히 "전략의 실력"처럼 보인다는 점을 생각해 본다. (상장폐지되는 달의 수익률은 −90%로 처리, 동일가중 매달 재조정, 비용 없음)</div>
+    </div>
+
+    <p>전체 300종목으로는 해마다 약 1.2%p, 소형주만 보면 약 1.6%p 차이가 난다. 1년에 1~2%p는 작아 보이지만 10년이면 누적으로 수십 %p다. 게다가 생존 편향은 방향이 늘 한쪽이다. 망한 회사를 빼면 성과는 좋아지기만 한다. 소형주, 저PBR주, 적자 기업처럼 상장폐지가 잦은 곳을 다루는 전략일수록 이 편향이 크다. 상장폐지 종목을 포함한 데이터를 <b>생존 편향 없는 데이터</b><span class="en">(Survivorship-bias-free)</span>라고 부르고, 믿을 만한 연구는 이것을 쓴다.</p>
+    <div class="callout">
+      <strong>지수도 생존자다</strong>
+      SB 종합지수 같은 시장 지수는 구성 종목이 바뀌어도 그날그날의 실제 종목으로 계산되므로 생존 편향이 적다. 그러나 "지금 지수에 들어 있는 종목들로 10년 전부터 지수를 다시 만들어" 백테스트하면 생존 편향이 들어간다. 지금 지수에 있는 종목은 대개 지난 10년 동안 잘 커서 들어온 종목이기 때문이다.
+    </div>
+  </section>
+
+  <section id="friction">
+    <h2>비용, 슬리피지, 체결 가능성</h2>
+    <p>백테스트 속의 매매는 공짜이고, 원하는 가격에, 원하는 양만큼 언제나 체결된다. 현실은 셋 다 아니다. <a href="orderbook.html">3장</a>에서 본 것처럼 한 번 사고팔 때마다 수수료(약 0.015%씩)와 매도 때 증권거래세(2026년 기준 0.20%)가 나가고, 시장가 주문은 호가 차이(스프레드)만큼 불리하게 체결된다. 주문이 크면 호가를 여러 칸 먹으면서 가격을 밀어 올린다. 생각한 가격과 실제 체결 가격의 차이를 <span class="term">슬리피지</span><span class="en">(Slippage)</span>라고 한다.</p>
+    <p>비용의 무게는 <b>매매 횟수</b>가 정한다. 1년에 한두 번 사고파는 규칙에는 0.3%의 비용이 별일 아니지만, 1년에 30번 사고파는 규칙에는 해마다 몇 %p가 사라진다. 아래에서 규칙의 빠르기를 고르고 비용과 슬리피지를 올려 보자.</p>
+
+    <div class="sim" id="sim-cost">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>비용과 슬리피지: 자주 사고팔수록 녹는 곡선</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="co-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>규칙의 빠르기</span>
+            <div class="seg" id="co-rule"><button data-value="5,20" class="on">빠름 5·20</button><button data-value="20,60">보통 20·60</button><button data-value="50,200">느림 50·200</button></div>
+          </div>
+          <label class="ctrl"><span>수수료+세금(편도) <output id="co-fee-out"></output></span><input type="range" id="co-fee" min="0" max="0.3" step="0.005" value="0.115"></label>
+          <label class="ctrl"><span>슬리피지(편도) <output id="co-slip-out"></output></span><input type="range" id="co-slip" min="0" max="0.5" step="0.01" value="0.1"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">1년 매매 횟수</span><span class="v" id="co-o-n">—</span></div>
+        <div class="stat"><span class="k">비용 0일 때(연)</span><span class="v" id="co-o-0">—</span></div>
+        <div class="stat"><span class="k">비용 반영(연)</span><span class="v" id="co-o-1">—</span></div>
+        <div class="stat"><span class="k">해마다 사라진 몫</span><span class="v" id="co-o-d">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 빠른 규칙에서 비용 두 개를 0으로 내리면 연 수익이 어떻게 되는지 본다. 광고 속 곡선은 대개 이 상태다. ② 슬리피지만 0.3%로 올리면 빠른 규칙은 손실 전략이 된다. ③ 느린 규칙은 같은 비용에도 거의 흔들리지 않는다. (편도 비용 = 사거나 팔 때마다 거래 금액에서 빠지는 비율. 수수료 0.015%와 매도 거래세 0.20%를 편도로 나누면 약 0.115%)</div>
+    </div>
+
+    <p>빠른 규칙은 1년에 열 번 넘게 사고판다(매수와 매도를 각각 한 번으로 센다). 편도 비용 0.215%(수수료·세금 0.115% + 슬리피지 0.1%)라면 그것만으로 해마다 3%p 넘게 빠진다. 많은 단기 전략의 "초과수익"은 정확히 이 정도 크기라서, 비용을 넣는 순간 사라진다.</p>
+
+    <h3>그 양을 실제로 살 수 있었나</h3>
+    <p>슬리피지는 주문 크기에 따라 달라진다. 백테스트가 "소형주 하나에 1억원어치를 종가에 샀다"고 적어도, 실제 호가창에 1억원어치 매도 물량이 없으면 그 가격에 살 수 없다. 이것이 <span class="term">체결 가능성</span>, 다른 말로 <span class="term">유동성</span><span class="en">(Liquidity)</span> 문제다. 아래 호가창의 매도 쪽(파랑)에 시장가 매수 주문을 넣는다고 생각하고, 차트를 좌우로 끌어 주문 금액을 바꿔 보자.</p>
+
+    <div class="sim" id="sim-liq">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>주문이 가격을 민다: 주문 금액과 평균 체결가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lq-cv"></canvas><span class="hint">좌우로 끌어 주문 금액을 바꾼다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>종목</span>
+            <div class="seg" id="lq-stock"><button data-value="big" class="on">대형주(한빛반도체)</button><button data-value="small">소형주(가상)</button></div>
+          </div>
+          <div class="btn-row"><button class="btn sm" data-amt="1e6">100만원</button><button class="btn sm" data-amt="3e7">3,000만원</button><button class="btn sm" data-amt="3e8">3억원</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주문 금액</span><span class="v" id="lq-o-amt">—</span></div>
+        <div class="stat"><span class="k">평균 체결가</span><span class="v" id="lq-o-avg">—</span></div>
+        <div class="stat"><span class="k">슬리피지(중간값 대비)</span><span class="v" id="lq-o-slip">—</span></div>
+        <div class="stat"><span class="k">호가에 없어 못 산 금액</span><span class="v" id="lq-o-left">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 대형주에 3억원을 넣어도 미끄러짐이 작다. ② 소형주로 바꾸면 3,000만원만 넣어도 호가 여러 칸을 먹는다. ③ 3억원이면 보이는 호가를 다 먹고도 못 산 금액이 남는다. 백테스트는 이 주문을 종가에 전부 샀다고 기록한다. (엔진의 호가창 <code>ST.Book</code>으로 만든 가상 호가 20단계, 시장가 매수만 계산)</div>
+    </div>
+
+    <p>운용 금액이 작은 개인에게 유동성은 대형주에서는 큰 문제가 아니다. 그러나 백테스트가 고른 종목이 거래가 적은 소형주라면 이야기가 다르다. 소형주 전략의 백테스트 수익이 유난히 좋다면, 그 수익의 상당 부분은 "실제로는 그 가격에 살 수 없었던" 데서 나왔을 수 있다. 이 장 끝의 광고 해부에서 소형주 전략에 편도 0.4%의 슬리피지를 붙이는 이유다.</p>
+  </section>
+
+  <section id="period">
+    <h2>표본 기간과 국면: 언제를 돌렸나</h2>
+    <p>시장은 늘 같은 성격이 아니다. 이 책의 가상 시장 10년에도 완만한 상승, 조정, 강세장, 40일 만의 −34% 급락, 급반등, 약세장, 횡보가 차례로 들어 있다. 이런 시장의 성격이 바뀌는 것을 <span class="term">국면 변화</span><span class="en">(Regime change)</span>라고 한다. 추세를 따라가는 규칙은 길게 오르거나 길게 내리는 국면에서 빛나고, 위아래로 흔들리는 국면에서 사고팔기만 반복하며 돈을 잃는다. 아래에서 규칙을 바꿔 가며 국면마다 전략과 보유를 비교해 보자.</p>
+
+    <div class="sim" id="sim-regime">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>국면별 성과: 전략 vs 그냥 보유</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="rg-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>규칙</span>
+            <div class="seg" id="rg-rule"><button data-value="20,60" class="on">이평 20·60</button><button data-value="50,200">이평 50·200</button><button data-value="5,20">이평 5·20</button></div>
+          </div>
+          <div class="legend"><span><i style="background:var(--accent)"></i>전략</span><span><i style="background:var(--text-faint)"></i>보유</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">보유보다 나았던 국면</span><span class="v" id="rg-o-win">—</span></div>
+        <div class="stat"><span class="k">가장 크게 이긴 국면</span><span class="v" id="rg-o-best">—</span></div>
+        <div class="stat"><span class="k">가장 크게 진 국면</span><span class="v" id="rg-o-worst">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 급락과 약세장에서 전략이 손실을 줄이는지 본다. ② 횡보 구간에서는 어떤지 본다. ③ 급반등에서 전략이 얼마나 뒤처지는지 본다. 추세 규칙은 바닥에서 늦게 올라탄다. (각 국면 처음부터 끝까지의 구간 수익률, 비용 포함)</div>
+    </div>
+
+    <p>추세 규칙의 성적표는 "어떤 국면이 몇 번 들어 있었나"에 크게 달려 있다. 급락이 한 번 있었던 10년이면 낙폭을 피한 덕에 영웅이 되고, 같은 규칙도 횡보장 5년만 돌리면 비용만 내는 바보가 된다. 그러니 백테스트 기간을 고르는 일 자체가 결과를 고르는 일이 될 수 있다. 직접 해 보자. 아래 차트의 두 손잡이를 끌어 백테스트할 기간을 고른다.</p>
+
+    <div class="sim" id="sim-window">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>기간 고르기: 손잡이 두 개로 결론 뒤집기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="wn-cv"></canvas><span class="hint">시작·끝 손잡이를 끈다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn" id="wn-good">전략이 제일 좋아 보이는 기간</button><button class="btn" id="wn-bad">제일 나빠 보이는 기간</button><button class="btn" id="wn-all">10년 전체</button></div>
+          <div class="legend"><span><i style="background:var(--accent)"></i>이평 20·60 전략</span><span><i style="background:var(--text-faint)"></i>보유</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">기간</span><span class="v" id="wn-o-p">—</span></div>
+        <div class="stat"><span class="k">전략(연)</span><span class="v" id="wn-o-s">—</span></div>
+        <div class="stat"><span class="k">보유(연)</span><span class="v" id="wn-o-h">—</span></div>
+        <div class="stat"><span class="k">전략 − 보유</span><span class="v" id="wn-o-d">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 급락이 들어간 구간을 고르면 전략이 크게 이긴다. ② 급락 뒤 꾸준히 오르기만 한 구간을 고르면 전략이 크게 진다. ③ 두 버튼은 2년 이상인 모든 기간 중 차이가 가장 큰 것을 찾는다. 같은 규칙, 같은 데이터로 "연 몇 %p 이긴다"와 "연 몇 %p 진다"를 둘 다 말할 수 있다. (기간은 최소 2년)</div>
+    </div>
+
+    <p>광고 속 백테스트의 시작일이 이상하게 특정한 날짜라면, 그 날짜가 왜 골라졌는지 물어볼 만하다. 정직한 백테스트는 데이터가 있는 가장 긴 기간을 쓰고, 여러 국면에서 따로 성적을 보여 준다.</p>
+  </section>
+
+  <section id="overfit">
+    <h2>과최적화: 과거에 꼭 맞는 옷</h2>
+    <p>첫 시뮬레이터에서 단기·장기 이동평균 기간을 바꿔 보았다. 그 두 숫자를 <span class="term">파라미터</span><span class="en">(Parameter)</span>라고 한다. 파라미터를 바꿔 가며 가장 좋은 조합을 찾는 것을 최적화라고 하는데, 너무 열심히 하면 규칙이 시장의 원리가 아니라 그 기간의 <b>우연한 소음</b>에 맞춰진다. 이것이 <span class="term">과최적화</span><span class="en">(Overfitting)</span>다. 과거의 몸에 꼭 맞춘 옷은 미래의 몸에 맞지 않는다.</p>
+    <p>확인하는 방법은 간단하다. 데이터를 둘로 나눠 앞부분(<span class="term">훈련 구간</span>, In-sample)에서만 최적화하고, 손대지 않은 뒷부분(<span class="term">검증 구간</span>, Out-of-sample)에서 그 파라미터를 시험한다. 아래 격자는 단기 8가지 × 장기 10가지 조합을 모두 돌린 결과다. 칸의 색은 샤프 비율(빨강일수록 좋고, 파랑이면 손실)이다. 칸을 눌러 그 조합의 훈련·검증 성과를 보자.</p>
+
+    <div class="sim" id="sim-grid">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>파라미터 격자: 훈련의 봉우리는 검증에서 어떻게 되나</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gd-cv"></canvas><span class="hint">칸을 눌러 조합을 고른다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>칸 색의 기준</span>
+            <div class="seg" id="gd-mode"><button data-value="train" class="on">훈련 샤프</button><button data-value="test">검증 샤프</button><button data-value="smooth">훈련(이웃 평균)</button></div>
+          </div>
+          <div class="btn-row"><button class="btn" id="gd-best">훈련 1등 고르기</button><button class="btn" id="gd-plat">고원 가운데 고르기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">고른 조합</span><span class="v" id="gd-o-p">—</span></div>
+        <div class="stat"><span class="k">훈련 샤프(순위)</span><span class="v" id="gd-o-tr">—</span></div>
+        <div class="stat"><span class="k">검증 샤프(순위)</span><span class="v" id="gd-o-te">—</span></div>
+        <div class="stat"><span class="k">이웃 평균(훈련)</span><span class="v" id="gd-o-nb">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① "훈련 1등 고르기"를 누르고 검증 순위를 본다. ② 색 기준을 "검증 샤프"로 바꾸면 훈련 때의 빨간 봉우리가 어디로 갔는지 보인다. ③ "이웃 평균"은 각 칸을 주변 칸과 평균 낸 값이다. 홀로 솟은 봉우리는 낮아지고, 넓게 좋은 고원은 그대로 남는다. (SB 종합지수, 훈련 2017~2020년, 검증 2021~2025년, 비용 포함)</div>
+    </div>
+
+    <p>훈련 구간에서 가장 좋았던 조합이 검증 구간에서도 1등일 가능성은 낮다. 훈련 성과에는 진짜 원리와 우연이 섞여 있고, 1등은 대개 <b>우연을 가장 많이 받은</b> 조합이기 때문이다. 그래서 1등 칸 하나보다 넓게 좋은 지역을 본다. 주변 값을 조금 바꿔도 성과가 비슷한 <b>고원</b><span class="en">(Plateau)</span>은 규칙이 실제로 무언가를 잡고 있다는 신호이고, 한 칸만 솟은 <b>봉우리</b><span class="en">(Peak)</span>는 소음일 가능성이 크다.</p>
+    <p>이 가상 시장에서는 훈련 1등(15일·30일)이 훈련 샤프 1.09로 70개 중 1위였다가 검증에서 −0.23, 65위로 떨어진다. 고원 가운데(15일·40일)도 검증 샤프는 0 근처다. 고원은 <b>필요조건이지 충분조건이 아니다</b>. 훈련 구간 전체가 우연히 이동평균 규칙에 유리했다면 고원째로 무너진다. 그래서 다음 절의 표본 밖 검증이 따로 필요하다.</p>
+
+    <h3>조건을 하나씩 붙이면</h3>
+    <p>파라미터만이 손잡이가 아니다. "월요일에는 쉰다", "9월에는 안 산다" 같은 조건도 하나하나가 손잡이다. 아래에서는 지수를 그냥 들고 있는 전략에서 출발해, 훈련 구간의 샤프 비율을 가장 많이 올려 주는 조건을 하나씩 붙인다. 후보는 요일 다섯 개, 달 열두 개, 전날 오르거나 내린 날, 월초·월말 같은 21가지다. 가상 시장에는 요일이나 달에 따른 규칙성이 <b>전혀 없도록</b> 만들었다. 그러니 어떤 조건도 진짜일 수 없다.</p>
+
+    <div class="sim" id="sim-filter">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>조건 덧붙이기: 훈련 샤프는 오르고, 검증 샤프는</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ft-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="ft-add">조건 하나 더</button><button class="btn" id="ft-re">처음으로</button></div>
+          <div class="legend"><span><i style="background:var(--accent)"></i>훈련 샤프</span><span><i style="background:var(--accent-2)"></i>검증 샤프</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">붙인 조건</span><span class="v" id="ft-o-n">—</span></div>
+        <div class="stat"><span class="k">훈련 샤프</span><span class="v" id="ft-o-tr">—</span></div>
+        <div class="stat"><span class="k">검증 샤프</span><span class="v" id="ft-o-te">—</span></div>
+        <div class="stat"><span class="k">방금 붙인 조건</span><span class="v" id="ft-o-last">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 조건을 하나씩 붙이며 훈련 샤프가 계단처럼 오르는 것을 본다. ② 검증 샤프가 따라 오르는지 본다. ③ 조건의 이름을 읽어 본다. 하나하나는 그럴듯한 "계절성"처럼 들린다. (훈련 2016~2020년, 검증 2021~2025년, 쉬는 날은 현금, 비용 제외, 훈련 샤프를 더 올리는 조건이 없으면 멈춘다)</div>
+    </div>
+
+    <p>조건 네 개(7월·목요일·1월·11월 쉬기)를 붙이자 훈련 샤프는 0.55에서 1.61로 세 배가 되었다. 그럴 수밖에 없다. 매번 훈련 구간에서 가장 좋은 조건을 골랐으니까. 그러나 검증 샤프는 0.24에서 오르락내리락하다 0.10으로 끝난다. 처음 그냥 들고 있던 것보다 못하다. 조건의 수가 늘수록 규칙은 훈련 구간의 우연한 무늬를 외운다. 손잡이가 많은 전략일수록 백테스트 성과를 깎아서 읽어야 한다.</p>
+  </section>
+
+  <section id="snooping">
+    <h2>데이터 스누핑: 많이 시험하면 하나는 맞는다</h2>
+    <p>과최적화가 한 규칙의 손잡이를 너무 많이 돌리는 것이라면, <span class="term">데이터 스누핑</span><span class="en">(Data snooping)</span>은 너무 많은 규칙을 시험하는 것이다. 동전 1,000개를 열 번씩 던지면 열 번 모두 앞면이 나오는 동전이 평균 한 개쯤 나온다. 그 동전이 특별한 것은 아니다. 1,000번 시험했기 때문에 나온 것이다. 통계에서는 이것을 <span class="term">다중 검정</span><span class="en">(Multiple testing)</span> 문제라고 부른다.</p>
+    <p>아래에서 완전히 무작위인 전략 1,000개를 만든다. 각 전략은 매달 동전을 던져 지수를 들고 있을지 현금으로 둘지 정한다. 어떤 전략에도 실력은 없다. 그래도 1,000개를 시험하면 그중 최고는 꽤 멋져 보인다. 그 최고 전략을 다음 기간에 돌리면 어떻게 될까.</p>
+
+    <div class="sim" id="sim-snoop">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>무작위 전략 1,000개: 운의 최대값</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sn-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="sn-play">1,000개 시험하기</button><button class="btn" id="sn-re">다시 뽑기</button></div>
+          <div class="legend"><span><i style="background:var(--accent)"></i>훈련 기간 샤프</span><span><i style="background:var(--accent-2)"></i>같은 전략의 검증 기간 샤프</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시험한 전략</span><span class="v" id="sn-o-n">—</span></div>
+        <div class="stat"><span class="k">최고 훈련 샤프</span><span class="v" id="sn-o-max">—</span></div>
+        <div class="stat"><span class="k">운만으로 기대되는 최고</span><span class="v" id="sn-o-exp">—</span></div>
+        <div class="stat"><span class="k">그 전략의 검증 샤프</span><span class="v" id="sn-o-te">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 시험이 쌓이면서 최고 기록(▼)이 오른쪽으로 밀려 가는 것을 본다. 시험이 많을수록 최고는 높아진다. ② 아래 분포에서 그 최고 전략(◆)이 어디에 떨어지는지 본다. ③ "다시 뽑기"를 여러 번 눌러 최고 전략의 검증 샤프가 평균 근처로 돌아가는지 확인한다. (훈련 약 5년, 검증 그 뒤 약 5년, 한 달 단위로 보유·현금을 무작위로 정함)</div>
+    </div>
+
+    <p>전략 하나하나의 샤프 비율은 운에 따라 평균 주위로 흩어진다. 그 흩어짐의 크기를 \(\sigma\)라고 하면, \(N\)개를 시험했을 때 운만으로 나오는 최고값은 대략 이렇다.</p>
+    <div class="formula">$$\text{최고값} \approx \text{평균} + \sigma\sqrt{2\ln N}$$<div class="where">N = 10이면 평균 + 약 2.1σ, N = 1,000이면 평균 + 약 3.7σ. 이 식은 대략적인 위쪽 어림이고 실제 기대값은 조금 낮다(1,000개면 약 3.2σ). 시뮬레이터의 점선은 디플레이티드 샤프에서 쓰는 더 정확한 근사식으로 그렸다. 시험 횟수가 100배가 되어도 최고값은 크게 오르지 않지만, 늘 평균보다는 한참 높다.</div></div>
+    <p>최고 전략의 검증 성과는 평균 근처로 돌아간다. 처음부터 실력이 아니라 운이 만든 1등이었기 때문이다. 이것을 거꾸로 보면 중요한 질문이 생긴다. 어떤 백테스트 결과를 볼 때 "이것이 몇 번째 시도인가"를 모르면, 그 결과가 얼마나 대단한지 판단할 수 없다. 광고는 1,000개 중 1등만 보여 주고 나머지 999개는 말하지 않는다.</p>
+
+    <h3>눈으로 가려낼 수 있을까</h3>
+    <p>반대 방향도 시험해 보자. 아래 여덟 개의 자산 곡선 중 하나만 진짜 실력(샤프 0.5)이 있는 전략이고, 나머지 일곱은 실력이 0인 전략이다. 변동성은 모두 연 15%로 같다. 진짜를 골라 보자. 기간을 바꾸면서 몇 판씩 해 보면 감이 온다.</p>
+
+    <div class="sim" id="sim-guess">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>진짜 실력 찾기: 여덟 곡선 중 하나</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gs-cv"></canvas><span class="hint">진짜라고 생각하는 곡선을 누른다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>데이터 기간</span>
+            <div class="seg" id="gs-yrs"><button data-value="3">3년</button><button data-value="10" class="on">10년</button><button data-value="40">40년</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="gs-next">다음 판</button><button class="btn" id="gs-re">점수 초기화</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">판</span><span class="v" id="gs-o-r">—</span></div>
+        <div class="stat"><span class="k">맞힌 판</span><span class="v" id="gs-o-hit">—</span></div>
+        <div class="stat"><span class="k">적중률(찍기 12.5%)</span><span class="v" id="gs-o-rate">—</span></div>
+        <div class="stat"><span class="k">"가장 좋아 보이는 곡선"이 진짜인 비율</span><span class="v" id="gs-o-top">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 10년으로 몇 판 해 본다. 가장 높이 올라간 곡선을 고르는 전략이 얼마나 자주 맞는지 오른쪽 숫자로 본다. ② 3년으로 바꾸면 거의 찍기다. ③ 40년이면 비로소 진짜가 자주 보인다. (월간 수익률, 진짜 전략은 연 기대 초과수익 7.5%·변동성 15%, 나머지는 기대 초과수익 0)</div>
+    </div>
+
+    <p>"가장 높이 오른 곡선을 고른다"는 방법이 맞는 비율은 3년이면 약 34%, 10년이면 약 57%, 40년이면 약 94%다. 후보가 여덟 개만 되어도 10년 데이터로는 두 번에 한 번꼴로 운 좋은 가짜를 고른다. 후보가 1,000개라면 진짜는 운의 최대값 속에 묻혀 거의 보이지 않는다.</p>
+  </section>
+
+  <section id="significance">
+    <h2>통계적 유의성: 샤프 0.5는 몇 년이면 보이나</h2>
+    <p>마지막 게임이 어려웠던 이유는 숫자로 설명할 수 있다. 관측한 샤프 비율은 진짜 샤프 비율의 추정값이고, 추정값에는 오차가 있다. 연 단위 샤프 비율 SR을 T년 데이터로 잴 때, 그 오차(표준오차)는 대략 다음과 같다.</p>
+    <div class="formula">$$\text{SE}(\widehat{SR}) \approx \sqrt{\frac{1 + SR^2/2}{T}}$$<div class="where">T는 햇수. 수익률이 정규분포에 가깝고 서로 독립이라는 가정의 근사식이다. 꼬리가 두껍거나 수익률이 이어지는 성질이 있으면 오차는 더 커진다.</div></div>
+    <p>진짜 샤프가 0.5인 전략을 10년 동안 재면 표준오차는 약 \(\sqrt{1.125/10} \approx 0.34\)다. 관측값은 대략 0.5 ± 0.67(±2 표준오차), 즉 −0.2에서 1.2 사이 어디든 나올 수 있다. 실력이 전혀 없는 전략(진짜 샤프 0)도 10년이면 관측 샤프가 0.5 이상 나올 확률이 약 6%다. 위의 무작위 전략 1,000개라면 그런 것이 수십 개다. 아래에서 진짜 샤프와 데이터 길이를 바꿔 보자.</p>
+
+    <div class="sim" id="sim-sr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>샤프 비율의 불확실성: 진짜 값과 관측값</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sr-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>진짜 샤프 비율 <output id="sr-t-out"></output></span><input type="range" id="sr-t" min="0" max="1.5" step="0.05" value="0.5"></label>
+          <label class="ctrl"><span>데이터 길이 <output id="sr-y-out"></output></span><input type="range" id="sr-y" min="1" max="40" step="1" value="10"></label>
+          <div class="btn-row"><button class="btn" id="sr-re">다시 뽑기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">표준오차</span><span class="v" id="sr-o-se">—</span></div>
+        <div class="stat"><span class="k">관측값 95% 범위</span><span class="v" id="sr-o-ci">—</span></div>
+        <div class="stat"><span class="k">관측 샤프가 0 이하일 확률</span><span class="v" id="sr-o-neg">—</span></div>
+        <div class="stat"><span class="k">t값 2에 필요한 햇수</span><span class="v" id="sr-o-need">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 진짜 0.5, 10년에서 점(같은 전략을 200번 다른 운으로 잰 관측값)이 얼마나 넓게 퍼지는지 본다. 일부는 0 아래다. ② 기간을 40년으로 늘리면 분포가 좁아진다. ③ 진짜 샤프를 1.0으로 올리면 몇 년이면 0과 구분되는지 본다. (월간 수익률을 정규분포에서 뽑아 잰 관측 샤프, 곡선은 위 근사식)</div>
+    </div>
+
+    <p>진짜 샤프 0.5짜리 전략이 "운이 아니다"라고 말하려면(관측값이 표준오차의 두 배를 넘으려면) 대략 \(4(1+SR^2/2)/SR^2 = 4 	imes 1.125 / 0.25 = 18\)년이 필요하다. 지수 자체의 샤프 비율이 0.3~0.5 언저리라는 것을 생각하면, 지수를 이긴다는 전략의 <b>초과</b> 성과는 이보다 훨씬 작아서 수십 년 데이터로도 증명하기 어렵다. 10년 백테스트 하나로 "이 전략은 검증되었다"고 말하는 것은 대개 지나친 말이다.</p>
+    <div class="callout deep">
+      <strong>시험한 횟수까지 따지는 샤프: 디플레이티드 샤프</strong>
+      데이터 스누핑과 표준오차를 합치면 이런 질문이 된다. "N개를 시험해서 고른 최고 전략의 관측 샤프가 운만으로 나올 수 있는 최고값보다 의미 있게 높은가?" 이 생각을 식으로 만든 것이 <span class="term">디플레이티드 샤프 비율</span><span class="en">(Deflated Sharpe Ratio)</span>이다. 기준선을 0이 아니라 "N개 중 최고가 운으로 나올 기대값(앞 절의 식)"으로 올리고, 데이터 길이와 수익률 분포의 꼬리까지 반영해 그 기준을 넘을 확률을 계산한다. 같은 관측 샤프 1.0이라도 한 번 시험해서 나온 것과 1,000번 시험해서 고른 것은 전혀 다른 증거다.
+    </div>
+  </section>
+
+  <section id="defense">
+    <h2>대책: 백테스트를 의심하는 방법</h2>
+    <p>함정을 다 피하는 백테스트는 없다. 다만 함정에 덜 빠지는 습관은 있다. 가장 중요한 것은 <b>결과를 보기 전에 규칙을 정하고, 손대지 않은 데이터에서 다시 확인하는 것</b>이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 268" role="img" aria-label="훈련·검증 분리와 워크포워드 구조">
+        <text class="lbl-b" x="14" y="22">① 한 번 나누기(표본 밖 검증)</text>
+        <rect class="f-acc-soft s-acc" x="14" y="34" width="270" height="30" rx="5"/>
+        <text class="lbl" x="149" y="54" text-anchor="middle">훈련: 여기서만 고른다</text>
+        <rect class="f-acc2-soft s-acc2" x="288" y="34" width="158" height="30" rx="5"/>
+        <text class="lbl" x="367" y="54" text-anchor="middle">검증: 한 번만 본다</text>
+        <text class="lbl-b" x="14" y="100">② 워크포워드(창을 밀며 반복)</text>
+        <rect class="f-acc-soft s-acc" x="14" y="112" width="180" height="22" rx="4"/><rect class="f-acc2-soft s-acc2" x="196" y="112" width="60" height="22" rx="4"/>
+        <rect class="f-acc-soft s-acc" x="74" y="140" width="180" height="22" rx="4"/><rect class="f-acc2-soft s-acc2" x="256" y="140" width="60" height="22" rx="4"/>
+        <rect class="f-acc-soft s-acc" x="134" y="168" width="180" height="22" rx="4"/><rect class="f-acc2-soft s-acc2" x="316" y="168" width="60" height="22" rx="4"/>
+        <rect class="f-acc-soft s-acc" x="194" y="196" width="180" height="22" rx="4"/><rect class="f-acc2-soft s-acc2" x="376" y="196" width="60" height="22" rx="4"/>
+        <text class="lbl-dim" x="104" y="128" text-anchor="middle">훈련</text>
+        <text class="lbl-dim" x="226" y="128" text-anchor="middle">검증</text>
+        <line class="s-ok" x1="196" y1="246" x2="436" y2="246"/>
+        <line class="s-dash" x1="226" y1="136" x2="226" y2="240"/><line class="s-dash" x1="286" y1="164" x2="286" y2="240"/><line class="s-dash" x1="346" y1="192" x2="346" y2="240"/><line class="s-dash" x1="406" y1="220" x2="406" y2="240"/>
+        <text class="lbl-acc2" x="190" y="250" text-anchor="end">검증 조각을 이은</text>
+        <text class="lbl-acc2" x="190" y="266" text-anchor="end">표본 밖 성적</text>
+      </svg>
+      <figcaption><b>그림 17-3. 훈련·검증 분리와 워크포워드.</b> ①은 데이터를 한 번 나눠 뒷부분을 한 번만 본다. ②는 그 시점까지의 데이터로 고르고 다음 조각에 적용하는 일을 창을 밀며 반복한다. 매 순간 "그때 알 수 있던 것"만으로 고르므로 실제로 운용했을 때와 가장 비슷하다.</figcaption>
+    </figure>
+
+    <h3>훈련과 검증을 어디서 나누나</h3>
+    <p>나누는 위치도 결과를 바꾼다. 아래 차트의 세로선을 끌어 훈련·검증의 경계를 옮겨 보자. 그때마다 훈련 구간에서 1등인 조합을 다시 찾고, 아래쪽 점 그림에 모든 조합의 훈련 샤프(가로)와 검증 샤프(세로)를 찍는다. 점들이 오른쪽 위로 비스듬히 늘어서면 훈련 성적이 검증 성적을 예측한다는 뜻이고, 둥글게 흩어지면 예측하지 못한다는 뜻이다.</p>
+
+    <div class="sim" id="sim-split">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>훈련·검증 경계 끌기</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="spl-cv"></canvas><span class="hint">세로선을 좌우로 끈다</span></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">훈련 1등 조합</span><span class="v" id="spl-o-p">—</span></div>
+        <div class="stat"><span class="k">훈련 샤프</span><span class="v" id="spl-o-tr">—</span></div>
+        <div class="stat"><span class="k">검증 샤프(순위)</span><span class="v" id="spl-o-te">—</span></div>
+        <div class="stat"><span class="k">훈련·검증 샤프 상관</span><span class="v" id="spl-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 경계를 급락 직후(2019년 말쯤)에 두면 훈련 1등이 검증에서 몇 위가 되는지 본다. ② 경계를 약세장 직전으로 옮기면 1등 조합이 바뀌는지 본다. ③ 상관이 음수인 경계도 있다. 훈련에서 좋았던 조합일수록 검증에서 나빴다는 뜻이다. (이동평균 70개 조합, 비용 포함, 훈련은 2017년부터)</div>
+    </div>
+
+    <p>경계를 조금만 옮겨도 1등 조합이 바뀌고, 1등의 검증 순위는 위아래로 크게 흔들린다. 검증 구간도 결국 한 번의 표본이라는 뜻이다. 그래서 검증 구간을 여러 번 들여다보며 규칙을 고치면, 검증 구간마저 훈련 구간이 되어 버린다. 검증 데이터는 <b>마지막에 한 번만</b> 본다.</p>
+
+    <h3>워크포워드: 실제로 운용했다면</h3>
+    <p>한 번 나누기보다 현실에 가까운 방법이 <span class="term">워크포워드</span><span class="en">(Walk-forward)</span> 분석이다. 그 시점까지의 데이터(훈련 창)로 1등 조합을 고르고, 다음 반년 동안 그 조합으로 운용한다. 반년이 지나면 창을 반년 밀어서 다시 고른다. 이렇게 이은 성적은 "그때그때 최선을 다해 최적화했다면 실제로 받았을 성적"이다. 재생을 눌러 창이 미끄러지는 것을 보자.</p>
+
+    <div class="sim" id="sim-wf">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>워크포워드: 창을 밀며 다시 고르기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="wf-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>훈련 창 길이 <output id="wf-len-out"></output></span><input type="range" id="wf-len" min="252" max="1008" step="126" value="756"></label>
+          <div class="btn-row"><button class="btn primary" id="wf-play">재생</button><button class="btn" id="wf-end">끝까지</button><button class="btn" id="wf-re">처음으로</button></div>
+          <div class="legend"><span><i style="background:var(--accent-2)"></i>워크포워드</span><span><i style="background:var(--accent)"></i>사후 1등(전체 기간)</span><span><i style="background:var(--text-faint)"></i>보유</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">다시 고른 횟수</span><span class="v" id="wf-o-n">—</span></div>
+        <div class="stat"><span class="k">지금 쓰는 조합</span><span class="v" id="wf-o-cur">—</span></div>
+        <div class="stat"><span class="k">워크포워드(연)</span><span class="v" id="wf-o-wf">—</span></div>
+        <div class="stat"><span class="k">사후 1등(연) / 보유(연)</span><span class="v" id="wf-o-hs">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 재생하며 고르는 조합이 창마다 바뀌는 것을 본다. 안정적인 규칙이라면 비슷한 조합이 계속 뽑혀야 한다. ② 끝까지 돌린 뒤 워크포워드 곡선을 "사후 1등"과 비교한다. 그 차이가 과최적화의 크기다. ③ 훈련 창 길이를 바꿔도 결론이 같은지 본다. (반년마다 재선택, 조합을 바꿀 때의 추가 비용은 무시)</div>
+    </div>
+
+    <p>사후 1등 곡선은 같은 기간을 다 보고 고른 조합이다. 광고에 나오는 곡선은 대개 이것이다. 훈련 창 3년에서 사후 1등은 연 약 12.2%, 보유는 약 9.2%인데 워크포워드는 약 3.8%다. 둘 사이의 간격이 "과거를 알고 고른 덕"이다. 창 길이를 바꾸면 더 놀랍다. 1년이면 약 7.7%, 2년이면 약 10.0%, 4년이면 약 0.4%다. 훈련 창 길이라는 손잡이 하나에 결과가 이만큼 흔들린다면, 그 규칙에는 믿고 기댈 만한 무엇이 없다는 뜻이다.</p>
+
+    <h3>의심하는 습관 다섯 가지</h3>
+    <ol>
+      <li><b>먼저 정하고, 나중에 본다.</b> 규칙과 평가 기준을 적어 둔 뒤 돌린다. 결과를 보고 규칙을 고칠 때마다 검증 구간은 조금씩 훈련 구간이 된다.</li>
+      <li><b>표본 밖에서, 한 번만.</b> 훈련·검증을 나누고, 가능하면 워크포워드로 실제 운용을 흉내 낸다.</li>
+      <li><b>봉우리보다 고원.</b> 이웃 파라미터에서도 성과가 비슷한지 본다. 한 칸만 좋은 규칙은 버린다.</li>
+      <li><b>단순한 규칙.</b> 손잡이가 적을수록 우연에 맞출 여지가 적다. 조건 하나를 더할 때마다 "왜 그래야 하는가"에 대한 경제적 이유가 있어야 한다.</li>
+      <li><b>시험한 횟수를 센다.</b> 시험을 많이 했다면 기준을 올린다. 관측 샤프의 표준오차와 "N개 중 최고"의 기대값을 같이 본다.</li>
+    </ol>
+  </section>
+
+  <section id="anatomy">
+    <h2>"연 40% 전략" 해부</h2>
+    <p>이제 처음의 광고로 돌아가자. 한결이 본 광고는 이랬다.</p>
+    <div class="ad-box">
+      "소형주 모멘텀 전략, 7년 백테스트 연평균 <span class="big">+40%</span> 내외. 최근 몇 달 많이 오른 소형주 다섯 종목을 매달 바꿔 담기만 하면 된다."
+      <small>(이 책이 만든 가상의 광고다. 아래 숫자는 모두 가상 유니버스로 계산했다.)</small>
+    </div>
+    <p>규칙 자체는 단순하다. 매달 말, 소형주 가운데 지난 L개월 동안 가장 많이 오른 k종목을 같은 비중으로 사서 한 달 들고 있는다. <a href="factor.html">16장</a>의 모멘텀이다. 광고를 만든 사람은 L과 k를 여러 가지로 돌려 가장 좋은 것을 골랐고, 오늘 살아 있는 종목 데이터만 썼고, 순위를 매긴 데이터에 다음 달 첫날 종가가 섞여 있었고, 비용은 넣지 않았다. 아래에서 함정을 하나씩 걷어 내 보자.</p>
+
+    <div class="sim" id="sim-ad">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>광고 해부: 함정을 하나씩 걷어 내는 폭포</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ad-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="ad-next">함정 하나 걷어 내기</button><button class="btn" id="ad-re">광고로 돌아가기</button></div>
+          <div class="legend"><span><i style="background:var(--up)"></i>남은 연 수익</span><span><i style="background:var(--down)"></i>걷어 낸 몫</span><span><i style="background:var(--text-faint)"></i>시장 동일가중</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">지금 단계</span><span class="v" id="ad-o-st">—</span></div>
+        <div class="stat"><span class="k">연평균 수익</span><span class="v" id="ad-o-cagr">—</span></div>
+        <div class="stat"><span class="k">이번에 걷어 낸 몫</span><span class="v" id="ad-o-cut">—</span></div>
+        <div class="stat"><span class="k">시장 동일가중(연)</span><span class="v" id="ad-o-mkt">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 버튼을 한 번씩 누르며 어느 함정이 가장 큰 몫을 차지했는지 본다. ② 아래 자산 곡선이 광고의 곡선에서 어떻게 주저앉는지 본다. ③ 마지막 단계의 숫자를 시장 동일가중과 비교한다. (가상 유니버스 소형주, 평가 기간 7년, 비용은 왕복 0.23% + 편도 슬리피지 0.4%, 과최적화 제거는 해마다 그때까지의 데이터로 L·k를 다시 고르는 워크포워드)</div>
+    </div>
+
+    <p>남는 것은 광고의 숫자와 거리가 멀다. 연 약 40%가 미래 참조를 빼자 30.5%, 상장폐지 종목을 넣자 29.8%, 비용과 슬리피지를 넣자 20.9%, L·k를 그때그때 고르게 하자 11.6%가 된다. 미래 참조(하루치였을 뿐인데 연 9%p 넘게), 비용(소형주를 매달 갈아타는 전략은 비용에 가장 약하다), 과최적화가 거의 같은 몫씩 나눠 가졌다. 생존 편향은 이 기간에는 1%p도 되지 않았지만, 기간과 종목에 따라 훨씬 커질 수 있다. 마지막 숫자는 시장 동일가중(약 10.1%)과 비슷하다. 이 가상 유니버스에는 모멘텀이 실제로 조금 있도록 만들었다. 그런데도 남은 초과수익은 앞 절에서 본 표준오차 안에 쉽게 숨는 크기다.</p>
+
+    <div class="callout warn">
+      <strong>숫자는 바뀐다</strong>
+      이 장의 거래세(0.20%), 수수료(약 0.015%), 공시 기한(분기 말 후 45일)은 2026년 기준 대표값이다. 제도와 증권사 수수료는 바뀌므로 실제로 계산할 때는 그때의 값을 확인한다. 이 장의 시장과 종목은 모두 교육용 가상 데이터이고, 과거의 수익은 앞으로의 수익을 보장하지 않는다. 어떤 전략도 권하지 않는다.
+    </div>
+
+    <div class="casefile">
+      <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 17장</span></div>
+      <h4>"연 40%" 광고를 해부하다</h4>
+      <p>위성(satellite) 몫으로 무엇을 살지 고민하던 한결에게 "소형주 모멘텀, 백테스트 연 40%" 광고가 떴다. 12장의 골든크로스 때와 달리 이번에는 그래프가 너무 매끈했다. 한결은 이 장의 체크리스트를 들고 광고의 백테스트를 가상 유니버스에서 다시 돌렸다.</p>
+      <p>광고 그대로면 연 약 <b>40%</b>. 순위 데이터에 섞인 하루치 미래를 빼자 <b>30.5%</b>, 상장폐지 종목을 넣자 <b>29.8%</b>, 비용과 슬리피지를 넣자 <b>20.9%</b>, 마지막으로 L·k를 그때그때 고르게 하자(과최적화 제거) <b>11.6%</b>가 남았다. 같은 기간 시장 동일가중은 약 <b>10.1%</b>. 남은 1.5%p의 차이는 10년 데이터로는 운과 가려내기 어려운 크기였다. 표본 밖에서 무너진 것은 전략이 아니라 광고였다.</p>
+      <div class="clue">
+        <div><b>이 장에서 정한 것</b>백테스트 숫자를 볼 때 미래 참조·생존 편향·비용·시험 횟수·표본 밖 성과를 먼저 묻는다. 확인할 수 없으면 믿지 않는다.</div>
+        <div><b>아직 남은 문제</b>그렇다면 1,000만원과 매달 70만원을 실제로 언제, 얼마씩, 어떤 규칙으로 넣을 것인가.</div>
+        <div><b>다음 단계</b><a href="strategy.html">18장</a>에서 분할 매수, 적립, 위성 비중, 리밸런싱 규칙을 정한다.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>백테스트는 규칙을 과거 데이터에 하루씩 돌려 자산 곡선을 만드는 일이다. 정직한 엔진은 i일 종가까지의 정보로 신호를 내고 i+1일에 체결하며, 비용을 뺀다.</li>
+      <li>미래 참조는 날짜가 어긋나는 실수로 숨어 든다(종가 보고 종가 체결, 공시 전 실적 사용). 하루만 엿봐도 쓸모없는 규칙이 꿈의 전략이 된다. 결과가 너무 좋으면 날짜부터 의심한다.</li>
+      <li>생존 편향은 상장폐지 종목이 빠진 데이터에서 생기며 늘 성과를 부풀린다. 소형주·부실주를 다루는 전략일수록 크다.</li>
+      <li>비용·슬리피지는 매매 횟수에 비례해 수익을 깎는다. 유동성이 적은 종목에서는 백테스트 가격에 그 양을 살 수 없다.</li>
+      <li>성과는 표본 기간과 국면에 크게 의존한다. 기간을 고르는 것만으로 결론을 뒤집을 수 있다.</li>
+      <li>파라미터와 조건을 많이 맞출수록 훈련 성과는 오르고 검증 성과는 나빠진다(과최적화). 많이 시험하면 운만으로도 멋진 결과가 나온다(데이터 스누핑).</li>
+      <li>샤프 비율의 표준오차는 약 √((1+SR²/2)/T)다. 진짜 샤프 0.5도 10년으로는 운과 구분하기 어렵고, 0과 구분하려면 약 18년이 필요하다.</li>
+      <li>대책: 결과 전에 규칙을 정하고, 표본 밖·워크포워드로 확인하고, 봉우리보다 고원을 고르고, 단순한 규칙을 쓰고, 시험 횟수만큼 기준을 올린다(디플레이티드 샤프).</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 어떤 백테스트가 "오늘 종가가 20일 이동평균을 넘으면 오늘 종가에 산다"고 계산했다. 무엇이 문제인가?</p>
+        <div class="opts">
+          <button class="opt">이동평균 기간이 너무 짧다.</button>
+          <button class="opt" data-correct>종가가 확정된 뒤에야 알 수 있는 신호로 같은 종가에 샀다고 기록한 미래 참조다.</button>
+          <button class="opt">생존 편향이다.</button>
+          <button class="opt">거래 비용을 너무 많이 넣었다.</button>
+        </div>
+        <div class="quiz-exp">종가는 장이 끝나야 확정되므로, 그 종가로 계산한 신호는 빨라야 다음 거래일에 체결할 수 있다. 같은 종가에 체결했다고 기록하면 실제로는 불가능한 거래가 되고 결과가 부풀려진다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 지금 상장되어 있는 종목만으로 10년 전부터 소형주 전략을 백테스트했다. 결과는 실제보다 어떻게 나오기 쉬운가?</p>
+        <div class="opts">
+          <button class="opt">실제보다 나쁘게 나온다.</button>
+          <button class="opt">방향을 알 수 없다.</button>
+          <button class="opt">차이가 없다.</button>
+          <button class="opt" data-correct>상장폐지된 종목이 빠져 있어 실제보다 좋게 나온다.</button>
+        </div>
+        <div class="quiz-exp">생존 편향이다. 중간에 망해 사라진 종목은 대개 큰 손실을 낸 종목이고, 이것이 빠지면 성과는 좋아지는 쪽으로만 바뀐다. 상장폐지가 잦은 소형주에서 특히 크다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 파라미터 격자에서 훈련 구간 샤프가 가장 높은 칸 하나가 주변 칸들보다 홀로 높게 솟아 있다. 어떻게 해석하는 것이 가장 알맞은가?</p>
+        <div class="opts">
+          <button class="opt" data-correct>우연에 맞춰진 봉우리일 가능성이 크므로, 주변까지 고르게 좋은 고원을 더 믿는다.</button>
+          <button class="opt">가장 좋은 칸이므로 그 파라미터를 그대로 쓴다.</button>
+          <button class="opt">격자를 더 촘촘히 나눠 더 높은 칸을 찾는다.</button>
+          <button class="opt">검증 구간에서도 반드시 1등일 것이다.</button>
+        </div>
+        <div class="quiz-exp">훈련 1등은 대개 우연을 가장 많이 받은 조합이다. 파라미터를 조금 바꿔도 성과가 비슷한 고원은 규칙이 실제 원리를 잡고 있다는 신호이고, 홀로 솟은 봉우리는 표본 밖에서 무너지기 쉽다. 격자를 더 촘촘히 하는 것은 시험 횟수를 늘려 스누핑을 키운다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 실력이 전혀 없는 무작위 전략 1,000개를 시험해 가장 좋은 것을 골랐다. 그 전략을 새 기간에 돌리면 어떻게 될 가능성이 가장 큰가?</p>
+        <div class="opts">
+          <button class="opt">훈련 기간과 비슷하게 좋다.</button>
+          <button class="opt">훈련 기간보다 더 좋아진다.</button>
+          <button class="opt" data-correct>무작위 전략들의 평균 근처로 돌아간다.</button>
+          <button class="opt">반드시 손실이 난다.</button>
+        </div>
+        <div class="quiz-exp">최고 성과는 실력이 아니라 많이 시험한 데서 나온 운의 최대값이다. 운은 이어지지 않으므로 새 기간에는 평균 근처로 돌아간다. 반드시 손실이 나는 것도 아니다. 평균이 기준이다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 진짜 샤프 비율이 0.5인 전략을 10년 데이터로 잴 때, 관측 샤프 비율의 표준오차로 가장 가까운 것은? (SE ≈ √((1+SR²/2)/T))</p>
+        <div class="opts">
+          <button class="opt">약 0.03</button>
+          <button class="opt">약 0.10</button>
+          <button class="opt" data-correct>약 0.34</button>
+          <button class="opt">약 1.00</button>
+        </div>
+        <div class="quiz-exp">√((1 + 0.125)/10) = √0.1125 ≈ 0.34. 관측값의 95% 범위는 대략 0.5 ± 0.67로, 0 아래도 포함한다. 그래서 10년 백테스트 하나로는 샤프 0.5 전략을 운과 구분하기 어렵다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2, TD = 252;
+  const M = ST.market(), C = M.index, T = C.length, D = M.dates;
+  const RET = C.map((c, i) => (i ? c / C[i - 1] - 1 : 0));
+  const narrow = (id) => document.getElementById(id).parentElement.clientWidth < 560;
+  const sp = (x, d) => (isFinite(x) ? (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%" : "—");
+  const pc = (x, d) => (isFinite(x) ? (x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%" : "—");
+  const f2 = (x) => (isFinite(x) ? (x < 0 ? "−" : "") + Math.abs(x).toFixed(2) : "—");
+  const tn = (x, s) => '<span class="' + MB.tone(x) + '">' + s + "</span>";
+  const ym = (i) => D[MB.clamp(Math.round(i), 0, T - 1)].slice(0, 7).replace("-", ".");
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function knob(ctx, x, y, P, r) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = P.bg; ctx.stroke();
+    ctx.restore();
+  }
+  function tri(ctx, x, y, up, color, s) {
+    s = s || 5; ctx.fillStyle = color; ctx.beginPath();
+    if (up) { ctx.moveTo(x, y); ctx.lineTo(x - s, y + s * 1.6); ctx.lineTo(x + s, y + s * 1.6); }
+    else { ctx.moveTo(x, y); ctx.lineTo(x - s, y - s * 1.6); ctx.lineTo(x + s, y - s * 1.6); }
+    ctx.fill();
+  }
+  function logTicks(lo, hi, n) {
+    let out = [];
+    for (let e = Math.floor(Math.log10(lo)) - 1; e <= Math.ceil(Math.log10(hi)); e++) for (const m of [1, 1.5, 2, 3, 5, 7]) { const v = m * Math.pow(10, e); if (v >= lo && v <= hi) out.push(v); }
+    while (out.length > (n || 6)) out = out.filter((_, k) => k % 2 === 0);
+    return out;
+  }
+  const pts = (arr, from, scale) => { const o = []; for (let i = from || 0; i < arr.length; i++) if (arr[i] != null) o.push([i, arr[i] * (scale || 1)]); return o; };
+  const range = (arrs) => { let lo = Infinity, hi = -Infinity; arrs.forEach((a) => a.forEach((p) => { const v = Array.isArray(p) ? p[1] : p; if (v != null && isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } })); return [lo, hi]; };
+  const YEARS = []; D.forEach((d, i) => { if (i && d.slice(0, 4) !== D[i - 1].slice(0, 4)) YEARS.push(i); });
+  const dayTicks = (nar, a, b) => YEARS.filter((i, k) => (!nar || k % 2 === 1) && (a == null || (i >= a && i <= b)));
+  const dayFmt = (i) => D[MB.clamp(Math.round(i), 0, T - 1)].slice(0, 4);
+  const wonFmt = (v) => MB.wonAxis(v);
+
+  const SMA = {}; const sma = (n) => SMA[n] || (SMA[n] = ST.sma(C, n));
+  const maSig = (s, l) => { const a = sma(s), b = sma(l); return C.map((_, i) => (a[i] == null || b[i] == null ? null : a[i] > b[i] ? 1 : 0)); };
+  const BT = {};
+  const maBT = (s, l) => BT[s + ":" + l] || (BT[s + ":" + l] = ST.backtest(C, maSig(s, l)));
+  const HOLD = ST.summary(C);
+
+  /* 구간 통계용 누적합 */
+  function pref(r) {
+    const n = r.length, p1 = new Float64Array(n), p2 = new Float64Array(n), lg = new Float64Array(n);
+    for (let i = 1; i < n; i++) { p1[i] = p1[i - 1] + r[i]; p2[i] = p2[i - 1] + r[i] * r[i]; lg[i] = lg[i - 1] + Math.log(1 + r[i]); }
+    return { p1, p2, lg };
+  }
+  function wst(q, a, b) {
+    const n = b - a; if (n < 2) return { sh: NaN, cagr: NaN };
+    const m = (q.p1[b] - q.p1[a]) / n, v = (q.p2[b] - q.p2[a]) / n - m * m;
+    return { sh: v > 1e-14 ? (m / Math.sqrt(v)) * Math.sqrt(TD) : 0, cagr: Math.exp(((q.lg[b] - q.lg[a]) * TD) / n) - 1 };
+  }
+  const HQ = pref(RET);
+  const GS = [3, 5, 10, 15, 20, 30, 40, 60], GL = [20, 30, 40, 60, 80, 100, 120, 150, 200, 250];
+  const TR0 = 250;
+  let GRID = null;
+  function grid() {
+    if (GRID) return GRID;
+    GRID = [];
+    GS.forEach((s, r) => GL.forEach((l, c) => {
+      if (s >= l) return;
+      const eq = maBT(s, l).equity;
+      GRID.push({ s, l, r, c, eq, q: pref(eq.map((e, i) => (i ? e / eq[i - 1] - 1 : 0))) });
+    }));
+    return GRID;
+  }
+  const rankOf = (vals, k) => 1 + vals.filter((v) => v > vals[k]).length;
+  const argmax = (vals) => vals.reduce((b, v, k) => (v > vals[b] ? k : b), 0);
+
+  /* ---------------------------------------------------------- 1. 백테스트 엔진 */
+  (function () {
+    const upd = () => cv.redraw();
+    const S = MB.range("en-s", (v) => v + "일", upd), L = MB.range("en-l", (v) => v + "일", upd);
+    const showMA = document.getElementById("en-ma");
+    showMA.addEventListener("change", upd);
+    const [clo, chi] = range([C]);
+    const cv = MB.canvas("#en-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("en-cv"), s = S(), l = L(), ok = s < l;
+      const top = { x: 56, y: 22, w: w - 70, h: Math.round((h - 96) * 0.5) };
+      const bot = { x: 56, y: top.y + top.h + 50, w: w - 70, h: h - top.y - top.h - 50 - 26 };
+      const bt = ok ? maBT(s, l) : null;
+      const bands = [];
+      if (bt) { let st = -1; bt.pos.forEach((p, i) => { if (p && st < 0) st = i; if ((!p || i === T - 1) && st >= 0) { bands.push({ x0: st, x1: i, color: MB.color("accent-soft") }); st = -1; } }); }
+      const ser = [{ data: pts(C), color: P.dim, width: 1.1 }];
+      if (ok && showMA.checked) { ser.push({ data: pts(sma(s)), color: P.accent, width: 1.3 }); ser.push({ data: pts(sma(l)), color: P.accent2, width: 1.3 }); }
+      const c1 = MB.chart(ctx, top, { x: [0, T - 1], y: [clo * 0.95, chi * 1.05], logY: true, yTicks: logTicks(clo * 0.95, chi * 1.05, 4), yFmt: (v) => Math.round(v).toLocaleString("ko-KR"), xTicks: dayTicks(nar), xFmt: dayFmt, series: ser, bands });
+      text(ctx, "SB 종합지수 · 색칠한 곳 = 주식 보유", top.x + 6, top.y - 7, { color: P.dim, size: 11.5 });
+      if (bt) {
+        ctx.save(); ctx.beginPath(); ctx.rect(top.x, top.y - 10, top.w, top.h + 20); ctx.clip();
+        const many = bt.trades.length > 80;
+        bt.trades.forEach((tr) => { const x = c1.X(tr.i), y = c1.Y(C[tr.i]); tri(ctx, x, tr.side === "buy" ? y + 3 : y - 3, tr.side === "buy", tr.side === "buy" ? P.up : P.down, many ? 2.6 : 4); });
+        ctx.restore();
+      }
+      const H = C.map((c) => (c / C[0]) * 1e7), E = bt ? bt.equity.map((e) => e * 1e7) : [];
+      const [lo, hi] = range([H, E]);
+      MB.chart(ctx, bot, { x: [0, T - 1], y: [lo * 0.92, hi * 1.08], logY: true, yTicks: logTicks(lo * 0.92, hi * 1.08, 4), yFmt: wonFmt, xTicks: dayTicks(nar), xFmt: dayFmt,
+        series: [{ data: pts(H), color: P.faint, width: 1.4, dash: [5, 4] }, { data: pts(E), color: P.accent, width: 2 }], hlines: [{ y: 1e7, color: P.faint }] });
+      text(ctx, "자산 곡선(1,000만원 시작) ", bot.x + 6, bot.y - 7, { color: P.dim, size: 11.5 });
+      text(ctx, "— 전략", bot.x + bot.w - 70, bot.y - 7, { color: P.accent, size: 11.5, weight: 700, align: "right" });
+      text(ctx, "-- 보유", bot.x + bot.w, bot.y - 7, { color: P.dim, size: 11.5, align: "right" });
+      if (!ok) { text(ctx, "단기 기간이 장기 기간보다 짧아야 한다", top.x + top.w / 2, top.y + top.h / 2, { color: P.bad, size: 14, weight: 700, align: "center", base: "middle" }); }
+      if (bt) {
+        const st = bt.stats;
+        MB.stat("en-o-cagr", tn(st.cagr, sp(st.cagr)) + " <small>보유 " + sp(HOLD.cagr) + "</small>");
+        MB.stat("en-o-sh", f2(st.sharpe) + " <small>보유 " + f2(HOLD.sharpe) + "</small>");
+        MB.stat("en-o-mdd", pc(st.mdd, 0) + " <small>보유 " + pc(HOLD.mdd, 0) + "</small>");
+        MB.stat("en-o-tr", st.trades + " <small>번</small>");
+      } else ["en-o-cagr", "en-o-sh", "en-o-mdd", "en-o-tr"].forEach((id) => MB.stat(id, "—"));
+    }, { get height() { return narrow("en-cv") ? 460 : 430; } });
+  })();
+
+  /* ---------------------------------------------------------- 2. 하루씩 백테스트 */
+  (function () {
+    const S0 = 840, N = 200, T0 = S0 + 24, sig = maSig(5, 20), bt = maBT(5, 20), cand = M.indexCandles, a5 = sma(5), a20 = sma(20);
+    let t = T0, playing = false, acc = 0;
+    let lo = Infinity, hi = -Infinity;
+    for (let i = S0; i < S0 + N; i++) { lo = Math.min(lo, cand[i].l, a20[i]); hi = Math.max(hi, cand[i].h, a20[i]); }
+    const eqv = (i) => (bt.equity[i] / bt.equity[S0]) * 1e7, hv = (i) => (C[i] / C[S0]) * 1e7;
+    let elo = Infinity, ehi = -Infinity;
+    for (let i = S0; i < S0 + N; i++) { elo = Math.min(elo, eqv(i), hv(i)); ehi = Math.max(ehi, eqv(i), hv(i)); }
+    const playBtn = document.getElementById("sp-play");
+    const setPlay = (v) => { playing = v; playBtn.textContent = v ? "멈춤" : "자동 진행"; };
+    const cv = MB.canvas("#sp-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = t - S0 + 1;
+      const B = { x: 58, y: 12, w: w - 70, h: h - 12 - 128 };
+      const slot = B.w / N, sub = { x: B.x, y: B.y, w: slot * n, h: B.h };
+      const markers = [];
+      for (let i = S0 + 1; i <= t; i++) if (sig[i] != null && sig[i - 1] != null && sig[i] !== sig[i - 1]) markers.push({ i: i - S0, price: C[i], shape: "dot", color: P.text });
+      bt.trades.forEach((tr) => { if (tr.i > S0 && tr.i <= t) markers.push({ i: tr.i - S0, price: tr.side === "buy" ? cand[tr.i].l : cand[tr.i].h, shape: tr.side === "buy" ? "up" : "down" }); });
+      const bands = [];
+      for (let i = S0; i <= t; i++) if (bt.pos[i]) bands.push({ i0: i - S0, i1: i - S0, color: MB.color("accent-soft") });
+      MB.candles(ctx, sub, cand.slice(S0, t + 1), { y: [lo * 0.98, hi * 1.02], volume: false, bands,
+        overlays: [{ data: a5.slice(S0, t + 1), color: P.accent, width: 1.5 }, { data: a20.slice(S0, t + 1), color: P.accent2, width: 1.5 }], markers,
+        xLabel: (i) => (i && D[S0 + i].slice(5, 7) !== D[S0 + i - 1].slice(5, 7) ? D[S0 + i].slice(2, 7).replace("-", ".") : null) });
+      // 아직 오지 않은 날
+      const fx = sub.x + sub.w;
+      if (fx < B.x + B.w - 2) {
+        ctx.save(); ctx.fillStyle = P.text; ctx.globalAlpha = MB.isDark() ? 0.1 : 0.07; ctx.fillRect(fx, B.y, B.x + B.w - fx, B.h); ctx.globalAlpha = 1;
+        ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(fx, B.y); ctx.lineTo(fx, B.y + B.h); ctx.stroke(); ctx.setLineDash([]);
+        if (B.x + B.w - fx > 70) text(ctx, "아직 오지 않은 날", (fx + B.x + B.w) / 2, B.y + B.h / 2, { color: P.dim, size: 12, align: "center", base: "middle" });
+        ctx.restore();
+      }
+      const E = { x: B.x, y: B.y + B.h + 40, w: B.w, h: h - B.y - B.h - 40 - 22 };
+      const eq = [], hd = [];
+      for (let i = S0; i <= t; i++) { eq.push([i, eqv(i)]); hd.push([i, hv(i)]); }
+      MB.chart(ctx, E, { x: [S0, S0 + N - 1], y: [elo * 0.97, ehi * 1.03], yTicks: [elo, ehi].map((v) => Math.round(v / 1e6) * 1e6), yFmt: wonFmt, xTicks: [],
+        series: [{ data: hd, color: P.faint, width: 1.3, dash: [4, 4] }, { data: eq, color: P.accent, width: 2 }] });
+      text(ctx, "자산(— 전략, -- 보유)", E.x + 4, E.y - 6, { color: P.dim, size: 11 });
+      const chg = sig[t] !== sig[t - 1];
+      MB.stat("sp-o-d", D[t].replace(/-/g, "."));
+      MB.stat("sp-o-sig", (sig[t] ? '<span class="up-t">보유</span>' : '<span class="down-t">현금</span>') + (chg ? " <small>오늘 바뀜 → 내일 체결</small>" : ""));
+      MB.stat("sp-o-pos", bt.pos[t] ? "100% 주식" : "0% <small>현금</small>");
+      const v = eqv(t);
+      MB.stat("sp-o-eq", tn(v - 1e7, MB.won(v)) + " <small>보유 " + MB.won(hv(t)) + "</small>");
+    }, { get height() { return narrow("sp-cv") ? 400 : 380; } });
+    const step = (k) => { t = Math.min(S0 + N - 1, t + k); if (t >= S0 + N - 1) setPlay(false); cv.redraw(); };
+    document.getElementById("sp-next").addEventListener("click", () => step(1));
+    document.getElementById("sp-five").addEventListener("click", () => step(5));
+    playBtn.addEventListener("click", () => { if (t >= S0 + N - 1) t = T0; setPlay(!playing); });
+    document.getElementById("sp-re").addEventListener("click", () => { t = T0; setPlay(false); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (!playing) return; acc += dt; if (acc > 0.11) { acc = 0; step(1); } });
+  })();
+
+  /* ---------------------------------------------------------- 3. 미래 참조 */
+  (function () {
+    const H20 = ST.highest(C, 20), A20 = sma(20), A60 = sma(60);
+    const RULES = {
+      ma: (k) => C.map((_, i) => { const j = i + k; return j >= T || A60[j] == null ? null : A20[j] > A60[j] ? 1 : 0; }),
+      brk: (k) => C.map((_, i) => { const j = i + k; if (j >= T || j < 20) return null; return C[j] >= H20[j - 1] ? 1 : C[j] < A20[j] ? 0 : null; }),
+      up: (k) => C.map((_, i) => { const j = i + k; if (j >= T || j < 1) return null; return C[j] > C[j - 1] ? 1 : 0; }),
+    };
+    const cache = {};
+    const run = (r, lv) => cache[r + lv] || (cache[r + lv] = lv === 0 ? ST.backtest(C, RULES[r](0)) : lv === 1 ? ST.backtest(C, RULES[r](0), { lookahead: true }) : ST.backtest(C, RULES[r](1), { lookahead: true }));
+    const upd = () => cv.redraw();
+    const rule = MB.seg("lk-rule", upd), lv = MB.seg("lk-lv", upd);
+    const cv = MB.canvas("#lk-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("lk-cv"), r = rule(), L = +lv();
+      const base = run(r, 0), cur = run(r, L);
+      const H = C.map((c) => (c / C[0]) * 1e7), E0 = base.equity.map((e) => e * 1e7), E = cur.equity.map((e) => e * 1e7);
+      let [lo, hi] = range([H, E0, L ? run(r, 1).equity.map((e) => e * 1e7) : []]);
+      hi = Math.max(hi * 1.15, 2.4e7); lo = Math.min(lo * 0.9, 0.8e7);
+      if (L === 2) hi = Math.max(hi, Math.min(E[T - 1] * 1.1, 1.2e8));
+      const B = { x: 56, y: 22, w: w - 70, h: h - 22 - 30 };
+      const ser = [{ data: pts(H), color: P.faint, width: 1.3, dash: [5, 4] }];
+      if (L) ser.push({ data: pts(E0), color: P.dim, width: 1.4 });
+      ser.push({ data: pts(E), color: L ? P.bad : P.accent, width: 2.2 });
+      const c = MB.chart(ctx, B, { x: [0, T - 1], y: [lo, hi], logY: true, yTicks: logTicks(lo, hi, 5), yFmt: wonFmt, xTicks: dayTicks(nar), xFmt: dayFmt, series: ser, hlines: [{ y: 1e7, color: P.faint }] });
+      if (!nar) text(ctx, "1,000만원의 자산 곡선(로그 눈금)", B.x + 4, B.y - 8, { color: P.dim, size: 11.5 });
+      const lab = ["정상", "종가 체결", "내일 종가 섞임"][L];
+      text(ctx, "— " + lab + (L ? "   — 정상" : "") + "   -- 보유", B.x + B.w, B.y - 8, { color: P.dim, size: 11.5, align: "right" });
+      const fin = E[T - 1];
+      if (fin > hi) {
+        let k = 0; while (k < T && E[k] <= hi) k++;
+        const x = c.X(Math.min(T - 1, k));
+        text(ctx, "↑ 차트 밖으로: 최종 " + MB.won(fin), Math.min(x + 6, B.x + B.w - 4), B.y + 14, { color: P.bad, size: 12, weight: 700, align: x > B.x + B.w * 0.5 ? "right" : "left" });
+      }
+      const st = cur.stats;
+      MB.stat("lk-o-cagr", isFinite(st.cagr) && st.cagr < 50 ? tn(st.cagr, sp(st.cagr)) : '<span class="up-t">' + MB.fmt(st.cagr * 100, 3) + "%</span>");
+      MB.stat("lk-o-base", tn(base.stats.cagr, sp(base.stats.cagr)) + " <small>보유 " + sp(HOLD.cagr) + "</small>");
+      MB.stat("lk-o-sh", f2(st.sharpe));
+      MB.stat("lk-o-mdd", pc(st.mdd, 0));
+    }, { get height() { return narrow("lk-cv") ? 320 : 340; } });
+  })();
+
+  /* ---------------------------------------------------------- 유니버스 공통 */
+  const U = ST.universe(), US = U.stocks, UM = U.months;
+  const ewR = (pool, from, to) => { const r = []; for (let t = from || 0; t < (to || UM); t++) { let s = 0, n = 0; for (const x of pool) if (x.rets[t] != null) { s += x.rets[t]; n++; } r.push(n ? s / n : 0); } return r; };
+  const cagrM = (r) => ST.cagr(ST.cumulate(r, 1), 12);
+  const monFmt = (m) => (m % 12 === 0 ? m / 12 + "년" : "");
+
+  /* ---------------------------------------------------------- 4. 생존 편향 */
+  (function () {
+    const POOLS = {};
+    const pool = (k) => {
+      if (POOLS[k]) return POOLS[k];
+      const p = k === "all" ? US : US.filter((s) => s.size < 0), surv = p.filter((s) => s.delistedAt < 0);
+      const ra = ewR(p), rs = ewR(surv);
+      return (POOLS[k] = { n: p.length, dl: p.filter((s) => s.delistedAt >= 0).map((s) => s.delistedAt).sort((a, b) => a - b), A: ST.cumulate(ra, 1e7), S: ST.cumulate(rs, 1e7), ca: cagrM(ra), cs: cagrM(rs) });
+    };
+    let cur = 60, BOX = null;
+    const which = MB.seg("sv-pool", () => cv.redraw());
+    const cv = MB.canvas("#sv-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = pool(which());
+      const B = { x: 56, y: 20, w: w - 70, h: h - 20 - 54 };
+      BOX = B;
+      const [lo, hi] = range([d.A, d.S]);
+      const c = MB.chart(ctx, B, { x: [0, UM], y: [lo * 0.9, hi * 1.1], logY: true, yTicks: logTicks(lo * 0.9, hi * 1.1, 5), yFmt: wonFmt, xTicks: [0, 24, 48, 72, 96, 120], xFmt: monFmt,
+        series: [{ data: d.A.map((v, i) => [i, v]), color: P.accent, width: 2 }, { data: d.S.map((v, i) => [i, v]), color: P.accent2, width: 2 }],
+        vlines: [{ x: cur, color: P.dim, dash: [3, 3] }] });
+      text(ctx, "동일가중 자산 곡선(1,000만원, 로그 눈금)", B.x + 4, B.y - 7, { color: P.dim, size: 11.5 });
+      // 상장폐지 표시
+      d.dl.forEach((m) => { const x = c.X(m + 1), y = B.y + B.h - 8; ctx.strokeStyle = m < cur ? P.bad : P.faint; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - 4, y - 4); ctx.lineTo(x + 4, y + 4); ctx.moveTo(x + 4, y - 4); ctx.lineTo(x - 4, y + 4); ctx.stroke(); });
+      text(ctx, "× 상장폐지", B.x + B.w - 4, B.y + B.h - 20, { color: P.bad, size: 11, align: "right" });
+      const gap = d.S[cur] / d.A[cur] - 1;
+      const kx = c.X(cur), ky = c.Y(d.S[cur]);
+      knob(ctx, kx, ky, P, 6);
+      text(ctx, "차이 " + sp(gap), kx + (kx > B.x + B.w * 0.7 ? -12 : 12), ky - 12, { color: P.text, size: 12, weight: 700, align: kx > B.x + B.w * 0.7 ? "right" : "left" });
+      const nd = d.dl.filter((m) => m < cur).length;
+      MB.stat("sv-o-s", tn(d.cs, sp(d.cs)));
+      MB.stat("sv-o-a", tn(d.ca, sp(d.ca)));
+      MB.stat("sv-o-d", "+" + ((d.cs - d.ca) * 100).toFixed(1) + "%p <small>/ 년</small>");
+      MB.stat("sv-o-n", nd + " <small>/ " + d.n + "종목 (" + Math.floor(cur / 12) + "년 " + (cur % 12) + "개월)</small>");
+    }, { get height() { return narrow("sv-cv") ? 320 : 330; } });
+    MB.drag(cv.canvas, { move(x) { if (!BOX) return; cur = Math.round(MB.clamp(((x - BOX.x) / BOX.w) * UM, 1, UM)); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 5. 비용과 슬리피지 */
+  (function () {
+    const upd = () => cv.redraw();
+    const rule = MB.seg("co-rule", upd);
+    const fee = MB.range("co-fee", (v) => v.toFixed(3) + "%", upd), slip = MB.range("co-slip", (v) => v.toFixed(2) + "%", upd);
+    const Z = {};
+    const cv = MB.canvas("#co-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("co-cv"), [s, l] = rule().split(",").map(Number), sig = maSig(s, l);
+      const b0 = Z[s] || (Z[s] = ST.backtest(C, sig, { cost: 0 })), b1 = ST.backtest(C, sig, { cost: (fee() + slip()) / 100 });
+      const H = C.map((c) => (c / C[0]) * 1e7), E0 = b0.equity.map((e) => e * 1e7), E1 = b1.equity.map((e) => e * 1e7);
+      const [lo, hi] = range([H, E0, E1]);
+      const B = { x: 56, y: 22, w: w - 70, h: h - 22 - 30 };
+      MB.chart(ctx, B, { x: [0, T - 1], y: [lo * 0.9, hi * 1.1], logY: true, yTicks: logTicks(lo * 0.9, hi * 1.1, 5), yFmt: wonFmt, xTicks: dayTicks(nar), xFmt: dayFmt,
+        series: [{ data: pts(H), color: P.faint, width: 1.3, dash: [5, 4] }, { data: pts(E0), color: P.dim, width: 1.4 }, { data: pts(E1), color: P.accent, width: 2.2 }], hlines: [{ y: 1e7, color: P.faint }] });
+      text(ctx, "— 비용 반영   — 비용 0   -- 보유", B.x + B.w, B.y - 8, { color: P.dim, size: 11.5, align: "right" });
+      const yrs = (T - 1) / TD;
+      MB.stat("co-o-n", (b1.stats.trades / yrs).toFixed(1) + " <small>번</small>");
+      MB.stat("co-o-0", tn(b0.stats.cagr, sp(b0.stats.cagr)) + " <small>보유 " + sp(HOLD.cagr) + "</small>");
+      MB.stat("co-o-1", tn(b1.stats.cagr, sp(b1.stats.cagr)));
+      MB.stat("co-o-d", ((b0.stats.cagr - b1.stats.cagr) * 100).toFixed(1) + "<small>%p</small>");
+    }, { get height() { return narrow("co-cv") ? 300 : 320; } });
+  })();
+
+  /* ---------------------------------------------------------- 6. 유동성 */
+  (function () {
+    const BOOKS = {
+      big: { name: "한빛반도체", book: new ST.Book({ ref: 72000 }).seed({ levels: 20, seed: 5, size: 2500 }) },
+      small: { name: "가상 소형주", book: new ST.Book({ ref: 5000 }).seed({ levels: 20, seed: 8, size: 150 }) },
+    };
+    let amt = 3e7, BOX = null;
+    const LMIN = 6, LMAX = 9;
+    const which = MB.seg("lq-stock", () => cv.redraw());
+    const fill = (bk, money) => {
+      const d = bk.depth(20), best = bk.best();
+      let left = money, sh = 0, cost = 0; const used = [];
+      d.asks.forEach((a) => { const cap = a.qty * a.price, take = Math.max(0, Math.min(cap, left)); const q = Math.floor(take / a.price); sh += q; cost += q * a.price; left -= q * a.price; used.push(q); });
+      const all = d.asks.every((a, k) => used[k] >= a.qty);
+      return { d, best, sh, avg: sh ? cost / sh : NaN, left: all ? Math.max(0, left) : 0, used, slip: sh ? cost / sh / best.mid - 1 : NaN };
+    };
+    const cv = MB.canvas("#lq-cv", (ctx, w, h) => {
+      const P = MB.palette(), B = BOOKS[which()], f = fill(B.book, amt);
+      // 주문 금액 축
+      const A = { x: 70, y: 30, w: w - 100 };
+      BOX = A;
+      ctx.strokeStyle = P.axis; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(A.x + A.w, A.y); ctx.stroke();
+      [1e6, 1e7, 1e8, 1e9].forEach((v) => { const x = A.x + ((Math.log10(v) - LMIN) / (LMAX - LMIN)) * A.w; ctx.fillStyle = P.dim; ctx.fillRect(x - 0.5, A.y - 5, 1, 10); text(ctx, MB.wonAxis(v), x, A.y + 18, { color: P.dim, size: 11, align: "center" }); });
+      const kx = A.x + ((Math.log10(amt) - LMIN) / (LMAX - LMIN)) * A.w;
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(A.x, A.y); ctx.lineTo(kx, A.y); ctx.stroke();
+      knob(ctx, kx, A.y, P, 7);
+      text(ctx, "시장가 매수 " + MB.won(amt), MB.clamp(kx, A.x + 60, A.x + A.w - 60), A.y - 13, { color: P.text, size: 12, weight: 700, align: "center" });
+      // 매도 호가 사다리
+      const asks = f.d.asks, n = asks.length, top = 72, rh = Math.min(15, (h - top - 34) / n), maxV = Math.max(...asks.map((a) => a.qty * a.price));
+      const bx = 74, bw = w - bx - 120;
+      text(ctx, "매도 호가(잔량 금액)", 8, top - 8, { color: P.dim, size: 11 });
+      for (let k = 0; k < n; k++) {
+        const a = asks[k], y = top + (n - 1 - k) * rh, full = (a.qty * a.price) / maxV * bw, used = (f.used[k] * a.price) / maxV * bw;
+        text(ctx, MB.price(a.price, { short: true }), bx - 8, y + rh / 2, { color: P.dim, size: 10.5, mono: true, align: "right", base: "middle" });
+        ctx.fillStyle = P.downSoft; ctx.fillRect(bx, y + 1, full, rh - 2);
+        if (used > 0) { ctx.fillStyle = P.down; ctx.fillRect(bx, y + 1, used, rh - 2); }
+        if (f.used[k] > 0 && k === f.used.findLastIndex((u) => u > 0)) text(ctx, "여기까지 먹음", bx + Math.max(full, used) + 6, y + rh / 2, { color: P.text, size: 11, base: "middle", weight: 700 });
+      }
+      const by = top + n * rh + 4;
+      ctx.fillStyle = P.up; ctx.globalAlpha = 0.5; ctx.fillRect(bx, by + 1, bw * 0.15, rh - 2); ctx.globalAlpha = 1;
+      text(ctx, MB.price(f.best.bid, { short: true }), bx - 8, by + rh / 2, { color: P.up, size: 10.5, mono: true, align: "right", base: "middle" });
+      text(ctx, "최우선 매수 호가", bx + bw * 0.15 + 6, by + rh / 2, { color: P.dim, size: 10.5, base: "middle" });
+      if (f.left > 0) text(ctx, "호가 부족: " + MB.won(f.left) + "은 체결 안 됨", w - 10, top - 8, { color: P.bad, size: 12, weight: 700, align: "right" });
+      MB.stat("lq-o-amt", MB.won(amt));
+      MB.stat("lq-o-avg", isFinite(f.avg) ? MB.price(Math.round(f.avg)) + " <small>" + B.name + "</small>" : "—");
+      MB.stat("lq-o-slip", isFinite(f.slip) ? pc(f.slip, 2) : "—");
+      MB.stat("lq-o-left", f.left > 0 ? '<span class="bad-t">' + MB.won(f.left) + "</span>" : "0원");
+    }, { get height() { return narrow("lq-cv") ? 420 : 400; } });
+    const setX = (x) => { if (!BOX) return; amt = Math.pow(10, MB.clamp(LMIN + ((x - BOX.x) / BOX.w) * (LMAX - LMIN), LMIN, LMAX)); amt = Math.round(amt / 1e5) * 1e5; cv.redraw(); };
+    MB.drag(cv.canvas, { move(x) { setX(x); } });
+    document.querySelectorAll("#sim-liq [data-amt]").forEach((b) => b.addEventListener("click", () => { amt = Number(b.dataset.amt); cv.redraw(); }));
+  })();
+
+  /* ---------------------------------------------------------- 7. 국면별 성과 */
+  (function () {
+    const rule = MB.seg("rg-rule", () => cv.redraw());
+    const RG = M.regimes;
+    const cv = MB.canvas("#rg-cv", (ctx, w, h) => {
+      const P = MB.palette(), [s, l] = rule().split(",").map(Number), bt = maBT(s, l);
+      const rows = RG.map((g) => ({ name: g.name, st: bt.equity[g.to] / bt.equity[g.from] - 1, hd: C[g.to] / C[g.from] - 1 }));
+      const lo = Math.min(-0.4, ...rows.map((r) => Math.min(r.st, r.hd))) * 1.1, hi = Math.max(0.5, ...rows.map((r) => Math.max(r.st, r.hd))) * 1.12;
+      const lx = 92, B = { x: lx, y: 14, w: w - lx - 16, h: h - 14 - 30 }, rh = B.h / rows.length;
+      const X = (v) => B.x + ((v - lo) / (hi - lo)) * B.w;
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+      [-0.4, -0.2, 0, 0.2, 0.4, 0.6].filter((v) => v >= lo && v <= hi).forEach((v) => { ctx.beginPath(); ctx.moveTo(X(v), B.y); ctx.lineTo(X(v), B.y + B.h); ctx.stroke(); text(ctx, Math.round(v * 100) + "%", X(v), B.y + B.h + 16, { color: P.dim, size: 10.5, mono: true, align: "center" }); });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(X(0), B.y); ctx.lineTo(X(0), B.y + B.h); ctx.stroke();
+      rows.forEach((r, k) => {
+        const y = B.y + k * rh, bh = Math.min(12, rh * 0.32);
+        text(ctx, (k + 1) + ". " + r.name, lx - 8, y + rh / 2, { color: P.text, size: 12, align: "right", base: "middle" });
+        ctx.fillStyle = P.accent; ctx.fillRect(Math.min(X(0), X(r.st)), y + rh / 2 - bh - 1, Math.abs(X(r.st) - X(0)), bh);
+        ctx.fillStyle = P.faint; ctx.fillRect(Math.min(X(0), X(r.hd)), y + rh / 2 + 1, Math.abs(X(r.hd) - X(0)), bh);
+        const d = r.st - r.hd;
+        text(ctx, sp(r.st, 0), X(r.st) + (r.st >= 0 ? 4 : -4), y + rh / 2 - bh / 2 - 1, { color: P.text, size: 10.5, mono: true, align: r.st >= 0 ? "left" : "right", base: "middle" });
+        if (Math.abs(d) > 0.03) { ctx.fillStyle = d > 0 ? P.up : P.down; ctx.beginPath(); ctx.arc(B.x + B.w - 5, y + rh / 2, 3.5, 0, TAU); ctx.fill(); }
+      });
+      const diffs = rows.map((r) => r.st - r.hd), bi = argmax(diffs), wi = argmax(diffs.map((v) => -v));
+      MB.stat("rg-o-win", diffs.filter((v) => v > 0).length + " <small>/ " + rows.length + "</small>");
+      MB.stat("rg-o-best", rows[bi].name + " <small>" + sp(diffs[bi], 0) + "p</small>");
+      MB.stat("rg-o-worst", rows[wi].name + " <small>" + sp(diffs[wi], 0) + "p</small>");
+    }, { get height() { return narrow("rg-cv") ? 380 : 360; } });
+  })();
+
+  /* ---------------------------------------------------------- 8. 기간 고르기 */
+  (function () {
+    const bt = maBT(20, 60), SQ = pref(bt.equity.map((e, i) => (i ? e / bt.equity[i - 1] - 1 : 0))), MIN = 504, A0 = 60;
+    let a = A0, b = T - 1, grab = 0, BOXC = null;
+    const diff = (x, y) => wst(SQ, x, y).cagr - wst(HQ, x, y).cagr;
+    let best = null, worst = null;
+    for (let x = A0; x < T - MIN; x += 21) for (let y = x + MIN; y < T; y += 21) { const d = diff(x, y); if (!best || d > best[2]) best = [x, y, d]; if (!worst || d < worst[2]) worst = [x, y, d]; }
+    const [clo, chi] = range([C]);
+    const cv = MB.canvas("#wn-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("wn-cv");
+      const top = { x: 56, y: 14, w: w - 70, h: Math.round((h - 80) * 0.42) };
+      const bot = { x: 56, y: top.y + top.h + 50, w: w - 70, h: h - top.y - top.h - 50 - 56 };
+      const c1 = MB.chart(ctx, top, { x: [0, T - 1], y: [clo * 0.95, chi * 1.05], logY: true, yTicks: logTicks(clo * 0.95, chi * 1.05, 3), yFmt: (v) => Math.round(v).toLocaleString("ko-KR"), xTicks: dayTicks(nar), xFmt: dayFmt,
+        series: [{ data: pts(C), color: P.dim, width: 1.2 }], bands: [{ x0: a, x1: b, color: MB.color("accent-soft") }] });
+      BOXC = c1;
+      [a, b].forEach((v) => { ctx.strokeStyle = P.accent; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(c1.X(v), top.y); ctx.lineTo(c1.X(v), top.y + top.h); ctx.stroke(); knob(ctx, c1.X(v), top.y + top.h / 2, P, 7); });
+      const S = [], H = [];
+      for (let i = a; i <= b; i++) { S.push([i, (bt.equity[i] / bt.equity[a]) * 1e7]); H.push([i, (C[i] / C[a]) * 1e7]); }
+      const [lo, hi] = range([S, H]);
+      MB.chart(ctx, bot, { x: [a, b], y: [lo * 0.93, hi * 1.07], logY: true, yTicks: logTicks(lo * 0.93, hi * 1.07, 4), yFmt: wonFmt, xTicks: dayTicks(nar && b - a > 1000, a, b), xFmt: dayFmt,
+        series: [{ data: H, color: P.faint, width: 1.4, dash: [5, 4] }, { data: S, color: P.accent, width: 2 }], hlines: [{ y: 1e7, color: P.faint }] });
+      text(ctx, "고른 기간만 다시 돌린 자산 곡선", bot.x + 4, bot.y - 8, { color: P.dim, size: 11.5 });
+      const s = wst(SQ, a, b).cagr, hh = wst(HQ, a, b).cagr;
+      MB.stat("wn-o-p", ym(a) + "~" + ym(b) + " <small>" + ((b - a) / TD).toFixed(1) + "년</small>");
+      MB.stat("wn-o-s", tn(s, sp(s)));
+      MB.stat("wn-o-h", tn(hh, sp(hh)));
+      MB.stat("wn-o-d", tn(s - hh, sp(s - hh) + "p"));
+    }, { get height() { return narrow("wn-cv") ? 400 : 380; } });
+    const toDay = (x) => MB.clamp(Math.round(((x - BOXC.box.x) / BOXC.box.w) * (T - 1)), A0, T - 1);
+    MB.drag(cv.canvas, {
+      start(x) { if (!BOXC) return; grab = Math.abs(x - BOXC.X(a)) < Math.abs(x - BOXC.X(b)) ? 0 : 1; },
+      move(x) { if (!BOXC) return; const d = toDay(x); if (grab === 0) a = Math.min(d, b - MIN); else b = Math.max(d, a + MIN); a = Math.max(A0, a); b = Math.min(T - 1, b); cv.redraw(); },
+    });
+    document.getElementById("wn-good").addEventListener("click", () => { [a, b] = best; cv.redraw(); });
+    document.getElementById("wn-bad").addEventListener("click", () => { [a, b] = worst; cv.redraw(); });
+    document.getElementById("wn-all").addEventListener("click", () => { a = A0; b = T - 1; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 9. 파라미터 격자 */
+  (function () {
+    const G = grid(), SPL = 1300;
+    const tr = G.map((g) => wst(g.q, TR0, SPL).sh), te = G.map((g) => wst(g.q, SPL, T - 1).sh);
+    const at = (r, c) => G.findIndex((g) => g.r === r && g.c === c);
+    const sm = G.map((g) => { const v = []; for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) { const k = at(g.r + dr, g.c + dc); if (k >= 0) v.push(tr[k]); } return ST.mean(v); });
+    let sel = argmax(tr), HM = null;
+    const mode = MB.seg("gd-mode", () => cv.redraw());
+    const cv = MB.canvas("#gd-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("gd-cv"), m = mode(), vals = m === "train" ? tr : m === "test" ? te : sm;
+      const hm = nar ? { x: 44, y: 22, w: w - 56, h: 230 } : { x: 44, y: 22, w: w * 0.5 - 56, h: h - 22 - 48 };
+      const cw = hm.w / GL.length, ch = hm.h / GS.length;
+      HM = { x: hm.x, y: hm.y, cw, ch };
+      const bestTr = argmax(tr);
+      text(ctx, ["훈련 구간 샤프", "검증 구간 샤프", "훈련 샤프(이웃 평균)"][["train", "test", "smooth"].indexOf(m)], hm.x, hm.y - 8, { color: P.dim, size: 11.5 });
+      GS.forEach((s, r) => GL.forEach((l, c) => {
+        const x = hm.x + c * cw, y = hm.y + r * ch, k = at(r, c);
+        if (k < 0) { ctx.fillStyle = P.grid; ctx.globalAlpha = 0.5; ctx.fillRect(x + 1, y + 1, cw - 2, ch - 2); ctx.globalAlpha = 1; return; }
+        const v = vals[k];
+        ctx.fillStyle = P.surface; ctx.fillRect(x + 1, y + 1, cw - 2, ch - 2);
+        ctx.fillStyle = v >= 0 ? P.up : P.down; ctx.globalAlpha = Math.min(0.92, 0.08 + Math.abs(v) / 0.9); ctx.fillRect(x + 1, y + 1, cw - 2, ch - 2); ctx.globalAlpha = 1;
+        if (cw >= 30) text(ctx, v.toFixed(2).replace("-", "−"), x + cw / 2, y + ch / 2, { color: Math.abs(v) > 0.55 ? "#fff" : P.text, size: cw >= 40 ? 10.5 : 9.5, mono: true, align: "center", base: "middle" });
+        if (k === bestTr) { ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.setLineDash([3, 2]); ctx.strokeRect(x + 2.5, y + 2.5, cw - 5, ch - 5); ctx.setLineDash([]); }
+        if (k === sel) { ctx.strokeStyle = P.text; ctx.lineWidth = 2.5; ctx.strokeRect(x + 1, y + 1, cw - 2, ch - 2); }
+      }));
+      GL.forEach((l, c) => text(ctx, String(l), hm.x + (c + 0.5) * cw, hm.y + hm.h + 13, { color: P.dim, size: 10, mono: true, align: "center" }));
+      GS.forEach((s, r) => text(ctx, String(s), hm.x - 6, hm.y + (r + 0.5) * ch, { color: P.dim, size: 10, mono: true, align: "right", base: "middle" }));
+      text(ctx, "장기 이평(일) →", hm.x + hm.w, hm.y + hm.h + 30, { color: P.dim, size: 11, align: "right" });
+      ctx.save(); ctx.translate(12, hm.y + hm.h / 2); ctx.rotate(-Math.PI / 2); text(ctx, "단기 이평(일)", 0, 0, { color: P.dim, size: 11, align: "center", base: "middle" }); ctx.restore();
+      // 오른쪽: 고른 조합의 자산 곡선
+      const E = nar ? { x: 56, y: hm.y + hm.h + 66, w: w - 70, h: h - hm.y - hm.h - 66 - 42 } : { x: w * 0.5 + 44, y: 22, w: w * 0.5 - 58, h: h - 22 - 48 };
+      const g = G[sel], S = [], H = [];
+      for (let i = TR0; i < T; i++) { S.push([i, (g.eq[i] / g.eq[TR0]) * 1e7]); H.push([i, (C[i] / C[TR0]) * 1e7]); }
+      const [lo, hi] = range([S, H]);
+      MB.chart(ctx, E, { x: [TR0, T - 1], y: [lo * 0.92, hi * 1.08], logY: true, yTicks: logTicks(lo * 0.92, hi * 1.08, 4), yFmt: wonFmt, xTicks: dayTicks(true), xFmt: dayFmt,
+        bands: [{ x0: TR0, x1: SPL, color: MB.color("accent-soft") }], vlines: [{ x: SPL, color: P.accent2, label: "검증 →" }],
+        series: [{ data: H, color: P.faint, width: 1.3, dash: [5, 4] }, { data: S, color: P.accent, width: 2 }] });
+      text(ctx, "단기 " + g.s + " · 장기 " + g.l + " (— 전략, -- 보유)", E.x + 4, E.y - 8, { color: P.dim, size: 11.5 });
+      MB.stat("gd-o-p", g.s + "일 · " + g.l + "일");
+      MB.stat("gd-o-tr", f2(tr[sel]) + " <small>" + rankOf(tr, sel) + "위/" + G.length + "</small>");
+      MB.stat("gd-o-te", f2(te[sel]) + " <small>" + rankOf(te, sel) + "위/" + G.length + "</small>");
+      MB.stat("gd-o-nb", f2(sm[sel]));
+    }, { get height() { return narrow("gd-cv") ? 520 : 340; } });
+    MB.drag(cv.canvas, { start(x, y) {
+      if (!HM) return;
+      const c = Math.floor((x - HM.x) / HM.cw), r = Math.floor((y - HM.y) / HM.ch);
+      if (r < 0 || c < 0 || r >= GS.length || c >= GL.length) return;
+      const k = at(r, c); if (k >= 0) { sel = k; cv.redraw(); }
+    } });
+    document.getElementById("gd-best").addEventListener("click", () => { sel = argmax(tr); cv.redraw(); });
+    document.getElementById("gd-plat").addEventListener("click", () => { sel = argmax(sm); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 10. 조건 덧붙이기 */
+  (function () {
+    const SPL = 1300, WD = ["일", "월", "화", "수", "목", "금", "토"];
+    const wd = D.map((d) => new Date(d + "T00:00:00").getDay()), mo = D.map((d) => +d.slice(5, 7));
+    const dom = [], dEnd = new Array(T).fill(0);
+    D.forEach((d, i) => { dom.push(i && d.slice(5, 7) === D[i - 1].slice(5, 7) ? dom[i - 1] + 1 : 0); });
+    for (let i = T - 1; i >= 0; i--) dEnd[i] = i < T - 1 && D[i].slice(5, 7) === D[i + 1].slice(5, 7) ? dEnd[i + 1] + 1 : 0;
+    const CANDS = [];
+    for (let k = 1; k <= 5; k++) CANDS.push({ name: WD[k] + "요일 쉬기", ex: (i) => wd[i] === k });
+    for (let k = 1; k <= 12; k++) CANDS.push({ name: k + "월 쉬기", ex: (i) => mo[i] === k });
+    CANDS.push({ name: "오른 다음 날 쉬기", ex: (i) => RET[i - 1] > 0 }, { name: "내린 다음 날 쉬기", ex: (i) => RET[i - 1] < 0 },
+      { name: "월초 5일 쉬기", ex: (i) => dom[i] < 5 }, { name: "월말 5일 쉬기", ex: (i) => dEnd[i] < 5 });
+    const masks = CANDS.map((c) => { const m = new Uint8Array(T); for (let i = 1; i < T; i++) m[i] = c.ex(i) ? 1 : 0; return m; });
+    const sh = (on, a, b) => { let s1 = 0, s2 = 0; const n = b - a; for (let i = a; i < b; i++) if (on[i]) { s1 += RET[i]; s2 += RET[i] * RET[i]; } const m = s1 / n, v = s2 / n - m * m; return v > 0 ? (m / Math.sqrt(v)) * Math.sqrt(TD) : 0; };
+    const path = [];
+    (function () {
+      let on = new Uint8Array(T).fill(1); const used = new Set();
+      path.push({ name: "그냥 보유", tr: sh(on, 1, SPL), te: sh(on, SPL, T) });
+      for (let step = 0; step < 10; step++) {
+        let best = -1, bv = -Infinity, bon = null;
+        CANDS.forEach((c, k) => { if (used.has(k)) return; const o = on.map((v, i) => (v && !masks[k][i] ? 1 : 0)); const v = sh(o, 1, SPL); if (v > bv) { bv = v; best = k; bon = o; } });
+        if (best < 0 || bv <= path[path.length - 1].tr) break;
+        used.add(best); on = bon;
+        path.push({ name: CANDS[best].name, tr: bv, te: sh(on, SPL, T), days: ST.mean(Array.from(on.subarray(1))) });
+      }
+    })();
+    let k = 0;
+    const [lo, hi] = range([path.map((p) => p.tr), path.map((p) => p.te)]);
+    const cv = MB.canvas("#ft-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ft-cv"), N = path.length - 1;
+      const B = nar ? { x: 46, y: 18, w: w - 60, h: 200 } : { x: 46, y: 18, w: w * 0.6 - 60, h: h - 18 - 46 };
+      const vis = path.slice(0, k + 1);
+      MB.chart(ctx, B, { x: [0, N], y: [Math.min(0, lo - 0.1), hi + 0.15], xTicks: path.map((_, i) => i), xFmt: (v) => String(v), yFmt: (v) => v.toFixed(1), xLabel: "붙인 조건 수", hlines: [{ y: 0, color: P.faint }],
+        series: [{ data: vis.map((p, i) => [i, p.tr]), color: P.accent, width: 2.2 }, { data: vis.map((p, i) => [i, p.te]), color: P.accent2, width: 2.2 }],
+        points: vis.map((p, i) => ({ x: i, y: p.tr, color: P.accent, r: 3.5 })).concat(vis.map((p, i) => ({ x: i, y: p.te, color: P.accent2, r: 3.5 }))) });
+      text(ctx, "샤프 비율", B.x + 4, B.y + 2, { color: P.dim, size: 11, base: "top" });
+      const L = nar ? { x: 14, y: B.y + B.h + 62 } : { x: w * 0.6 + 6, y: 30 };
+      text(ctx, "붙인 조건(훈련 → 검증)", L.x, L.y - 8, { color: P.dim, size: 11.5 });
+      const lh = nar ? 19 : Math.min(24, (h - 50) / (N + 1));
+      path.forEach((p, i) => {
+        const y = L.y + 8 + i * lh, on = i <= k;
+        text(ctx, (i ? i + ". " : "") + p.name, L.x, y + lh / 2, { color: on ? P.text : P.faint, size: 12, base: "middle", weight: i === k ? 700 : 400 });
+        if (on) text(ctx, f2(p.tr) + " → " + f2(p.te), w - 12, y + lh / 2, { color: p.te < path[0].te ? P.down : P.dim, size: 11, mono: true, align: "right", base: "middle" });
+      });
+      const p = path[k];
+      MB.stat("ft-o-n", k + " <small>개</small>");
+      MB.stat("ft-o-tr", f2(p.tr) + " <small>처음 " + f2(path[0].tr) + "</small>");
+      MB.stat("ft-o-te", f2(p.te) + " <small>처음 " + f2(path[0].te) + "</small>");
+      MB.stat("ft-o-last", k ? p.name : "—");
+    }, { get height() { return narrow("ft-cv") ? 300 + 19 * path.length + 20 : 340; } });
+    document.getElementById("ft-add").addEventListener("click", () => { k = Math.min(path.length - 1, k + 1); cv.redraw(); });
+    document.getElementById("ft-re").addEventListener("click", () => { k = 0; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 11. 무작위 전략 1,000개 */
+  (function () {
+    const BL = 21, NB = Math.floor((T - 1) / BL), TRB = Math.floor(NB / 2), NS = 1000;
+    const s1 = [], s2 = [];
+    for (let b = 0; b < NB; b++) { let a = 0, q = 0; for (let i = 1 + b * BL; i < 1 + (b + 1) * BL; i++) { a += RET[i]; q += RET[i] * RET[i]; } s1.push(a); s2.push(q); }
+    const shOf = (on, b0, b1) => { let a = 0, q = 0; const n = (b1 - b0) * BL; for (let b = b0; b < b1; b++) if (on[b]) { a += s1[b]; q += s2[b]; } const m = a / n, v = q / n - m * m; return v > 0 ? (m / Math.sqrt(v)) * Math.sqrt(TD) : 0; };
+    let seed = 1, TR, TE, cnt = 0, playing = false, MU, SD;
+    function gen() {
+      const r = ST.rng(500 + seed); TR = []; TE = [];
+      for (let k = 0; k < NS; k++) { const on = []; for (let b = 0; b < NB; b++) on.push(r() < 0.5 ? 1 : 0); TR.push(shOf(on, 0, TRB)); TE.push(shOf(on, TRB, NB)); }
+      MU = ST.mean(TR); SD = ST.std(TR);
+    }
+    gen();
+    const qn = (p) => { let lo = -8, hi = 8; for (let i = 0; i < 60; i++) { const m = (lo + hi) / 2; if (ST.ncdf(m) < p) lo = m; else hi = m; } return (lo + hi) / 2; };
+    const emax = (n) => MU + SD * ((1 - 0.5772) * qn(1 - 1 / n) + 0.5772 * qn(1 - 1 / (n * Math.E)));
+    const LO = -1.2, HI = 2.0, NBIN = 32, BW = (HI - LO) / NBIN;
+    const histo = (vals) => { const c = new Array(NBIN).fill(0); vals.forEach((v) => { const b = Math.floor((v - LO) / BW); if (b >= 0 && b < NBIN) c[b]++; }); return c; };
+    const playBtn = document.getElementById("sn-play");
+    const cv = MB.canvas("#sn-cv", (ctx, w, h) => {
+      const P = MB.palette(), tr = TR.slice(0, cnt), te = TE.slice(0, cnt);
+      const gap = 44, hh = (h - 20 - gap - 30) / 2;
+      const A = { x: 44, y: 20, w: w - 58, h: hh }, Bx = { x: 44, y: 20 + hh + gap, w: w - 58, h: hh };
+      const ca = histo(tr), cb = histo(te), ymax = Math.max(10, ...ca, ...cb) * 1.15;
+      const bi = cnt ? argmax(tr) : -1;
+      [[A, ca, P.accent, "훈련 기간(약 5년)의 샤프"], [Bx, cb, P.accent2, "같은 전략들의 검증 기간(다음 약 5년) 샤프"]].forEach(([box, cts, col, lab]) => {
+        const c = MB.chart(ctx, box, { x: [LO, HI], y: [0, ymax], xTicks: [-1, -0.5, 0, 0.5, 1, 1.5, 2], xFmt: (v) => v.toFixed(1), yTicks: [], yFmt: () => "" });
+        ctx.fillStyle = col; ctx.globalAlpha = 0.75;
+        cts.forEach((n, b) => { if (!n) return; const x0 = c.X(LO + b * BW) + 1, x1 = c.X(LO + (b + 1) * BW) - 1; ctx.fillRect(x0, c.Y(n), x1 - x0, c.Y(0) - c.Y(n)); });
+        ctx.globalAlpha = 1;
+        text(ctx, lab, box.x + 4, box.y - 6, { color: P.dim, size: 11.5 });
+        box.c = c;
+      });
+      if (!cnt) text(ctx, "\"1,000개 시험하기\"를 누른다", A.x + A.w / 2, A.y + A.h / 2, { color: P.dim, size: 13, align: "center", base: "middle" });
+      if (cnt > 1) {
+        const exp = emax(cnt), cA = A.c;
+        ctx.strokeStyle = P.dim; ctx.setLineDash([4, 3]); ctx.beginPath(); ctx.moveTo(cA.X(exp), A.y); ctx.lineTo(cA.X(exp), A.y + A.h); ctx.stroke(); ctx.setLineDash([]);
+        text(ctx, "운의 최고 기대", cA.X(exp) - 4, A.y + 12, { color: P.dim, size: 10.5, align: "right" });
+        const mx = TR[bi], x = cA.X(Math.min(HI, mx));
+        tri(ctx, x, A.y + A.h - 2, false, P.bad, 6);
+        text(ctx, "최고 " + mx.toFixed(2), x, A.y + A.h - 16, { color: P.bad, size: 11.5, weight: 700, align: x > A.x + A.w - 50 ? "right" : "center" });
+        const cB = Bx.c, xb = cB.X(MB.clamp(TE[bi], LO, HI)), yb = Bx.y + Bx.h - 10;
+        ctx.fillStyle = P.bad; ctx.beginPath(); ctx.moveTo(xb, yb - 7); ctx.lineTo(xb + 6, yb); ctx.lineTo(xb, yb + 7); ctx.lineTo(xb - 6, yb); ctx.closePath(); ctx.fill();
+        text(ctx, "◆ 그 전략 " + TE[bi].toFixed(2), MB.clamp(xb, Bx.x + 50, Bx.x + Bx.w - 50), Bx.y + 12, { color: P.bad, size: 11.5, weight: 700, align: "center" });
+      }
+      MB.stat("sn-o-n", cnt.toLocaleString("ko-KR") + " <small>개</small>");
+      MB.stat("sn-o-max", cnt ? TR[bi].toFixed(2) + " <small>평균 " + ST.mean(tr).toFixed(2) + "</small>" : "—");
+      MB.stat("sn-o-exp", cnt > 1 ? emax(cnt).toFixed(2) : "—");
+      MB.stat("sn-o-te", cnt ? TE[bi].toFixed(2) + " <small>평균 " + ST.mean(te).toFixed(2) + "</small>" : "—");
+    }, { get height() { return narrow("sn-cv") ? 360 : 340; } });
+    playBtn.addEventListener("click", () => { if (cnt >= NS) cnt = 0; playing = true; });
+    document.getElementById("sn-re").addEventListener("click", () => { seed++; gen(); cnt = 0; playing = true; cv.redraw(); });
+    MB.loop(cv.canvas, () => { if (!playing) return; cnt = Math.min(NS, cnt + (cnt < 50 ? 1 : cnt < 200 ? 4 : 15)); if (cnt >= NS) playing = false; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 12. 진짜 실력 찾기 */
+  (function () {
+    const NP = 8, SIG = 0.15 / Math.sqrt(12), MU = 0.075 / 12;
+    let seed = 1, curves, truth, chosen = -1, rounds = 0, hits = 0, PAN = [];
+    const MC = {};
+    const yrs = MB.seg("gs-yrs", () => { rounds = 0; hits = 0; newRound(); });
+    function mk(g, n, mu) { const e = [1]; for (let t = 0; t < n; t++) e.push(e[t] * (1 + mu + SIG * g())); return e; }
+    function newRound() {
+      const n = 12 * +yrs(), g = ST.gauss(7000 + seed), r = ST.rng(9000 + seed);
+      truth = Math.floor(r() * NP); curves = [];
+      for (let k = 0; k < NP; k++) curves.push(mk(g, n, k === truth ? MU : 0));
+      chosen = -1; cv && cv.redraw();
+    }
+    function topRate(y) {
+      if (MC[y] != null) return MC[y];
+      const g = ST.gauss(31 + y), n = 12 * y, R = 2000; let ok = 0;
+      for (let k = 0; k < R; k++) { let best = -Infinity, bi = 0; for (let p = 0; p < NP; p++) { let s = 0; for (let t = 0; t < n; t++) s += Math.log(1 + (p === 0 ? MU : 0) + SIG * g()); if (s > best) { best = s; bi = p; } } if (bi === 0) ok++; }
+      return (MC[y] = ok / R);
+    }
+    let cv = null;
+    newRound();
+    cv = MB.canvas("#gs-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("gs-cv"), cols = nar ? 2 : 4, rows = NP / cols, pad = 8;
+      const pw = (w - pad * (cols + 1)) / cols, ph = (h - pad * (rows + 1)) / rows;
+      const [lo, hi] = range(curves);
+      const llo = Math.log(lo * 0.95), lhi = Math.log(hi * 1.05), n = curves[0].length - 1;
+      PAN = [];
+      const tops = curves.map((c) => c[n]), topI = argmax(tops);
+      curves.forEach((cu, k) => {
+        const x = pad + (k % cols) * (pw + pad), y = pad + Math.floor(k / cols) * (ph + pad);
+        PAN.push({ x, y, w: pw, h: ph });
+        const rev = chosen >= 0, isT = k === truth, isC = k === chosen;
+        ctx.fillStyle = P.surface; ctx.fillRect(x, y, pw, ph);
+        ctx.strokeStyle = rev && isT ? P.up : rev && isC ? P.down : P.border; ctx.lineWidth = rev && (isT || isC) ? 3 : 1; ctx.strokeRect(x + 0.5, y + 0.5, pw - 1, ph - 1);
+        const X = (t) => x + 6 + (t / n) * (pw - 12), Y = (v) => y + ph - 18 - ((Math.log(v) - llo) / (lhi - llo)) * (ph - 36);
+        ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x + 6, Y(1)); ctx.lineTo(x + pw - 6, Y(1)); ctx.stroke(); ctx.setLineDash([]);
+        ctx.strokeStyle = rev && isT ? P.up : P.accent; ctx.lineWidth = 1.6; ctx.beginPath();
+        cu.forEach((v, t) => (t ? ctx.lineTo(X(t), Y(v)) : ctx.moveTo(X(t), Y(v)))); ctx.stroke();
+        text(ctx, String.fromCharCode(65 + k), x + 8, y + 16, { color: P.dim, size: 12, weight: 700 });
+        if (rev) {
+          text(ctx, cu[n].toFixed(2) + "배", x + pw - 8, y + 16, { color: k === topI ? P.text : P.dim, size: 11, mono: true, align: "right", weight: k === topI ? 700 : 400 });
+          if (isT) text(ctx, "진짜 실력", x + pw / 2, y + ph - 6, { color: P.up, size: 11.5, weight: 700, align: "center" });
+          else if (isC) text(ctx, "내 선택(운)", x + pw / 2, y + ph - 6, { color: P.down, size: 11.5, weight: 700, align: "center" });
+        }
+      });
+      MB.stat("gs-o-r", rounds + " <small>판</small>");
+      MB.stat("gs-o-hit", hits + " <small>판</small>");
+      MB.stat("gs-o-rate", rounds ? pc(hits / rounds, 0) : "—");
+      MB.stat("gs-o-top", pc(topRate(+yrs()), 0) + " <small>2,000판 모의</small>");
+    }, { get height() { return narrow("gs-cv") ? 520 : 300; } });
+    MB.drag(cv.canvas, { start(x, y) {
+      if (chosen >= 0) return;
+      const k = PAN.findIndex((p) => x >= p.x && x <= p.x + p.w && y >= p.y && y <= p.y + p.h);
+      if (k < 0) return;
+      chosen = k; rounds++; if (k === truth) hits++; cv.redraw();
+    } });
+    document.getElementById("gs-next").addEventListener("click", () => { seed++; newRound(); });
+    document.getElementById("gs-re").addEventListener("click", () => { rounds = 0; hits = 0; seed++; newRound(); });
+  })();
+
+  /* ---------------------------------------------------------- 13. 샤프의 불확실성 */
+  (function () {
+    let seed = 1;
+    const upd = () => cv.redraw();
+    const TS = MB.range("sr-t", (v) => v.toFixed(2), upd), YS = MB.range("sr-y", (v) => v + "년", upd);
+    const se = (sr, y) => Math.sqrt((1 + (sr * sr) / 2) / y);
+    const cv = MB.canvas("#sr-cv", (ctx, w, h) => {
+      const P = MB.palette(), sr = TS(), y = YS(), s = se(sr, y), LO = -1.5, HI = 3;
+      const B = { x: 30, y: 24, w: w - 44, h: h - 24 - 44 };
+      const pdf = (x) => Math.exp(-0.5 * ((x - sr) / s) ** 2) / (s * Math.sqrt(TAU));
+      const top = Math.max(pdf(sr) * 1.15, 1.2);
+      const c = MB.chart(ctx, B, { x: [LO, HI], y: [0, top], xTicks: [-1, -0.5, 0, 0.5, 1, 1.5, 2, 2.5, 3], xFmt: (v) => v.toFixed(1), yTicks: [], xLabel: "관측된 샤프 비율" });
+      const N = 160;
+      ctx.save(); ctx.beginPath(); ctx.rect(B.x, B.y, B.w, B.h); ctx.clip();
+      [[LO, 0, P.downSoft], [0, HI, MB.color("accent-soft")]].forEach(([a, b, col]) => {
+        ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(c.X(a), c.Y(0));
+        for (let k = 0; k <= N; k++) { const x = a + ((b - a) * k) / N; ctx.lineTo(c.X(x), c.Y(pdf(x))); }
+        ctx.lineTo(c.X(b), c.Y(0)); ctx.closePath(); ctx.fill();
+      });
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.beginPath();
+      for (let k = 0; k <= N * 2; k++) { const x = LO + ((HI - LO) * k) / (N * 2); k ? ctx.lineTo(c.X(x), c.Y(pdf(x))) : ctx.moveTo(c.X(x), c.Y(pdf(x))); }
+      ctx.stroke();
+      // 모의 관측값 200개
+      const n = 12 * y, sm = 0.15 / Math.sqrt(12), mu = (sr * 0.15) / 12, g = ST.gauss(100 + seed), r = ST.rng(300 + seed);
+      for (let k = 0; k < 200; k++) {
+        let a = 0, q = 0; for (let t = 0; t < n; t++) { const x = mu + sm * g(); a += x; q += x * x; }
+        const m = a / n, v = q / n - m * m, o = v > 0 ? (m / Math.sqrt(v)) * Math.sqrt(12) : 0;
+        ctx.fillStyle = o < 0 ? P.down : P.accent; ctx.globalAlpha = 0.6;
+        ctx.beginPath(); ctx.arc(c.X(o), B.y + B.h - 8 - r() * Math.min(60, B.h * 0.3), 2.6, 0, TAU); ctx.fill();
+      }
+      ctx.globalAlpha = 1; ctx.restore();
+      ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(c.X(sr), B.y); ctx.lineTo(c.X(sr), B.y + B.h); ctx.stroke();
+      text(ctx, "진짜 " + sr.toFixed(2), c.X(sr) + 5, B.y + 2, { color: P.accent2, size: 12, weight: 700, base: "top" });
+      ctx.strokeStyle = P.axis; ctx.setLineDash([3, 3]); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(c.X(0), B.y); ctx.lineTo(c.X(0), B.y + B.h); ctx.stroke(); ctx.setLineDash([]);
+      text(ctx, "점: 같은 전략을 다른 운으로 200번 잰 관측값", B.x + B.w, B.y - 8, { color: P.dim, size: 11, align: "right" });
+      const pneg = ST.ncdf(-sr / s);
+      MB.stat("sr-o-se", s.toFixed(2));
+      MB.stat("sr-o-ci", f2(sr - 1.96 * s) + " ~ " + f2(sr + 1.96 * s));
+      MB.stat("sr-o-neg", pc(pneg, 1));
+      MB.stat("sr-o-need", sr > 0.01 ? Math.ceil((4 * (1 + (sr * sr) / 2)) / (sr * sr)) + " <small>년</small>" : "∞");
+    }, { get height() { return narrow("sr-cv") ? 300 : 320; } });
+    document.getElementById("sr-re").addEventListener("click", () => { seed++; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 14. 훈련·검증 경계 */
+  (function () {
+    const G = grid(), MINS = TR0 + 500, MAXS = T - 250;
+    let spl = 1300, BOXC = null;
+    const [clo, chi] = range([C]);
+    const cv = MB.canvas("#spl-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("spl-cv");
+      const tr = G.map((g) => wst(g.q, TR0, spl).sh), te = G.map((g) => wst(g.q, spl, T - 1).sh), bi = argmax(tr);
+      const top = { x: 56, y: 18, w: w - 70, h: nar ? 130 : 150 };
+      const c1 = MB.chart(ctx, top, { x: [0, T - 1], y: [clo * 0.95, chi * 1.05], logY: true, yTicks: logTicks(clo * 0.95, chi * 1.05, 3), yFmt: (v) => Math.round(v).toLocaleString("ko-KR"), xTicks: dayTicks(nar), xFmt: dayFmt,
+        bands: [{ x0: TR0, x1: spl, color: MB.color("accent-soft") }, { x0: spl, x1: T - 1, color: MB.color("accent-2-soft") }], series: [{ data: pts(C), color: P.dim, width: 1.2 }] });
+      BOXC = c1;
+      const sx = c1.X(spl);
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(sx, top.y); ctx.lineTo(sx, top.y + top.h); ctx.stroke();
+      knob(ctx, sx, top.y + top.h / 2, P, 8);
+      text(ctx, "← 훈련", sx - 12, top.y + 12, { color: P.accent, size: 12, weight: 700, align: "right" });
+      text(ctx, "검증 →", sx + 12, top.y + 12, { color: P.accent2, size: 12, weight: 700 });
+      text(ctx, ym(spl), sx, top.y - 5, { color: P.text, size: 11, mono: true, align: "center" });
+      const S = { x: 56, y: top.y + top.h + 56, w: nar ? w - 70 : Math.min(w - 70, 560), h: h - top.y - top.h - 56 - (nar ? 82 : 46) };
+      if (!nar) S.x = 56 + (w - 70 - S.w) / 2;
+      const [xlo, xhi] = range([tr]), [ylo, yhi] = range([te]);
+      const c2 = MB.chart(ctx, S, { x: [Math.min(0, xlo) - 0.1, xhi + 0.1], y: [Math.min(0, ylo) - 0.1, yhi + 0.1], xFmt: (v) => v.toFixed(1), yFmt: (v) => v.toFixed(1), xLabel: "훈련 구간 샤프 →", yLabel: "검증 구간 샤프",
+        hlines: [{ y: 0, color: P.faint }], vlines: [{ x: 0, color: P.faint }] });
+      G.forEach((g, k) => { ctx.fillStyle = P.accent; ctx.globalAlpha = 0.55; ctx.beginPath(); ctx.arc(c2.X(tr[k]), c2.Y(te[k]), 3.2, 0, TAU); ctx.fill(); });
+      ctx.globalAlpha = 1;
+      const bx = c2.X(tr[bi]), by = c2.Y(te[bi]);
+      ctx.fillStyle = P.bad; ctx.beginPath(); ctx.arc(bx, by, 6.5, 0, TAU); ctx.fill();
+      text(ctx, "훈련 1등", bx - 9, by - 8, { color: P.bad, size: 12, weight: 700, align: "right" });
+      const rk = rankOf(te, bi), cr = ST.corr(tr, te);
+      MB.stat("spl-o-p", G[bi].s + "일 · " + G[bi].l + "일");
+      MB.stat("spl-o-tr", f2(tr[bi]));
+      MB.stat("spl-o-te", f2(te[bi]) + " <small>" + rk + "위/" + G.length + "</small>");
+      MB.stat("spl-o-c", tn(cr, f2(cr)));
+    }, { get height() { return narrow("spl-cv") ? 470 : 470; } });
+    MB.drag(cv.canvas, { move(x) { if (!BOXC) return; spl = Math.round(MB.clamp(((x - BOXC.box.x) / BOXC.box.w) * (T - 1), MINS, MAXS)); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 15. 워크포워드 */
+  (function () {
+    const G = grid(), STEP = 126;
+    let W = null, k = 0, playing = false, acc = 0;
+    function build(len) {
+      const steps = [];
+      for (let j = 0; ; j++) {
+        const a = TR0 + j * STEP, b = a + len; if (b >= T - 20) break;
+        const e = Math.min(T - 1, b + STEP), pick = argmax(G.map((g) => wst(g.q, a, b).sh));
+        steps.push({ a, b, e, pick });
+      }
+      const b0 = steps[0].b, eq = [[b0, 1e7]]; let v = 1e7;
+      steps.forEach((s) => { const g = G[s.pick].eq; for (let i = s.b + 1; i <= s.e; i++) { v *= g[i] / g[i - 1]; eq.push([i, v]); } });
+      return { steps, b0, eq, hs: argmax(G.map((g) => wst(g.q, b0, T - 1).cagr)) };
+    }
+    const playBtn = document.getElementById("wf-play");
+    const setPlay = (v) => { playing = v; playBtn.textContent = v ? "멈춤" : "재생"; };
+    const LEN = MB.range("wf-len", (v) => (v / TD).toFixed(1) + "년", (v) => { W = build(v); k = W.steps.length - 1; setPlay(false); cv.redraw(); });
+    W = build(LEN());
+    const cv = MB.canvas("#wf-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("wf-cv"), s = W.steps[k], b0 = W.b0;
+      const tl = { x: 56, y: 22, w: w - 70, h: 34 };
+      const X = (i) => tl.x + (i / (T - 1)) * tl.w;
+      text(ctx, "창 " + (k + 1) + "/" + W.steps.length + ": " + ym(s.a) + "~" + ym(s.b) + " 훈련 → " + ym(s.e) + "까지 운용", tl.x, tl.y - 8, { color: P.dim, size: 11.5 });
+      ctx.fillStyle = P.grid; ctx.fillRect(tl.x, tl.y + 12, tl.w, 10);
+      W.steps.forEach((q, j) => { if (j < k) { ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.35; ctx.fillRect(X(q.b), tl.y + 12, X(q.e) - X(q.b), 10); ctx.globalAlpha = 1; } });
+      ctx.fillStyle = P.accent; ctx.fillRect(X(s.a), tl.y + 6, X(s.b) - X(s.a), 22);
+      ctx.fillStyle = P.accent2; ctx.fillRect(X(s.b), tl.y + 6, X(s.e) - X(s.b), 22);
+      text(ctx, "훈련", (X(s.a) + X(s.b)) / 2, tl.y + 17, { color: "#fff", size: 11, weight: 700, align: "center", base: "middle" });
+      dayTicks(nar).forEach((i) => text(ctx, dayFmt(i), X(i), tl.y + 42, { color: P.dim, size: 10, mono: true, align: "center" }));
+      const B = { x: 56, y: tl.y + 76, w: w - 70, h: h - tl.y - 76 - 30 };
+      const hs = G[W.hs].eq, Hs = [], Hd = [];
+      for (let i = b0; i < T; i++) { Hs.push([i, (hs[i] / hs[b0]) * 1e7]); Hd.push([i, (C[i] / C[b0]) * 1e7]); }
+      const wf = W.eq.filter((p) => p[0] <= s.e);
+      const [lo, hi] = range([Hs, Hd, W.eq]);
+      MB.chart(ctx, B, { x: [b0, T - 1], y: [lo * 0.92, hi * 1.08], logY: true, yTicks: logTicks(lo * 0.92, hi * 1.08, 4), yFmt: wonFmt, xTicks: dayTicks(nar, b0, T - 1), xFmt: dayFmt,
+        series: [{ data: Hd, color: P.faint, width: 1.3, dash: [5, 4] }, { data: Hs, color: P.accent, width: 1.6 }, { data: wf, color: P.accent2, width: 2.4 }], hlines: [{ y: 1e7, color: P.faint }],
+        bands: [{ x0: s.b, x1: s.e, color: MB.color("accent-2-soft") }] });
+      const yrs = (s.e - b0) / TD, last = wf[wf.length - 1][1];
+      const cw = Math.pow(last / 1e7, 1 / yrs) - 1, ch = Math.pow(hs[s.e] / hs[b0], 1 / yrs) - 1, cb = Math.pow(C[s.e] / C[b0], 1 / yrs) - 1;
+      const changes = W.steps.slice(1, k + 1).filter((q, j) => q.pick !== W.steps[j].pick).length;
+      MB.stat("wf-o-n", k + 1 + " <small>번 · 조합 변경 " + changes + "번</small>");
+      MB.stat("wf-o-cur", G[s.pick].s + "일 · " + G[s.pick].l + "일");
+      MB.stat("wf-o-wf", tn(cw, sp(cw)));
+      MB.stat("wf-o-hs", sp(ch) + " <small>/ " + sp(cb) + "</small>");
+    }, { get height() { return narrow("wf-cv") ? 380 : 380; } });
+    playBtn.addEventListener("click", () => { if (k >= W.steps.length - 1) k = 0; setPlay(!playing); cv.redraw(); });
+    document.getElementById("wf-end").addEventListener("click", () => { k = W.steps.length - 1; setPlay(false); cv.redraw(); });
+    document.getElementById("wf-re").addEventListener("click", () => { k = 0; setPlay(false); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (!playing) return; acc += dt; if (acc > 0.5) { acc = 0; if (k < W.steps.length - 1) { k++; cv.redraw(); } else setPlay(false); } });
+  })();
+
+  /* ---------------------------------------------------------- 16. 광고 해부 */
+  (function () {
+    const S = US.filter((s) => s.size < 0), FROM = 36, TO = UM, COST = ST.roundTrip() + 2 * 0.004;
+    const Ls = [1, 2, 3, 4, 6, 9, 12], Ks = [5, 10, 20, 30];
+    const cum = S.map((s) => { const c = [0]; s.rets.forEach((r) => c.push(c[c.length - 1] + Math.log(1 + (r == null ? -0.99 : r)))); return c; });
+    const g = ST.gauss(77);
+    const d1 = S.map((s) => { const sd = (0.22 + 0.1 * Math.max(0, -s.size) + 0.06 * Math.max(0, -s.lowvol)) / Math.sqrt(12); return s.rets.map((r) => (r == null ? 0 : Math.log(1 + r) / 21 + sd * Math.sqrt(20 / 441) * g())); });
+    function run(L, K, o) {
+      const out = []; let prev = new Set();
+      for (let t = o.from; t < o.to; t++) {
+        const live = [];
+        S.forEach((s, k) => { if (s.rets[t] != null && (!o.surv || s.delistedAt < 0)) live.push({ k, sc: cum[k][t] - cum[k][Math.max(0, t - L)] + (o.look ? d1[k][t] : 0) }); });
+        live.sort((a, b) => b.sc - a.sc);
+        const top = live.slice(0, K); let ch = 0, sum = 0;
+        top.forEach((x) => { if (!prev.has(x.k)) ch++; sum += S[x.k].rets[t]; });
+        prev = new Set(top.map((x) => x.k));
+        out.push(sum / top.length - (ch / K) * (o.cost || 0));
+      }
+      return out;
+    }
+    function best(o) { let b = null; Ls.forEach((L) => Ks.forEach((K) => { const c = cagrM(run(L, K, o)); if (!b || c > b.c) b = { L, K, c }; })); return b; }
+    const ad = best({ look: true, surv: true, from: FROM, to: TO });
+    const wfR = [];
+    for (let t0 = FROM; t0 < TO; t0 += 12) { const p = best({ cost: COST, from: 12, to: t0 }); wfR.push(...run(p.L, p.K, { cost: COST, from: t0, to: Math.min(TO, t0 + 12) })); }
+    const R = [run(ad.L, ad.K, { look: true, surv: true, from: FROM, to: TO }), run(ad.L, ad.K, { surv: true, from: FROM, to: TO }), run(ad.L, ad.K, { from: FROM, to: TO }), run(ad.L, ad.K, { cost: COST, from: FROM, to: TO }), wfR];
+    const V = R.map(cagrM), EQ = R.map((r) => ST.cumulate(r, 1e7));
+    const mR = ewR(US, FROM, TO), mV = cagrM(mR), mEQ = ST.cumulate(mR, 1e7);
+    const NAMES = ["광고", "미래 참조", "생존 편향", "비용·슬리피지", "과최적화"];
+    let st = 0;
+    const cv = MB.canvas("#ad-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ad-cv");
+      const B = { x: 48, y: 18, w: w - 60, h: Math.round((h - 70) * 0.55) };
+      const slots = 6, sw = B.w / slots, bw = sw * 0.62, ymax = Math.max(...V) * 1.18;
+      const Y = (v) => B.y + B.h - (v / ymax) * B.h;
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+      [0, 0.1, 0.2, 0.3, 0.4].filter((v) => v <= ymax).forEach((v) => { ctx.beginPath(); ctx.moveTo(B.x, Y(v)); ctx.lineTo(B.x + B.w, Y(v)); ctx.stroke(); text(ctx, Math.round(v * 100) + "%", B.x - 6, Y(v), { color: P.dim, size: 10.5, mono: true, align: "right", base: "middle" }); });
+      const lab = (s, x) => { const parts = nar && s.length > 4 ? s.split(/[ ·]/) : [s]; parts.forEach((p, j) => text(ctx, p, x, B.y + B.h + 14 + j * 13, { color: P.dim, size: 11, align: "center" })); };
+      for (let i = 0; i < 5; i++) {
+        const cx = B.x + sw * (i + 0.5);
+        if (i === 0) { ctx.fillStyle = P.up; ctx.fillRect(cx - bw / 2, Y(V[0]), bw, Y(0) - Y(V[0])); text(ctx, sp(V[0], 0), cx, Y(V[0]) - 5, { color: P.text, size: 11.5, weight: 700, mono: true, align: "center" }); }
+        else if (i <= st) {
+          const a = V[i - 1], b = V[i];
+          ctx.fillStyle = P.down; ctx.fillRect(cx - bw / 2, Y(a), bw, Math.max(1, Y(b) - Y(a)));
+          ctx.strokeStyle = P.faint; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(cx - sw / 2 - bw / 2 + sw * 0, Y(a)); ctx.lineTo(cx - bw / 2, Y(a)); ctx.stroke(); ctx.setLineDash([]);
+          text(ctx, "−" + ((a - b) * 100).toFixed(1) + "%p", cx, Y(b) + 13, { color: P.down, size: 11, weight: 700, mono: true, align: "center" });
+        } else {
+          ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.strokeRect(cx - bw / 2 + 0.5, Y(V[0] * 0.6), bw - 1, Y(V[0] * 0.3) - Y(V[0] * 0.6)); ctx.setLineDash([]);
+          text(ctx, "?", cx, Y(V[0] * 0.45), { color: P.faint, size: 14, align: "center", base: "middle" });
+        }
+        lab(NAMES[i], cx);
+      }
+      const cx = B.x + sw * 5.5;
+      ctx.fillStyle = P.up; ctx.globalAlpha = 0.85; ctx.fillRect(cx - bw / 2, Y(V[st]), bw, Y(0) - Y(V[st])); ctx.globalAlpha = 1;
+      text(ctx, sp(V[st], 1), cx, Y(V[st]) - 5, { color: P.text, size: 11.5, weight: 700, mono: true, align: "center" });
+      lab("남은 것", cx);
+      ctx.strokeStyle = P.dim; ctx.setLineDash([6, 4]); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(B.x, Y(mV)); ctx.lineTo(B.x + B.w, Y(mV)); ctx.stroke(); ctx.setLineDash([]);
+      text(ctx, "시장 동일가중 " + sp(mV, 1), B.x + sw * 0.5 + bw / 2 + 6, Y(mV) + 14, { color: P.dim, size: 11 });
+      const E = { x: 56, y: B.y + B.h + 62, w: w - 70, h: h - B.y - B.h - 62 - 24 };
+      const [lo, hi] = range([EQ[st], mEQ, EQ[0]]);
+      MB.chart(ctx, E, { x: [0, TO - FROM], y: [lo * 0.9, hi * 1.1], logY: true, yTicks: logTicks(lo * 0.9, hi * 1.1, 4), yFmt: wonFmt, xTicks: [0, 12, 24, 36, 48, 60, 72, 84], xFmt: (m) => m / 12 + "년",
+        series: [{ data: mEQ.map((v, i) => [i, v]), color: P.faint, width: 1.4, dash: [5, 4] }, st ? { data: EQ[0].map((v, i) => [i, v]), color: P.up, width: 1.2, dash: [2, 3] } : null, { data: EQ[st].map((v, i) => [i, v]), color: P.accent, width: 2.2 }].filter(Boolean),
+        hlines: [{ y: 1e7, color: P.faint }] });
+      text(ctx, "1,000만원의 자산 곡선(— 지금 단계, ··· 광고, -- 시장)", E.x + 4, E.y - 8, { color: P.dim, size: 11.5 });
+      MB.stat("ad-o-st", st === 0 ? "광고 그대로 <small>L=" + ad.L + "개월, " + ad.K + "종목</small>" : NAMES[st] + " 제거");
+      MB.stat("ad-o-cagr", tn(V[st], sp(V[st])));
+      MB.stat("ad-o-cut", st ? '<span class="down-t">−' + ((V[st - 1] - V[st]) * 100).toFixed(1) + "%p</span>" : "—");
+      MB.stat("ad-o-mkt", sp(mV));
+    }, { get height() { return narrow("ad-cv") ? 470 : 440; } });
+    document.getElementById("ad-next").addEventListener("click", () => { st = Math.min(4, st + 1); cv.redraw(); });
+    document.getElementById("ad-re").addEventListener("click", () => { st = 0; cv.redraw(); });
+  })();
+})();
+</script>
+</body>
+</html>

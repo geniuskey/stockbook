@@ -1,0 +1,1303 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "한 종목에 다 넣으면 얼마나 흔들리는가. 변동성과 최대 낙폭, 체계적·비체계적 위험, 종목 수와 상관관계에 따른 분산 효과, 베타, 두꺼운 꼬리와 VaR·CVaR를 가상 시장의 다섯 회사와 300종목 유니버스로 직접 만져 보고, 한결의 −30% 감내선을 넘는 것이 무엇인지 확인한다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>위험과 분산 · StockBook</title>
+<meta name="description" content="한 종목에 다 넣으면 얼마나 흔들리는가. 변동성과 최대 낙폭, 체계적·비체계적 위험, 종목 수와 상관관계에 따른 분산 효과, 베타, 두꺼운 꼬리와 VaR·CVaR를 가상 시장의 다섯 회사와 300종목 유니버스로 직접 만져 보고, 한결의 −30% 감내선을 넘는 것이 무엇인지 확인한다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/risk.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="위험과 분산 · StockBook">
+<meta property="og:description" content="한 종목에 다 넣으면 얼마나 흔들리는가. 변동성과 최대 낙폭, 체계적·비체계적 위험, 종목 수와 상관관계에 따른 분산 효과, 베타, 두꺼운 꼬리와 VaR·CVaR를 가상 시장의 다섯 회사와 300종목 유니버스로 직접 만져 보고, 한결의 −30% 감내선을 넘는 것이 무엇인지 확인한다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/risk.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/risk.html#chapter","name":"위험과 분산","headline":"위험과 분산 · StockBook","description":"한 종목에 다 넣으면 얼마나 흔들리는가. 변동성과 최대 낙폭, 체계적·비체계적 위험, 종목 수와 상관관계에 따른 분산 효과, 베타, 두꺼운 꼬리와 VaR·CVaR를 가상 시장의 다섯 회사와 300종목 유니버스로 직접 만져 보고, 한결의 −30% 감내선을 넘는 것이 무엇인지 확인한다.","url":"https://stockbook.euiyun.com/chapters/risk.html","position":13,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"13. 위험과 분산","item":"https://stockbook.euiyun.com/chapters/risk.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  .rk-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  .rk-table th, .rk-table td { padding: 7px 10px; border-bottom: 1px solid var(--border); text-align: right; white-space: nowrap; }
+  .rk-table th:first-child, .rk-table td:first-child { text-align: left; }
+  .rk-table th { color: var(--text-dim); font-weight: 600; font-size: 12px; }
+  .rk-table td { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .rk-table td:first-child { font-family: var(--font); }
+  .rk-table tr.hot td { background: var(--accent-soft); }
+  .rk-table i.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+  .sim .table-wrap { margin: 0; border: 0; border-top: 1px solid var(--border); border-radius: 0; }
+  .rk-time { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  figure.diagram svg { max-width: 520px; margin: 0 auto; }
+</style>
+</head>
+<body data-chapter="risk">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 13</div>
+    <h1>위험과 분산</h1>
+    <p class="lead">1,000만원을 한빛반도체 한 종목에 모두 넣는 것과 다섯 종목에 나눠 넣는 것, 지수를 통째로 사는 것은 무엇이 다른가. 기대수익이 비슷해도 흔들림의 크기와 모양은 전혀 다르다. 이 장에서는 흔들림을 재는 자(변동성, 최대 낙폭, 베타, VaR)를 하나씩 손에 쥐고, 나눠 담으면 왜 위험이 줄어드는지, 그리고 어디서부터는 아무리 나눠도 줄지 않는지를 직접 확인한다.</p>
+    <ul class="objectives">
+      <li>변동성(표준편차)이 말해 주는 것과 말해 주지 않는 것을 구분하고, 최대 낙폭과 회복 기간을 함께 읽는다.</li>
+      <li>위험을 체계적 위험과 비체계적 위험으로 나누고, 종목 수와 상관관계가 분산 효과를 어떻게 정하는지 설명한다.</li>
+      <li>베타로 시장 민감도를 읽고, 두꺼운 꼬리와 VaR·CVaR로 "나쁜 날"의 크기를 잰다.</li>
+      <li>위험 감내도와 위험 감당 능력을 나눠 생각하고, 한결의 −30% 감내선에 세 가지 선택지를 대어 본다.</li>
+    </ul>
+  </header>
+
+  <section id="question">
+    <h2>몰빵, 다섯 종목, 지수</h2>
+    <p>한결은 첫 투자금 1,000만원을 어디에 넣을지 아직 정하지 못했다. 동료는 "제일 좋은 한 종목에 몰아야 돈을 번다"고 하고, 유튜브는 "다섯 종목 정도면 분산은 충분하다"고 하며, 책은 "지수를 사라"고 한다. 세 말 모두 수익 이야기만 한다. 그런데 한결이 <a href="https://moneybook.euiyun.com/chapters/risk.html">MoneyBook 12장</a>에서 정한 기준은 수익이 아니라 위험이었다. <b>평가손실 −30%까지는 견딘다.</b> 그렇다면 질문은 이렇게 바뀐다. 세 선택지 중 어느 것이 −30% 선을 넘는가, 넘는다면 얼마나 자주, 얼마나 오래 넘는가.</p>
+    <p>MoneyBook에서는 표준편차, 손실의 비대칭, 분산의 기본 원리를 이미 배웠다. 이 장은 그 위에 주식 포트폴리오의 언어를 쌓는다. 이 장의 차트는 대부분 이 책의 <b>가상 시장</b>(2016~2025년, 약 10년, 교육용으로 만든 가짜 가격)에서 나온다. 가상 시장의 SB 종합지수와 다섯 회사는 실제 기업이 아니며, 과거 수익률은 미래를 보장하지 않는다.</p>
+  </section>
+
+  <section id="volatility">
+    <h2>변동성: 흔들림의 평균 크기</h2>
+    <p><a href="price.html">4장</a>에서 한빛반도체의 <span class="term">변동성</span><span class="en">(Volatility)</span>이 연 38%라고 했다. 변동성은 수익률의 표준편차, 즉 "평소에 평균에서 얼마나 벗어나는가"를 연 단위로 잰 숫자다. 연 38%면 하루로는 \(38\% / \sqrt{252} \approx 2.4\%\)다. 하루에 ±2.4% 안쪽에서 움직이는 날이 약 3분의 2, ±4.8%를 넘는 날이 20일에 하루쯤이라는 뜻이다(정규분포라면).</p>
+    <p>변동성은 편리하다. 숫자 하나로 종목들을 줄 세울 수 있고, 섞었을 때의 값도 계산할 수 있다. 하지만 변동성은 <b>나쁜 날들이 어떤 순서로 왔는지</b>를 전혀 모른다. 같은 날들을 순서만 바꿔 놓으면 변동성은 소수점 끝까지 같지만, 통장이 겪는 일은 전혀 다르다. 아래에서 2년치 일간 수익률 504개를 그대로 두고 순서만 섞어 보자.</p>
+
+    <div class="sim" id="sim-same">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>같은 변동성, 다른 고통: 나쁜 날의 순서</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sa-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>나쁜 날이 몰린 정도 <output id="sa-k-out"></output></span><input type="range" id="sa-k" min="0" max="1" step="0.05" value="0"></label>
+          <div class="btn-row"><button class="btn" id="sa-re">다른 2년 뽑기</button></div>
+          <p class="sim-note" style="margin:0;padding:0;border:0">점선은 몰림 0%일 때의 경로다. 수익률 504개는 하나도 바뀌지 않고 순서만 바뀐다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">연 변동성</span><span class="v" id="sa-o-v">—</span></div>
+        <div class="stat"><span class="k">2년 수익률</span><span class="v" id="sa-o-t">—</span></div>
+        <div class="stat"><span class="k">최대 낙폭</span><span class="v" id="sa-o-m">—</span></div>
+        <div class="stat"><span class="k">고점을 되찾기까지</span><span class="v" id="sa-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 몰림을 0%에서 50%로 올리면 변동성과 2년 수익률(+25%)은 그대로인데 최대 낙폭이 −17%에서 −50%로 세 배 가까이 깊어진다. ② 100%까지 밀면 손실 날이 한 덩어리로 모여 계좌의 80% 넘게 사라졌다가 되돌아온다. 끝 금액은 같아도 이 길을 끝까지 걸을 사람은 드물다. ③ 다른 2년을 뽑아도 같은 일이 일어난다. (연 변동성 25%, 연 기대수익 7%의 무작위 수익률 504개, 순서만 재배열)</div>
+    </div>
+
+    <p>변동성과 최종 수익률이 똑같은데 최대 낙폭은 −17%에서 −80% 넘게까지 벌어진다. 변동성은 하루하루의 흔들림을 평균 낸 값이라서, 나쁜 날이 흩어져 오든 몰려 오든 같은 숫자를 낸다. 그런데 실제 시장에서 나쁜 날은 흩어져 오지 않는다. 하락은 하락을 부르고, 큰 변동성 뒤에는 큰 변동성이 따른다(변동성 군집). 그래서 변동성 하나만 보면 위험을 과소평가하기 쉽다. 변동성 옆에 <b>얼마나 깊이 떨어졌는가</b>와 <b>얼마나 오래 잠겨 있었는가</b>를 함께 적어야 한다.</p>
+    <div class="callout">
+      <strong>변동성은 위로 튀는 것도 위험으로 센다</strong>
+      <p>표준편차는 평균에서 위로 벗어나든 아래로 벗어나든 똑같이 센다. 별빛바이오가 하루에 +25% 오른 날도 변동성을 키운다. 투자자가 실제로 두려워하는 것은 아래쪽뿐이므로, 아래쪽만 따로 재는 지표(하방 편차, 낙폭, VaR)가 따로 있다. 이 장 뒤쪽에서 하나씩 만난다.</p>
+    </div>
+  </section>
+
+  <section id="drawdown">
+    <h2>최대 낙폭과 회복 기간</h2>
+    <p><span class="term">낙폭</span><span class="en">(Drawdown)</span>은 지금 가격이 지금까지의 최고점에서 몇 % 아래에 있는지다. 기간 중 가장 깊은 낙폭이 <span class="term">최대 낙폭</span><span class="en">(Maximum drawdown, MDD)</span>이다. MDD 하나에는 세 개의 시간이 숨어 있다. 고점에서 저점까지 떨어지는 <b>하락 기간</b>, 저점에서 고점을 되찾는 <b>회복 기간</b>, 그리고 둘을 합친 <b>수중 기간</b>(고점 아래에 잠겨 있던 시간)이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 260" role="img" aria-label="고점, 저점, 회복 시점과 최대 낙폭, 하락 기간, 회복 기간을 표시한 가격 경로">
+        <defs><marker id="rk-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-down-soft" x="128" y="20" width="96" height="170"/>
+        <rect class="f-acc-soft" x="224" y="20" width="168" height="170"/>
+        <line class="s-axis" x1="24" y1="190" x2="440" y2="190"/>
+        <line class="s-dash" x1="128" y1="52" x2="440" y2="52"/>
+        <polyline class="s-line" style="stroke-width:2.5" points="30,120 50,104 66,110 84,84 100,92 116,64 128,52 140,74 152,66 166,104 180,96 194,140 210,128 224,160 240,146 258,130 274,138 292,110 310,118 328,92 346,98 366,70 380,60 392,52 410,40 432,34"/>
+        <circle class="f-up" cx="128" cy="52" r="5"/>
+        <circle class="f-down" cx="224" cy="160" r="5"/>
+        <circle class="f-acc" cx="392" cy="52" r="5"/>
+        <line class="s-bad" x1="232" y1="56" x2="232" y2="156" marker-start="url(#rk-ar)" marker-end="url(#rk-ar)"/>
+        <text class="lbl-bad" x="240" y="176">최대 낙폭: 고점 대비 −40%</text>
+        <text class="lbl-b" x="128" y="42" text-anchor="middle">고점</text>
+        <text class="lbl-b" x="224" y="178" text-anchor="middle">저점</text>
+        <text class="lbl-b" x="392" y="42" text-anchor="middle">회복</text>
+        <line class="s-axis" x1="130" y1="206" x2="222" y2="206" marker-start="url(#rk-ar)" marker-end="url(#rk-ar)"/>
+        <line class="s-axis" x1="226" y1="206" x2="390" y2="206" marker-start="url(#rk-ar)" marker-end="url(#rk-ar)"/>
+        <text class="lbl-dim" x="176" y="224" text-anchor="middle">하락 기간</text>
+        <text class="lbl-dim" x="308" y="224" text-anchor="middle">회복 기간</text>
+        <line class="s-acc" x1="130" y1="238" x2="390" y2="238" marker-start="url(#rk-ar)" marker-end="url(#rk-ar)"/>
+        <text class="lbl-acc" x="260" y="256" text-anchor="middle">수중 기간: 고점 아래에 잠겨 있던 시간</text>
+      </svg>
+      <figcaption><b>그림 13-1. 최대 낙폭의 해부.</b> 깊이(−40%)는 MDD가 말해 주지만, 하락이 몇 주 만에 끝났는지, 회복에 몇 년이 걸렸는지는 따로 재야 한다. −40%를 되찾으려면 저점에서 +67%가 필요하므로 회복 기간은 보통 하락 기간보다 길다.</figcaption>
+    </figure>
+
+    <p>아래는 가상 시장 10년의 가격(위)과 낙폭(아래, "수중 그래프")이다. 파란 띠가 고점에서 저점까지, 보라 띠가 저점에서 회복까지다. 차트를 끌어 날짜를 고르면 그날의 낙폭과 함께 "하필 그날 산 사람"이 그 뒤에 겪은 최악의 손실도 보인다.</p>
+
+    <div class="sim" id="sim-dd">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>수중 그래프: 고점, 저점, 회복</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dd-cv"></canvas><span class="hint">끌어서 날짜를 고른다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>종목</span>
+            <div class="seg" id="dd-s"><button data-value="index" class="on">지수</button><button data-value="hanbit">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div>
+          </div>
+          <div class="ctrl"><span>고른 날</span><span class="rk-time" id="dd-cur">—</span></div>
+          <div class="ctrl"><span>그날 산 사람의 이후 최대 손실</span><span class="rk-time" id="dd-buy">—</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">최대 낙폭</span><span class="v" id="dd-o-m">—</span></div>
+        <div class="stat"><span class="k">하락 기간</span><span class="v" id="dd-o-f">—</span></div>
+        <div class="stat"><span class="k">회복 기간</span><span class="v" id="dd-o-r">—</span></div>
+        <div class="stat"><span class="k">−30% 아래에 있던 날</span><span class="v" id="dd-o-b">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 지수의 MDD −42%는 약 석 달 만에 파였지만 되찾는 데 1년 넘게 걸렸다. ② 한빛은 상장 초기 고점에서 −62%까지 빠졌다. 2016년 1월 고점 근처를 끌어 보면 "그날 산 사람"이 무엇을 겪었는지 보인다. ③ 누리·다온·모아·별빛은 마지막 날까지 최대 낙폭의 고점을 되찾지 못한다(회복 기간 "미회복"). (가상 시장, 거래일 기준, 1년 ≈ 252거래일)</div>
+    </div>
+
+    <p>최대 낙폭은 "가장 나빴던 한 번"이라서 기간을 길게 잡을수록 깊어지기만 한다. 10년짜리 MDD를 1년짜리 MDD와 비교하면 안 되는 이유다. 그리고 회복 기간은 흔히 하락 기간보다 훨씬 길다. 지수는 63거래일 만에 −42%까지 떨어졌지만 회복에는 310거래일이 걸렸다. 사람이 무너지는 시간은 떨어지는 석 달이 아니라 그 뒤 잠겨 있는 1년이다.</p>
+    <p>세 가지 자를 한꺼번에 대 보자. 아래는 가상 시장의 10년을 하루씩 다시 재생하면서 다섯 종목과 지수의 변동성, 지금의 낙폭, 최대 낙폭, 가장 길었던 수중 기간을 동시에 갱신한다. 줄 세우는 기준을 바꿔 가며 순위가 어떻게 뒤바뀌는지 보자.</p>
+
+    <div class="sim" id="sim-race">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>세 가지 자로 줄 세우기: 10년 재생</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="rc-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>줄 세우는 기준</span>
+            <div class="seg" id="rc-by"><button data-value="vol" class="on">변동성</button><button data-value="mdd">최대 낙폭</button><button data-value="uw">수중 기간</button></div>
+          </div>
+          <div class="ctrl"><span>재생 속도</span>
+            <div class="seg" id="rc-sp"><button data-value="1" class="on">보통</button><button data-value="4">빠르게</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="rc-play">재생</button><button class="btn" id="rc-re">처음으로</button><button class="btn" id="rc-end">끝으로</button></div>
+          <div class="ctrl"><span>지금</span><span class="rk-time" id="rc-now">—</span></div>
+        </div>
+      </div>
+      <div class="table-wrap"><table class="rk-table" id="rc-tb"></table></div>
+      <div class="sim-note">해볼 것: ① 끝까지 재생한 뒤 기준을 바꿔 본다. 변동성으로는 누리식품이 다섯 종목 중 가장 얌전하지만, 수중 기간으로는 지수보다 오래 잠겨 있다. ② 2019년 여름 급락 구간에서 모든 줄의 "지금 낙폭"이 한꺼번에 깊어지는 것을 본다. ③ 다온은행은 변동성이 다섯 종목 중 두 번째로 낮은데 최대 낙폭은 −71%로 가장 깊은 축이다. 느리게, 오래 빠지면 변동성은 작게 나온다. (가상 시장, 위쪽 표가 그 기준으로 가장 위험한 것)</div>
+    </div>
+
+    <p>세 가지 자는 서로 다른 것을 잰다. 변동성은 하루하루의 출렁임, 최대 낙폭은 가장 깊은 구덩이, 수중 기간은 그 구덩이에서 보낸 시간이다. 변동성이 작아도 한 방향으로 꾸준히 빠지면 낙폭은 깊고(다온은행), 변동성이 커도 빨리 되돌아오면 수중 기간은 짧을 수 있다(한빛반도체). 위험을 비교할 때는 적어도 둘 이상을 나란히 둔다.</p>
+  </section>
+
+  <section id="systematic">
+    <h2>체계적 위험과 비체계적 위험</h2>
+    <p>한빛반도체 주가가 오늘 −3%였다. 그중 얼마가 "시장 전체가 빠져서"이고, 얼마가 "한빛만의 사정"일까? 주식 하나의 수익률은 두 부분으로 나눠 볼 수 있다. 시장 전체를 따라 움직이는 부분과, 그 회사에만 일어나는 일(실적 쇼크, 임상 실패, 경영진 교체)에서 오는 부분이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="종목 수익률을 시장 부분과 고유 부분으로 나누고, 여러 종목을 섞으면 고유 부분이 상쇄되는 구조">
+        <defs><marker id="rk-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <rect class="f-surface" x="14" y="16" width="132" height="58" rx="8"/>
+        <text class="lbl-b" x="80" y="40" text-anchor="middle">한 종목의 수익률</text>
+        <text class="lbl-dim" x="80" y="60" text-anchor="middle">전체 위험 σ²</text>
+        <line class="s-axis" x1="146" y1="36" x2="196" y2="28" marker-end="url(#rk-ar2)"/>
+        <line class="s-axis" x1="146" y1="56" x2="196" y2="98" marker-end="url(#rk-ar2)"/>
+        <rect class="f-acc-soft" x="200" y="8" width="246" height="50" rx="8"/>
+        <text class="lbl-acc" x="212" y="30">β × 시장 수익률</text>
+        <text class="lbl-dim" x="212" y="48">체계적 위험: 경기·금리·환율</text>
+        <rect class="f-acc2-soft" x="200" y="76" width="246" height="50" rx="8"/>
+        <text class="lbl-acc2" x="212" y="98">+ 고유 수익률 ε</text>
+        <text class="lbl-dim" x="212" y="116">비체계적 위험: 그 회사만의 사정</text>
+        <line class="s-dash" x1="20" y1="146" x2="440" y2="146"/>
+        <text class="lbl-b" x="230" y="170" text-anchor="middle">여러 종목을 섞으면</text>
+        <rect class="f-acc-soft" x="40" y="184" width="186" height="46" rx="8"/>
+        <text class="lbl-acc" x="133" y="204" text-anchor="middle">시장 부분: 함께 움직인다</text>
+        <text class="lbl-dim" x="133" y="222" text-anchor="middle">→ 섞어도 남는다</text>
+        <rect class="f-acc2-soft" x="236" y="184" width="186" height="46" rx="8"/>
+        <text class="lbl-acc2" x="329" y="204" text-anchor="middle">고유 부분: 따로 논다</text>
+        <text class="lbl-dim" x="329" y="222" text-anchor="middle">→ 서로 상쇄되어 사라진다</text>
+      </svg>
+      <figcaption><b>그림 13-2. 위험의 두 갈래.</b> 시장 전체를 흔드는 <span class="term">체계적 위험</span><span class="en">(Systematic risk)</span>은 아무리 섞어도 남고, 회사 하나의 사정인 <span class="term">비체계적 위험</span><span class="en">(Unsystematic risk)</span>은 여러 회사를 섞으면 서로 상쇄된다.</figcaption>
+    </figure>
+
+    <p>두 부분이 서로 독립이라면 분산(표준편차의 제곱)은 그냥 더해진다.</p>
+    <div class="formula">$$\sigma_i^2 = \beta_i^2\,\sigma_m^2 + \sigma_{\varepsilon,i}^2$$<div class="where">\(\sigma_m\): 시장(지수)의 변동성, \(\beta_i\): 그 종목이 시장에 얼마나 민감한지(뒤의 베타 절), \(\sigma_{\varepsilon,i}\): 시장으로 설명되지 않는 고유 변동성. 첫 항의 비중 \(\beta_i^2\sigma_m^2/\sigma_i^2\)를 결정계수 \(R^2\)라 부른다.</div></div>
+    <p>가상 시장의 10년 데이터로 다섯 회사의 β와 고유 변동성을 추정해 두었다. 아래 막대는 각 종목의 변동성을 체계적 몫(보라)과 고유 몫(금색)으로 나눈 것이다. 시장 변동성 슬라이더를 움직여, 조용한 해(연 10%)와 위기의 해(연 45%)에 이 비중이 어떻게 바뀌는지 보자.</p>
+
+    <div class="sim" id="sim-dc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>위험 분해: 시장 몫과 고유 몫</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>시장(지수) 변동성 <output id="dc-m-out"></output></span><input type="range" id="dc-m" min="0.08" max="0.5" step="0.01" value="0.18"></label>
+          <div class="ctrl"><span>막대 길이</span>
+            <div class="seg" id="dc-v"><button data-value="vol" class="on">변동성</button><button data-value="share">분산 비중</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">한빛 변동성</span><span class="v" id="dc-o-h">—</span></div>
+        <div class="stat"><span class="k">한빛의 시장 몫(R²)</span><span class="v" id="dc-o-r">—</span></div>
+        <div class="stat"><span class="k">다섯 종목 균등 변동성</span><span class="v" id="dc-o-p">—</span></div>
+        <div class="stat"><span class="k">종목 간 평균 상관</span><span class="v" id="dc-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 실제 값(18%)에서 한빛 변동성의 시장 몫은 약 30%다. 나머지 70%는 한빛만의 사정이다. ② 별빛바이오는 시장 몫이 10%도 안 된다. 주가가 시장보다 신약 소식에 달려 있다. ③ 시장 변동성을 45%로 올리면 한빛의 시장 몫이 70%를 넘고 종목 간 평균 상관이 0.24에서 0.6 넘게 오른다. 위기 때 다 같이 빠지는 이유다. (고유 변동성은 고정, 다섯 종목 균등은 고유 몫이 다섯으로 나뉘어 줄어든다고 계산)</div>
+    </div>
+
+    <p>"다섯 종목 균등" 막대에서 금색 부분이 확 줄어든 것이 분산의 효과다. 다섯 회사의 고유한 사정은 서로 엇갈리므로, 각자의 몫을 5분의 1씩 섞으면 고유 분산은 대략 5분의 1로 준다. 반면 보라 부분, 즉 시장과 함께 움직이는 몫은 섞어도 그대로 남는다. 시장 변동성이 커지는 해에는 이 남는 몫이 커져서 분산이 덜 듣는다.</p>
+  </section>
+
+  <section id="count">
+    <h2>종목 수와 분산 효과</h2>
+    <p>그렇다면 몇 종목을 섞어야 할까? 같은 비중으로 n개를 담은 포트폴리오의 분산은 놀랍도록 단순한 식으로 정리된다.</p>
+    <div class="formula">$$\sigma_p^2 = \frac{1}{n}\,\overline{\sigma^2} + \left(1 - \frac{1}{n}\right)\overline{\mathrm{cov}}$$<div class="where">\(\overline{\sigma^2}\): 종목 하나의 평균 분산, \(\overline{\mathrm{cov}}\): 종목 두 개 사이의 평균 공분산. n이 커지면 첫 항은 0으로 사라지고, 평균 공분산만 남는다. 그것이 체계적 위험의 바닥이다.</div></div>
+    <p>MoneyBook 12장에서는 모든 자산의 변동성과 상관이 똑같다고 가정하고 이 곡선을 그렸다. 여기서는 가정 대신 이 책의 <b>가상 유니버스</b>(300종목, 10년 월간 데이터, 중간에 상장폐지되는 종목 포함)에서 실제로 종목을 뽑는다. 종목 수 n을 바꾸거나 오른쪽 곡선 위를 끌어 보자. 회색 점은 같은 n으로 서른 번 뽑은 바구니 각각의 변동성이다.</p>
+
+    <div class="sim" id="sim-n">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>몇 종목이면 충분한가: 300종목에서 n개 뽑기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ns-cv"></canvas><span class="hint">곡선을 끌어 n을 바꾼다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>종목 수 n <output id="ns-n-out"></output></span><input type="range" id="ns-n" min="1" max="50" step="1" value="1"></label>
+          <div class="btn-row"><button class="btn" id="ns-re">다른 종목 뽑기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">이 바구니 변동성</span><span class="v" id="ns-o-v">—</span></div>
+        <div class="stat"><span class="k">n개 바구니 평균</span><span class="v" id="ns-o-m">—</span></div>
+        <div class="stat"><span class="k">체계적 위험 바닥</span><span class="v" id="ns-o-f">—</span></div>
+        <div class="stat"><span class="k">한 종목 대비 줄어든 몫</span><span class="v" id="ns-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① n=1에서 회색 점이 20%대에서 50%대까지 흩어져 있다. 어떤 종목을 고르느냐가 운이다. ② n=5에서 평균 변동성은 약 22%, n=10에서 약 20%, n=30에서 약 18%다. 처음 열 종목이 줄일 수 있는 위험의 대부분을 없앤다. ③ 50까지 밀어도 점선 바닥(약 17%) 아래로는 내려가지 않는다. 그 바닥이 시장 전체의 흔들림이다. (가상 유니버스, 월간 수익률, 매달 같은 비중, 상장폐지된 종목은 그 뒤 빠진다)</div>
+    </div>
+
+    <p>곡선이 보여 주는 것은 두 가지다. 첫째, 분산의 효과는 <b>처음 몇 종목에서 가장 크다</b>. 한 종목에서 다섯 종목으로 가면 평균 변동성이 약 33%에서 22%로 줄지만, 30종목에서 50종목으로 가도 거의 줄지 않는다. 둘째, 회색 점의 흩어짐도 함께 줄어든다. 한 종목만 사면 "평균적인 위험"보다 훨씬 큰 위험을 질 수 있고, 그것이 어느 쪽일지는 사기 전에 알 수 없다. 다섯 종목도 운이 나쁘면 30%를 넘는다.</p>
+    <div class="callout deep">
+      <strong>시장은 없앨 수 있는 위험에 보상하지 않는다</strong>
+      <p>비체계적 위험은 종목을 섞기만 하면 공짜로 없앨 수 있다. 그래서 시장은 그 위험을 졌다고 해서 더 높은 기대수익을 주지 않는다. 한 종목에 몰빵한 사람은 지수를 산 사람과 기대수익이 비슷한데 흔들림만 두 배를 진다. 위험과 기대수익이 어떤 관계인지는 <a href="portfolio.html">14장</a>의 CAPM에서 정식으로 다룬다.</p>
+    </div>
+  </section>
+
+  <section id="correlation">
+    <h2>상관관계: 무엇과 섞느냐</h2>
+    <p>분산 공식의 바닥은 평균 공분산이었다. 공분산은 두 종목의 변동성과 <span class="term">상관계수</span><span class="en">(Correlation, ρ)</span>의 곱이므로, 같은 변동성이라면 <b>상관이 낮은 것끼리 섞을수록</b> 바닥이 낮아진다. 두 종목만으로 이를 보자. 아래 두 종목은 변동성이 연 35%로 같고, 상관계수만 슬라이더로 정한다. 굵은 선이 반씩 섞은 포트폴리오다.</p>
+
+    <div class="sim" id="sim-r2">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>두 종목과 반반 섞기: 상관계수 ρ</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="r2-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>상관계수 ρ <output id="r2-r-out"></output></span><input type="range" id="r2-r" min="-1" max="1" step="0.05" value="0.3"></label>
+          <div class="btn-row"><button class="btn" id="r2-re">다른 2년 뽑기</button></div>
+          <div class="legend"><span><i style="background:var(--accent)"></i>종목 A</span><span><i style="background:var(--accent-2)"></i>종목 B</span><span><i style="background:var(--text)"></i>반반</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">A·B 변동성</span><span class="v" id="r2-o-a">—</span></div>
+        <div class="stat"><span class="k">반반 변동성</span><span class="v" id="r2-o-p">—</span></div>
+        <div class="stat"><span class="k">이론값 σ√((1+ρ)/2)</span><span class="v" id="r2-o-t">—</span></div>
+        <div class="stat"><span class="k">반반 최대 낙폭</span><span class="v" id="r2-o-m">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① ρ=1이면 A와 B가 같은 선이 되고 반반도 똑같이 흔들린다. 섞은 효과가 0이다. ② ρ=0이면 반반의 변동성이 35%에서 약 25%로 준다(1/√2). ③ ρ=−1이면 한쪽이 빠질 때 다른 쪽이 정확히 오르고 흔들림이 거의 사라진다. 현실의 주식끼리는 거의 없는 경우다. (연 35%, 연 기대수익 8%, 2년 일간, 매일 반반으로 맞춤)</div>
+    </div>
+
+    <p>가상 시장의 다섯 회사끼리의 일간 상관계수는 0.14~0.32다. 같은 나라 주식끼리는 대개 양(+)의 상관을 갖는다. 같은 경기, 같은 금리, 같은 환율 아래 있기 때문이다. 상관계수 숫자가 실제로 무엇을 뜻하는지는 두 종목의 하루하루를 점으로 찍어 보면 바로 보인다. 아래 점 하나가 하루다. 가로는 종목 A, 세로는 종목 B의 그날 수익률이다. 손잡이를 위아래로 끌어 점 구름의 기울기를 바꿔 보자.</p>
+
+    <div class="sim" id="sim-sc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>점 구름 끌기: 상관계수의 모양</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="sc-cv"></canvas><span class="hint">손잡이를 위아래로 끈다</span></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">상관계수 ρ</span><span class="v" id="sc-o-r">—</span></div>
+        <div class="stat"><span class="k">둘 다 하락한 날</span><span class="v" id="sc-o-d">—</span></div>
+        <div class="stat"><span class="k">하나만 하락한 날</span><span class="v" id="sc-o-x">—</span></div>
+        <div class="stat"><span class="k">반반 섞은 하루 변동성</span><span class="v" id="sc-o-p">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① ρ=0이면 구름이 동그랗다. 둘 다 빠지는 날(왼쪽 아래, 파란 칸)이 약 4분의 1이다. ② ρ를 0.9로 올리면 구름이 대각선으로 눌리고 둘 다 빠지는 날이 40%를 넘는다. 한쪽이 다른 쪽을 받쳐 주는 날(하나만 하락)이 사라진다. ③ ρ를 음수로 내리면 구름이 반대로 기운다. (두 종목 모두 하루 변동성 2%, 300일)</div>
+    </div>
+
+    <p>분산이 먹히는 날은 "하나만 하락한 날"이다. 그날 한쪽의 손실을 다른 쪽이 메운다. 상관이 높아질수록 그런 날이 줄고, 둘 다 빠지는 날이 늘어난다. 문제는 상관계수가 고정된 숫자가 아니라는 것이다. 평소에는 낮다가, 하필 분산이 가장 필요한 순간에 올라간다.</p>
+  </section>
+
+  <section id="crisis">
+    <h2>위기에는 상관이 1로 달려간다</h2>
+    <p>가상 시장 10년을 국면별로 잘라 지수의 연 변동성과 다섯 회사 사이의 평균 상관계수(일간)를 구하면 이렇다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>국면</th><th class="num">지수 변동성</th><th class="num">평균 상관</th></tr></thead>
+      <tbody>
+        <tr><td>완만한 상승 (2016~17)</td><td class="num">12%</td><td class="num">0.11</td></tr>
+        <tr><td>강세장 (2018~19)</td><td class="num">14%</td><td class="num">0.18</td></tr>
+        <tr><td><b>급락 (2019년 여름)</b></td><td class="num"><b>46%</b></td><td class="num"><b>0.71</b></td></tr>
+        <tr><td>약세장 (2021~22)</td><td class="num">23%</td><td class="num">0.39</td></tr>
+        <tr><td>회복과 상승 (2024~25)</td><td class="num">14%</td><td class="num">0.15</td></tr>
+      </tbody>
+    </table></div>
+    <p>평소 0.1~0.2이던 상관이 급락 40일 동안 0.71까지 뛴다. 시장 전체를 흔드는 충격(위의 체계적 몫)이 커지면 회사마다의 사정은 상대적으로 작아지고, 모두가 같은 방향으로 움직인다. 실제 시장에서도 2008년 금융위기, 2020년 3월 급락 때 종목 간·국가 간 상관이 크게 올랐다. 아래에서 위기가 "따로따로" 올 때와 "한꺼번에" 올 때를 비교하자. 두 경우 모두 각 종목이 한 번씩 약 40% 빠졌다가 되돌아오는 것은 같다. 다른 것은 그 시기가 겹치느냐 뿐이다.</p>
+
+    <div class="sim" id="sim-cr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>위기의 상관: 분산 효과가 사라지는 순간</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cr-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>위기의 모습</span>
+            <div class="seg" id="cr-m"><button data-value="apart">따로따로</button><button data-value="together" class="on">한꺼번에</button></div>
+          </div>
+          <div class="btn-row"><button class="btn" id="cr-re">다른 경로 뽑기</button></div>
+          <p class="sim-note" style="margin:0;padding:0;border:0">얇은 선은 다섯 종목, 굵은 선은 다섯 종목을 같은 비중으로 섞은 바구니다. 아래 칸은 30일 이동 평균 상관계수다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">종목 하나의 평균 MDD</span><span class="v" id="cr-o-s">—</span></div>
+        <div class="stat"><span class="k">바구니 MDD</span><span class="v" id="cr-o-p">—</span></div>
+        <div class="stat"><span class="k">분산이 막아 준 몫</span><span class="v" id="cr-o-k">—</span></div>
+        <div class="stat"><span class="k">위기 때 평균 상관</span><span class="v" id="cr-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① "따로따로"에서는 각 종목이 다른 때 −40%를 겪고, 바구니는 −20% 안팎으로 버틴다. 분산이 낙폭의 절반쯤을 막아 준다. ② "한꺼번에"로 바꾸면 위기 동안 상관이 0.1~0.2에서 0.7 넘게 치솟고, 바구니의 낙폭이 종목 하나와 거의 같아진다. ③ 몇 번 다시 뽑아도 결론은 같다. 분산은 평소의 위험은 줄여 주지만 시장 전체의 붕괴는 막지 못한다. (600거래일, 평시 시장 변동성 15%, 고유 변동성 30%, 각 종목은 위기 40일 동안 약 −40%까지 빠졌다가 되돌아온다)</div>
+    </div>
+
+    <div class="callout warn">
+      <strong>"다섯 종목이면 충분히 분산했다"의 함정</strong>
+      <p>평소의 상관으로 계산한 분산 효과는 위기 때 과대평가된다. 그리고 투자자가 분산에 기대하는 것은 평소의 잔잔함이 아니라 위기 때의 방어다. 같은 나라, 같은 업종, 같은 테마(예: 반도체 다섯 종목)로 모은 종목은 평소에도 상관이 높고, 위기에는 거의 하나처럼 움직인다. 서로 다른 자산(채권, 해외 주식)과 섞는 문제는 <a href="portfolio.html">14장</a>과 <a href="global.html">22장</a>에서 다룬다.</p>
+    </div>
+  </section>
+
+  <section id="beta">
+    <h2>베타: 시장이 1% 움직일 때</h2>
+    <p>분산으로도 없앨 수 없는 체계적 위험의 크기를 종목별로 재는 자가 <span class="term">베타</span><span class="en">(Beta, β)</span>다. 시장이 1% 움직일 때 그 종목이 평균적으로 몇 % 움직이는지다. 지수와 종목의 일간 수익률을 점으로 찍고, 그 점들을 가장 잘 지나는 직선을 그으면 그 기울기가 베타다.</p>
+    <div class="formula">$$\beta_i = \frac{\mathrm{Cov}(r_i, r_m)}{\mathrm{Var}(r_m)} = \rho_{i,m}\,\frac{\sigma_i}{\sigma_m}$$<div class="where">\(r_i\): 종목 수익률, \(r_m\): 시장(지수) 수익률. 베타는 상관과 변동성 비율의 곱이다. 변동성이 커도 시장과 상관이 낮으면 베타는 작을 수 있다.</div></div>
+    <p>먼저 눈으로 맞혀 보자. 점 구름을 보고 손잡이를 끌어 직선의 기울기를 정한 다음 "정답 보기"를 누르면 실제 회귀선이 나타난다.</p>
+
+    <div class="sim" id="sim-bt">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>베타 맞히기: 점 구름에 직선 긋기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="bt-cv"></canvas><span class="hint">손잡이를 끌어 기울기를 정한다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>종목</span>
+            <div class="seg" id="bt-s"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="bt-go">정답 보기</button></div>
+          <div class="ctrl"><span>점수</span><span class="rk-time" id="bt-score">—</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">내 추정 β</span><span class="v" id="bt-o-g">—</span></div>
+        <div class="stat"><span class="k">실제 β</span><span class="v" id="bt-o-b">—</span></div>
+        <div class="stat"><span class="k">지수와 상관 ρ</span><span class="v" id="bt-o-c">—</span></div>
+        <div class="stat"><span class="k">R² (시장 몫)</span><span class="v" id="bt-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한빛(β 약 1.19)과 누리(약 0.59)를 비교한다. 누리는 시장이 크게 빠진 날에도 덜 빠진다. ② 별빛은 위아래로 크게 튄 점(임상 소식) 때문에 기울기를 가늠하기 어렵다. 실제 β는 약 1.41이지만 R²는 0.09뿐이다. 직선이 거의 아무것도 설명하지 못한다. ③ 점 구름이 세로로 길수록 고유 위험이 크다. (가상 시장 10년 일간 수익률, 가로 ±7%·세로 ±15% 밖의 점은 가장자리에 붙여 그림)</div>
+    </div>
+
+    <p>베타가 1보다 크면 시장보다 크게, 1보다 작으면 시장보다 작게 움직인다. 경기 민감주(한빛반도체)와 성장주(모아플랫폼)는 1보다 크고, 생활필수품(누리식품)은 작다. 하지만 베타는 <b>평균적인</b> 민감도일 뿐이다. 별빛바이오처럼 R²가 낮은 종목은 베타가 1.4여도 시장과 상관없이 움직이는 날이 대부분이다. 시장이 한 달에 크게 빠질 때 각 종목이 어떻게 될지를 베타와 고유 위험으로 나눠 그려 보자.</p>
+
+    <div class="sim" id="sim-sh">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>시장이 한 달에 X% 움직이면: 베타와 고유 위험</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sh-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>지수의 한 달 수익률 <output id="sh-m-out"></output></span><input type="range" id="sh-m" min="-0.3" max="0.3" step="0.01" value="-0.1"></label>
+          <label class="check"><input type="checkbox" id="sh-e" checked> 고유 위험 범위(±1σ) 보기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">한빛 평균 예상</span><span class="v" id="sh-o-h">—</span></div>
+        <div class="stat"><span class="k">누리 평균 예상</span><span class="v" id="sh-o-n">—</span></div>
+        <div class="stat"><span class="k">한빛 1,000만원</span><span class="v" id="sh-o-w">—</span></div>
+        <div class="stat"><span class="k">지수 1,000만원</span><span class="v" id="sh-o-i">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 지수 −10%에서 막대(β × 시장)는 한빛 −12%, 누리 −6%다. ② 범위 표시를 켜면 별빛의 범위가 막대보다 훨씬 길다. 시장이 −10%인 달에도 별빛은 오를 수 있고 −40%가 될 수도 있다. ③ 지수를 −30%까지 밀면 모든 막대가 함께 아래로 간다. 범위의 위 끝도 대부분 0 아래로 내려간다. 체계적 위험은 피할 곳이 없다. (가상 시장에서 추정한 β와 고유 변동성, 한 달 = 연 변동성 ÷ √12)</div>
+    </div>
+  </section>
+
+  <section id="tail">
+    <h2>꼬리 위험: 정규분포가 놓치는 날</h2>
+    <p>변동성으로 위험을 재는 데는 숨은 가정이 있다. 수익률이 종 모양의 정규분포를 따른다는 가정이다. 정규분포라면 평균에서 표준편차 3배(3σ) 넘게 떨어지는 날은 740일에 하루, 5σ는 1만 년에 한 번꼴이다. 그런데 가상 시장 지수의 10년 일간 수익률에서 −3σ 아래로 떨어진 날을 세면 27일이다. 정규분포가 예상하는 3.5일의 여덟 배다. 실제 주식 수익률도 이렇게 극단적인 날이 정규분포보다 훨씬 자주 나온다. 이를 <span class="term">두꺼운 꼬리</span><span class="en">(Fat tails)</span>라 한다.</p>
+    <p>아래는 변동성이 똑같은 두 세계의 1,000일이다. 위는 정규분포, 아래는 두꺼운 꼬리(t분포)에서 하루하루를 뽑는다. 자유도가 작을수록 꼬리가 두껍다. −5% 이하로 떨어진 날을 빨간 막대로 표시한다.</p>
+
+    <div class="sim" id="sim-ft">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>1,000일 실험: 정규분포 vs 두꺼운 꼬리</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ft-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>연 변동성 <output id="ft-s-out"></output></span><input type="range" id="ft-s" min="0.12" max="0.6" step="0.02" value="0.24"></label>
+          <label class="ctrl"><span>꼬리 자유도 <output id="ft-d-out"></output></span><input type="range" id="ft-d" min="3" max="30" step="1" value="4"></label>
+          <div class="btn-row"><button class="btn primary" id="ft-go">1,000일 굴리기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">−5% 이하 (정규)</span><span class="v" id="ft-o-n">—</span></div>
+        <div class="stat"><span class="k">−5% 이하 (두꺼운 꼬리)</span><span class="v" id="ft-o-f">—</span></div>
+        <div class="stat"><span class="k">최악의 날 (정규 / 꼬리)</span><span class="v" id="ft-o-w">—</span></div>
+        <div class="stat"><span class="k">1,000일 기대 횟수 (정규 / 꼬리)</span><span class="v" id="ft-o-e">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 연 24%(하루 약 1.5%)에서 −5% 이하인 날은 정규분포에서 1,000일에 평균 0.5번, 두꺼운 꼬리에서 평균 4.7번이다. 변동성은 똑같은데 열 배 가까이 차이 난다. 몇 번 굴려 맞춰 본다. ② 자유도를 30으로 올리면 꼬리가 얇아져 두 세계가 비슷해진다. ③ 변동성을 50% 넘게 올리면 −5%는 더 이상 드문 날이 아니다. 별빛바이오 같은 종목의 세계다. (두꺼운 꼬리는 분산을 1로 맞춘 t분포, 굴릴 때마다 새 1,000일)</div>
+    </div>
+
+    <p>두꺼운 꼬리의 세계에서는 "평균적인 날"은 오히려 정규분포보다 잔잔하고, 그 대신 드문 날이 훨씬 크다. 변동성 숫자는 둘을 구분하지 못한다. 그래서 극단적인 하루, 극단적인 한 달을 따로 재는 지표가 필요하다.</p>
+  </section>
+
+  <section id="var">
+    <h2>VaR와 CVaR: 나쁜 날은 얼마나 나쁜가</h2>
+    <p><span class="term">VaR</span><span class="en">(Value at Risk, 위험 가치)</span>는 "100일 중 나쁜 쪽에서 5번째 날의 손실"처럼, 정해진 확률로 넘지 않을 손실의 경계다. "1일 95% VaR가 −2%"는 하루 손실이 2%보다 클 확률이 5%라는 뜻이다. 하지만 VaR는 그 5%의 날에 <b>얼마나</b> 잃는지는 말하지 않는다. 그 날들의 평균 손실을 따로 잰 것이 <span class="term">CVaR</span><span class="en">(Conditional VaR, 기대손실)</span>다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 230" role="img" aria-label="수익률 분포의 왼쪽 꼬리에 VaR 경계선과, 그보다 더 왼쪽에 꼬리 평균인 CVaR 선을 표시한 그림">
+        <path class="f-down-soft" d="M150,190 C170,189 190,186 205,180 L210,178 L210,190 Z"/>
+        <path class="s-line" style="fill:none;stroke-width:2.5" d="M150,190 C170,189 190,186 205,180 C230,168 255,120 280,75 C295,48 308,30 320,30 C332,30 345,48 360,75 C385,120 410,168 435,180 C445,186 450,189 455,190"/>
+        <path class="s-down" style="fill:none;stroke-width:2.5" d="M150,190 C170,189 190,186 205,180 L210,178"/>
+        <line class="s-axis" x1="10" y1="190" x2="456" y2="190"/>
+        <line class="s-acc" x1="210" y1="50" x2="210" y2="196" style="stroke-width:2"/>
+        <line class="s-bad" x1="180" y1="92" x2="180" y2="196" style="stroke-width:2;stroke-dasharray:5 4"/>
+        <text class="lbl-acc" x="204" y="46" text-anchor="end">VaR: 이보다 나쁜 날이 5%</text>
+        <text class="lbl-bad" x="174" y="88" text-anchor="end">CVaR: 그 5%의 평균</text>
+        <text class="lbl-dim" x="320" y="214" text-anchor="middle">하루 수익률 →</text>
+        <text class="lbl-down" x="150" y="214" text-anchor="middle">손실</text>
+        <text class="lbl-up" x="440" y="214" text-anchor="middle">이익</text>
+        <text class="lbl-dim" x="372" y="50">평범한 날들</text>
+      </svg>
+      <figcaption><b>그림 13-3. VaR는 경계, CVaR는 경계 너머의 평균.</b> 꼬리가 두꺼우면 VaR가 같아도 CVaR는 훨씬 깊다. VaR만 보면 "5%의 날"이 −2%에서 끝나는지 −20%까지 가는지 알 수 없다.</figcaption>
+    </figure>
+
+    <p>아래는 가상 시장 10년 일간 수익률의 히스토그램이다. 신뢰수준 슬라이더를 움직이거나 VaR 선을 직접 끌어 보자. 점선은 같은 평균·변동성의 정규분포를 가정했을 때의 VaR다.</p>
+
+    <div class="sim" id="sim-vr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>VaR와 CVaR: 히스토그램의 왼쪽 끝</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="vr-cv"></canvas><span class="hint">VaR 선을 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>데이터</span>
+            <div class="seg" id="vr-s"><button data-value="index" class="on">지수</button><button data-value="hanbit">한빛</button><button data-value="byeol">별빛</button></div>
+          </div>
+          <label class="ctrl"><span>신뢰수준 <output id="vr-c-out"></output></span><input type="range" id="vr-c" min="0.9" max="0.995" step="0.005" value="0.95"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">1일 VaR</span><span class="v" id="vr-o-v">—</span></div>
+        <div class="stat"><span class="k">1,000만원 기준</span><span class="v" id="vr-o-w">—</span></div>
+        <div class="stat"><span class="k">CVaR (꼬리 평균)</span><span class="v" id="vr-o-c">—</span></div>
+        <div class="stat"><span class="k">정규 가정 VaR</span><span class="v" id="vr-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 지수 95%에서 실제 VaR(약 −1.8%)와 정규 가정(약 −1.8%)은 비슷하다. ② 99%로 올리면 실제 VaR는 약 −3.4%인데 정규 가정은 −2.6%에 그친다. 꼬리로 갈수록 정규분포가 위험을 깎아 말한다. ③ 별빛 99%에서는 실제 VaR −17%, CVaR −20%다. 정규 가정(약 −12%)과의 차이가 임상 소식 같은 점프에서 나온다. (가상 시장, 과거 데이터를 그대로 쓰는 역사적 VaR)</div>
+    </div>
+
+    <p>VaR는 은행과 증권사가 위험 한도를 정할 때 널리 쓰지만 두 가지 함정이 있다. 첫째, 과거 데이터로 계산하므로 과거에 없던 위기는 반영하지 못한다. 급락 구간이 없는 3년치로 계산한 VaR는 아주 작게 나온다. 둘째, 경계 너머는 보지 않는다. 그래서 꼬리 위험을 볼 때는 CVaR와 최대 낙폭을 함께 본다. 개인에게 더 와닿는 형태로 바꾸면 이렇다. "1,000만원이 하루에 30만원 넘게 줄어드는 날이 1년에 몇 번 있고, 그런 날엔 평균 40만원이 준다."</p>
+  </section>
+
+  <section id="single">
+    <h2>개별 종목의 운명</h2>
+    <p>지금까지는 변동성과 낙폭, 즉 "얼마나 흔들리는가"를 봤다. 한 종목에 몰빵할 때의 위험은 하나 더 있다. 흔들리다 <b>끝나는</b> 위험이다. 회사가 망하거나 상장폐지되면 주가는 회복하지 않는다. 지수는 망한 회사를 빼고 새 회사를 넣으며 계속되지만, 그 회사만 가진 사람의 계좌는 거기서 끝난다.</p>
+    <p>가상 유니버스 300종목의 10년 성적표를 펼쳐 보자. 가로축은 10년 동안 몇 배가 되었는지(로그 축), 빨간 막대는 중간에 상장폐지된 종목이다. 비교 기준은 300종목을 같은 금액씩 모두 산 "전부 사기" 바구니다. 바구니 크기를 바꾸면 1종목, 5종목, 30종목을 무작위로 담은 바구니 300개의 성적 분포가 나온다.</p>
+
+    <div class="sim" id="sim-fa">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>300종목의 10년: 한 종목을 고른다는 것</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="fa-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>바구니 크기</span>
+            <div class="seg" id="fa-k"><button data-value="1" class="on">1종목</button><button data-value="5">5종목</button><button data-value="30">30종목</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="fa-pick">하나 뽑아 보기</button></div>
+          <div class="ctrl"><span>뽑은 것</span><span class="rk-time" id="fa-cur">—</span></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">상장폐지</span><span class="v" id="fa-o-d">—</span></div>
+        <div class="stat"><span class="k">"전부 사기"보다 나은 비율</span><span class="v" id="fa-o-b">—</span></div>
+        <div class="stat"><span class="k">원금 손실 비율</span><span class="v" id="fa-o-l">—</span></div>
+        <div class="stat"><span class="k">중앙값 / 평균</span><span class="v" id="fa-o-m">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 1종목에서 300개 중 19개(약 6%)가 상장폐지되고, 75개(25%)가 10년 뒤 원금보다 적다. ② "전부 사기"(약 2.85배)를 이긴 종목은 약 35%뿐이다. 평균(2.85배)이 중앙값(1.91배)보다 큰 것은 몇십 배 오른 소수의 종목이 평균을 끌어올리기 때문이다. ③ 30종목으로 바꾸면 원금 손실이 0개가 되고 분포가 "전부 사기" 근처로 모인다. 대박도 사라지고 쪽박도 사라진다. (가상 유니버스, 처음에 같은 금액으로 사서 10년 보유)</div>
+    </div>
+
+    <p>한 종목을 고르는 것은 이 넓은 분포에서 공 하나를 뽑는 일이다. 평균은 몇십 배짜리 소수의 종목이 끌어올리지만, 무작위로 하나를 뽑으면 그 소수를 만날 확률은 작다. 그래서 <b>대부분의 종목은 "전부 사기"보다 못하다</b>. 실제 시장 연구에서도 장기 수익의 대부분을 소수의 종목이 만들어 내고, 개별 종목의 절반 이상이 지수에 뒤진다는 결과가 여러 번 나왔다(나라와 기간에 따라 다르다). 종목을 고르는 실력이 있다면 이 비율을 바꿀 수 있겠지만, 그 실력이 있는지를 확인하는 일 자체가 어렵다(<a href="backtest.html">17장</a>).</p>
+    <div class="callout warn">
+      <strong>상장폐지는 제도로 정해지고, 제도는 바뀐다</strong>
+      <p>한국 거래소는 자본잠식, 매출 미달, 감사의견 거절, 주가·시가총액 미달 같은 요건에 걸린 종목을 관리종목으로 지정하고, 개선되지 않으면 상장폐지 절차를 밟는다. 구체적인 요건과 유예 기간은 2026년 기준으로도 개정 논의가 이어지고 있으니 실제 투자 전에는 거래소 공시를 확인한다. 상장폐지 전후의 정리매매와 기업 이벤트는 <a href="corporate.html">9장</a>에서 다뤘다.</p>
+    </div>
+  </section>
+
+  <section id="tolerance">
+    <h2>위험 감내도와 위험 감당 능력</h2>
+    <p>위험을 재는 자를 모두 손에 쥐었다. 남은 질문은 "나는 얼마만큼의 위험을 질 것인가"다. MoneyBook 12장에서 이것을 두 질문으로 나눴다. <span class="term">위험 감내도</span><span class="en">(Risk tolerance)</span>는 마음이 견딜 수 있는 하락, <span class="term">위험 감당 능력</span><span class="en">(Risk capacity)</span>은 형편이 견딜 수 있는 하락이다. 둘이 다르면 <b>낮은 쪽</b>이 기준이다. 아래 질문에 답하면 각각을 최대 낙폭으로 바꿔 주고, 가상 시장 10년에서 각 선택지가 실제로 겪은 최대 낙폭과 비교한다. 기준선을 직접 끌어도 된다.</p>
+
+    <div class="sim" id="sim-sv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>내 감내선 찾기: 질문 여섯 개</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sv-cv"></canvas><span class="hint">기준선을 끌 수 있다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>1. 1,000만원이 700만원이 되면</span>
+            <div class="seg" id="sv-q1"><button data-value="-0.1">다 판다</button><button data-value="-0.2">일부 판다</button><button data-value="-0.3" class="on">그대로 둔다</button><button data-value="-0.45">더 산다</button></div>
+          </div>
+          <div class="ctrl"><span>2. 겪어 본 가장 큰 평가손실</span>
+            <div class="seg" id="sv-q2"><button data-value="-0.2" class="on">없다</button><button data-value="-0.3">−20% 안팎</button><button data-value="-0.45">−40% 이상</button></div>
+          </div>
+          <div class="ctrl"><span>3. 이 돈의 목표</span>
+            <div class="seg" id="sv-q3"><button data-value="-0.1">원금 지키기</button><button data-value="-0.25">물가보다 조금 더</button><button data-value="-0.4" class="on">장기 성장</button></div>
+          </div>
+          <div class="ctrl"><span>4. 이 돈을 쓸 시기</span>
+            <div class="seg" id="sv-q4"><button data-value="-0.1">3년 안</button><button data-value="-0.25">3~10년</button><button data-value="-0.5" class="on">10년 넘게</button></div>
+          </div>
+          <div class="ctrl"><span>5. 비상금</span>
+            <div class="seg" id="sv-q5"><button data-value="-0.1">없다</button><button data-value="-0.25">3개월 미만</button><button data-value="-0.5" class="on">6개월 이상</button></div>
+          </div>
+          <div class="ctrl"><span>6. 소득</span>
+            <div class="seg" id="sv-q6"><button data-value="-0.15">불안정</button><button data-value="-0.3">보통</button><button data-value="-0.5" class="on">안정적</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">마음 (감내도, 1~3번 평균)</span><span class="v" id="sv-o-t">—</span></div>
+        <div class="stat"><span class="k">형편 (감당 능력, 4~6번 최소)</span><span class="v" id="sv-o-c">—</span></div>
+        <div class="stat"><span class="k">기준선</span><span class="v" id="sv-o-f">—</span></div>
+        <div class="stat"><span class="k">선 안에 드는 선택지</span><span class="v" id="sv-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값은 한결의 답이다. 마음은 −30%, 형편은 −50%, 기준선은 낮은 쪽인 −30%다. ② 4번을 "3년 안"으로 바꾸면 마음이 아무리 담대해도 기준선이 −10%로 올라간다. 곧 쓸 돈은 흔들리면 안 된다. ③ 기준선 −30% 안에 드는 것은 지수와 현금을 반반 섞은 것 하나뿐이다. 지수 70%도 −31%로 선을 살짝 넘고, 개별 종목은 하나도 들어오지 않는다. (단순화한 교육용 설문, 막대는 가상 시장 10년의 실제 최대 낙폭, 현금은 이자 0%로 가정)</div>
+    </div>
+
+    <p>설문 점수는 출발점일 뿐이다. 감내도는 설문보다 경험이 정확하고, 사람들은 상승장에서 자기 감내도를 과대평가한다. 그래서 숫자를 금액으로 바꿔 상상해 보는 것이 좋다. 한결의 −30%는 1,000만원이 700만원이 된 화면이다. 3년 뒤 계좌가 3,000만원이라면 900만원이 사라진 화면이다. 같은 −30%라도 금액이 커질수록 무겁게 느껴진다. 하락장에서 실제로 무슨 일이 일어나는지는 <a href="psychology.html">24장</a>에서 다룬다.</p>
+  </section>
+
+  <section id="hangyeol">
+    <h2>한결의 세 선택지와 −30% 선</h2>
+    <p>이제 이 장의 질문으로 돌아간다. 한결이 2016년 초 가상 시장에 1,000만원을 넣었다면 세 선택지는 10년 동안 어떤 길을 걸었을까? 위 칸은 계좌 금액, 아래 칸은 수중 그래프이고, 빨간 점선이 한결의 −30% 감내선이다. "재생"을 누르면 하루씩 진행되며, 감내선 아래에 있던 날을 센다. 투자 비율을 낮추면 나머지는 현금(이자 0%)으로 둔다.</p>
+
+    <div class="sim" id="sim-hg">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>한결: 한빛 몰빵 vs 다섯 종목 균등 vs 지수</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="hg-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>다섯 종목 균등의 방식</span>
+            <div class="seg" id="hg-eq"><button data-value="rb" class="on">매달 20%씩 맞춤</button><button data-value="bh">처음 그대로</button></div>
+          </div>
+          <label class="ctrl"><span>주식에 넣는 비율 <output id="hg-w-out"></output></span><input type="range" id="hg-w" min="0.3" max="1" step="0.05" value="1"></label>
+          <div class="btn-row"><button class="btn primary" id="hg-play">재생</button><button class="btn" id="hg-end">끝으로</button></div>
+          <div class="ctrl"><span>지금</span><span class="rk-time" id="hg-now">—</span></div>
+        </div>
+      </div>
+      <div class="table-wrap"><table class="rk-table" id="hg-tb"></table></div>
+      <div class="sim-note">해볼 것: ① 100%에서 끝까지 보면 세 선택지 모두 −30% 선을 넘는다. 지수도 −42%다. ② 감내선 아래에 있던 날은 한빛 1,394일, 다섯 종목 736일, 지수 616일이다. 넘는 깊이보다 넘어 있는 시간이 더 크게 다르다. ③ 비율을 70%로 낮추면 지수는 −31.5%로 선을 살짝 넘는다(18일). 한빛은 50%까지 낮춰도 −36%로 선을 넘는다. (가상 시장 2016~2025, 거래일 기준, 수수료·세금·배당 제외)</div>
+    </div>
+  </section>
+
+  <div class="casefile">
+    <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 13장</span></div>
+    <h4>−30% 감내선을 넘는 것은 무엇인가</h4>
+    <p>한결은 세 선택지를 가상 시장 10년에 대 보았다. <b>한빛반도체 몰빵</b>은 변동성 약 40%, 최대 낙폭 −62%, −30% 아래에 있던 날이 1,394일(10년의 절반 이상)이었다. <b>다섯 종목 균등</b>(매달 20%씩 맞춤)은 변동성 약 27%, 최대 낙폭 −47%, 736일이었다. 처음 산 비중 그대로 두었다면 별빛바이오가 커졌다가 무너지는 바람에 최대 낙폭이 −61%로 한빛과 비슷했다. <b>SB 종합지수</b>는 변동성 18%, 최대 낙폭 −42%, 616일이었다.</p>
+    <p>결론은 예상과 조금 달랐다. 셋 다 −30% 선을 넘는다. 지수조차 넘는다. 다만 넘는 정도와 시간이 다르다. 다섯 종목은 몰빵보다 훨씬 낫지만 종목 고유의 사고(별빛의 임상 지연, 다온의 긴 하락)를 다 지우기에는 너무 적었고, 300종목 실험에서 본 것처럼 "전부 사기"를 이길 종목을 고를 자신도 없었다. 한결은 "어느 종목이 오를까"보다 먼저 "어느 것이 내 선 안에 들어오는가"를 묻기로 했다.</p>
+    <div class="clue">
+      <div><b>이 장에서 정한 것</b>위험은 변동성, 최대 낙폭, 수중 기간을 함께 본다. 한 종목 몰빵은 하지 않는다. 비체계적 위험은 섞어서 없앤다.</div>
+      <div><b>아직 남은 문제</b>지수만으로도 −42%다. 주식 70 / 채권 30이라는 MoneyBook의 계획을 지키면 계좌 전체의 낙폭은 얼마가 되는가. 무엇을 어떤 비율로 섞어야 하는가.</div>
+      <div><b>다음 단계</b><a href="portfolio.html">14장</a>: 다섯 종목, 지수, 채권으로 효율적 투자선을 그리고 한결의 위치를 찍는다.</div>
+    </div>
+  </div>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>변동성(표준편차)은 흔들림의 평균 크기다. 나쁜 날의 순서와 몰림을 모르므로, 같은 변동성에서도 최대 낙폭은 크게 다를 수 있다.</li>
+      <li>최대 낙폭은 가장 깊은 구덩이, 수중 기간은 그 구덩이에서 보낸 시간이다. 회복은 보통 하락보다 오래 걸린다(가상 지수: 하락 63일, 회복 310일).</li>
+      <li>종목의 위험은 시장을 따라가는 체계적 위험(β²σ²<sub>m</sub>)과 회사 고유의 비체계적 위험으로 나뉜다. 비체계적 위험은 섞으면 사라지고, 시장은 그 위험에 보상하지 않는다.</li>
+      <li>n종목 균등 포트폴리오의 분산은 평균 공분산 + (평균 분산 − 평균 공분산)/n이다. 처음 열 종목 정도가 줄일 수 있는 위험의 대부분을 없애고, 평균 공분산의 바닥 아래로는 내려가지 않는다.</li>
+      <li>상관이 낮을수록 분산 효과가 크지만, 위기 때는 상관이 1 쪽으로 치솟아 분산 효과가 가장 필요한 순간에 줄어든다.</li>
+      <li>베타는 시장이 1% 움직일 때의 평균 반응이다. R²가 낮은 종목에서는 베타가 설명하는 부분이 작다.</li>
+      <li>주식 수익률은 정규분포보다 꼬리가 두껍다. VaR는 나쁜 날의 경계, CVaR는 그 너머의 평균이다. 개별 종목에는 상장폐지처럼 회복하지 않는 꼬리도 있다.</li>
+      <li>얼마만큼 위험을 질지는 마음(감내도)과 형편(감당 능력) 중 낮은 쪽에 맞춘다. 한결의 −30% 선은 한빛 몰빵도, 다섯 종목도, 지수 하나도 넘는다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 두 펀드의 10년 연 변동성이 똑같이 20%이고 10년 수익률도 같다. 두 펀드에 대해 확실히 말할 수 있는 것은?</p>
+        <div class="opts">
+          <button class="opt">최대 낙폭도 같다.</button>
+          <button class="opt">회복 기간도 같다.</button>
+          <button class="opt" data-correct>하루하루 흔들림의 평균 크기가 비슷하다는 것 말고는 낙폭에 대해 알 수 없다.</button>
+          <button class="opt">위험이 완전히 같으므로 어느 것을 골라도 겪는 일은 같다.</button>
+        </div>
+        <div class="quiz-exp">변동성은 수익률의 흩어진 정도만 잰다. 같은 수익률들을 순서만 바꿔도 변동성과 최종 수익률은 그대로지만, 나쁜 날이 몰려 오면 최대 낙폭과 회복 기간은 크게 달라진다(첫 시뮬레이터).</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 국내 주식 50종목을 같은 비중으로 샀다. 종목을 100개로 늘려도 거의 줄지 않는 위험은?</p>
+        <div class="opts">
+          <button class="opt" data-correct>경기·금리처럼 모든 종목을 함께 흔드는 체계적 위험</button>
+          <button class="opt">한 회사의 실적 쇼크 같은 비체계적 위험</button>
+          <button class="opt">한 회사가 상장폐지될 위험</button>
+          <button class="opt">한 업종에만 생기는 규제 위험</button>
+        </div>
+        <div class="quiz-exp">종목 수를 늘리면 개별 사정(비체계적 위험)은 1/n로 줄어 사라지고, 평균 공분산만 남는다. 그 바닥이 시장 전체의 위험, 즉 체계적 위험이다. 50종목이면 이미 바닥 근처라 더 늘려도 거의 줄지 않는다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 어떤 종목의 베타가 1.2, R²가 0.1이다. 다음 달 지수가 −10%라면?</p>
+        <div class="opts">
+          <button class="opt">이 종목은 반드시 −12%가 된다.</button>
+          <button class="opt">이 종목은 시장보다 덜 빠진다.</button>
+          <button class="opt">베타가 1보다 크므로 이 종목은 오를 수 없다.</button>
+          <button class="opt" data-correct>평균적으로는 약 −12%를 예상하지만, R²가 낮아 고유 위험 때문에 실제 결과는 크게 벗어날 수 있다.</button>
+        </div>
+        <div class="quiz-exp">베타는 평균적인 반응(1.2 × −10% = −12%)이다. R² 0.1은 이 종목 변동의 10%만 시장으로 설명된다는 뜻이라, 시장이 빠진 달에도 회사 고유의 소식으로 오를 수도, 훨씬 더 빠질 수도 있다(별빛바이오).</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 어떤 계좌의 "1일 99% VaR가 −3%"다. 바르게 해석한 것은?</p>
+        <div class="opts">
+          <button class="opt">하루에 3%보다 많이 잃는 일은 없다.</button>
+          <button class="opt" data-correct>100일 중 하루쯤은 3%보다 많이 잃으며, 그날 얼마나 잃는지는 VaR만으로 알 수 없다.</button>
+          <button class="opt">하루 평균 손실이 3%다.</button>
+          <button class="opt">99일은 3%씩 번다.</button>
+        </div>
+        <div class="quiz-exp">VaR는 경계일 뿐, 경계 너머의 크기는 말하지 않는다. 그 1%의 날들의 평균 손실이 CVaR다. 꼬리가 두꺼운 종목일수록 CVaR가 VaR보다 훨씬 깊다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 평소 상관이 0.2인 다섯 종목으로 분산했다. 시장 전체가 급락하는 위기 때 일어나기 쉬운 일은?</p>
+        <div class="opts">
+          <button class="opt">상관이 0으로 떨어져 분산 효과가 더 커진다.</button>
+          <button class="opt">상관은 그대로라 평소처럼 낙폭의 대부분을 막아 준다.</button>
+          <button class="opt" data-correct>상관이 크게 올라 다섯 종목이 함께 빠지고, 분산 효과가 크게 줄어든다.</button>
+          <button class="opt">분산한 포트폴리오는 위기 때 오히려 오른다.</button>
+        </div>
+        <div class="quiz-exp">위기에는 시장 전체의 충격(체계적 몫)이 커져 종목들이 같은 방향으로 움직인다. 가상 시장에서도 급락 40일 동안 다섯 회사의 평균 상관이 0.1~0.2에서 0.71로 올랐다. 분산이 가장 필요한 순간에 분산 효과가 줄어든다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const M = ST.market(), K = ST.COKEYS, N0 = M.days;
+  const SER = { index: M.index }; K.forEach((k) => (SER[k] = M.closes[k]));
+  const RET = {}; Object.keys(SER).forEach((k) => (RET[k] = ST.returns(SER[k])));
+  const RM = RET.index;
+  const NAME = (k) => (k === "index" ? "SB 종합지수" : k === "eq5" ? "다섯 종목 균등" : ST.CO[k].name);
+  const SHORT = { index: "지수", hanbit: "한빛", nuri: "누리", byeol: "별빛", daon: "다온", moa: "모아", eq5: "다섯 균등" };
+  const COL = (P, k) => ({ index: P.text, hanbit: P.accent, nuri: P.ok, byeol: P.warn, daon: P.dim, moa: P.blue, eq5: P.accent2 })[k];
+  const narrow = (id) => document.getElementById(id).parentElement.clientWidth < 560;
+  const pct = (x, d) => (x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%";
+  const spct = (x, d) => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%";
+  const tn = (x, s) => '<span class="' + MB.tone(x) + '">' + s + "</span>";
+  const bad = (s) => '<span class="bad-t">' + s + "</span>";
+  const pAx = (v) => Math.round(v * 100) + "%";
+  const days = (n) => (n < 0 ? "미회복" : n + "일 <small>(" + (n / 252).toFixed(1) + "년)</small>");
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color || MB.palette().text; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function knob(ctx, x, y, P, r) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = P.bg; ctx.stroke();
+    ctx.restore();
+  }
+  const invX = (c, px, a, b) => a + ((px - c.box.x) / c.box.w) * (b - a);
+  const invY = (c, py, a, b) => a + ((c.box.y + c.box.h - py) / c.box.h) * (b - a);
+  // 연도 눈금
+  const YEARS = []; M.dates.forEach((d, i) => { if (i === 0 || d.slice(0, 4) !== M.dates[i - 1].slice(0, 4)) YEARS.push(i); });
+  const yearTicks = (nar) => YEARS.filter((i, j) => (nar ? j % 2 === 0 : true));
+  const yearFmt = (i) => M.dates[Math.round(i)].slice(0, 4);
+  // 수중 기간 등 공통 계산
+  const soft = (name) => MB.color(name);
+
+  /* ---------------------------------------------------------- 1. 같은 변동성, 다른 고통 */
+  (function () {
+    const ND = 504, mu = 0.07 / 252, s = 0.25 / Math.sqrt(252);
+    let seed = 21, base, u;
+    function gen() { const g = ST.gauss(seed), r = ST.rng(seed + 100); base = []; u = []; for (let i = 0; i < ND; i++) { base.push(Math.exp(mu - (s * s) / 2 + s * g()) - 1); u.push(r()); } }
+    function order(k) {
+      const key = base.map((x, i) => (1 - k) * u[i] + k * (x < 0 ? 0.3 + 0.4 * u[i] : u[i]));
+      return base.map((x, i) => i).sort((a, b) => key[a] - key[b]).map((i) => base[i]);
+    }
+    gen();
+    const kk = MB.range("sa-k", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    const cv = MB.canvas("#sa-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("sa-cv");
+      const ref = ST.cumulate(order(0), 1e7), cur = ST.cumulate(order(kk()), 1e7);
+      const dd = ST.drawdowns(cur), md = ST.maxDrawdown(cur);
+      const hi = Math.max(Math.max.apply(null, ref), Math.max.apply(null, cur)) * 1.05, lo = Math.min(Math.min.apply(null, ref), Math.min.apply(null, cur)) * 0.92;
+      const top = { x: 62, y: 14, w: w - 80, h: (h - 64) * 0.6 }, bot = { x: 62, y: top.y + top.h + 18, w: w - 80, h: (h - 64) * 0.4 - 4 };
+      const c1 = MB.chart(ctx, top, { x: [0, ND], y: [lo, hi], yFmt: MB.wonAxis, xTicks: [], yTicks: undefined,
+        series: [{ data: ref.map((v, i) => [i, v]), color: P.faint, width: 1.5, dash: [4, 4] }, { data: cur.map((v, i) => [i, v]), color: P.accent, width: 2 }],
+        bands: md.mdd < 0 ? [{ x0: md.peak, x1: md.recovery < 0 ? ND : md.recovery, color: soft("down-soft") }] : [] });
+      ctx.fillStyle = P.bad; ctx.beginPath(); ctx.arc(c1.X(md.trough), c1.Y(cur[md.trough]), 4, 0, TAU); ctx.fill();
+      const ymin = Math.min(-0.2, md.mdd * 1.08);
+      MB.chart(ctx, bot, { x: [0, ND], y: [ymin, 0], yFmt: pAx, yTicks: ymin < -0.6 ? [0, -0.4, -0.8] : [0, -0.1, -0.2, -0.3, -0.4, -0.5].filter((v) => v >= ymin),
+        xTicks: [0, 126, 252, 378, 504], xFmt: (v) => (v / 252).toFixed(1) + (nar ? "" : "y"),
+        series: [{ data: dd.map((v, i) => [i, v]), color: P.down, width: 1.5, fill: soft("down-soft") }] });
+      text(ctx, "계좌 (1,000만원 시작)", top.x + 6, top.y + 12, { color: P.dim, size: 11 });
+      text(ctx, "고점 대비 낙폭", bot.x + 6, bot.y + bot.h - 6, { color: P.dim, size: 11 });
+      const r = ST.returns(cur);
+      MB.stat("sa-o-v", pct(ST.annVol(r)));
+      MB.stat("sa-o-t", tn(cur[ND] - 1e7, spct(cur[ND] / 1e7 - 1)));
+      MB.stat("sa-o-m", tn(md.mdd, pct(md.mdd)));
+      MB.stat("sa-o-r", md.recovery < 0 ? bad("미회복") : (md.recovery - md.peak) + "일");
+    }, { get height() { return narrow("sa-cv") ? 340 : 330; } });
+    document.getElementById("sa-re").addEventListener("click", () => { seed++; gen(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 2. 수중 그래프 */
+  (function () {
+    let cur = null, C1 = null;
+    const ser = MB.seg("dd-s", () => { cur = null; cv.redraw(); });
+    const cv = MB.canvas("#dd-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("dd-cv"), k = ser(), p = SER[k], n = p.length;
+      const dd = ST.drawdowns(p), md = ST.maxDrawdown(p);
+      const lo = Math.min.apply(null, p), hi = Math.max.apply(null, p);
+      const fmt = k === "index" ? (v) => String(Math.round(v)) : (v) => (v >= 1e4 ? Math.round(v / 1000) + "k" : String(Math.round(v)));
+      const top = { x: 54, y: 12, w: w - 68, h: (h - 78) * 0.58 }, bot = { x: 54, y: top.y + top.h + 16, w: w - 68, h: (h - 78) * 0.42 - 2 };
+      const bands = [{ x0: md.peak, x1: md.trough, color: soft("down-soft") }, { x0: md.trough, x1: md.recovery < 0 ? n - 1 : md.recovery, color: soft("accent-soft") }];
+      C1 = MB.chart(ctx, top, { x: [0, n - 1], y: [lo * 0.92, hi * 1.06], yFmt: fmt, xTicks: [], bands,
+        series: [{ data: p.map((v, i) => [i, v]), color: COL(P, k), width: 1.5 }] });
+      const ymin = Math.min(-0.45, md.mdd * 1.06);
+      const c2 = MB.chart(ctx, bot, { x: [0, n - 1], y: [ymin, 0], yFmt: pAx, yTicks: ymin < -0.7 ? [0, -0.3, -0.6, -0.9] : [0, -0.2, -0.4, -0.6].filter((v) => v >= ymin),
+        xTicks: yearTicks(nar), xFmt: yearFmt, bands,
+        series: [{ data: dd.map((v, i) => [i, v]), color: P.down, width: 1.2, fill: soft("down-soft") }],
+        hlines: [{ y: -0.3, color: P.bad, label: "−30%" }] });
+      [md.peak, md.trough].concat(md.recovery >= 0 ? [md.recovery] : []).forEach((i, j) => {
+        ctx.fillStyle = [P.up, P.down, P.accent][j]; ctx.beginPath(); ctx.arc(C1.X(i), C1.Y(p[i]), 4.5, 0, TAU); ctx.fill();
+      });
+      text(ctx, NAME(k), top.x + 6, top.y + 13, { color: P.dim, size: 11 });
+      const i = cur == null ? md.trough : cur;
+      ctx.strokeStyle = P.text; ctx.lineWidth = 1; ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(C1.X(i), top.y); ctx.lineTo(C1.X(i), bot.y + bot.h); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, C1.X(i), c2.Y(dd[i]), P, 6);
+      let mn = p[i], ri = -1; for (let j = i; j < n; j++) { if (p[j] < mn) mn = p[j]; }
+      for (let j = i + 1; j < n; j++) if (p[j] >= p[i]) { ri = j; break; }
+      MB.stat("dd-cur", M.dates[i] + " · 낙폭 " + pct(dd[i]));
+      MB.stat("dd-buy", pct(mn / p[i] - 1) + (ri < 0 ? " · 끝까지 원금 미회복" : " · 원금까지 " + (ri - i) + "일"));
+      MB.stat("dd-o-m", bad(pct(md.mdd)));
+      MB.stat("dd-o-f", (md.trough - md.peak) + "일");
+      MB.stat("dd-o-r", md.recovery < 0 ? bad("미회복") : (md.recovery - md.trough) + "일");
+      const below = dd.filter((d) => d <= -0.3).length;
+      MB.stat("dd-o-b", below + "일 <small>(" + Math.round((below / n) * 100) + "%)</small>");
+    }, { get height() { return narrow("dd-cv") ? 380 : 400; } });
+    MB.drag(cv.canvas, { move(x) { if (!C1) return; cur = Math.round(MB.clamp(invX(C1, x, 0, N0 - 1), 0, N0 - 1)); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 3. 세 가지 자로 줄 세우기 */
+  (function () {
+    const keys = ["index"].concat(K);
+    const pre = {};
+    keys.forEach((k) => {
+      const p = SER[k], r = RET[k], dd = ST.drawdowns(p);
+      const s1 = [0], s2 = [0]; r.forEach((x) => { s1.push(s1[s1.length - 1] + x); s2.push(s2[s2.length - 1] + x * x); });
+      const mdd = [], uw = []; let m = 0, run = 0, best = 0;
+      dd.forEach((d) => { m = Math.min(m, d); run = d < 0 ? run + 1 : 0; best = Math.max(best, run); mdd.push(m); uw.push(best); });
+      pre[k] = { p, dd, s1, s2, mdd, uw };
+    });
+    let t = N0 - 1, playing = false;
+    const by = MB.seg("rc-by", () => table());
+    const sp = MB.seg("rc-sp");
+    const tb = document.getElementById("rc-tb");
+    function vol(k, i) { const n = i; if (n < 20) return NaN; const a = pre[k].s1[i], b = pre[k].s2[i]; return Math.sqrt(Math.max(0, (b - (a * a) / n) / (n - 1)) * 252); }
+    function table() {
+      const i = Math.floor(t), P = MB.palette(), b = by();
+      const rows = keys.map((k) => ({ k, v: vol(k, i), d: pre[k].dd[i], m: pre[k].mdd[i], u: pre[k].uw[i] }));
+      const key = b === "vol" ? (r) => -(r.v || 0) : b === "mdd" ? (r) => r.m : (r) => -r.u;
+      rows.sort((x, y) => key(x) - key(y));
+      tb.innerHTML = "<thead><tr><th>종목</th><th" + (b === "vol" ? ' style="color:var(--accent)"' : "") + ">변동성(연)</th><th>지금 낙폭</th><th" + (b === "mdd" ? ' style="color:var(--accent)"' : "") + ">최대 낙폭</th><th" + (b === "uw" ? ' style="color:var(--accent)"' : "") + ">최장 수중</th></tr></thead><tbody>" +
+        rows.map((r, j) => '<tr class="' + (j === 0 ? "hot" : "") + '"><td><i class="dot" style="background:' + COL(P, r.k) + '"></i>' + SHORT[r.k] + "</td><td>" + (isFinite(r.v) ? pct(r.v) : "—") + "</td><td>" + (r.d < 0 ? pct(r.d) : "0%") + "</td><td>" + pct(r.m) + "</td><td>" + r.u + "일</td></tr>").join("") + "</tbody>";
+      MB.stat("rc-now", M.dates[i]);
+    }
+    const cv = MB.canvas("#rc-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("rc-cv"), i = Math.floor(t);
+      const c = MB.chart(ctx, { x: 46, y: 12, w: w - 60, h: h - 40 }, { x: [0, N0 - 1], y: [0.35, 9], logY: true, yTicks: [0.5, 1, 2, 4, 8], yFmt: (v) => v + "x",
+        xTicks: yearTicks(nar), xFmt: yearFmt,
+        bands: M.regimes.filter((g) => g.ret < -0.2).map((g) => ({ x0: g.from, x1: g.to, color: soft("down-soft") })),
+        series: keys.map((k) => ({ data: pre[k].p.slice(0, i + 1).map((v, j) => [j, v / pre[k].p[0]]), color: COL(P, k), width: k === "index" ? 2.4 : 1.3 })) });
+      keys.forEach((k) => { const v = pre[k].p[i] / pre[k].p[0]; ctx.fillStyle = COL(P, k); ctx.beginPath(); ctx.arc(c.X(i), c.Y(v), 3.5, 0, TAU); ctx.fill(); });
+      text(ctx, "처음 = 1배, 로그 축 · 음영: 급락·약세장", c.box.x + 6, c.box.y + 12, { color: P.dim, size: 11 });
+      table();
+    }, { get height() { return narrow("rc-cv") ? 260 : 320; } });
+    const playBtn = document.getElementById("rc-play");
+    playBtn.addEventListener("click", () => { if (!playing && t >= N0 - 1) t = 0; playing = !playing; playBtn.textContent = playing ? "멈춤" : "재생"; });
+    document.getElementById("rc-re").addEventListener("click", () => { t = 0; playing = false; playBtn.textContent = "재생"; cv.redraw(); });
+    document.getElementById("rc-end").addEventListener("click", () => { t = N0 - 1; playing = false; playBtn.textContent = "재생"; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return;
+      t = Math.min(N0 - 1, t + dt * 60 * Number(sp()));
+      if (t >= N0 - 1) { playing = false; playBtn.textContent = "재생"; }
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 4. 위험 분해 */
+  const SM = ST.annVol(RM);
+  const EST = {};
+  K.forEach((k) => { const b = ST.beta(RET[k], RM), v = ST.annVol(RET[k]); EST[k] = { b, e: Math.sqrt(Math.max(0, v * v - b * b * SM * SM)), v, rho: ST.corr(RET[k], RM) }; });
+  (function () {
+    const sm = MB.range("dc-m", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    const view = MB.seg("dc-v", () => cv.redraw());
+    const cv = MB.canvas("#dc-cv", (ctx, w, h) => {
+      const P = MB.palette(), m = sm(), nar = narrow("dc-cv"), share = view() === "share";
+      const bE = ST.mean(K.map((k) => EST[k].b)), eE = Math.sqrt(ST.sum(K.map((k) => 0.04 * EST[k].e * EST[k].e)));
+      const rows = K.map((k) => ({ k, b: EST[k].b, e: EST[k].e })).concat([{ k: "eq5", b: bE, e: eE }, { k: "index", b: 1, e: 0 }]);
+      rows.forEach((r) => { r.sys = r.b * r.b * m * m; r.tot = Math.sqrt(r.sys + r.e * r.e); r.r2 = r.sys / (r.tot * r.tot); });
+      const lx = nar ? 64 : 104, bx = { x: lx, y: 16, w: w - lx - (nar ? 54 : 70), h: h - 44 };
+      const vmax = share ? 1 : Math.max(0.9, Math.max.apply(null, rows.map((r) => r.tot)) * 1.05);
+      const rh = bx.h / rows.length, X = (v) => bx.x + (v / vmax) * bx.w;
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+      const ticks = share ? [0, 0.25, 0.5, 0.75, 1] : [0, 0.2, 0.4, 0.6, 0.8].filter((v) => v <= vmax);
+      ticks.forEach((v) => { ctx.beginPath(); ctx.moveTo(X(v), bx.y); ctx.lineTo(X(v), bx.y + bx.h); ctx.stroke(); text(ctx, pAx(v), X(v), bx.y + bx.h + 16, { color: P.dim, size: 11, align: "center", mono: true }); });
+      rows.forEach((r, i) => {
+        const y = bx.y + i * rh + rh * 0.18, hh = rh * 0.64;
+        const L = share ? 1 : r.tot, a = L * r.r2;
+        ctx.fillStyle = P.accent; ctx.fillRect(X(0), y, X(a) - X(0), hh);
+        ctx.fillStyle = P.accent2; ctx.fillRect(X(a), y, X(L) - X(a), hh);
+        text(ctx, nar ? SHORT[r.k] : NAME(r.k), bx.x - 8, y + hh / 2, { color: r.k === "eq5" || r.k === "index" ? P.text : P.dim, size: 12, align: "right", base: "middle", weight: r.k === "eq5" ? 700 : 400 });
+        text(ctx, share ? Math.round(r.r2 * 100) + "%" : pct(r.tot, 0), X(L) + 6, y + hh / 2, { color: P.text, size: 11, base: "middle", mono: true });
+        if (i === K.length - 1) { ctx.strokeStyle = P.border; ctx.beginPath(); ctx.moveTo(4, bx.y + (i + 1) * rh); ctx.lineTo(w - 4, bx.y + (i + 1) * rh); ctx.stroke(); }
+      });
+      text(ctx, share ? "분산 중 시장 몫(보라) / 고유 몫(금색)" : "변동성: 시장 몫(보라) + 고유 몫(금색)", w - 8, 12, { color: P.dim, size: 11, align: "right" });
+      const H = rows[0], E5 = rows[K.length];
+      let cs = 0, cn = 0;
+      for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++) { cs += (rows[i].b * rows[j].b * m * m) / (rows[i].tot * rows[j].tot); cn++; }
+      MB.stat("dc-o-h", pct(H.tot));
+      MB.stat("dc-o-r", Math.round(H.r2 * 100) + "%");
+      MB.stat("dc-o-p", pct(E5.tot));
+      MB.stat("dc-o-c", (cs / cn).toFixed(2));
+    }, { get height() { return narrow("dc-cv") ? 300 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 5. 종목 수와 분산 효과 */
+  const U = ST.universe();
+  (function () {
+    const S = U.stocks, T = U.months, NS = S.length;
+    const portRets = (pick) => { const out = []; for (let t = 0; t < T; t++) { let s = 0, c = 0; for (const q of pick) { const r = S[q].rets[t]; if (r != null) { s += r; c++; } } out.push(c ? s / c : 0); } return out; };
+    const draw = (r, n) => { const pick = []; while (pick.length < n) { const q = Math.floor(r() * NS); if (!pick.includes(q)) pick.push(q); } return pick; };
+    // 이론 곡선: 평균 분산과 평균 공분산
+    const vr = S.map((s) => { const r = s.rets.filter((x) => x != null); return ST.std(r) ** 2 * 12; });
+    let cs = 0, cn = 0;
+    for (let i = 0; i < 150; i++) for (let j = i + 1; j < 150; j++) {
+      const a = [], b = []; for (let t = 0; t < T; t++) if (S[i].rets[t] != null && S[j].rets[t] != null) { a.push(S[i].rets[t]); b.push(S[j].rets[t]); }
+      cs += ST.cov(a, b) * 12; cn++;
+    }
+    const VB = ST.mean(vr), CB = cs / cn, FLOOR = Math.sqrt(CB), theo = (n) => Math.sqrt(CB + (VB - CB) / n);
+    // 회색 점: n마다 30개 바구니
+    const rr = ST.rng(5), DOTS = [], MEAN = [];
+    for (let n = 1; n <= 50; n++) { const v = []; for (let d = 0; d < 30; d++) v.push(ST.annVol(portRets(draw(rr, n)), 12)); DOTS.push(v); MEAN.push(ST.mean(v)); }
+    let seed = 21, pick = [], C2 = null;
+    const nn = MB.range("ns-n", (v) => v + "개", () => { pickNow(); cv.redraw(); });
+    function pickNow() { pick = draw(ST.rng(seed), nn()); }
+    pickNow();
+    const cv = MB.canvas("#ns-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ns-cv"), n = nn();
+      const L = nar ? { x: 46, y: 22, w: w - 60, h: 170 } : { x: 46, y: 22, w: w * 0.47 - 56, h: h - 84 };
+      const R = nar ? { x: 46, y: 246, w: w - 60, h: h - 246 - 50 } : { x: w * 0.47 + 44, y: 22, w: w * 0.53 - 58, h: h - 84 };
+      // 왼쪽: 고른 종목과 바구니의 10년
+      const c1 = MB.chart(ctx, L, { x: [0, T], y: [0.05, 20], logY: true, yTicks: [0.1, 0.3, 1, 3, 10], yFmt: (v) => v + "x", xTicks: [0, 24, 48, 72, 96, 120], xFmt: (v) => v / 12 + (nar ? "" : "y") });
+      ctx.save(); ctx.beginPath(); ctx.rect(L.x, L.y, L.w, L.h); ctx.clip();
+      const show = pick.slice(0, 50);
+      ctx.globalAlpha = n > 10 ? 0.35 : 0.6; ctx.lineWidth = 1;
+      show.forEach((q) => {
+        const s = S[q]; ctx.strokeStyle = s.delistedAt >= 0 ? P.bad : P.dim; ctx.beginPath(); let st = false;
+        s.price.forEach((v, t) => { if (v == null || v <= 0) return; const x = c1.X(t), y = c1.Y(Math.max(0.05, v)); st ? ctx.lineTo(x, y) : ctx.moveTo(x, y); st = true; });
+        ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      const pv = ST.cumulate(portRets(pick));
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2.6; ctx.beginPath(); pv.forEach((v, t) => (t ? ctx.lineTo(c1.X(t), c1.Y(v)) : ctx.moveTo(c1.X(t), c1.Y(v)))); ctx.stroke();
+      ctx.restore();
+      text(ctx, "고른 " + n + "종목(회색, 빨강=상장폐지)과 바구니(보라)", L.x, L.y - 8, { color: P.dim, size: 11 });
+      // 오른쪽: 변동성 곡선
+      C2 = MB.chart(ctx, R, { x: [0, 51], y: [0, 0.6], xTicks: [1, 10, 20, 30, 40, 50], yTicks: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6], yFmt: pAx,
+        series: [{ data: Array.from({ length: 50 }, (_, i) => [i + 1, theo(i + 1)]), color: P.dim, width: 1.2, dash: [5, 4] }, { data: MEAN.map((v, i) => [i + 1, v]), color: P.accent, width: 2.2 }],
+        hlines: [{ y: FLOOR, color: P.accent2, width: 2 }] });
+      ctx.fillStyle = P.faint;
+      DOTS.forEach((v, i) => v.forEach((x) => { ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.arc(C2.X(i + 1), C2.Y(Math.min(0.6, x)), 1.6, 0, TAU); ctx.fill(); }));
+      ctx.globalAlpha = 1;
+      const mine = ST.annVol(portRets(pick), 12);
+      ctx.fillStyle = P.bad; ctx.beginPath(); ctx.arc(C2.X(n), C2.Y(Math.min(0.6, mine)), 4.5, 0, TAU); ctx.fill();
+      knob(ctx, C2.X(n), C2.Y(MEAN[n - 1]), P);
+      text(ctx, "보라: 30개 평균 · 점선: 공식 · 금색: 바닥 " + pct(FLOOR, 0), R.x + R.w, R.y - 8, { color: P.dim, size: 11, align: "right" });
+      if (!nar) text(ctx, "종목 수 n", R.x + R.w / 2, R.y + R.h + 34, { color: P.dim, size: 11, align: "center" });
+      MB.stat("ns-o-v", pct(mine));
+      MB.stat("ns-o-m", pct(MEAN[n - 1]));
+      MB.stat("ns-o-f", pct(FLOOR));
+      MB.stat("ns-o-r", pct(1 - MEAN[n - 1] / MEAN[0], 0));
+    }, { get height() { return narrow("ns-cv") ? 500 : 360; } });
+    MB.drag(cv.canvas, { move(x, y) { if (!C2) return; if (!narrow("ns-cv") && x < C2.box.x - 30) return; if (narrow("ns-cv") && y < C2.box.y - 20) return; const n = Math.round(MB.clamp(invX(C2, x, 0, 51), 1, 50)); if (n !== nn()) nn.set(n); } });
+    document.getElementById("ns-re").addEventListener("click", () => { seed++; pickNow(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 6. 두 종목과 반반 */
+  (function () {
+    const ND = 504, sg = 0.35 / Math.sqrt(252), mu = 0.08 / 252;
+    let seed = 8, z1, z2;
+    function gen() { const g = ST.gauss(seed); z1 = []; z2 = []; for (let i = 0; i < ND; i++) { z1.push(g()); z2.push(g()); } }
+    gen();
+    const rho = MB.range("r2-r", (v) => v.toFixed(2), () => cv.redraw());
+    const cv = MB.canvas("#r2-cv", (ctx, w, h) => {
+      const P = MB.palette(), r = rho(), q = Math.sqrt(Math.max(0, 1 - r * r)), nar = narrow("r2-cv");
+      const ra = z1.map((z) => mu + sg * z), rb = z1.map((z, i) => mu + sg * (r * z + q * z2[i]));
+      const rp = ra.map((x, i) => 0.5 * (x + rb[i]));
+      const A = ST.cumulate(ra), B = ST.cumulate(rb), Pp = ST.cumulate(rp);
+      const all = A.concat(B, Pp), lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+      MB.chart(ctx, { x: 46, y: 14, w: w - 60, h: h - 44 }, { x: [0, ND], y: [Math.min(0.5, lo * 0.95), Math.max(1.6, hi * 1.05)], yFmt: (v) => v.toFixed(1) + "x",
+        xTicks: [0, 126, 252, 378, 504], xFmt: (v) => (v / 252).toFixed(1) + (nar ? "" : "y"),
+        hlines: [{ y: 1, color: P.faint }],
+        series: [{ data: A.map((v, i) => [i, v]), color: P.accent, width: 1.4 }, { data: B.map((v, i) => [i, v]), color: P.accent2, width: 1.4 }, { data: Pp.map((v, i) => [i, v]), color: P.text, width: 2.6 }] });
+      MB.stat("r2-o-a", pct(ST.annVol(ra), 0) + " · " + pct(ST.annVol(rb), 0));
+      MB.stat("r2-o-p", pct(ST.annVol(rp)));
+      MB.stat("r2-o-t", pct(0.35 * Math.sqrt((1 + r) / 2)));
+      MB.stat("r2-o-m", tn(-1, pct(ST.maxDrawdown(Pp).mdd)));
+    }, { get height() { return narrow("r2-cv") ? 260 : 300; } });
+    document.getElementById("r2-re").addEventListener("click", () => { seed++; gen(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 7. 점 구름 끌기 */
+  (function () {
+    const ND = 300, sd = 0.02, g = ST.gauss(44), z1 = [], z2 = [];
+    for (let i = 0; i < ND; i++) { z1.push(g()); z2.push(g()); }
+    let rho = 0.3, C = null;
+    const cv = MB.canvas("#sc-cv", (ctx, w, h) => {
+      const P = MB.palette(), q = Math.sqrt(Math.max(0, 1 - rho * rho)), E = 0.07;
+      const side = Math.min(w - 70, h - 66), bx = { x: (w - side) / 2 + 14, y: 12, w: side, h: side };
+      C = MB.chart(ctx, bx, { x: [-E, E], y: [-E, E], xTicks: [-0.06, -0.03, 0, 0.03, 0.06], yTicks: [-0.06, -0.03, 0, 0.03, 0.06], xFmt: pAx, yFmt: pAx });
+      ctx.fillStyle = P.downSoft; ctx.fillRect(C.X(-E), C.Y(0), C.X(0) - C.X(-E), C.Y(-E) - C.Y(0));
+      ctx.fillStyle = P.upSoft; ctx.fillRect(C.X(0), C.Y(E), C.X(E) - C.X(0), C.Y(0) - C.Y(E));
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(C.X(0), bx.y); ctx.lineTo(C.X(0), bx.y + bx.h); ctx.moveTo(bx.x, C.Y(0)); ctx.lineTo(bx.x + bx.w, C.Y(0)); ctx.stroke();
+      let both = 0, one = 0; const rp = [];
+      ctx.fillStyle = P.accent; ctx.globalAlpha = 0.7;
+      for (let i = 0; i < ND; i++) {
+        const a = sd * z1[i], b = sd * (rho * z1[i] + q * z2[i]);
+        if (a < 0 && b < 0) both++; else if (a < 0 || b < 0) one++;
+        rp.push((a + b) / 2);
+        ctx.beginPath(); ctx.arc(C.X(MB.clamp(a, -E, E)), C.Y(MB.clamp(b, -E, E)), 2.6, 0, TAU); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(C.X(-E), C.Y(-E * rho)); ctx.lineTo(C.X(E), C.Y(E * rho)); ctx.stroke();
+      knob(ctx, C.X(0.05), C.Y(0.05 * rho), P, 8);
+      text(ctx, "둘 다 하락 " + both + "일", C.X(-E) + 6, C.Y(-E) - 8, { color: P.down, size: 12, weight: 700 });
+      text(ctx, "둘 다 상승", C.X(E) - 6, C.Y(E) + 16, { color: P.up, size: 12, weight: 700, align: "right" });
+      text(ctx, "A →", bx.x + bx.w + 4, bx.y + bx.h + 18, { color: P.dim, size: 11, align: "right" });
+      text(ctx, "B ↑", bx.x - 40, bx.y + 10, { color: P.dim, size: 11 });
+      MB.stat("sc-o-r", rho.toFixed(2));
+      MB.stat("sc-o-d", Math.round((both / ND) * 100) + "%");
+      MB.stat("sc-o-x", Math.round((one / ND) * 100) + "%");
+      MB.stat("sc-o-p", pct(ST.std(rp), 2) + " <small>(하나 2%)</small>");
+    }, { get height() { return Math.min(440, Math.max(320, document.getElementById("sc-cv").parentElement.clientWidth * 0.62)); } });
+    MB.drag(cv.canvas, { move(x, y) { if (!C) return; rho = Math.round(MB.clamp(invY(C, y, -0.07, 0.07) / 0.05, -1, 1) * 20) / 20; cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 8. 위기의 상관 */
+  (function () {
+    const ND = 600, W = 40, H2 = W / 2, sm = 0.15 / Math.sqrt(252), se = 0.3 / Math.sqrt(252), sc = 0.45 / Math.sqrt(252), dc = Math.log(0.6) / H2, mu = 0.08 / 252;
+    const WIN = [60, 170, 280, 390, 500], C0 = 280;
+    const shock = (t, w0) => (t < w0 || t >= w0 + W ? 0 : t < w0 + H2 ? dc : -dc);
+    let seed = 15, data = null;
+    const mode = MB.seg("cr-m", () => { build(); cv.redraw(); });
+    function build() {
+      const g = ST.gauss(seed), tog = mode() === "together", R = [[], [], [], [], []];
+      for (let t = 0; t < ND; t++) {
+        const zm = g(), m = mu + sm * zm + (tog ? shock(t, C0) + (t >= C0 && t < C0 + W ? sc * g() : 0) : 0);
+        for (let j = 0; j < 5; j++) {
+          let x = m + se * g();
+          if (!tog && t >= WIN[j] && t < WIN[j] + W) x += shock(t, WIN[j]) + sc * g();
+          R[j].push(Math.exp(x) - 1);
+        }
+      }
+      const port = R[0].map((_, t) => ST.mean(R.map((r) => r[t])));
+      const roll = []; for (let t = 0; t < ND; t++) { if (t < 29) { roll.push(null); continue; } let s = 0, c = 0; for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++) { s += ST.corr(R[i].slice(t - 29, t + 1), R[j].slice(t - 29, t + 1)); c++; } roll.push(s / c); }
+      const crisisCorr = tog ? (() => { let s = 0, c = 0; for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++) { s += ST.corr(R[i].slice(280, 320), R[j].slice(280, 320)); c++; } return s / c; })() : ST.mean(WIN.map((w0) => { let s = 0, c = 0; for (let i = 0; i < 5; i++) for (let j = i + 1; j < 5; j++) { s += ST.corr(R[i].slice(w0, w0 + W), R[j].slice(w0, w0 + W)); c++; } return s / c; }));
+      data = { paths: R.map((r) => ST.cumulate(r)), port: ST.cumulate(port), roll, crisisCorr };
+    }
+    build();
+    const cv = MB.canvas("#cr-cv", (ctx, w, h) => {
+      const P = MB.palette(), tog = mode() === "together";
+      const top = { x: 46, y: 12, w: w - 60, h: (h - 50) * 0.66 }, bot = { x: 46, y: top.y + top.h + 14, w: w - 60, h: (h - 50) * 0.34 - 6 };
+      const bands = tog ? [{ x0: 280, x1: 320, color: P.downSoft }] : WIN.map((a) => ({ x0: a, x1: a + W, color: P.downSoft }));
+      const all = data.paths.flat(), lo = Math.min.apply(null, all), hi = Math.max.apply(null, all);
+      MB.chart(ctx, top, { x: [0, ND], y: [Math.min(0.4, lo * 0.95), Math.max(1.4, hi * 1.03)], yFmt: (v) => v.toFixed(1) + "x", xTicks: [], bands,
+        series: data.paths.map((p) => ({ data: p.map((v, i) => [i, v]), color: P.faint, width: 1 })).concat([{ data: data.port.map((v, i) => [i, v]), color: P.accent, width: 2.8 }]),
+        hlines: [{ y: 1, color: P.faint }] });
+      MB.chart(ctx, bot, { x: [0, ND], y: [-0.2, 1], yTicks: [0, 0.5, 1], yFmt: (v) => v.toFixed(1), xTicks: [0, 100, 200, 300, 400, 500, 600], xFmt: (v) => v + "일", bands,
+        series: [{ data: data.roll.map((v, i) => [i, v == null ? NaN : v]), color: P.accent2, width: 1.8 }] });
+      text(ctx, "평균 상관(30일)", bot.x + 6, bot.y + 12, { color: P.dim, size: 11 });
+      const sm_ = ST.mean(data.paths.map((p) => ST.maxDrawdown(p).mdd)), pm = ST.maxDrawdown(data.port).mdd;
+      MB.stat("cr-o-s", pct(sm_));
+      MB.stat("cr-o-p", tn(-1, pct(pm)));
+      MB.stat("cr-o-k", pct(1 - pm / sm_, 0));
+      MB.stat("cr-o-c", data.crisisCorr.toFixed(2));
+    }, { get height() { return narrow("cr-cv") ? 320 : 340; } });
+    document.getElementById("cr-re").addEventListener("click", () => { seed++; build(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 9. 베타 맞히기 */
+  (function () {
+    let guess = 1, shown = false, C = null;
+    const XE = 0.07, YE = 0.15;
+    const st = MB.seg("bt-s", () => { guess = 1; shown = false; MB.stat("bt-score", "—"); cv.redraw(); });
+    const cv = MB.canvas("#bt-cv", (ctx, w, h) => {
+      const P = MB.palette(), k = st(), r = RET[k], b = EST[k].b, rho = EST[k].rho;
+      C = MB.chart(ctx, { x: 52, y: 14, w: w - 66, h: h - 68 }, { x: [-XE, XE], y: [-YE, YE], xTicks: [-0.06, -0.03, 0, 0.03, 0.06], yTicks: [-0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15], xFmt: pAx, yFmt: pAx, xLabel: narrow("bt-cv") ? null : "SB 종합지수 일간 수익률 →" });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(C.X(0), C.box.y); ctx.lineTo(C.X(0), C.box.y + C.box.h); ctx.moveTo(C.box.x, C.Y(0)); ctx.lineTo(C.box.x + C.box.w, C.Y(0)); ctx.stroke();
+      ctx.fillStyle = COL(P, k); ctx.globalAlpha = 0.32;
+      for (let i = 0; i < r.length; i++) { ctx.beginPath(); ctx.arc(C.X(MB.clamp(RM[i], -XE, XE)), C.Y(MB.clamp(r[i], -YE, YE)), 1.7, 0, TAU); ctx.fill(); }
+      ctx.globalAlpha = 1;
+      const line = (s, col, dash, wd) => { ctx.save(); ctx.beginPath(); ctx.rect(C.box.x, C.box.y, C.box.w, C.box.h); ctx.clip(); ctx.strokeStyle = col; ctx.lineWidth = wd; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(C.X(-XE), C.Y(-XE * s)); ctx.lineTo(C.X(XE), C.Y(XE * s)); ctx.stroke(); ctx.restore(); };
+      line(1, P.faint, [3, 4], 1.2);
+      text(ctx, "β=1", C.X(0.06), C.Y(0.06) - 6, { color: P.dim, size: 11, align: "center" });
+      line(guess, P.accent, [], 2.4);
+      if (shown) line(b, P.bad, [7, 4], 2.4);
+      knob(ctx, C.X(0.05), C.Y(MB.clamp(0.05 * guess, -YE, YE)), P, 8);
+      text(ctx, ST.CO[k].name + " 일간 수익률 ↑", C.box.x + 6, C.box.y + 12, { color: P.dim, size: 11 });
+      if (shown) text(ctx, "실제 회귀선 β=" + b.toFixed(2), C.box.x + C.box.w - 6, C.box.y + C.box.h - 10, { color: P.bad, size: 12, weight: 700, align: "right" });
+      MB.stat("bt-o-g", guess.toFixed(2));
+      MB.stat("bt-o-b", shown ? b.toFixed(2) : "?");
+      MB.stat("bt-o-c", shown ? rho.toFixed(2) : "?");
+      MB.stat("bt-o-r", shown ? (rho * rho).toFixed(2) : "?");
+    }, { get height() { return narrow("bt-cv") ? 350 : 400; } });
+    MB.drag(cv.canvas, { move(x, y) { if (!C) return; guess = Math.round(MB.clamp(invY(C, y, -YE, YE) / 0.05, -0.5, 3) * 20) / 20; cv.redraw(); } });
+    document.getElementById("bt-go").addEventListener("click", () => {
+      shown = true; const b = EST[st()].b, e = Math.abs(guess - b);
+      MB.stat("bt-score", e < 0.1 ? '<span class="ok-t">아주 가깝다 (차이 ' + e.toFixed(2) + ")</span>" : e < 0.3 ? "괜찮다 (차이 " + e.toFixed(2) + ")" : '<span class="warn-t">차이 ' + e.toFixed(2) + "</span>");
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 10. 시장 충격과 베타 */
+  (function () {
+    const mm = MB.range("sh-m", (v) => spct(v, 0), () => cv.redraw());
+    const ec = document.getElementById("sh-e"); ec.addEventListener("change", () => cv.redraw());
+    const rows = [{ k: "index", b: 1, e: 0 }].concat(K.map((k) => ({ k, b: EST[k].b, e: EST[k].e / Math.sqrt(12) })));
+    const cv = MB.canvas("#sh-cv", (ctx, w, h) => {
+      const P = MB.palette(), m = mm(), nar = narrow("sh-cv");
+      const bx = { x: 50, y: 14, w: w - 64, h: h - 46 }, Y0 = -0.6, Y1 = 0.6;
+      const c = MB.chart(ctx, bx, { x: [0, rows.length], y: [Y0, Y1], xTicks: [], yTicks: [-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6], yFmt: pAx });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(bx.x, c.Y(0)); ctx.lineTo(bx.x + bx.w, c.Y(0)); ctx.stroke();
+      const bw = (bx.w / rows.length) * 0.5;
+      rows.forEach((r, i) => {
+        const cx = c.X(i + 0.5), v = r.b * m;
+        ctx.fillStyle = MB.toneColor(v); ctx.globalAlpha = r.k === "index" ? 0.55 : 0.9;
+        ctx.fillRect(cx - bw / 2, Math.min(c.Y(v), c.Y(0)), bw, Math.abs(c.Y(v) - c.Y(0))); ctx.globalAlpha = 1;
+        if (ec.checked && r.e > 0) {
+          const a = MB.clamp(v - r.e, Y0, Y1), b = MB.clamp(v + r.e, Y0, Y1);
+          ctx.strokeStyle = P.text; ctx.lineWidth = 1.6;
+          ctx.beginPath(); ctx.moveTo(cx, c.Y(a)); ctx.lineTo(cx, c.Y(b)); ctx.moveTo(cx - 7, c.Y(a)); ctx.lineTo(cx + 7, c.Y(a)); ctx.moveTo(cx - 7, c.Y(b)); ctx.lineTo(cx + 7, c.Y(b)); ctx.stroke();
+        }
+        text(ctx, spct(v, 0), cx, v < 0 ? c.Y(v) + 14 : c.Y(v) - 6, { color: P.text, size: 11, align: "center", mono: true });
+        text(ctx, SHORT[r.k], cx, bx.y + bx.h + 18, { color: P.dim, size: 12, align: "center" });
+        if (!nar) text(ctx, "β " + r.b.toFixed(2), cx, bx.y + 12, { color: P.faint, size: 11, align: "center", mono: true });
+      });
+      const H = rows[1], N = rows[2];
+      MB.stat("sh-o-h", tn(H.b * m, spct(H.b * m)));
+      MB.stat("sh-o-n", tn(N.b * m, spct(N.b * m)));
+      MB.stat("sh-o-w", tn(H.b * m, (H.b * m < 0 ? "−" : "+") + MB.won(Math.abs(H.b * m * 1e7))));
+      MB.stat("sh-o-i", tn(m, (m < 0 ? "−" : "+") + MB.won(Math.abs(m * 1e7))));
+    }, { get height() { return narrow("sh-cv") ? 300 : 320; } });
+  })();
+
+  /* ---------------------------------------------------------- 11. 두꺼운 꼬리 1,000일 */
+  (function () {
+    const ND = 1000, TH = -0.05;
+    let seed = 1, zn = [], zf = [], shown = ND, expF = 0, worst1 = 0, worst2 = 0;
+    const sg = MB.range("ft-s", (v) => Math.round(v * 100) + "% · 하루 " + ((v / Math.sqrt(252)) * 100).toFixed(1) + "%", () => { stats(); cv.redraw(); });
+    const df = MB.range("ft-d", (v) => String(v), () => { gen(); expect(); cv.redraw(); });
+    function gen() { const g = ST.gauss(seed), f = ST.fat(seed + 500, df()); zn = []; zf = []; for (let i = 0; i < ND; i++) { zn.push(g()); zf.push(f()); } }
+    let big = [];
+    function expect() { const f = ST.fat(99, df()); big = []; for (let i = 0; i < 60000; i++) big.push(f()); stats(); }
+    function stats() { const sd = sg() / Math.sqrt(252), th = TH / sd; expF = (big.filter((z) => z <= th).length / big.length) * ND; }
+    gen(); expect();
+    const cv = MB.canvas("#ft-cv", (ctx, w, h) => {
+      const P = MB.palette(), sd = sg() / Math.sqrt(252), n = Math.floor(shown);
+      const ph = (h - 40) / 2, YE = 0.12;
+      [[zn, "정규분포"], [zf, "두꺼운 꼬리 (자유도 " + df() + ")"]].forEach(([z, lab], k) => {
+        const bx = { x: 46, y: 10 + k * (ph + 10), w: w - 58, h: ph - 10 };
+        const c = MB.chart(ctx, bx, { x: [0, ND], y: [-YE, YE * 0.6], xTicks: k ? [0, 250, 500, 750, 1000] : [], xFmt: (v) => v + "일", yTicks: [-0.1, -0.05, 0, 0.05], yFmt: pAx,
+          hlines: [{ y: TH, color: P.bad, label: "−5%" }] });
+        ctx.save(); ctx.beginPath(); ctx.rect(bx.x, bx.y, bx.w, bx.h); ctx.clip();
+        let cnt = 0, worst = 0;
+        for (let i = 0; i < n; i++) {
+          const r = z[i] * sd, hit = r <= TH; if (hit) cnt++; worst = Math.min(worst, r);
+          ctx.strokeStyle = hit ? P.bad : r < 0 ? P.down : P.up; ctx.globalAlpha = hit ? 1 : 0.45; ctx.lineWidth = hit ? 2.4 : 1;
+          ctx.beginPath(); ctx.moveTo(c.X(i), c.Y(0)); ctx.lineTo(c.X(i), c.Y(MB.clamp(r, -YE, YE))); ctx.stroke();
+        }
+        ctx.globalAlpha = 1; ctx.restore();
+        text(ctx, lab + " · −5% 이하 " + cnt + "일", bx.x + 6, bx.y + 13, { color: P.text, size: 12, weight: 600 });
+        MB.stat(k ? "ft-o-f" : "ft-o-n", (k ? bad(cnt + "일") : cnt + "일"));
+        (k ? (worst2 = worst) : (worst1 = worst));
+      });
+      MB.stat("ft-o-w", pct(worst1) + " / " + pct(worst2));
+      MB.stat("ft-o-e", (ND * ST.ncdf(TH / sd)).toFixed(1) + " / " + expF.toFixed(1));
+    }, { get height() { return narrow("ft-cv") ? 320 : 340; } });
+    document.getElementById("ft-go").addEventListener("click", () => { seed++; gen(); shown = 0; });
+    MB.loop(cv.canvas, (dt) => { if (shown >= ND) return; shown = Math.min(ND, shown + dt * 400); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 12. VaR와 CVaR */
+  (function () {
+    let C = null;
+    const RANGE = { index: 0.07, hanbit: 0.13, byeol: 0.3 };
+    const ds = MB.seg("vr-s", () => cv.redraw());
+    const cf = MB.range("vr-c", (v) => (v * 100).toFixed(1) + "%", () => cv.redraw());
+    const cv = MB.canvas("#vr-cv", (ctx, w, h) => {
+      const P = MB.palette(), k = ds(), r = RET[k], E = RANGE[k], c = cf();
+      const v = ST.percentile(r, 1 - c), tail = r.filter((x) => x <= v), cvar = ST.mean(tail);
+      const mu = ST.mean(r), sd = ST.std(r);
+      let z = 0; { let a = -6, b = 0; for (let i = 0; i < 60; i++) { const m = (a + b) / 2; ST.ncdf(m) < 1 - c ? (a = m) : (b = m); } z = (a + b) / 2; }
+      const nv = mu + z * sd;
+      const H = ST.hist(r.map((x) => MB.clamp(x, -E, E - 1e-9)), 60, -E, E);
+      const ymax = Math.max.apply(null, H.counts) * 1.1;
+      C = MB.chart(ctx, { x: 46, y: 14, w: w - 58, h: h - 68 }, { x: [-E, E], y: [0, ymax], xFmt: pAx, yFmt: (y) => String(Math.round(y)), xLabel: "하루 수익률 (10년, " + r.length + "일)" });
+      H.counts.forEach((n, i) => {
+        if (!n) return; const x0 = C.X(H.edges[i]), x1 = C.X(H.edges[i + 1]);
+        ctx.fillStyle = H.edges[i + 1] <= v + 1e-12 ? P.down : P.faint; ctx.globalAlpha = H.edges[i + 1] <= v + 1e-12 ? 0.95 : 0.55;
+        ctx.fillRect(x0 + 0.5, C.Y(n), Math.max(1, x1 - x0 - 1), C.Y(0) - C.Y(n));
+      });
+      ctx.globalAlpha = 1;
+      // 정규 곡선
+      ctx.strokeStyle = P.dim; ctx.lineWidth = 1.2; ctx.setLineDash([4, 3]); ctx.beginPath();
+      for (let i = 0; i <= 200; i++) { const x = -E + (2 * E * i) / 200, y = (r.length * H.width * ST.npdf((x - mu) / sd)) / sd; i ? ctx.lineTo(C.X(x), C.Y(Math.min(ymax, y))) : ctx.moveTo(C.X(x), C.Y(Math.min(ymax, y))); }
+      ctx.stroke(); ctx.setLineDash([]);
+      const vl = (x, col, dash, lab, row) => { ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.setLineDash(dash); ctx.beginPath(); ctx.moveTo(C.X(x), C.box.y); ctx.lineTo(C.X(x), C.box.y + C.box.h); ctx.stroke(); ctx.setLineDash([]); text(ctx, lab, C.X(x) + (row === 2 ? -4 : 4), C.box.y + 14 + row * 16, { color: col, size: 12, weight: 700, align: row === 2 ? "right" : "left" }); };
+      vl(nv, P.dim, [3, 3], "정규 " + pct(nv), 1);
+      vl(cvar, P.bad, [6, 4], "CVaR " + pct(cvar), 2);
+      vl(v, P.accent, [], "VaR " + pct(v), 0);
+      knob(ctx, C.X(v), C.box.y + C.box.h * 0.55, P, 7);
+      MB.stat("vr-o-v", tn(-1, pct(v, 2)));
+      MB.stat("vr-o-w", "−" + MB.won(Math.abs(v) * 1e7));
+      MB.stat("vr-o-c", bad(pct(cvar, 2)));
+      MB.stat("vr-o-n", pct(nv, 2));
+    }, { get height() { return narrow("vr-cv") ? 320 : 350; } });
+    MB.drag(cv.canvas, { move(x) {
+      if (!C) return; const r = RET[ds()], E = RANGE[ds()], v = invX(C, x, -E, E);
+      const c = r.filter((y) => y > v).length / r.length;
+      cf.set(MB.clamp(Math.round(c * 200) / 200, 0.9, 0.995));
+    } });
+  })();
+
+  /* ---------------------------------------------------------- 13. 300종목의 10년 */
+  (function () {
+    const S = U.stocks, NS = S.length;
+    const last = (s) => { let v = 1; for (const x of s.price) if (x != null) v = x; return v; };
+    const MULT = S.map(last), ALL = ST.mean(MULT);
+    const BAS = {};
+    [1, 5, 30].forEach((k) => {
+      const r = ST.rng(77), out = [];
+      for (let b = 0; b < NS; b++) {
+        if (k === 1) { out.push({ m: MULT[b], ids: [b], del: S[b].delistedAt >= 0 }); continue; }
+        const pick = []; while (pick.length < k) { const q = Math.floor(r() * NS); if (!pick.includes(q)) pick.push(q); }
+        out.push({ m: ST.mean(pick.map((q) => MULT[q])), ids: pick, del: false });
+      }
+      BAS[k] = out;
+    });
+    const LO = -7, HI = 5, BW = 0.5, NB = (HI - LO) / BW;
+    const bin = (m) => MB.clamp(Math.floor((Math.log2(Math.max(m, 1e-6)) - LO) / BW), 0, NB - 1);
+    let picked = -1, drop = 1, pr = ST.rng(3);
+    const kk = MB.seg("fa-k", () => { picked = -1; MB.stat("fa-cur", "—"); cv.redraw(); });
+    const cv = MB.canvas("#fa-cv", (ctx, w, h) => {
+      const P = MB.palette(), k = Number(kk()), B = BAS[k];
+      const cnt = new Array(NB).fill(0), dcnt = new Array(NB).fill(0);
+      B.forEach((b) => { cnt[bin(b.m)]++; if (b.del) dcnt[bin(b.m)]++; });
+      const ymax = Math.max(10, Math.max.apply(null, cnt) * 1.15);
+      const C = MB.chart(ctx, { x: 46, y: 22, w: w - 58, h: h - 70 }, { x: [LO, HI], y: [0, ymax], xTicks: [-6, -4, -2, 0, 2, 4], xFmt: (v) => (v >= 0 ? Math.pow(2, v) + "x" : "1/" + Math.pow(2, -v)), yFmt: (y) => String(Math.round(y)), xLabel: "10년 뒤 몇 배 (로그 축)" });
+      ctx.fillStyle = P.downSoft; ctx.fillRect(C.X(LO), C.box.y, C.X(0) - C.X(LO), C.box.h);
+      for (let i = 0; i < NB; i++) {
+        if (!cnt[i]) continue;
+        const x0 = C.X(LO + i * BW) + 1, x1 = C.X(LO + (i + 1) * BW) - 1, nd = cnt[i] - dcnt[i];
+        ctx.fillStyle = LO + i * BW >= 0 ? P.accent : P.down; ctx.globalAlpha = 0.85; ctx.fillRect(x0, C.Y(nd), x1 - x0, C.Y(0) - C.Y(nd));
+        if (dcnt[i]) { ctx.fillStyle = P.bad; ctx.globalAlpha = 1; ctx.fillRect(x0, C.Y(cnt[i]), x1 - x0, C.Y(nd) - C.Y(cnt[i])); }
+        ctx.globalAlpha = 1;
+      }
+      const ax = C.X(Math.log2(ALL));
+      ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.setLineDash([5, 4]); ctx.beginPath(); ctx.moveTo(ax, C.box.y - 8); ctx.lineTo(ax, C.box.y + C.box.h); ctx.stroke(); ctx.setLineDash([]);
+      text(ctx, "전부 사기 " + ALL.toFixed(2) + "배", ax + 4, C.box.y - 8, { color: P.accent2, size: 12, weight: 700 });
+      text(ctx, "원금 손실", C.X(0) - 6, C.box.y + 12, { color: P.down, size: 11, align: "right" });
+      if (k === 1) text(ctx, "빨강: 상장폐지", C.box.x + 6, C.box.y + 28, { color: P.bad, size: 11 });
+      if (picked >= 0) {
+        const b = B[picked], i = bin(b.m), x = C.X(LO + (i + 0.5) * BW), yT = C.Y(cnt[i]) - 12, y = MB.lerp(C.box.y + 10, yT, Math.min(1, drop * drop));
+        ctx.fillStyle = b.m >= ALL ? P.up : P.down; ctx.strokeStyle = P.bg; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x, y, 8, 0, TAU); ctx.fill(); ctx.stroke();
+      }
+      const n = B.length, bt = B.filter((b) => b.m > ALL).length, ls = B.filter((b) => b.m < 1).length, sorted = B.map((b) => b.m).sort((a, b) => a - b);
+      MB.stat("fa-o-d", k === 1 ? bad(B.filter((b) => b.del).length + "개 (" + Math.round((B.filter((b) => b.del).length / n) * 100) + "%)") : "<small>바구니 안에서 섞임</small>");
+      MB.stat("fa-o-b", Math.round((bt / n) * 100) + "%");
+      MB.stat("fa-o-l", ls ? '<span class="down-t">' + Math.round((ls / n) * 100) + "%</span>" : "0%");
+      MB.stat("fa-o-m", sorted[Math.floor(n / 2)].toFixed(2) + " / " + ST.mean(sorted).toFixed(2) + "배");
+    }, { get height() { return narrow("fa-cv") ? 300 : 320; } });
+    document.getElementById("fa-pick").addEventListener("click", () => {
+      const k = Number(kk()), B = BAS[k]; picked = Math.floor(pr() * B.length); drop = 0;
+      const b = B[picked];
+      MB.stat("fa-cur", (k === 1 ? S[b.ids[0]].name + (b.del ? " · 상장폐지" : "") : k + "종목 바구니") + " · " + b.m.toFixed(2) + "배 " + (b.m > ALL ? "(전부 사기보다 낫다)" : "(전부 사기보다 못하다)"));
+    });
+    MB.loop(cv.canvas, (dt) => { if (drop >= 1) return; drop = Math.min(1, drop + dt * 1.6); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 14. 감내선 찾기 */
+  const mixCash = (p, w) => { const v = [1]; for (let i = 1; i < p.length; i++) v.push(v[i - 1] * (1 + w * (p[i] / p[i - 1] - 1))); return v; };
+  const EQ = {
+    rb: ST.rebalance(K.map((k) => SER[k]), [0.2, 0.2, 0.2, 0.2, 0.2], 21, 0).value,
+    bh: M.index.map((_, i) => ST.sum(K.map((k) => (0.2 * SER[k][i]) / SER[k][0]))),
+  };
+  (function () {
+    const opts = [
+      { n: "지수 50% + 현금 50%", m: ST.maxDrawdown(mixCash(M.index, 0.5)).mdd },
+      { n: "지수 70% + 현금 30%", m: ST.maxDrawdown(mixCash(M.index, 0.7)).mdd },
+      { n: "누리식품", m: ST.maxDrawdown(SER.nuri).mdd },
+      { n: "SB 종합지수", m: ST.maxDrawdown(M.index).mdd },
+      { n: "다섯 종목 균등", m: ST.maxDrawdown(EQ.rb).mdd },
+      { n: "한빛반도체", m: ST.maxDrawdown(SER.hanbit).mdd },
+      { n: "모아플랫폼", m: ST.maxDrawdown(SER.moa).mdd },
+      { n: "다온은행", m: ST.maxDrawdown(SER.daon).mdd },
+      { n: "별빛바이오", m: ST.maxDrawdown(SER.byeol).mdd },
+    ];
+    let manual = null, C = null;
+    const qs = [1, 2, 3, 4, 5, 6].map((i) => MB.seg("sv-q" + i, () => { manual = null; cv.redraw(); }));
+    const cv = MB.canvas("#sv-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("sv-cv");
+      const a = qs.map((q) => Number(q()));
+      const tol = (a[0] + a[1] + a[2]) / 3, cap = Math.max(a[3], a[4], a[5]);
+      const line = manual != null ? manual : Math.max(tol, cap);
+      const lx = nar ? 112 : 150, bx = { x: lx, y: 26, w: w - lx - 24, h: h - 74 };
+      const X = (v) => bx.x + (-v / 1) * bx.w, rh = bx.h / opts.length;
+      C = { X, bx };
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+      [0, -0.2, -0.4, -0.6, -0.8].forEach((v) => { ctx.beginPath(); ctx.moveTo(X(v), bx.y); ctx.lineTo(X(v), bx.y + bx.h); ctx.stroke(); text(ctx, pAx(v), X(v), bx.y + bx.h + 16, { color: P.dim, size: 11, align: "center", mono: true }); });
+      let inside = 0;
+      opts.forEach((o, i) => {
+        const y = bx.y + i * rh + rh * 0.2, hh = rh * 0.6, ok = o.m >= line;
+        if (ok) inside++;
+        ctx.fillStyle = ok ? P.ok : P.bad; ctx.globalAlpha = ok ? 0.85 : 0.7;
+        ctx.fillRect(X(0), y, X(o.m) - X(0), hh); ctx.globalAlpha = 1;
+        text(ctx, o.n, bx.x - 8, y + hh / 2, { color: ok ? P.text : P.dim, size: nar ? 11 : 12, align: "right", base: "middle" });
+        text(ctx, pct(o.m, 0), X(o.m) + 5, y + hh / 2, { color: P.text, size: 11, base: "middle", mono: true });
+      });
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(X(line), bx.y - 6); ctx.lineTo(X(line), bx.y + bx.h); ctx.stroke();
+      knob(ctx, X(line), bx.y - 6, P, 7);
+      text(ctx, "기준선 " + pct(line, 0), X(line) + 12, bx.y - 2, { color: P.accent, size: 12, weight: 700 });
+      MB.stat("sv-o-t", pct(tol, 0));
+      MB.stat("sv-o-c", pct(cap, 0));
+      MB.stat("sv-o-f", pct(line, 0) + (manual != null ? " <small>직접</small>" : ""));
+      MB.stat("sv-o-n", inside + " / " + opts.length);
+    }, { get height() { return narrow("sv-cv") ? 360 : 560; } });
+    MB.drag(cv.canvas, { move(x) { if (!C) return; manual = MB.clamp(Math.round((-(x - C.bx.x) / C.bx.w) * 100) / 100, -0.9, -0.05); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 15. 한결의 세 선택지 */
+  (function () {
+    let t = N0 - 1, playing = false;
+    const eq = MB.seg("hg-eq", () => cv.redraw());
+    const ww = MB.range("hg-w", (v) => Math.round(v * 100) + "%", () => cv.redraw());
+    const tb = document.getElementById("hg-tb");
+    const cv = MB.canvas("#hg-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("hg-cv"), i = Math.floor(t), wt = ww();
+      const L = [
+        { k: "hanbit", n: "한빛 몰빵", p: mixCash(SER.hanbit, wt), c: P.accent },
+        { k: "eq5", n: "다섯 종목 균등", p: mixCash(EQ[eq()], wt), c: P.accent2 },
+        { k: "index", n: "SB 종합지수", p: mixCash(M.index, wt), c: P.text },
+      ];
+      L.forEach((s) => { s.v = s.p.map((x) => x * 1e7); s.dd = ST.drawdowns(s.p); });
+      const top = { x: 58, y: 14, w: w - 72, h: (h - 56) * 0.56 }, bot = { x: 58, y: top.y + top.h + 16, w: w - 72, h: (h - 56) * 0.44 - 4 };
+      const hi = Math.max.apply(null, L.map((s) => Math.max.apply(null, s.v.slice(0, i + 1))));
+      MB.chart(ctx, top, { x: [0, N0 - 1], y: [0, Math.max(2e7, hi * 1.08)], yFmt: MB.wonAxis, xTicks: [],
+        hlines: [{ y: 1e7, color: P.faint, label: "1,000만원" }],
+        series: L.map((s) => ({ data: s.v.slice(0, i + 1).map((v, j) => [j, v]), color: s.c, width: s.k === "index" ? 2.4 : 1.6 })) });
+      const ymin = Math.min(-0.45, Math.min.apply(null, L.map((s) => Math.min.apply(null, s.dd))) * 1.05);
+      const c2 = MB.chart(ctx, bot, { x: [0, N0 - 1], y: [ymin, 0], yFmt: pAx, yTicks: [0, -0.2, -0.4, -0.6].filter((v) => v >= ymin), xTicks: yearTicks(nar), xFmt: yearFmt,
+        series: L.map((s) => ({ data: s.dd.slice(0, i + 1).map((v, j) => [j, v]), color: s.c, width: s.k === "index" ? 1.8 : 1.1 })),
+        hlines: [{ y: -0.3, color: P.bad, label: "한결의 감내선 −30%", width: 2 }] });
+      ctx.save(); ctx.beginPath(); ctx.rect(bot.x, c2.Y(-0.3), bot.w, c2.Y(ymin) - c2.Y(-0.3)); ctx.clip(); ctx.fillStyle = P.downSoft; ctx.globalAlpha = 0.6; ctx.fillRect(bot.x, c2.Y(-0.3), bot.w, bot.h); ctx.restore();
+      let lx = top.x + 8; L.forEach((s) => { ctx.fillStyle = s.c; ctx.fillRect(lx, top.y + 6, 12, 3); text(ctx, s.n, lx + 16, top.y + 12, { color: P.dim, size: 11 }); ctx.font = MB.font(11); lx += ctx.measureText(s.n).width + 30; });
+      tb.innerHTML = "<thead><tr><th>선택지</th><th>변동성</th><th>최대 낙폭</th><th>−30% 아래</th><th>지금 금액</th></tr></thead><tbody>" + L.map((s) => {
+        const p = s.p.slice(0, i + 1), md = ST.maxDrawdown(p).mdd, below = s.dd.slice(0, i + 1).filter((d) => d <= -0.3).length;
+        return '<tr><td><i class="dot" style="background:' + s.c + '"></i>' + s.n + "</td><td>" + (i > 20 ? pct(ST.annVol(ST.returns(p))) : "—") + "</td><td" + (md <= -0.3 ? ' class="bad-t"' : "") + ">" + pct(md) + "</td><td" + (below ? ' class="bad-t"' : "") + ">" + below + "일</td><td>" + MB.won(s.v[i]) + "</td></tr>";
+      }).join("") + "</tbody>";
+      MB.stat("hg-now", M.dates[i]);
+    }, { get height() { return narrow("hg-cv") ? 380 : 400; } });
+    const pb = document.getElementById("hg-play");
+    pb.addEventListener("click", () => { if (!playing && t >= N0 - 1) t = 0; playing = !playing; pb.textContent = playing ? "멈춤" : "재생"; });
+    document.getElementById("hg-end").addEventListener("click", () => { t = N0 - 1; playing = false; pb.textContent = "재생"; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (!playing) return; t = Math.min(N0 - 1, t + dt * 120); if (t >= N0 - 1) { playing = false; pb.textContent = "재생"; } cv.redraw(); });
+  })();
+})();
+</script>
+</body>
+</html>

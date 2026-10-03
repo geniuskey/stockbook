@@ -1,0 +1,1524 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "손익 그래프로 보는 파생상품. 선물의 증거금과 일일정산, 보유비용과 베이시스, 콜·풋과 만기 손익, 이항 트리와 블랙-숄즈, 내재변동성과 그릭스, 풋-콜 패리티, 커버드콜·보호적 풋·스트래들, 옵션 매도의 꼬리 위험을 직접 끌고 돌려 본다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>선물과 옵션 · StockBook</title>
+<meta name="description" content="손익 그래프로 보는 파생상품. 선물의 증거금과 일일정산, 보유비용과 베이시스, 콜·풋과 만기 손익, 이항 트리와 블랙-숄즈, 내재변동성과 그릭스, 풋-콜 패리티, 커버드콜·보호적 풋·스트래들, 옵션 매도의 꼬리 위험을 직접 끌고 돌려 본다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/derivatives.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="선물과 옵션 · StockBook">
+<meta property="og:description" content="손익 그래프로 보는 파생상품. 선물의 증거금과 일일정산, 보유비용과 베이시스, 콜·풋과 만기 손익, 이항 트리와 블랙-숄즈, 내재변동성과 그릭스, 풋-콜 패리티, 커버드콜·보호적 풋·스트래들, 옵션 매도의 꼬리 위험을 직접 끌고 돌려 본다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/derivatives.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/derivatives.html#chapter","name":"선물과 옵션","headline":"선물과 옵션 · StockBook","description":"손익 그래프로 보는 파생상품. 선물의 증거금과 일일정산, 보유비용과 베이시스, 콜·풋과 만기 손익, 이항 트리와 블랙-숄즈, 내재변동성과 그릭스, 풋-콜 패리티, 커버드콜·보호적 풋·스트래들, 옵션 매도의 꼬리 위험을 직접 끌고 돌려 본다.","url":"https://stockbook.euiyun.com/chapters/derivatives.html","position":20,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"20. 선물과 옵션","item":"https://stockbook.euiyun.com/chapters/derivatives.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  figure.diagram svg { max-width: 500px; margin: 0 auto; }
+  .legs { display: flex; flex-wrap: wrap; gap: 6px; min-height: 30px; }
+  .legs .leg { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; padding: 3px 4px 3px 10px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface); color: var(--text); }
+  .legs .leg.long { border-color: var(--up); }
+  .legs .leg.short { border-color: var(--down); }
+  .legs .leg button { font: inherit; font-size: 12px; line-height: 1; border: 0; background: var(--bg-elev); color: var(--text-dim); border-radius: 999px; width: 22px; height: 22px; cursor: pointer; }
+  .legs .empty { font-size: 13px; color: var(--text-faint); }
+  .ctrl-cap { font-size: 13px; color: var(--text-dim); margin-bottom: -6px; }
+  .btn.right { border-color: var(--ok); color: var(--ok); font-weight: 600; }
+  .btn.wrong { border-color: var(--bad); color: var(--bad); }
+</style>
+</head>
+<body data-chapter="derivatives">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 20</div>
+    <h1>선물과 옵션</h1>
+    <p class="lead">"3개월 뒤에 이 가격에 사겠다"는 약속, "이 가격에 살 수 있는 권리"도 사고판다. 주식에서 갈라져 나온 이 계약들을 <b>파생상품</b>이라고 부른다. 수식보다 먼저 손익 그래프를 끌어 보고, 증거금 계좌가 매일 불었다 줄었다 하는 것을 지켜보고, 꾸준히 벌다가 한 번에 무너지는 옵션 매도를 10년 동안 돌려 본다.</p>
+    <ul class="objectives">
+      <li>선물의 증거금·일일정산·레버리지를 이해하고, 보유비용으로 이론 선물가를 계산한다.</li>
+      <li>콜과 풋, 행사가와 프리미엄, 내재가치와 시간가치를 만기 손익 그래프로 읽는다.</li>
+      <li>이항 트리에서 블랙-숄즈로 넘어가며 옵션 가격이 정해지는 원리와 변동성의 역할을 안다.</li>
+      <li>델타·감마·세타·베가와 풋-콜 패리티를 그래프로 확인한다.</li>
+      <li>커버드콜·보호적 풋·칼라·스프레드·스트래들의 손익을 직접 조립하고, 옵션 매도의 꼬리 위험을 본다.</li>
+    </ul>
+  </header>
+
+  <section id="what">
+    <h2>파생상품이란</h2>
+    <p>쌀 농부는 가을에 쌀값이 떨어질까 걱정하고, 떡집 주인은 오를까 걱정한다. 둘이 봄에 만나 "가을에 한 가마 20만원에 사고판다"고 약속하면, 둘 다 가격 걱정을 덜 수 있다. 이 약속 자체가 하나의 상품이 된다. 값이 쌀값에서 갈라져 나오므로 <span class="term">파생상품</span><span class="en">(Derivative)</span>, 쌀처럼 값의 근원이 되는 것을 <span class="term">기초자산</span><span class="en">(Underlying)</span>이라고 부른다.</p>
+    <p>주식시장에서 기초자산은 개별 주식, KOSPI 200 같은 지수, 금리, 환율이다. 파생상품은 크게 두 갈래다. 정해진 가격에 사고팔 <b>의무</b>를 주고받는 <b>선물</b>, 정해진 가격에 사거나 팔 <b>권리</b>를 사고파는 <b>옵션</b>이다. 이 장의 모든 그림은 결국 한 가지 질문으로 모인다. "만기에 기초자산 가격이 얼마면 나는 얼마를 벌거나 잃는가?"</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="기초자산에서 선물과 옵션이 갈라져 나오는 구조">
+        <defs><marker id="dv-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <rect x="120" y="12" width="220" height="56" rx="10" class="f-elev s-line"/>
+        <text x="230" y="35" text-anchor="middle" class="lbl-b">기초자산</text>
+        <text x="230" y="55" text-anchor="middle" class="lbl-dim">주식 · 지수 · 금리 · 환율 · 원자재</text>
+        <path d="M190 70 L110 116" class="s-acc" marker-end="url(#dv-ar)"/>
+        <path d="M270 70 L350 116" class="s-acc2" marker-end="url(#dv-ar)"/>
+        <rect x="16" y="120" width="196" height="116" rx="10" class="f-acc-soft s-acc"/>
+        <text x="114" y="144" text-anchor="middle" class="lbl-acc">선물 (Futures)</text>
+        <text x="114" y="166" text-anchor="middle" class="lbl">정해진 가격에 사고팔 <tspan class="lbl-b">의무</tspan></text>
+        <text x="114" y="188" text-anchor="middle" class="lbl-dim">양쪽 모두 증거금을 낸다</text>
+        <text x="114" y="208" text-anchor="middle" class="lbl-dim">손익이 가격에 정비례(직선)</text>
+        <text x="114" y="226" text-anchor="middle" class="lbl-dim">예: KOSPI 200 선물</text>
+        <rect x="248" y="120" width="196" height="116" rx="10" class="f-acc2-soft s-acc2"/>
+        <text x="346" y="144" text-anchor="middle" class="lbl-acc2">옵션 (Option)</text>
+        <text x="346" y="166" text-anchor="middle" class="lbl">정해진 가격에 사고팔 <tspan class="lbl-b">권리</tspan></text>
+        <text x="346" y="188" text-anchor="middle" class="lbl-dim">사는 쪽이 프리미엄을 낸다</text>
+        <text x="346" y="208" text-anchor="middle" class="lbl-dim">손익이 꺾인 선</text>
+        <text x="346" y="226" text-anchor="middle" class="lbl-dim">살 권리 = 콜, 팔 권리 = 풋</text>
+      </svg>
+      <figcaption><b>그림 20-1. 파생상품의 두 갈래.</b> 선물은 의무라서 손익이 직선이고, 옵션은 권리라서 불리하면 버릴 수 있어 손익이 꺾인다. 금리를 맞바꾸는 스왑 같은 다른 갈래도 있지만 이 장은 둘만 다룬다.</figcaption>
+    </figure>
+
+    <p>파생상품이 존재하는 이유는 두 가지다. 하나는 <b>위험을 옮기는 것</b>(헤지)이다. 주식을 가진 사람은 하락 위험을 떼어 내 그 위험을 감수하겠다는 사람에게 넘길 수 있다. 다른 하나는 <b>적은 돈으로 큰 노출</b>을 얻는 것(레버리지)이다. 두 번째가 이 장에서 가장 조심해서 볼 부분이다. 빌린 돈의 무서움은 <a href="leverage.html">19장</a>에서 이미 보았는데, 파생상품은 대출 없이도 같은 효과를 낸다.</p>
+  </section>
+
+  <section id="futures">
+    <h2>선물: 미래 가격을 오늘 약속한다</h2>
+    <p><span class="term">선물</span><span class="en">(Futures)</span>은 정해진 날(<span class="term">만기</span><span class="en">(Expiry)</span>)에 정해진 가격으로 기초자산을 사고팔기로 한 표준화된 계약이다. 지금 돈을 주고받지 않는다. 약속만 한다. 산 사람(<b>매수</b>, 롱)은 가격이 오르면 벌고, 판 사람(<b>매도</b>, 숏)은 가격이 내리면 번다. 한 사람이 번 만큼 다른 사람이 잃는 <b>제로섬</b>이다.</p>
+    <p>약속만 하면 문제가 생긴다. 가격이 크게 움직였을 때 진 쪽이 도망가면 이긴 쪽은 받을 돈이 없다. 그래서 거래소가 두 가지 장치를 둔다. 첫째, 양쪽 모두 계약 금액의 일부를 담보로 맡긴다. 이것이 <span class="term">증거금</span><span class="en">(Margin)</span>이다. 둘째, 손익을 만기까지 미루지 않고 <b>매일 장이 끝날 때 정산</b>한다. 오늘 선물 가격이 오르면 그만큼이 매도자의 계좌에서 빠져 매수자의 계좌로 옮겨진다. 이것이 <span class="term">일일정산</span><span class="en">(Mark-to-market)</span>이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="거래소 청산소를 사이에 둔 선물 매수자와 매도자, 매일 증거금이 옮겨지는 구조">
+        <defs><marker id="dv-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <rect x="14" y="30" width="118" height="60" rx="10" class="f-up-soft s-up"/>
+        <text x="73" y="56" text-anchor="middle" class="lbl-up">매수자 (롱)</text>
+        <text x="73" y="76" text-anchor="middle" class="lbl-dim">오르면 이익</text>
+        <rect x="171" y="22" width="118" height="76" rx="10" class="f-elev s-line"/>
+        <text x="230" y="50" text-anchor="middle" class="lbl-b">거래소</text>
+        <text x="230" y="70" text-anchor="middle" class="lbl-dim">청산소가 양쪽의</text>
+        <text x="230" y="88" text-anchor="middle" class="lbl-dim">상대방이 된다</text>
+        <rect x="328" y="30" width="118" height="60" rx="10" class="f-down-soft s-down"/>
+        <text x="387" y="56" text-anchor="middle" class="lbl-down">매도자 (숏)</text>
+        <text x="387" y="76" text-anchor="middle" class="lbl-dim">내리면 이익</text>
+        <path d="M134 60 L168 60" class="s-line" marker-end="url(#dv-ar2)" marker-start="url(#dv-ar2)"/>
+        <path d="M292 60 L326 60" class="s-line" marker-end="url(#dv-ar2)" marker-start="url(#dv-ar2)"/>
+        <rect x="14" y="130" width="118" height="44" rx="8" class="f-surface s-line"/>
+        <text x="73" y="157" text-anchor="middle" class="lbl">증거금 계좌</text>
+        <rect x="328" y="130" width="118" height="44" rx="8" class="f-surface s-line"/>
+        <text x="387" y="157" text-anchor="middle" class="lbl">증거금 계좌</text>
+        <path d="M326 140 Q230 112 134 140" class="s-up" marker-end="url(#dv-ar2)"/>
+        <text x="230" y="120" text-anchor="middle" class="lbl-up">가격 상승일: 매도자 → 매수자</text>
+        <path d="M134 166 Q230 194 326 166" class="s-down" marker-end="url(#dv-ar2)"/>
+        <text x="230" y="200" text-anchor="middle" class="lbl-down">가격 하락일: 매수자 → 매도자</text>
+        <text x="230" y="234" text-anchor="middle" class="lbl-dim">잔액이 유지증거금 아래로 내려가면 마진콜 → 못 채우면 반대매매</text>
+      </svg>
+      <figcaption><b>그림 20-2. 선물의 일일정산.</b> 매수자와 매도자는 서로를 몰라도 된다. 거래소(청산소)가 가운데 서서 매일 장 마감 가격으로 이긴 쪽에 돈을 옮겨 주고, 진 쪽의 담보가 모자라면 채우라고 요구한다.</figcaption>
+    </figure>
+
+    <p>아래 시뮬레이터는 지수가 400일 때 지수선물 1계약을 산 사람의 계좌다. 1계약의 크기는 지수 × 25만원, 곧 1억원이다. 개시증거금은 계약 금액의 12%(1,200만원), 잔액이 8%(800만원)인 <span class="term">유지증거금</span><span class="en">(Maintenance margin)</span> 아래로 내려가면 <span class="term">마진콜</span><span class="en">(Margin call)</span>이 온다. "다음 날"을 눌러 하루씩 정산해 보자. 처음에는 "마진콜 때 입금한다"를 끄고 시작한다.</p>
+
+    <div class="sim" id="sim-settle">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>일일정산: 매일 움직이는 증거금 계좌</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="fs-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="seg" id="fs-side"><button data-value="buy" class="on">매수(롱)</button><button data-value="sell">매도(숏)</button></div>
+          <label class="ctrl"><span>계약 수 <output id="fs-n-out"></output></span><input type="range" id="fs-n" min="1" max="3" step="1" value="1"></label>
+          <label class="check"><input type="checkbox" id="fs-top"> 마진콜 때 입금한다</label>
+          <div class="btn-row"><button class="btn primary" id="fs-next">다음 날</button><button class="btn" id="fs-play">자동 재생</button><button class="btn" id="fs-new">다른 경로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">날짜 · 선물 가격</span><span class="v" id="fs-o-px">—</span></div>
+        <div class="stat"><span class="k">오늘 정산</span><span class="v" id="fs-o-today">—</span></div>
+        <div class="stat"><span class="k">계좌 잔액</span><span class="v" id="fs-o-eq">—</span></div>
+        <div class="stat"><span class="k">누적 손익</span><span class="v" id="fs-o-tot">—</span></div>
+        <div class="stat"><span class="k">추가 입금</span><span class="v" id="fs-o-dep">—</span></div>
+        <div class="stat"><span class="k">상태</span><span class="v" id="fs-o-st">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 입금 없이 하루씩 진행해 마진콜과 반대매매가 언제 오는지 본다. ② 입금을 켜고 같은 경로를 처음부터 끝까지 가서, 버텼다면 결국 이겼는지 본다. ③ 매도로 바꾸면 같은 경로에서 돈의 방향이 정반대가 된다. (가상의 경로, 연 변동성 28%. 실제로는 정해진 시간까지 입금하지 않으면 다음 날 반대매매된다.)</div>
+    </div>
+
+    <p>첫 경로에서는 지수가 열흘 남짓 사이에 4%쯤 빠지자 계좌가 유지증거금을 깨고, 입금하지 않으면 그 자리에서 포지션이 강제로 닫힌다. 그런데 같은 경로를 끝까지 보면 지수는 결국 400 위로 돌아온다. <b>방향을 맞혀도 중간의 흔들림을 버틸 현금이 없으면 진다.</b> 입금을 켜면 버틸 수는 있지만, 그만큼의 돈이 계좌에 더 묶인다. 일일정산은 손실을 미루지 못하게 하는 장치다.</p>
+
+    <h3>증거금이 곧 레버리지다</h3>
+    <p>지수가 1% 움직이면 1억원짜리 계약의 손익은 100만원이다. 그런데 내 돈은 증거금 1,200만원뿐이다. 내 돈 기준으로는 약 8.3% 움직인 셈이다. 증거금률이 낮을수록 배수는 커진다. 그래프의 손잡이를 좌우로 끌어 지수 변화를 바꿔 보자.</p>
+
+    <div class="sim" id="sim-lev">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>증거금률과 레버리지</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lv-cv"></canvas><span class="hint">손잡이를 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>증거금률 <output id="lv-m-out"></output></span><input type="range" id="lv-m" min="5" max="30" step="1" value="12"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">지수 변화</span><span class="v" id="lv-o-x">—</span></div>
+        <div class="stat"><span class="k">레버리지</span><span class="v" id="lv-o-L">—</span></div>
+        <div class="stat"><span class="k">선물 1계약 손익</span><span class="v" id="lv-o-pnl">—</span></div>
+        <div class="stat"><span class="k">증거금 대비</span><span class="v" id="lv-o-ret">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 증거금률 12%에서 지수 −5%면 증거금의 몇 %가 사라지는가. ② 증거금률을 5%로 낮추고 같은 하락을 본다. ③ 증거금이 전부 사라지는 지수 하락폭이 정확히 증거금률과 같은 이유를 생각해 본다. (계약 금액 1억원, 수수료 무시)</div>
+    </div>
+
+    <p>선물 손익선은 기울기만 다를 뿐 현물과 같은 직선이다. 선물은 "주식을 빚 없이 레버리지로 산 것"과 거의 같다. 증거금률이 12%면 지수가 12% 빠질 때 증거금이 0이 되고, 그보다 더 빠지면 맡긴 돈보다 많이 잃는다. 레버리지 ETF 대부분이 안에 선물을 담는 이유도 여기에 있다(<a href="index.html">15장</a>).</p>
+  </section>
+
+  <section id="carry">
+    <h2>베이시스와 보유비용</h2>
+    <p>오늘 지수가 400인데 6개월 뒤 만기 선물은 얼마여야 할까? 두 가지 방법을 비교하면 된다. ① 오늘 400을 빌려 지수 바스켓을 사서 6개월 들고 있는다. 이자를 내지만 그동안 배당을 받는다. ② 선물을 산다. 돈은 거의 들지 않는다. 두 방법은 만기에 똑같이 지수 한 단위를 쥐게 하므로 비용도 같아야 한다. 그래서 이론 선물가는 현재가에 "이자 − 배당"만큼을 더한 값이 된다. 이것을 <span class="term">보유비용 모형</span><span class="en">(Cost of carry)</span>이라고 한다.</p>
+    <div class="formula">$$F = S \cdot e^{(r-q)T}$$<div class="where">\(F\): 이론 선물가, \(S\): 현재 기초자산 가격, \(r\): 무위험 금리(연), \(q\): 배당수익률(연), \(T\): 만기까지 남은 기간(년)</div></div>
+    <p>선물가와 현물가의 차이 \(F - S\)를 <span class="term">베이시스</span><span class="en">(Basis)</span>라고 한다. 금리가 배당보다 높으면 선물이 현물보다 비싸고(<span class="term">콘탱고</span><span class="en">(Contango)</span>), 배당이 더 높으면 선물이 싸다(<span class="term">백워데이션</span><span class="en">(Backwardation)</span>). 남은 기간이 줄수록 베이시스도 줄어 만기일에는 0이 된다. 만기에는 선물이 곧 현물이기 때문이다.</p>
+
+    <div class="sim" id="sim-carry">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>보유비용: 이론 선물가와 베이시스의 수렴</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cy-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>금리 r <output id="cy-r-out"></output></span><input type="range" id="cy-r" min="0" max="8" step="0.25" value="3.5"></label>
+          <label class="ctrl"><span>배당수익률 q <output id="cy-q-out"></output></span><input type="range" id="cy-q" min="0" max="6" step="0.25" value="1.5"></label>
+          <label class="ctrl"><span>만기까지 <output id="cy-T-out"></output></span><input type="range" id="cy-T" min="1" max="12" step="1" value="6"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">현재 지수</span><span class="v">400.00</span></div>
+        <div class="stat"><span class="k">이론 선물가</span><span class="v" id="cy-o-F">—</span></div>
+        <div class="stat"><span class="k">베이시스</span><span class="v" id="cy-o-b">—</span></div>
+        <div class="stat"><span class="k">상태</span><span class="v" id="cy-o-st">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 배당수익률을 금리보다 높게 올려 선물이 현물보다 싸지는 것을 본다. ② 만기를 12개월로 늘리면 베이시스가 커진다. ③ 지수가 어떻게 흔들려도 두 선이 만기에 한 점으로 모인다. (가상의 지수 경로, 배당은 연속으로 나온다고 가정)</div>
+    </div>
+
+    <p>실제 선물 가격은 이론가에서 조금씩 벗어난다. 벗어난 폭이 거래 비용보다 커지면 싼 쪽을 사고 비싼 쪽을 팔아 차익을 얻는 <span class="term">차익거래</span><span class="en">(Arbitrage)</span>가 들어와 틈을 메운다. 그래서 선물 가격은 "시장의 예측"이라기보다 <b>현물 가격 + 보유비용</b>에 가깝다. 선물가가 현물보다 높다고 해서 시장이 상승을 예상한다는 뜻이 아니다.</p>
+  </section>
+
+  <section id="kospi200">
+    <h2>지수선물: KOSPI 200 선물</h2>
+    <p>한국에서 가장 많이 거래되는 파생상품은 <span class="term">KOSPI 200 선물</span>과 옵션이다. 기초자산은 KOSPI 대형주 200종목으로 만든 지수다. 개별 종목을 하나하나 사지 않고도 시장 전체를 사거나 팔 수 있어서, 기관은 주식 묶음의 하락 위험을 빠르게 헤지하는 데 쓰고 ETF 운용사는 레버리지·인버스 ETF를 만드는 데 쓴다.</p>
+    <div class="table-wrap"><table>
+      <tr><th>항목</th><th>KOSPI 200 선물(2026년 기준, 대략)</th></tr>
+      <tr><td>계약 크기</td><td>지수 × 25만원 (지수 400이면 1계약 약 1억원). 미니 선물은 × 5만원</td></tr>
+      <tr><td>만기</td><td>3·6·9·12월 둘째 목요일</td></tr>
+      <tr><td>결제</td><td>현금결제: 만기에 주식을 주고받지 않고 차액만 정산</td></tr>
+      <tr><td>증거금</td><td>계약 금액의 약 10% 안팎. 거래소가 시장 변동성에 따라 조정</td></tr>
+      <tr><td>거래 시간</td><td>정규장과 함께 거래되고 야간 거래도 있다</td></tr>
+    </table></div>
+    <div class="callout warn"><strong>제도는 바뀐다.</strong> 계약 승수, 증거금률, 만기 구조(주간 옵션 등), 개인 투자자의 진입 요건은 거래소 규정 개정으로 자주 바뀐다. 이 장의 수치는 2026년 기준 대표값이거나 이해를 돕는 예시다. 실제로 거래하기 전에는 반드시 거래소와 증권사의 최신 안내를 확인한다.</div>
+  </section>
+
+  <section id="options">
+    <h2>옵션: 권리를 사고판다</h2>
+    <p><span class="term">옵션</span><span class="en">(Option)</span>은 정해진 가격에 사거나 팔 수 있는 <b>권리</b>다. 살 권리는 <span class="term">콜옵션</span><span class="en">(Call)</span>, 팔 권리는 <span class="term">풋옵션</span><span class="en">(Put)</span>이다. 그 정해진 가격을 <span class="term">행사가</span><span class="en">(Strike)</span>, 권리의 값을 <span class="term">프리미엄</span><span class="en">(Premium)</span>이라고 한다. 권리를 산 사람은 프리미엄을 내고, 판 사람은 프리미엄을 받는 대신 상대가 권리를 쓰면 응해야 하는 <b>의무</b>를 진다. 만기일에만 행사할 수 있으면 유럽형, 만기 전 언제든 행사할 수 있으면 미국형이다. KOSPI 200 옵션은 유럽형이다.</p>
+    <p>예를 들어 한빛반도체 주가가 72,000원일 때 "3개월 뒤 80,000원에 살 권리"(행사가 80,000원 콜)를 2,650원에 샀다고 하자. 만기에 주가가 95,000원이면 80,000원에 사서 바로 95,000원에 팔 수 있으니 권리의 가치는 15,000원, 프리미엄을 빼면 12,350원 이익이다. 만기에 주가가 75,000원이면 시장에서 더 싸게 살 수 있으니 권리를 버린다. 잃는 것은 낸 프리미엄 2,650원뿐이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 300" role="img" aria-label="콜 매수, 콜 매도, 풋 매수, 풋 매도 네 가지 기본 포지션의 만기 손익 그래프">
+        <g transform="translate(20,18)">
+          <text x="95" y="0" text-anchor="middle" class="lbl-b">콜 매수</text>
+          <path d="M10 70 L180 70" class="s-axis"/><path d="M95 10 L95 120" class="s-dash"/>
+          <path d="M10 88 L95 88 L170 18" class="s-up" stroke-width="2.5" fill="none"/>
+          <text x="12" y="104" class="lbl-dim">최대 손실 = 프리미엄</text>
+          <text x="128" y="30" class="lbl-up" text-anchor="end">이익 무한</text>
+                  </g>
+        <g transform="translate(250,18)">
+          <text x="95" y="0" text-anchor="middle" class="lbl-b">콜 매도</text>
+          <path d="M10 70 L180 70" class="s-axis"/><path d="M95 10 L95 120" class="s-dash"/>
+          <path d="M10 52 L95 52 L170 122" class="s-down" stroke-width="2.5" fill="none"/>
+          <text x="12" y="44" class="lbl-dim">최대 이익 = 프리미엄</text>
+          <text x="128" y="118" class="lbl-bad" text-anchor="end">손실 무한</text>
+        </g>
+        <g transform="translate(20,166)">
+          <text x="95" y="0" text-anchor="middle" class="lbl-b">풋 매수</text>
+          <path d="M10 70 L180 70" class="s-axis"/><path d="M95 10 L95 120" class="s-dash"/>
+          <path d="M20 18 L95 88 L180 88" class="s-up" stroke-width="2.5" fill="none"/>
+          <text x="178" y="104" class="lbl-dim" text-anchor="end">최대 손실 = 프리미엄</text>
+          <text x="62" y="24" class="lbl-up">주가 0까지</text>
+        </g>
+        <g transform="translate(250,166)">
+          <text x="95" y="0" text-anchor="middle" class="lbl-b">풋 매도</text>
+          <path d="M10 70 L180 70" class="s-axis"/><path d="M95 10 L95 120" class="s-dash"/>
+          <path d="M20 122 L95 52 L180 52" class="s-down" stroke-width="2.5" fill="none"/>
+          <text x="178" y="44" class="lbl-dim" text-anchor="end">최대 이익 = 프리미엄</text>
+          <text x="62" y="124" class="lbl-bad">큰 손실</text>
+        </g>
+      </svg>
+      <figcaption><b>그림 20-3. 네 가지 기본 포지션.</b> 가로축은 만기 주가, 세로축은 손익, 가운데 점선이 행사가다. 산 쪽(위)과 판 쪽(아래)은 서로 위아래가 뒤집힌 거울이다. 판 쪽은 이익이 프리미엄으로 묶이고 손실이 열려 있다.</figcaption>
+    </figure>
+
+    <p>그래프 위의 꺾인 점을 직접 끌어 보자. 점을 좌우로 끌면 행사가가, 위아래로 끌면 프리미엄이 바뀐다. 손익이 0이 되는 <span class="term">손익분기점</span><span class="en">(Break-even)</span>이 어디로 움직이는지 본다.</p>
+
+    <div class="sim" id="sim-payoff">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>만기 손익 그래프: 행사가와 프리미엄 끌기</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="po-cv"></canvas><span class="hint">꺾인 점을 끈다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="po-type"><button data-value="cb" class="on">콜 매수</button><button data-value="cs">콜 매도</button><button data-value="pb">풋 매수</button><button data-value="ps">풋 매도</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">행사가 · 프리미엄</span><span class="v" id="po-o-k">—</span></div>
+        <div class="stat"><span class="k">손익분기점</span><span class="v" id="po-o-be">—</span></div>
+        <div class="stat"><span class="k">최대 이익</span><span class="v" id="po-o-max">—</span></div>
+        <div class="stat"><span class="k">최대 손실</span><span class="v" id="po-o-min">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 콜 매수에서 프리미엄을 올리면 손익분기점이 오른쪽으로 밀린다. ② 콜 매도로 바꾸면 그래프가 위아래로 뒤집히고, 최대 손실이 "무제한"이 된다. ③ 풋 매도에서 행사가를 올려 주가가 0이 될 때의 손실을 본다. (1주 기준, 만기 손익만 본다)</div>
+    </div>
+
+    <h3>내재가치와 시간가치</h3>
+    <p>옵션 가격은 두 조각으로 나뉜다. 지금 당장 행사하면 얻는 몫이 <span class="term">내재가치</span><span class="en">(Intrinsic value)</span>다. 콜이면 \(\max(S-K, 0)\), 풋이면 \(\max(K-S, 0)\)이다. 나머지는 "만기 전까지 더 유리해질 가능성"의 값인 <span class="term">시간가치</span><span class="en">(Time value)</span>다. 내재가치가 있는 옵션을 <b>내가격</b>(ITM), 행사가가 주가와 같으면 <b>등가격</b>(ATM), 내재가치가 0이면 <b>외가격</b>(OTM)이라고 부른다.</p>
+
+    <div class="sim" id="sim-tv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>옵션 가격 = 내재가치 + 시간가치</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="tv-cv"></canvas><span class="hint">점을 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="tv-type"><button data-value="call" class="on">콜</button><button data-value="put">풋</button></div>
+          <label class="ctrl"><span>남은 기간 <output id="tv-d-out"></output></span><input type="range" id="tv-d" min="1" max="365" step="1" value="90"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주가</span><span class="v" id="tv-o-s">—</span></div>
+        <div class="stat"><span class="k">옵션 가격</span><span class="v" id="tv-o-p">—</span></div>
+        <div class="stat"><span class="k">내재가치</span><span class="v" id="tv-o-i">—</span></div>
+        <div class="stat"><span class="k">시간가치</span><span class="v" id="tv-o-t">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 점을 행사가(72,000원) 위에 두면 시간가치가 가장 크다. ② 주가를 아주 높이거나 낮추면 시간가치가 거의 사라진다. ③ 남은 기간을 1일로 줄이면 곡선이 꺾은선에 달라붙는다. (한빛반도체 가정: 변동성 38%, 배당 2%, 금리 3%)</div>
+    </div>
+
+    <p>시간가치는 등가격에서 가장 크다. 등가격 옵션은 만기에 내가격이 될지 외가격이 될지 가장 불확실하기 때문이다. 아주 깊은 내가격 콜은 사실상 주식과 비슷하게 움직이고, 아주 깊은 외가격 콜은 거의 공짜 복권이다. 둘 다 "모름"의 값이 작다.</p>
+  </section>
+
+  <section id="pricing">
+    <h2>옵션 가격은 어떻게 정해지는가</h2>
+    <p>주가가 오를지 내릴지 모르는데 옵션의 "공정한 가격"을 어떻게 정할까? 핵심 아이디어는 <b>복제</b>다. 1년 뒤 주가가 100에서 120 또는 85 둘 중 하나가 된다고 하자. 행사가 100 콜은 120이면 20, 85면 0을 준다. 이때 주식 약 0.57주를 사고 일부를 빌리면, 두 경우 모두 콜과 똑같은 돈을 받는 묶음을 만들 수 있다. 결과가 같으면 값도 같아야 하므로 콜 가격은 그 묶음의 값이다. 신기하게도 주가가 오를 "진짜 확률"은 계산에 들어가지 않는다. 마치 모든 투자자가 위험에 무관심해 무위험 금리만 기대하는 것처럼 계산해도 같은 답이 나오는데, 이 가상의 확률을 <span class="term">위험중립 확률</span><span class="en">(Risk-neutral probability)</span>이라고 한다.</p>
+    <div class="formula">$$p = \frac{e^{r\Delta t} - d}{u - d}, \qquad V = e^{-r\Delta t}\left[\,p\,V_u + (1-p)\,V_d\,\right]$$<div class="where">\(u, d\): 한 단계 동안 주가가 오를 때·내릴 때 곱해지는 배수, \(V_u, V_d\): 각 경우의 옵션 가치, \(\Delta t\): 한 단계의 길이. 만기의 값에서 시작해 한 단계씩 거꾸로 할인한다.</div></div>
+    <p>한 단계를 여러 단계로 쪼개면 주가의 갈림길이 나무처럼 퍼진다. 이것이 <span class="term">이항 트리</span><span class="en">(Binomial tree)</span>다. 만기의 각 마디에서 옵션 값을 먼저 정하고, 위의 식으로 한 칸씩 왼쪽으로 거슬러 오면 오늘의 가격이 나온다.</p>
+
+    <div class="sim" id="sim-binom">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>이항 트리: 만기에서 오늘로 거슬러 계산하기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="bt-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>단계 수 <output id="bt-n-out"></output></span><input type="range" id="bt-n" min="1" max="8" step="1" value="3"></label>
+          <div class="btn-row"><button class="btn primary" id="bt-go">만기부터 거꾸로</button><button class="btn" id="bt-re">값 지우기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">위험중립 상승 확률 p</span><span class="v" id="bt-o-p">—</span></div>
+        <div class="stat"><span class="k">트리 가격</span><span class="v" id="bt-o-tree">—</span></div>
+        <div class="stat"><span class="k">블랙-숄즈</span><span class="v" id="bt-o-bs">—</span></div>
+        <div class="stat"><span class="k">차이</span><span class="v" id="bt-o-diff">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① "값 지우기" 후 "만기부터 거꾸로"를 눌러 오른쪽 끝(만기)에서 왼쪽(오늘)으로 값이 채워지는 순서를 본다. ② 단계 수를 1에서 8까지 올리며 아래 그래프에서 가격이 지그재그로 블랙-숄즈 값에 다가가는 것을 본다. (주가 100, 행사가 100, 1년, 변동성 20%, 금리 3%)</div>
+    </div>
+
+    <p>단계를 무한히 잘게 쪼개면 트리 가격은 하나의 식으로 모인다. 1973년 피셔 블랙과 마이런 숄즈(그리고 로버트 머턴)가 정리한 <span class="term">블랙-숄즈 공식</span><span class="en">(Black-Scholes)</span>이다.</p>
+    <div class="formula">$$C = S e^{-qT} N(d_1) - K e^{-rT} N(d_2),\qquad d_{1,2} = \frac{\ln(S/K) + (r - q \pm \tfrac{1}{2}\sigma^2)T}{\sigma\sqrt{T}}$$<div class="where">\(C\): 콜 가격, \(N(\cdot)\): 표준정규분포의 누적확률, \(\sigma\): 기초자산의 연 변동성. 나머지 기호는 보유비용 식과 같다. 다섯 개 입력 가운데 시장에서 바로 보이지 않는 것은 \(\sigma\) 하나다.</div></div>
+    <p>식을 외울 필요는 없다. 무엇이 들어가고 무엇이 나오는지만 알면 된다. 아래 계산기의 다섯 손잡이를 하나씩 움직여 보자.</p>
+
+    <div class="sim" id="sim-bs">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>블랙-숄즈 계산기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="bs-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="seg" id="bs-type"><button data-value="call" class="on">콜</button><button data-value="put">풋</button></div>
+          <label class="ctrl"><span>주가 S <output id="bs-S-out"></output></span><input type="range" id="bs-S" min="40000" max="110000" step="500" value="72000"></label>
+          <label class="ctrl"><span>행사가 K <output id="bs-K-out"></output></span><input type="range" id="bs-K" min="50000" max="100000" step="1000" value="72000"></label>
+          <label class="ctrl"><span>남은 기간 T <output id="bs-T-out"></output></span><input type="range" id="bs-T" min="1" max="365" step="1" value="90"></label>
+          <label class="ctrl"><span>변동성 σ <output id="bs-sig-out"></output></span><input type="range" id="bs-sig" min="10" max="100" step="1" value="38"></label>
+          <label class="ctrl"><span>금리 r <output id="bs-r-out"></output></span><input type="range" id="bs-r" min="0" max="8" step="0.25" value="3"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">옵션 가격</span><span class="v" id="bs-o-p">—</span></div>
+        <div class="stat"><span class="k">델타</span><span class="v" id="bs-o-d">—</span></div>
+        <div class="stat"><span class="k">감마(1,000원당)</span><span class="v" id="bs-o-g">—</span></div>
+        <div class="stat"><span class="k">세타(하루)</span><span class="v" id="bs-o-t">—</span></div>
+        <div class="stat"><span class="k">베가(1%p)</span><span class="v" id="bs-o-v">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 변동성을 38%에서 60%로 올리면 콜과 풋이 <b>둘 다</b> 비싸진다. ② 남은 기간을 줄이면 둘 다 싸진다. ③ 금리를 올리면 콜은 조금 비싸지고 풋은 조금 싸진다. (배당수익률 2%로 고정, 유럽형)</div>
+    </div>
+
+    <p>여기서 가장 중요한 관찰은 ①이다. 주가가 오를지 내릴지에 대한 의견은 공식 어디에도 없다. 옵션 가격을 크게 움직이는 것은 <b>얼마나 크게 흔들리는가</b>다. 흔들림이 크면 콜은 크게 오를 가능성, 풋은 크게 내릴 가능성을 더 많이 품는다. 반면 불리한 쪽의 손실은 프리미엄으로 막혀 있으니, 흔들림이 클수록 권리의 값이 커진다.</p>
+
+    <h3>만기가 다가오면 곡선이 꺾은선이 된다</h3>
+    <p>만기 손익 그래프는 꺾은선이었는데, 블랙-숄즈 그래프는 부드러운 곡선이다. 둘의 차이가 시간가치다. 6개월 만기 등가격 콜을 산 뒤 시간이 흐르게 해 보자.</p>
+
+    <div class="sim" id="sim-expiry">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>만기 전 손익 곡선이 꺾은선으로 녹아든다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ex-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>남은 일수 <output id="ex-d-out"></output></span><input type="range" id="ex-d" min="0" max="180" step="1" value="180"></label>
+          <div class="btn-row"><button class="btn primary" id="ex-play">만기까지 재생</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">처음 낸 프리미엄</span><span class="v" id="ex-o-p0">—</span></div>
+        <div class="stat"><span class="k">지금 옵션 가격(주가 72,000)</span><span class="v" id="ex-o-p">—</span></div>
+        <div class="stat"><span class="k">주가 그대로일 때 손익</span><span class="v" id="ex-o-pnl">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 재생을 눌러 곡선이 아래로 가라앉으며 꺾은선(점선)에 달라붙는 것을 본다. ② 주가가 그대로여도 손익이 점점 마이너스가 되는 구간을 본다. ③ 마지막 30일에 곡선이 가장 빠르게 내려간다. (한빛반도체 가정, 행사가 72,000원 콜 매수)</div>
+    </div>
+  </section>
+
+  <section id="volatility">
+    <h2>변동성과 내재변동성</h2>
+    <p>블랙-숄즈의 다섯 입력 가운데 주가, 행사가, 남은 기간, 금리는 누구나 안다. 변동성만은 미래의 값이라 아무도 모른다. 그래서 시장은 방향을 거꾸로 쓴다. 시장에서 거래되는 옵션 가격을 공식에 넣고, 그 가격이 나오게 하는 \(\sigma\)를 역산한다. 이것이 <span class="term">내재변동성</span><span class="en">(Implied volatility, IV)</span>이다. 지난 주가로 계산한 <b>역사적 변동성</b>이 "지금까지 얼마나 흔들렸나"라면, 내재변동성은 "시장이 앞으로 얼마나 흔들릴 거라고 값을 매기나"다.</p>
+
+    <div class="sim" id="sim-iv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>내재변동성 역산: 가격에서 변동성으로</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="iv-cv"></canvas><span class="hint">시장가 선을 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="iv-o"><button data-value="atm" class="on">3개월 등가격 콜</button><button data-value="otm">1개월 외가격 풋</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시장 가격</span><span class="v" id="iv-o-p">—</span></div>
+        <div class="stat"><span class="k">내재변동성</span><span class="v" id="iv-o-iv">—</span></div>
+        <div class="stat"><span class="k">하루 움직임으로</span><span class="v" id="iv-o-day">—</span></div>
+        <div class="stat"><span class="k">역사적 변동성</span><span class="v">38%</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 시장가를 올리면 내재변동성이 올라간다. 가격과 변동성은 한 줄로 이어져 있다. ② 내재변동성이 역사적 변동성 38%보다 높으면 시장이 "앞으로 더 흔들린다"에 값을 매기고 있다는 뜻이다. ③ 1개월 외가격 풋은 몇백 원만 바뀌어도 내재변동성이 크게 뛴다. (한빛반도체 가정)</div>
+    </div>
+
+    <p>급락장에서는 사람들이 앞다퉈 풋을 사서 내재변동성이 치솟는다. KOSPI 200 옵션 가격으로 계산한 변동성 지수(VKOSPI)가 흔히 "공포 지수"로 불리는 이유다. 2020년 3월 급락 때는 평소의 두세 배까지 뛰었다. 같은 행사가라도 외가격 풋의 내재변동성이 더 높게 매겨지는 경우가 많은데, 시장이 큰 하락의 가능성에 웃돈을 붙이기 때문이다.</p>
+  </section>
+
+  <section id="greeks">
+    <h2>그릭스: 옵션 가격의 민감도</h2>
+    <p>옵션 가격은 다섯 입력에 따라 움직인다. 입력 하나가 조금 바뀔 때 가격이 얼마나 바뀌는지를 그리스 문자로 부른다. 이것이 <span class="term">그릭스</span><span class="en">(Greeks)</span>다.</p>
+    <div class="table-wrap"><table>
+      <tr><th>이름</th><th>무엇에 대한 민감도</th><th>한 줄 뜻</th></tr>
+      <tr><td><b>델타</b> Δ</td><td>주가</td><td>주가가 1원 오르면 옵션이 몇 원 오르나. 콜 0~1, 풋 −1~0. 대략 "만기에 내가격일 확률"의 감각</td></tr>
+      <tr><td><b>감마</b> Γ</td><td>주가(델타의 변화)</td><td>주가가 움직일 때 델타가 얼마나 빨리 바뀌나. 등가격·만기 직전에 가장 크다</td></tr>
+      <tr><td><b>세타</b> Θ</td><td>시간</td><td>하루가 지나면 옵션이 몇 원 싸지나. 산 사람에게는 매일 내는 비용</td></tr>
+      <tr><td><b>베가</b> ν</td><td>변동성</td><td>변동성이 1%p 오르면 옵션이 몇 원 오르나. 만기가 길수록 크다</td></tr>
+    </table></div>
+
+    <div class="sim" id="sim-greeks">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>그릭스 곡선: 주가와 남은 기간에 따라</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gk-cv"></canvas><span class="hint">점을 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="seg" id="gk-g"><button data-value="delta" class="on">델타</button><button data-value="gamma">감마</button><button data-value="theta">세타</button><button data-value="vega">베가</button></div>
+          <label class="ctrl"><span>남은 기간 <output id="gk-d-out"></output></span><input type="range" id="gk-d" min="2" max="180" step="1" value="60"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주가</span><span class="v" id="gk-o-s">—</span></div>
+        <div class="stat"><span class="k">콜</span><span class="v" id="gk-o-c">—</span></div>
+        <div class="stat"><span class="k">풋</span><span class="v" id="gk-o-p">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 델타에서 남은 기간을 2일로 줄이면 S자 곡선이 계단처럼 가팔라진다. ② 감마로 바꿔 만기가 가까울수록 행사가 근처에 뾰족한 봉우리가 서는 것을 본다. ③ 베가는 반대로 만기가 길수록 크다. (행사가 72,000원, 변동성 38%, 점선은 180일 기준)</div>
+    </div>
+
+    <p>감마가 큰 옵션은 주가가 조금만 움직여도 델타가 확 바뀐다. 만기 직전의 등가격 옵션이 그렇다. 하루 사이에 거의 0이던 것이 몇 배가 되거나, 그 반대가 된다. 만기일 근처 옵션이 "복권"처럼 움직이는 이유다.</p>
+
+    <h3>시간가치 소멸</h3>
+    <p>세타는 옵션을 산 사람에게 매일 빠져나가는 비용이다. 같은 시간이 흘러도 소멸 속도는 일정하지 않다. 시간가치는 대략 남은 기간의 제곱근에 비례하므로, 만기가 가까울수록 하루에 사라지는 양이 커진다.</p>
+
+    <div class="sim" id="sim-theta">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>세타: 시간가치가 녹는 속도</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="th-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="th-play">시간 흐르게</button><button class="btn" id="th-re">처음으로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">남은 일수</span><span class="v" id="th-o-d">—</span></div>
+        <div class="stat"><span class="k">등가격 시간가치</span><span class="v" id="th-o-tv">—</span></div>
+        <div class="stat"><span class="k">오늘 하루 소멸</span><span class="v" id="th-o-th">—</span></div>
+        <div class="stat"><span class="k">사라진 비율</span><span class="v" id="th-o-gone">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 재생하며 오른쪽 끝 30일 동안 등가격 곡선이 절벽처럼 떨어지는 것을 본다. ② 외가격 옵션의 시간가치는 처음부터 작고, 만기 전에 이미 거의 0이 된다. ③ 깊은 내가격 옵션은 시간가치가 작아 세타도 작다. (주가 72,000원 고정, 콜 기준)</div>
+    </div>
+
+    <p>180일짜리 등가격 옵션은 처음 150일 동안 시간가치의 약 60%를 잃고, 마지막 30일 동안 나머지 약 40%를 잃는다. 하루 소멸 속도로 보면 마지막 30일이 처음보다 3배 넘게 빠르다. 옵션을 사는 쪽은 시간과 싸우고, 파는 쪽은 시간의 편에 선다. 그 대가가 무엇인지는 뒤의 옵션 매도 시뮬레이터에서 본다.</p>
+
+    <h3>델타 헤지: 옵션 판 쪽은 어떻게 버티나</h3>
+    <p>옵션을 판 증권사(마켓메이커)는 방향에 베팅하지 않는다. 콜을 팔았으면 델타만큼 주식을 사서 들고, 델타가 바뀔 때마다 주식 수를 다시 맞춘다. 이것이 <span class="term">델타 헤지</span><span class="en">(Delta hedge)</span>다. 이항 트리에서 본 "주식과 빌린 돈으로 옵션을 복제하는" 방법을 매일 실행하는 셈이다. 헤지를 잘 하면 손익은 주가 방향이 아니라 <b>실제로 흔들린 크기가 팔 때 매긴 변동성보다 컸느냐 작았느냐</b>로 정해진다.</p>
+
+    <div class="sim" id="sim-hedge">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>콜 100주를 판 뒤 델타 헤지하기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dh-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="seg" id="dh-mode"><button data-value="none">헤지 안 함</button><button data-value="week">매주</button><button data-value="day" class="on">매일</button></div>
+          <label class="ctrl"><span>실제 변동성 <output id="dh-vol-out"></output></span><input type="range" id="dh-vol" min="20" max="60" step="1" value="38"></label>
+          <div class="btn-row"><button class="btn primary" id="dh-step">다음 날</button><button class="btn" id="dh-run">끝까지</button><button class="btn" id="dh-new">다른 경로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">날짜 · 주가</span><span class="v" id="dh-o-s">—</span></div>
+        <div class="stat"><span class="k">델타 · 보유 주식</span><span class="v" id="dh-o-d">—</span></div>
+        <div class="stat"><span class="k">헤지한 손익</span><span class="v" id="dh-o-h">—</span></div>
+        <div class="stat"><span class="k">헤지 안 한 손익</span><span class="v" id="dh-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 실제 변동성을 판매 가격의 변동성(38%)과 같게 두고 "끝까지"를 누르면 헤지한 손익은 0 근처에 머문다. ② 실제 변동성을 55%로 올리면 헤지를 해도 손실이 커지고, 25%로 내리면 이익이 난다. 팔 때 매긴 변동성보다 실제로 더 흔들렸느냐가 손익을 정한다. ③ 헤지 안 함은 주가 방향에 따라 크게 출렁인다. (행사가 72,000원, 60일 만기, 내재변동성 38%로 판매, 거래 비용 무시)</div>
+    </div>
+  </section>
+
+  <section id="parity">
+    <h2>풋-콜 패리티</h2>
+    <p>같은 행사가·같은 만기의 콜과 풋 사이에는 공식 없이도 성립하는 관계가 있다. "콜 1개 + 만기에 K를 주는 채권"과 "풋 1개 + 주식 1주"는 만기에 언제나 같은 돈을 준다. 주가가 K보다 높으면 둘 다 주식 1주 값, 낮으면 둘 다 K다. 만기 손익이 같으면 오늘 값도 같아야 한다.</p>
+    <div class="formula">$$C + K e^{-rT} = P + S e^{-qT}$$<div class="where">\(C\), \(P\): 같은 행사가·만기의 콜과 풋 가격. 왼쪽은 "콜 + 채권", 오른쪽은 "풋 + 주식(배당만큼 할인)"이다.</div></div>
+    <p>저울로 확인해 보자. 콜이 시장에서 이론보다 비싸게 거래되면 저울이 기운다. 기운 쪽을 팔고 가벼운 쪽을 사면 위험 없이 차익이 남는다.</p>
+
+    <div class="sim" id="sim-parity">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>풋-콜 패리티 저울</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="pp-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>주가 S <output id="pp-S-out"></output></span><input type="range" id="pp-S" min="50000" max="95000" step="500" value="72000"></label>
+          <label class="ctrl"><span>콜 시장가의 어긋남 <output id="pp-gap-out"></output></span><input type="range" id="pp-gap" min="-1500" max="1500" step="50" value="0"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">콜 + 채권</span><span class="v" id="pp-o-l">—</span></div>
+        <div class="stat"><span class="k">풋 + 주식</span><span class="v" id="pp-o-r">—</span></div>
+        <div class="stat"><span class="k">차익거래</span><span class="v" id="pp-o-arb">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 주가를 아무리 바꿔도 어긋남이 0이면 저울은 수평이다. 콜과 풋 가격이 같이 움직이기 때문이다. ② 어긋남을 +500원으로 두면 무엇을 사고팔아야 이익이 고정되는지 읽는다. (행사가 72,000원, 3개월, 1주 기준, 거래 비용 무시)</div>
+    </div>
+
+    <p>패리티 덕분에 콜, 풋, 주식, 채권 넷 가운데 셋만 있으면 나머지 하나를 만들 수 있다. "주식 + 풋"은 "콜 + 채권"과 같으므로, 주식을 들고 풋을 사는 보호적 풋은 사실 "채권에 넣고 콜을 산 것"과 같은 손익이다. 아래 전략 빌더에서 직접 확인할 수 있다.</p>
+  </section>
+
+  <section id="strategies">
+    <h2>옵션 전략: 다리를 조립한다</h2>
+    <p>옵션 전략은 주식·콜·풋의 매수와 매도를 레고처럼 쌓은 것이다. 각 조각을 <b>다리</b>(leg)라고 부른다. 합친 손익은 각 다리의 손익을 더한 것이니 그래프도 그냥 더하면 된다. 자주 쓰는 조합은 다음과 같다.</p>
+    <ul>
+      <li><span class="term">커버드콜</span><span class="en">(Covered call)</span>: 주식을 들고 외가격 콜을 판다. 프리미엄을 받는 대신 위쪽 이익을 행사가에서 자른다.</li>
+      <li><span class="term">보호적 풋</span><span class="en">(Protective put)</span>: 주식을 들고 외가격 풋을 산다. 보험료(프리미엄)를 내고 아래쪽 손실을 행사가에서 막는다.</li>
+      <li><span class="term">칼라</span><span class="en">(Collar)</span>: 콜을 팔아 받은 돈으로 풋을 산다. 위아래를 모두 자른다. 보험료가 거의 0이 될 수 있다.</li>
+      <li><span class="term">스프레드</span><span class="en">(Spread)</span>: 같은 종류 옵션을 행사가만 달리해 하나는 사고 하나는 판다. 이익과 손실이 모두 묶인다.</li>
+      <li><span class="term">스트래들</span><span class="en">(Straddle)</span>: 같은 행사가의 콜과 풋을 함께 산다. 방향이 아니라 "크게 움직인다"에 건다. 팔면 "조용하다"에 건다.</li>
+    </ul>
+
+    <div class="sim" id="sim-builder">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>전략 빌더: 한빛반도체 100주 단위로 조립하기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sb-cv"></canvas><span class="hint">아래 삼각형(행사가)을 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl-cap">미리 만든 전략</div>
+          <div class="btn-row" id="sb-pre"><button class="btn sm" data-p="cc">커버드콜</button><button class="btn sm" data-p="pp">보호적 풋</button><button class="btn sm" data-p="col">칼라</button><button class="btn sm" data-p="bull">강세 스프레드</button><button class="btn sm" data-p="str">스트래들</button><button class="btn sm" data-p="sstr">스트래들 매도</button></div>
+          <div class="ctrl-cap">다리 추가</div>
+          <div class="btn-row" id="sb-add"><button class="btn sm" data-t="stock" data-s="1">주식 +</button><button class="btn sm" data-t="call" data-s="1">콜 매수</button><button class="btn sm" data-t="call" data-s="-1">콜 매도</button><button class="btn sm" data-t="put" data-s="1">풋 매수</button><button class="btn sm" data-t="put" data-s="-1">풋 매도</button><button class="btn sm" id="sb-clear">모두 지우기</button></div>
+          <div class="legs" id="sb-legs"></div>
+          <label class="ctrl"><span>만기까지 남은 일수 <output id="sb-d-out"></output></span><input type="range" id="sb-d" min="0" max="90" step="1" value="90"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">순 프리미엄</span><span class="v" id="sb-o-prem">—</span></div>
+        <div class="stat"><span class="k">최대 이익</span><span class="v" id="sb-o-max">—</span></div>
+        <div class="stat"><span class="k">최대 손실</span><span class="v" id="sb-o-min">—</span></div>
+        <div class="stat"><span class="k">손익분기점</span><span class="v" id="sb-o-be">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 커버드콜과 보호적 풋을 번갈아 눌러 위가 잘리는지 아래가 막히는지 비교한다. ② 보호적 풋을 누른 뒤 같은 모양을 "콜 매수" 하나로 만들어 본다(패리티). ③ 남은 일수를 0으로 내려 점선(지금 가치)이 실선(만기 손익)에 겹치는 것을 본다. (현재 주가 72,000원, 3개월 옵션, 변동성 38%로 매긴 이론 프리미엄, 수수료 무시)</div>
+    </div>
+
+    <p>어떤 전략도 공짜 점심은 아니다. 커버드콜이 받는 프리미엄은 크게 오를 때의 이익을 판 값이고, 보호적 풋의 보험료는 시간이 지나면 녹아 없어진다. 칼라는 비용이 거의 없는 대신 위와 아래를 모두 판다. 그래프가 바뀌는 것이지 기대수익이 공짜로 늘어나는 것이 아니다.</p>
+
+    <div class="sim" id="sim-guess">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>이 손익 그래프는 어떤 전략일까</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="gs-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row" id="gs-opts"></div>
+          <div class="btn-row"><button class="btn primary" id="gs-next">다음 문제</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">맞힌 문제</span><span class="v" id="gs-o-score">0 / 0</span></div>
+        <div class="stat"><span class="k">결과</span><span class="v" id="gs-o-msg">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: 먼저 그래프의 양 끝을 본다. 오른쪽이 계속 오르면 콜 매수나 주식이 들어 있고, 오른쪽이 평평하면 위쪽이 잘린 것이다. 가운데가 V자면 스트래들 매수, 뒤집힌 V자면 매도다. (만기 손익, 가로축은 만기 주가)</div>
+    </div>
+  </section>
+
+  <section id="selling">
+    <h2>옵션 매도의 위험: 작은 수익 여러 번, 큰 손실 한 번</h2>
+    <p>시간가치는 매일 녹고, 외가격 옵션은 대부분 휴지가 되어 만기를 맞는다. 그렇다면 외가격 풋을 매달 팔아 프리미엄을 챙기면 되지 않을까? 실제로 이 전략은 대부분의 달에 돈을 번다. 문제는 나머지 몇 달이다. 아래는 앞 장들에서 써 온 <b>가상의 시장</b>(SB 종합지수, 교육용으로 만든 가짜 가격)에서 10년 동안 매달 1개월 만기 외가격 풋을 판 결과다.</p>
+
+    <div class="sim" id="sim-short">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>매달 외가격 풋 매도 10년</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ps-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>얼마나 외가격 <output id="ps-otm-out"></output></span><input type="range" id="ps-otm" min="2" max="15" step="1" value="5"></label>
+          <div class="seg" id="ps-lev"><button data-value="1" class="on">계좌 1배</button><button data-value="3">3배</button><button data-value="5">5배</button></div>
+          <div class="btn-row"><button class="btn primary" id="ps-play">처음부터 재생</button><button class="btn" id="ps-new">다른 시장</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">이긴 달</span><span class="v" id="ps-o-win">—</span></div>
+        <div class="stat"><span class="k">이긴 달 평균</span><span class="v" id="ps-o-avg">—</span></div>
+        <div class="stat"><span class="k">최악의 달</span><span class="v" id="ps-o-worst">—</span></div>
+        <div class="stat"><span class="k">10년 뒤 계좌</span><span class="v" id="ps-o-end">—</span></div>
+        <div class="stat"><span class="k">지수만 들고 있었다면</span><span class="v" id="ps-o-idx">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 재생을 눌러 몇 년 동안 계좌가 매끈하게 오르다 급락 한 달에 무너지는 것을 본다. ② 3배, 5배로 바꾸면(계좌보다 큰 명목 금액의 풋을 팔면) 한 번의 급락이 몇 년 치 수익을 지운다. ③ 더 외가격으로 팔면 이기는 달은 늘지만 한 달 수익이 쥐꼬리가 된다. (시작 계좌 1억원, 내재변동성 18%로 매긴 프리미엄, 현금 이자·수수료 무시)</div>
+    </div>
+
+    <p>기본 설정(5% 외가격, 1배)에서는 약 90%의 달이 이기지만, 가상 시장이 한 달에 약 26% 빠진 달 하나가 몇 년 치 수익을 지우고, 10년 뒤 계좌는 시작보다 적다. 같은 기간 지수를 그냥 들고 있었다면 약 79% 올랐다. 3배로 팔면 그 한 달에 계좌의 60% 넘게 사라진다. 이런 손익을 "증기 롤러 앞에서 동전 줍기"라고 부른다. 꾸준한 수익 기록이 길수록 그 전략이 안전하다고 착각하기 쉽다. <b>승률은 위험을 말해 주지 않는다.</b> 한 번의 손실이 얼마나 큰지를 함께 봐야 한다.</p>
+    <div class="callout"><strong>매도한 옵션의 손실은 프리미엄으로 막히지 않는다.</strong> 옵션을 산 사람의 최대 손실은 낸 프리미엄이지만, 판 사람의 손실은 콜이면 이론상 무한, 풋이면 행사가 전체까지 열려 있다. 그래서 옵션 매도에는 선물처럼 증거금이 필요하고, 급락장에서는 증거금 요구가 함께 뛰어 마진콜과 반대매매가 연쇄적으로 일어난다.</div>
+  </section>
+
+  <section id="rules">
+    <h2>개인 투자자와 파생상품 제도</h2>
+    <p>파생상품은 손실이 원금을 넘을 수 있어서 개인 투자자에게 진입 요건이 있다. 2026년 기준으로 대략 다음과 같다.</p>
+    <ul>
+      <li><b>사전 교육</b>: 금융투자협회의 파생상품 온라인 교육을 약 1시간 이상 들어야 한다.</li>
+      <li><b>모의거래</b>: 거래소의 파생상품 모의거래를 약 3시간 이상 해야 한다.</li>
+      <li><b>기본예탁금</b>: 처음 거래를 시작하려면 계좌에 일정 금액 이상(첫 단계 약 1,000만원, 옵션 매도까지 하는 단계는 약 2,000만원)을 넣어 두어야 한다. 증권사가 투자자의 경험에 따라 단계를 나눈다.</li>
+      <li><b>적합성 확인</b>: 증권사는 투자 경험·목적을 확인하고, 맞지 않으면 권유할 수 없다.</li>
+    </ul>
+    <p>개별 주식 옵션도 상장되어 있지만 거래가 많지 않은 종목이 대부분이라 호가 차이가 크다. 그래서 개인이 실제로 접하는 옵션은 대부분 KOSPI 200 옵션이다. 이 장의 한빛반도체 옵션은 이해를 위해 있다고 가정한 것이다.</p>
+    <div class="callout warn"><strong>요건과 숫자는 바뀐다.</strong> 기본예탁금 단계, 교육·모의거래 시간, 증거금률, 개인 투자자 보호 제도는 시장 상황에 따라 완화되거나 강화되어 왔다. 이 절의 수치는 2026년 기준 대략값('약')이다. 거래 전에 금융투자협회·거래소·증권사의 현재 안내를 확인한다.</div>
+  </section>
+
+  <section id="case">
+    <h2>한결의 투자 노트</h2>
+    <div class="casefile">
+      <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 20장</span></div>
+      <h4>한빛반도체 100주에 옵션을 씌우면?</h4>
+      <p>한결이 위성 몫으로 들고 있는 한빛반도체가 100주라고 해 보자(평가액 720만원). 증권사 앱에서 "커버드콜로 매달 용돈 벌기"라는 글을 본 한결은 이 장의 계산기로 두 가지를 따져 보았다. 옵션은 3개월 만기, 프리미엄은 블랙-숄즈(변동성 38%, 금리 3%, 배당 2%)로 매긴 이론값이다.</p>
+      <div class="slip">
+        <div class="row"><span>커버드콜: 행사가 80,000원 콜 매도 (주당 약 2,650원)</span><span>+265,000</span></div>
+        <div class="row"><span>· 만기 주가가 80,000원 이상일 때 최대 이익</span><span>+1,065,000</span></div>
+        <div class="row"><span>· 주가가 95,000원으로 오르면, 주식만 들고 있었을 때와의 차이</span><span>−1,235,000</span></div>
+        <div class="row"><span>보호적 풋: 행사가 65,000원 풋 매수 (주당 약 2,350원)</span><span>−235,000</span></div>
+        <div class="row"><span>· 만기에 아무리 떨어져도 최대 손실</span><span>−935,000</span></div>
+        <div class="row total"><span>칼라(콜 매도 + 풋 매수) 순 프리미엄</span><span>+30,000</span></div>
+      </div>
+      <p>커버드콜은 석 달마다 주식값의 약 3.7%를 받지만, 한빛이 크게 오르는 분기에는 그 이익을 넘겨준다. 보호적 풋은 손실을 약 −13%에서 막아 −30% 감내선 안쪽에 들게 하지만, 3개월마다 약 3.3%의 보험료가 든다. 1년 내내 들고 있으면 대략 주식값의 13%라서, 한빛의 기대수익을 거의 다 보험료로 내는 셈이다. 칼라는 비용이 거의 없지만 위아래가 모두 묶여 주식을 산 이유가 흐려진다.</p>
+      <p>게다가 한결이 옵션을 거래하려면 사전 교육, 모의거래, 기본예탁금 요건을 먼저 채워야 하고, 개별 주식 옵션은 호가 차이가 커서 이론값대로 사고팔기도 어렵다. 결론은 단순하다. <b>지금은 이해만 한다.</b> 손익 그래프를 읽을 줄 알게 된 것으로 충분하다. "매달 프리미엄 수익" 광고를 보면 옵션 매도 시뮬레이터의 한 달을 떠올리기로 했다.</p>
+      <div class="clue">
+        <div><b>이 장에서 정한 것</b>파생상품은 거래하지 않는다. 커버드콜·보호적 풋은 손익 그래프로 이해만 한다.</div>
+        <div><b>아직 남은 문제</b>금리가 바뀌면 들고 있는 주식들은 왜 서로 다르게 움직이는가.</div>
+        <div><b>다음 단계</b><a href="macro.html">21장</a>에서 금리·경기와 주가의 관계를 본다.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>파생상품은 기초자산에서 값이 갈라져 나온 계약이다. 선물은 사고팔 <b>의무</b>(손익 직선), 옵션은 사고팔 <b>권리</b>(손익 꺾은선)다.</li>
+      <li>선물은 증거금과 일일정산으로 굴러간다. 증거금률이 곧 레버리지라서, 방향을 맞혀도 중간 흔들림에 마진콜·반대매매를 당할 수 있다.</li>
+      <li>이론 선물가는 \(F = S e^{(r-q)T}\)이다. 베이시스는 금리와 배당의 차이에서 나오고 만기에 0이 된다.</li>
+      <li>옵션 가격 = 내재가치 + 시간가치. 시간가치는 등가격에서 가장 크고, 만기가 다가올수록 빠르게 녹는다(세타).</li>
+      <li>옵션 가격은 복제와 위험중립 확률로 정해진다. 이항 트리를 잘게 쪼개면 블랙-숄즈가 되고, 가장 중요한 입력은 방향이 아니라 변동성이다. 시장 가격에서 역산한 것이 내재변동성이다.</li>
+      <li>델타·감마·세타·베가는 주가·델타의 변화·시간·변동성에 대한 민감도다. 풋-콜 패리티 \(C + Ke^{-rT} = P + Se^{-qT}\)로 콜·풋·주식·채권이 서로 묶인다.</li>
+      <li>커버드콜은 위쪽을 팔고, 보호적 풋은 아래쪽을 산다. 전략은 그래프의 모양을 바꿀 뿐 공짜 수익을 만들지 않는다. 옵션 매도는 높은 승률 뒤에 큰 꼬리 손실을 숨긴다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 지수선물 1계약(명목 1억원)을 증거금 1,000만원으로 샀다. 지수가 3% 떨어지면 증거금 대비 손익은?</p>
+        <div class="opts">
+          <button class="opt">−3%</button>
+          <button class="opt">−10%</button>
+          <button class="opt" data-correct>−30%</button>
+          <button class="opt">손실 없음(만기까지 정산하지 않는다)</button>
+        </div>
+        <div class="quiz-exp">손실은 1억원 × 3% = 300만원이고, 내 돈 1,000만원 대비 −30%다. 증거금률 10%면 레버리지 10배다. 선물은 매일 정산하므로 손실은 그날 바로 계좌에서 빠진다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 금리가 연 4%, 배당수익률이 연 1%일 때 지수선물 가격은 보통 현물 지수와 비교해 어떠한가?</p>
+        <div class="opts">
+          <button class="opt" data-correct>현물보다 조금 높다(콘탱고)</button>
+          <button class="opt">현물보다 조금 낮다(백워데이션)</button>
+          <button class="opt">항상 현물과 같다</button>
+          <button class="opt">시장 참여자들의 상승·하락 예상에 따라 정해진다</button>
+        </div>
+        <div class="quiz-exp">\(F = S e^{(r-q)T}\)에서 \(r - q = 3\%\) > 0이므로 선물이 현물보다 비싸다. 선물가는 예측이 아니라 현물가 + 보유비용에 가깝고, 어긋나면 차익거래가 메운다. 만기에는 현물과 같아진다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 다른 조건이 같을 때 기초자산의 변동성이 커지면 콜과 풋의 가격은?</p>
+        <div class="opts">
+          <button class="opt">콜은 오르고 풋은 내린다</button>
+          <button class="opt">콜은 내리고 풋은 오른다</button>
+          <button class="opt">둘 다 변하지 않는다</button>
+          <button class="opt" data-correct>둘 다 오른다</button>
+        </div>
+        <div class="quiz-exp">옵션을 산 쪽은 불리한 방향의 손실이 프리미엄으로 막혀 있고 유리한 방향은 열려 있다. 흔들림이 크면 유리한 쪽 꼬리가 길어지므로 콜과 풋 모두 비싸진다(베가 > 0).</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 주식 100주를 들고 행사가가 현재가보다 높은 콜 1계약(100주분)을 팔았다. 이 전략의 만기 손익에 대한 설명으로 옳은 것은?</p>
+        <div class="opts">
+          <button class="opt">주가가 아무리 떨어져도 손실이 프리미엄으로 제한된다</button>
+          <button class="opt" data-correct>프리미엄을 받는 대신 행사가 위의 이익을 포기한다</button>
+          <button class="opt">주가가 크게 오를수록 이익이 무한히 커진다</button>
+          <button class="opt">주가와 무관하게 이익이 고정된다</button>
+        </div>
+        <div class="quiz-exp">커버드콜이다. 받은 프리미엄만큼 손실이 조금 줄지만 하락은 그대로 맞는다. 위쪽 이익은 행사가에서 잘린다. 하락을 막는 것은 풋 매수(보호적 풋)다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 매달 외가격 풋을 팔아 10년 중 9년 넘게 매달 이익을 냈다. 이 기록에 대한 가장 적절한 해석은?</p>
+        <div class="opts">
+          <button class="opt">승률이 90%가 넘으니 위험이 낮은 전략이다</button>
+          <button class="opt">시간가치는 매도자 편이므로 장기적으로 손실이 날 수 없다</button>
+          <button class="opt" data-correct>드문 급락 한 번의 손실이 누적 이익을 지울 수 있으므로 손실의 크기를 따로 봐야 한다</button>
+          <button class="opt">레버리지를 높이면 같은 위험으로 수익만 커진다</button>
+        </div>
+        <div class="quiz-exp">옵션 매도는 작은 이익을 자주, 큰 손실을 드물게 낸다. 승률은 손실의 크기를 말해 주지 않는다. 레버리지를 높이면 그 한 번의 손실이 계좌를 지울 만큼 커진다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const HB = ST.CO.hanbit, S0 = HB.price, SIG = HB.sigma, Q = HB.dps / HB.price, R = 0.03;
+  const narrow = (id) => document.getElementById(id).parentElement.clientWidth < 560;
+  const span = (cls, s) => '<span class="' + cls + '">' + s + "</span>";
+  const sw = (x) => (x > 0.5 ? "+" : "") + MB.won(Math.abs(x) < 0.5 ? 0 : x);
+  const swT = (x) => span(MB.tone(Math.abs(x) < 0.5 ? 0 : x), sw(x));
+  const pr = (x) => MB.price(x);
+  const spr = (x) => (x > 0.5 ? "+" : x < -0.5 ? "−" : "") + MB.price(Math.abs(x));
+  const invX = (c, px, a, b) => a + ((px - c.box.x) / c.box.w) * (b - a);
+  const invY = (c, py, a, b) => a + ((c.box.y + c.box.h - py) / c.box.h) * (b - a);
+  const bs = (o) => ST.bs(Object.assign({ r: R, q: Q, sigma: SIG }, o));
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function knob(ctx, x, y, P, r, col) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = col || P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = "#fff"; ctx.stroke();
+    ctx.restore();
+  }
+  // 손익 곡선과 0선 사이를 이익(빨강)·손실(파랑)으로 칠한다
+  function pnlFill(ctx, c, data, P) {
+    const B = c.box, y0 = MB.clamp(c.Y(0), B.y, B.y + B.h);
+    [[B.y, y0 - B.y, P.upSoft], [y0, B.y + B.h - y0, P.downSoft]].forEach(([top, hh, col]) => {
+      if (hh <= 0) return;
+      ctx.save(); ctx.beginPath(); ctx.rect(B.x, top, B.w, hh); ctx.clip();
+      ctx.beginPath(); ctx.moveTo(c.X(data[0][0]), c.Y(0));
+      data.forEach(([x, y]) => ctx.lineTo(c.X(x), c.Y(y)));
+      ctx.lineTo(c.X(data[data.length - 1][0]), c.Y(0)); ctx.closePath();
+      ctx.fillStyle = col; ctx.fill(); ctx.restore();
+    });
+  }
+  const grid = (a, b, n) => { const o = []; for (let i = 0; i <= n; i++) o.push(a + ((b - a) * i) / n); return o; };
+  const manAxis = (v) => MB.wonAxis(v);
+  const bot = (w) => (w < 520 ? 92 : 62);
+
+  /* ---------------------------------------------------------- 1. 일일정산 */
+  (function () {
+    const MULT = 250000, IM = 0.12, MM = 0.08, DAYS = 40, F0 = 400;
+    const SEEDS = [17, 21, 5, 56, 2, 9, 30];
+    let si = 0, path, day, eq, dep, liq, hist, grow = 1, auto = false, acc = 0;
+    const side = MB.seg("fs-side", () => restart());
+    const N = MB.range("fs-n", (v) => v + "계약", () => restart());
+    const top = document.getElementById("fs-top");
+    const playBtn = document.getElementById("fs-play");
+    function gen() { path = ST.gbm({ s0: F0, mu: 0, sigma: 0.28, days: DAYS, seed: SEEDS[si % SEEDS.length] + Math.floor(si / SEEDS.length) * 100 }); }
+    function reset() { const im = IM * F0 * MULT * N(); day = 0; eq = im; dep = 0; liq = -1; hist = [{ pre: im, post: im, pnl: 0, d: 0, ev: null }]; grow = 1; }
+    function restart() { reset(); auto = false; playBtn.textContent = "자동 재생"; cv.redraw(); stats(); }
+    function step() {
+      if (day >= DAYS || liq >= 0) { auto = false; playBtn.textContent = "자동 재생"; return; }
+      day++;
+      const n = N(), s = side() === "buy" ? 1 : -1, im = IM * F0 * MULT * n, mm = MM * F0 * MULT * n;
+      const pnl = s * (path[day] - path[day - 1]) * MULT * n;
+      eq += pnl;
+      const pre = eq; let d = 0, ev = null;
+      if (eq < mm) {
+        if (top.checked) { d = im - eq; dep += d; eq = im; ev = "call"; }
+        else { liq = day; ev = "liq"; }
+      }
+      hist.push({ pre, post: eq, pnl, d, ev });
+      grow = 0;
+    }
+    gen(); reset();
+    let G = null;
+    const cv = MB.canvas("#fs-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = N(), im = IM * F0 * MULT * n, mm = MM * F0 * MULT * n;
+      const A = { x: 58, y: 24, w: w - 76, h: Math.round((h - 80) * 0.42) };
+      const B = { x: 58, y: A.y + A.h + 40, w: w - 76, h: h - (A.y + A.h + 40) - 34 };
+      const shown = path.slice(0, day + 1);
+      const lo = Math.min(F0 * 0.9, Math.min.apply(null, shown) - 4), hi = Math.max(F0 * 1.1, Math.max.apply(null, shown) + 4);
+      const c1 = MB.chart(ctx, A, { x: [0, DAYS], y: [lo, hi], xTicks: [], yFmt: (v) => String(Math.round(v)),
+        series: [{ data: shown.map((v, i) => [i, v]), color: P.accent, width: 2 }],
+        hlines: [{ y: F0, color: P.dim, label: "진입 400" }] });
+      if (liq >= 0) { ctx.fillStyle = P.bad; ctx.beginPath(); ctx.arc(c1.X(liq), c1.Y(path[liq]), 5, 0, TAU); ctx.fill(); }
+      else knob(ctx, c1.X(day), c1.Y(path[day]), P, 5);
+      text(ctx, "선물 가격", A.x + 4, A.y - 8, { color: P.dim, size: 12 });
+      const vals = hist.map((x) => x.pre).concat(hist.map((x) => x.post));
+      const ymax = Math.max(im * 1.7, Math.max.apply(null, vals) * 1.08), ymin = Math.min(0, Math.min.apply(null, vals) * 1.15);
+      const c2 = MB.chart(ctx, B, { x: [-0.6, DAYS + 0.6], y: [ymin, ymax], xTicks: [0, 10, 20, 30, 40], xFmt: (v) => "D+" + v, yFmt: MB.wonAxis,
+        hlines: [{ y: im, color: P.faint, label: "개시증거금" }, { y: mm, color: P.bad, label: "유지증거금" }] });
+      text(ctx, "증거금 계좌 잔액", B.x + 4, B.y - 8, { color: P.dim, size: 12 });
+      const bw = Math.max(2, (B.w / (DAYS + 1.2)) * 0.7);
+      hist.forEach((hh, i) => {
+        const g = i === hist.length - 1 ? grow : 1;
+        const x = c2.X(i) - bw / 2, y0 = c2.Y(0);
+        const v = hh.pre * g + (i ? hist[i - 1].post : hh.pre) * (1 - g);
+        ctx.fillStyle = i === 0 ? P.accent : hh.ev === "liq" ? P.bad : MB.toneColor(hh.pnl);
+        ctx.globalAlpha = 0.85; ctx.fillRect(x, Math.min(y0, c2.Y(v)), bw, Math.abs(c2.Y(v) - y0)); ctx.globalAlpha = 1;
+        if (hh.d > 0 && g >= 1) {
+          ctx.fillStyle = P.accent2; ctx.fillRect(x, c2.Y(hh.post), bw, c2.Y(Math.max(0, hh.pre)) - c2.Y(hh.post));
+          text(ctx, "입금", c2.X(i), c2.Y(hh.post) - 4, { color: P.accent2, size: 10, align: "center", weight: 700 });
+        }
+        if (hh.ev === "liq" && g >= 1) text(ctx, "반대매매", MB.clamp(c2.X(i), B.x + 30, B.x + B.w - 30), Math.min(c2.Y(Math.max(0, v)), B.y + B.h - 10) - 8, { color: P.bad, size: 12, align: "center", weight: 700 });
+      });
+      G = c2;
+    }, { get height() { return narrow("fs-cv") ? 400 : 380; } });
+    function stats() {
+      const last = hist[hist.length - 1], tot = eq - IM * F0 * MULT * N() - dep;
+      MB.stat("fs-o-px", "D+" + day + " · " + path[day].toFixed(1));
+      MB.stat("fs-o-today", day ? swT(last.pnl) : "—");
+      MB.stat("fs-o-eq", eq < 0 ? span("bad-t", MB.won(eq)) : MB.won(eq));
+      MB.stat("fs-o-tot", day ? swT(tot) : "—");
+      MB.stat("fs-o-dep", dep ? span("warn-t", MB.won(dep)) : "0원");
+      const calls = hist.filter((x) => x.ev === "call").length;
+      MB.stat("fs-o-st", liq >= 0 ? span("bad-t", "반대매매 (D+" + liq + ")") : calls ? span("warn-t", "마진콜 " + calls + "회") : day >= DAYS ? "만기 정산" : span("ok-t", "정상"));
+    }
+    document.getElementById("fs-next").addEventListener("click", () => { step(); stats(); cv.redraw(); });
+    playBtn.addEventListener("click", () => {
+      if (day >= DAYS || liq >= 0) reset();
+      auto = !auto; playBtn.textContent = auto ? "멈춤" : "자동 재생"; stats(); cv.redraw();
+    });
+    document.getElementById("fs-new").addEventListener("click", () => { si++; gen(); restart(); });
+    top.addEventListener("change", restart);
+    MB.loop(cv.canvas, (dt) => {
+      let dirty = false;
+      if (grow < 1) { grow = Math.min(1, grow + dt * 5); dirty = true; }
+      if (auto) { acc += dt; if (acc > 0.32) { acc = 0; step(); stats(); dirty = true; } }
+      if (dirty) cv.redraw();
+    });
+    stats();
+  })();
+
+  /* ---------------------------------------------------------- 2. 증거금률과 레버리지 */
+  (function () {
+    let x = -0.05, C = null;
+    const M = MB.range("lv-m", (v) => v + "%", () => { cv.redraw(); stats(); });
+    const cv = MB.canvas("#lv-cv", (ctx, w, h) => {
+      const P = MB.palette(), m = M() / 100;
+      const B = { x: 58, y: 18, w: w - 76, h: h - 18 - bot(w) };
+      const xs = grid(-0.1, 0.1, 80);
+      const c = MB.chart(ctx, B, { x: [-0.1, 0.1], y: [-2, 2], xTicks: [-0.1, -0.05, 0, 0.05, 0.1], yTicks: [-2, -1, 0, 1, 2],
+        xFmt: (v) => MB.chg(v, 0), yFmt: (v) => MB.chg(v, 0), xLabel: "지수 변화", yLabel: "내 돈 대비 손익",
+        hlines: [{ y: -1, color: P.bad, label: "증거금 전부 사라짐" }],
+        series: [{ data: xs.map((v) => [v, v]), color: P.dim, width: 2, dash: [5, 4] }, { data: xs.map((v) => [v, v / m]), color: P.accent, width: 2.5 }] });
+      C = c;
+      ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(x), B.y); ctx.lineTo(c.X(x), B.y + B.h); ctx.stroke(); ctx.setLineDash([]);
+      const yv = MB.clamp(x / m, -2, 2);
+      ctx.fillStyle = MB.toneColor(x); ctx.beginPath(); ctx.arc(c.X(x), c.Y(x), 4, 0, TAU); ctx.fill();
+      knob(ctx, c.X(x), c.Y(yv), P, 7);
+      text(ctx, "선물 (" + (1 / m).toFixed(1) + "배)", B.x + 6, B.y + 14, { color: P.accent, size: 12, weight: 700 });
+      text(ctx, "현물 (1배)", B.x + 6, B.y + 30, { color: P.dim, size: 12 });
+    }, { get height() { return narrow("lv-cv") ? 320 : 300; } });
+    function stats() {
+      const m = M() / 100, pnl = x * 1e8, ret = x / m;
+      MB.stat("lv-o-x", span(MB.tone(x), MB.chg(x, 1)));
+      MB.stat("lv-o-L", (1 / m).toFixed(1) + "배");
+      MB.stat("lv-o-pnl", swT(pnl));
+      MB.stat("lv-o-ret", ret <= -1 ? span("bad-t", MB.chg(ret, 0) + " (원금 초과)") : span(MB.tone(ret), MB.chg(ret, 1)));
+    }
+    MB.drag(cv.canvas, { move(px) { if (!C) return; x = Math.round(MB.clamp(invX(C, px, -0.1, 0.1), -0.1, 0.1) * 1000) / 1000; cv.redraw(); stats(); } });
+    stats();
+  })();
+
+  /* ---------------------------------------------------------- 3. 보유비용 */
+  (function () {
+    const r = MB.range("cy-r", (v) => v.toFixed(2) + "%", () => cv.redraw());
+    const q = MB.range("cy-q", (v) => v.toFixed(2) + "%", () => cv.redraw());
+    const T = MB.range("cy-T", (v) => v + "개월", () => cv.redraw());
+    const full = ST.gbm({ s0: 400, mu: 0.04, sigma: 0.16, days: 252, seed: 41 });
+    const cv = MB.canvas("#cy-cv", (ctx, w, h) => {
+      const P = MB.palette(), rr = r() / 100, qq = q() / 100, Ty = T() / 12, D = Math.round(T() * 21);
+      const S = full.slice(0, D + 1), F = S.map((s, i) => s * Math.exp((rr - qq) * (Ty - i / 252)));
+      const all = S.concat(F), lo = Math.min.apply(null, all), hi = Math.max.apply(null, all), pad = (hi - lo) * 0.1 + 2;
+      const A = { x: 52, y: 22, w: w - 70, h: Math.round((h - 86) * 0.55) };
+      const B = { x: 52, y: A.y + A.h + 36, w: w - 70, h: h - (A.y + A.h + 36) - 46 };
+      const xt = grid(0, D, Math.min(6, T())).map((v) => Math.round(v));
+      const c = MB.chart(ctx, A, { x: [0, D], y: [lo - pad, hi + pad], xTicks: [], yFmt: (v) => String(Math.round(v)),
+        series: [{ data: S.map((v, i) => [i, v]), color: P.dim, width: 1.6 }, { data: F.map((v, i) => [i, v]), color: P.accent, width: 2 }] });
+      knob(ctx, c.X(D), c.Y(S[D]), P, 5);
+      text(ctx, "선물", A.x + 4, A.y - 8, { color: P.accent, size: 12, weight: 700 });
+      text(ctx, "현물", A.x + 40, A.y - 8, { color: P.dim, size: 12, weight: 700 });
+      const bs_ = F.map((f, i) => f - S[i]), bm = Math.max(2, Math.max.apply(null, bs_.map(Math.abs))) * 1.25;
+      const c2 = MB.chart(ctx, B, { x: [0, D], y: [-bm, bm], xTicks: xt, yTicks: [-Math.round(bm * 0.8 * 10) / 10, 0, Math.round(bm * 0.8 * 10) / 10], yFmt: (v) => (v > 0 ? "+" : "") + v.toFixed(1),
+        xLabel: "거래일 (오른쪽 끝이 만기)", hlines: [{ y: 0, color: P.axis, dash: [] }] });
+      const bw = Math.max(1, (B.w / (D + 1)) * 0.8);
+      bs_.forEach((v, i) => { ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.8; ctx.fillRect(c2.X(i) - bw / 2, Math.min(c2.Y(0), c2.Y(v)), bw, Math.abs(c2.Y(v) - c2.Y(0))); });
+      ctx.globalAlpha = 1;
+      text(ctx, "베이시스 = 선물 − 현물", B.x + 4, B.y - 8, { color: P.accent2, size: 12, weight: 700 });
+      text(ctx, "만기에 0", B.x + B.w - 4, B.y - 8, { color: P.dim, size: 11, align: "right" });
+      const F0 = 400 * Math.exp((rr - qq) * Ty), b = F0 - 400;
+      MB.stat("cy-o-F", F0.toFixed(2));
+      MB.stat("cy-o-b", (b >= 0 ? "+" : "−") + Math.abs(b).toFixed(2) + "<small> (" + MB.chg(b / 400, 2) + ")</small>");
+      MB.stat("cy-o-st", Math.abs(b) < 0.005 ? "선물 = 현물" : b > 0 ? "콘탱고" : "백워데이션");
+    }, { get height() { return narrow("cy-cv") ? 360 : 360; } });
+  })();
+
+  /* ---------------------------------------------------------- 4. 만기 손익 끌기 */
+  (function () {
+    const LO = 50000, HI = 100000;
+    let K = 80000, prem = 2650, hov = null, C = null;
+    const type = MB.seg("po-type", () => { cv.redraw(); stats(); });
+    const info = () => { const t = type(); return { call: t[0] === "c", long: t[1] === "b" }; };
+    const pay = (S) => { const o = info(), iv = o.call ? Math.max(0, S - K) : Math.max(0, K - S); return (o.long ? 1 : -1) * (iv - prem); };
+    const cv = MB.canvas("#po-cv", (ctx, w, h) => {
+      const P = MB.palette(), o = info();
+      const B = { x: 60, y: 16, w: w - 78, h: h - 16 - bot(w) };
+      const xs = grid(LO, HI, 200), data = xs.map((s) => [s, pay(s)]);
+      const c = MB.chart(ctx, B, { x: [LO, HI], y: [-25000, 25000], xFmt: manAxis, yFmt: (v) => (v > 0 ? "+" : "") + MB.wonAxis(v), xLabel: "만기 주가", yLabel: "1주당 손익" });
+      C = c;
+      pnlFill(ctx, c, data, P);
+      MB.chart(ctx, B, { x: [LO, HI], y: [-25000, 25000], xTicks: [], yTicks: [], series: [{ data, color: P.accent, width: 2.6 }],
+        hlines: [{ y: 0, color: P.axis, dash: [] }], vlines: [{ x: S0, color: P.faint, label: "현재 72,000" }] });
+      const be = o.call ? K + prem : K - prem;
+      if (be > LO && be < HI) { ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(c.X(be), c.Y(0), 4, 0, TAU); ctx.fill(); text(ctx, "손익분기 " + MB.wonAxis(be), c.X(be), c.Y(0) + (o.long ? -10 : 18), { color: P.text, size: 11, align: "center" }); }
+      if (hov != null) {
+        const v = pay(hov);
+        ctx.strokeStyle = P.dim; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(hov), B.y); ctx.lineTo(c.X(hov), B.y + B.h); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = MB.toneColor(v); ctx.beginPath(); ctx.arc(c.X(hov), c.Y(MB.clamp(v, -25000, 25000)), 4, 0, TAU); ctx.fill();
+        const right = c.X(hov) < B.x + B.w * 0.7;
+        text(ctx, "주가 " + MB.price(hov, { short: true }) + " → " + spr(v), c.X(hov) + (right ? 8 : -8), B.y + B.h - 10, { color: MB.toneColor(v), size: 12, align: right ? "left" : "right", weight: 700 });
+      }
+      knob(ctx, c.X(K), c.Y(o.long ? -prem : prem), P, 8);
+    }, { get height() { return narrow("po-cv") ? 320 : 330; } });
+    function stats() {
+      const o = info(), be = o.call ? K + prem : K - prem, p100 = (x) => MB.price(x);
+      MB.stat("po-o-k", MB.price(K, { short: true }) + " · " + MB.price(prem));
+      MB.stat("po-o-be", MB.price(be));
+      const maxP = o.long ? (o.call ? "무제한" : p100(K - prem)) : p100(prem);
+      const maxL = o.long ? p100(prem) : o.call ? span("bad-t", "무제한") : span("bad-t", p100(K - prem));
+      MB.stat("po-o-max", span("up-t", maxP));
+      MB.stat("po-o-min", maxL);
+    }
+    let dragging = false;
+    MB.drag(cv.canvas, {
+      start(x, y) { if (!C) return; const o = info(); dragging = Math.hypot(x - C.X(K), y - C.Y(o.long ? -prem : prem)) < 40; },
+      move(x, y) {
+        if (!C) return;
+        if (dragging) {
+          const o = info();
+          K = Math.round(MB.clamp(invX(C, x, LO, HI), 55000, 95000) / 1000) * 1000;
+          prem = Math.round(MB.clamp(Math.abs(invY(C, y, -25000, 25000)), 0, 15000) / 50) * 50;
+          if (o.long && invY(C, y, -25000, 25000) > 0) prem = 0;
+          if (!o.long && invY(C, y, -25000, 25000) < 0) prem = 0;
+        }
+        hov = Math.round(MB.clamp(invX(C, x, LO, HI), LO, HI) / 500) * 500;
+        cv.redraw(); stats();
+      },
+      end() { dragging = false; },
+      hover(x) { if (!C) return; hov = Math.round(MB.clamp(invX(C, x, LO, HI), LO, HI) / 500) * 500; cv.redraw(); },
+    });
+    stats();
+  })();
+
+  /* ---------------------------------------------------------- 5. 내재가치와 시간가치 */
+  (function () {
+    const LO = 40000, HI = 110000, K = 72000;
+    let S = 80000, C = null;
+    const type = MB.seg("tv-type", () => { cv.redraw(); });
+    const D = MB.range("tv-d", (v) => v + "일", () => cv.redraw());
+    const cv = MB.canvas("#tv-cv", (ctx, w, h) => {
+      const P = MB.palette(), t = type(), T = D() / 365;
+      const iv = (s) => (t === "call" ? Math.max(0, s - K) : Math.max(0, K - s));
+      const B = { x: 58, y: 16, w: w - 76, h: h - 16 - bot(w) };
+      const xs = grid(LO, HI, 160), pv = xs.map((s) => bs({ S: s, K, T, type: t }).price);
+      const ymax = t === "call" ? 40000 : 34000;
+      const c = MB.chart(ctx, B, { x: [LO, HI], y: [0, ymax], xFmt: manAxis, yFmt: MB.wonAxis, xLabel: "주가", yLabel: "옵션 가격",
+        vlines: [{ x: K, color: P.faint, label: "행사가" }] });
+      C = c;
+      ctx.save(); ctx.globalAlpha = 0.3; ctx.fillStyle = P.accent2; ctx.beginPath();
+      xs.forEach((s, i) => (i ? ctx.lineTo(c.X(s), c.Y(pv[i])) : ctx.moveTo(c.X(s), c.Y(pv[i]))));
+      for (let i = xs.length - 1; i >= 0; i--) ctx.lineTo(c.X(xs[i]), c.Y(iv(xs[i])));
+      ctx.closePath(); ctx.fill(); ctx.restore();
+      MB.chart(ctx, B, { x: [LO, HI], y: [0, ymax], xTicks: [], yTicks: [], series: [{ data: xs.map((s) => [s, iv(s)]), color: P.dim, width: 2, dash: [5, 4] }, { data: xs.map((s, i) => [s, pv[i]]), color: P.accent, width: 2.6 }] });
+      const p = bs({ S, K, T, type: t }).price, i0 = iv(S), x = c.X(S);
+      ctx.lineWidth = 6; ctx.strokeStyle = P.accent;
+      ctx.beginPath(); ctx.moveTo(x, c.Y(0)); ctx.lineTo(x, c.Y(i0)); ctx.stroke();
+      ctx.strokeStyle = P.accent2; ctx.beginPath(); ctx.moveTo(x, c.Y(i0)); ctx.lineTo(x, c.Y(p)); ctx.stroke();
+      knob(ctx, x, c.Y(p), P, 7);
+      text(ctx, "내재가치(점선)", B.x + 6, B.y + 14, { color: P.dim, size: 12 });
+      text(ctx, "시간가치(금색 영역)", B.x + 6, B.y + 30, { color: P.accent2, size: 12, weight: 700 });
+      MB.stat("tv-o-s", MB.price(S) + " <small>" + (Math.abs(S - K) < 500 ? "등가격" : i0 > 0 ? "내가격" : "외가격") + "</small>");
+      MB.stat("tv-o-p", MB.price(p));
+      MB.stat("tv-o-i", MB.price(i0));
+      MB.stat("tv-o-t", span("warn-t", MB.price(p - i0)));
+    }, { get height() { return narrow("tv-cv") ? 320 : 310; } });
+    MB.drag(cv.canvas, { move(x) { if (!C) return; S = Math.round(MB.clamp(invX(C, x, LO, HI), LO, HI) / 500) * 500; cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 6. 이항 트리 */
+  (function () {
+    const S = 100, K = 100, T = 1, r = 0.03, sig = 0.2;
+    const BSP = ST.bs({ S, K, T, r, sigma: sig }).price;
+    const conv = []; for (let n = 1; n <= 60; n++) conv.push([n, ST.binomial({ S, K, T, r, sigma: sig, n })]);
+    function tree(n) {
+      const dt = T / n, u = Math.exp(sig * Math.sqrt(dt)), d = 1 / u, p = (Math.exp(r * dt) - d) / (u - d), disc = Math.exp(-r * dt);
+      const st = [], v = [];
+      for (let i = 0; i <= n; i++) { st.push([]); for (let j = 0; j <= i; j++) st[i].push(S * Math.pow(u, j) * Math.pow(d, i - j)); }
+      v[n] = st[n].map((s) => Math.max(0, s - K));
+      for (let i = n - 1; i >= 0; i--) { v[i] = []; for (let j = 0; j <= i; j++) v[i].push(disc * (p * v[i + 1][j + 1] + (1 - p) * v[i + 1][j])); }
+      return { st, v, p };
+    }
+    let shown = 0, anim = false, acc = 0;
+    const N = MB.range("bt-n", (v) => v + "단계", () => { shown = 0; anim = false; cv.redraw(); });
+    const cv = MB.canvas("#bt-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = N(), tr = tree(n), nar = w < 520;
+      const TB = { x: 30, y: 28, w: w - 60, h: nar ? h * 0.58 - 30 : h * 0.6 - 30 };
+      const CB = { x: 50, y: TB.y + TB.h + 40, w: w - 68, h: h - (TB.y + TB.h + 40) - 48 };
+      const ln = Math.log(tr.st[n][n] / S), X = (i) => TB.x + (TB.w * i) / n, Y = (s) => TB.y + TB.h / 2 - (Math.log(s / S) / (ln || 1)) * (TB.h / 2 - 12);
+      ctx.strokeStyle = P.faint; ctx.lineWidth = 1; ctx.globalAlpha = 0.6;
+      for (let i = 0; i < n; i++) for (let j = 0; j <= i; j++) {
+        ctx.beginPath(); ctx.moveTo(X(i), Y(tr.st[i][j])); ctx.lineTo(X(i + 1), Y(tr.st[i + 1][j + 1])); ctx.moveTo(X(i), Y(tr.st[i][j])); ctx.lineTo(X(i + 1), Y(tr.st[i + 1][j])); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+      const showText = n <= (nar ? 3 : 5);
+      for (let i = 0; i <= n; i++) for (let j = 0; j <= i; j++) {
+        const x = X(i), y = Y(tr.st[i][j]), known = i >= shown;
+        ctx.fillStyle = known ? (tr.v[i][j] > 0 ? P.accent : P.dim) : P.faint;
+        ctx.beginPath(); ctx.arc(x, y, showText ? 4 : 3, 0, TAU); ctx.fill();
+        if (showText) {
+          const al = i === 0 ? "left" : i === n ? "right" : "center", dx = i === 0 ? -2 : i === n ? 4 : 0;
+          text(ctx, tr.st[i][j].toFixed(1), x + dx, y - 8, { color: P.dim, size: 11, mono: true, align: al });
+          text(ctx, known ? tr.v[i][j].toFixed(2) : "?", x + dx, y + 17, { color: known ? P.accent : P.faint, size: 12, mono: true, weight: 700, align: al });
+        }
+      }
+      text(ctx, "오늘", X(0), TB.y + TB.h + 6, { color: P.dim, size: 11, align: "left", base: "top" });
+      text(ctx, "만기", X(n), TB.y + TB.h + 6, { color: P.dim, size: 11, align: "right", base: "top" });
+      if (showText) text(ctx, "위: 주가 · 아래: 콜 가치", TB.x + TB.w / 2, TB.y + TB.h + 6, { color: P.dim, size: 11, align: "center", base: "top" });
+      const vs = conv.map((c) => c[1]), lo = Math.min.apply(null, vs) - 0.2, hi = Math.max.apply(null, vs) + 0.2;
+      const c = MB.chart(ctx, CB, { x: [0, 61], y: [lo, hi], xTicks: [1, 10, 20, 30, 40, 50, 60], xFmt: (v) => String(v), yFmt: (v) => v.toFixed(1), xLabel: "단계 수",
+        series: [{ data: conv, color: P.accent2, width: 1.5 }], hlines: [{ y: BSP, color: P.text, label: "블랙-숄즈 " + BSP.toFixed(2) }] });
+      conv.forEach(([k, v]) => { ctx.fillStyle = k === n ? P.accent : P.accent2; ctx.beginPath(); ctx.arc(c.X(k), c.Y(v), k === n ? 5 : 2, 0, TAU); ctx.fill(); });
+      const price = tr.v[0][0];
+      MB.stat("bt-o-p", (tr.p * 100).toFixed(1) + "%");
+      MB.stat("bt-o-tree", shown === 0 ? price.toFixed(3) : "계산 중");
+      MB.stat("bt-o-bs", BSP.toFixed(3));
+      MB.stat("bt-o-diff", shown === 0 ? (price - BSP >= 0 ? "+" : "−") + Math.abs(price - BSP).toFixed(3) : "—");
+    }, { get height() { return narrow("bt-cv") ? 440 : 440; } });
+    document.getElementById("bt-re").addEventListener("click", () => { shown = N() + 1; anim = false; cv.redraw(); });
+    document.getElementById("bt-go").addEventListener("click", () => { shown = N() + 1; anim = true; acc = 0.5; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (!anim) return; acc += dt; if (acc > 0.6) { acc = 0; shown--; if (shown <= 0) { shown = 0; anim = false; } cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 7. 블랙-숄즈 계산기 */
+  (function () {
+    const upd = () => cv.redraw();
+    const type = MB.seg("bs-type", upd);
+    const S = MB.range("bs-S", (v) => MB.price(v, { short: true }), upd);
+    const K = MB.range("bs-K", (v) => MB.price(v, { short: true }), upd);
+    const T = MB.range("bs-T", (v) => v + "일", upd);
+    const sg = MB.range("bs-sig", (v) => v + "%", upd);
+    const r = MB.range("bs-r", (v) => v.toFixed(2) + "%", upd);
+    const LO = 40000, HI = 110000;
+    const cv = MB.canvas("#bs-cv", (ctx, w, h) => {
+      const P = MB.palette(), t = type(), o = { K: K(), T: T() / 365, sigma: sg() / 100, r: r() / 100, type: t };
+      const B = { x: 58, y: 16, w: w - 76, h: h - 62 };
+      const xs = grid(LO, HI, 140), pv = xs.map((s) => bs(Object.assign({ S: s }, o)).price);
+      const ymax = Math.max(20000, Math.ceil((Math.max.apply(null, pv) * 1.05) / 10000) * 10000);
+      const iv = (s) => (t === "call" ? Math.max(0, s - o.K) : Math.max(0, o.K - s));
+      const c = MB.chart(ctx, B, { x: [LO, HI], y: [0, ymax], xFmt: manAxis, yFmt: MB.wonAxis, xLabel: "주가", yLabel: (t === "call" ? "콜" : "풋") + " 가격",
+        series: [{ data: xs.map((s) => [s, iv(s)]), color: P.dim, width: 1.6, dash: [5, 4] }, { data: xs.map((s, i) => [s, pv[i]]), color: P.accent, width: 2.6 }],
+        vlines: [{ x: o.K, color: P.faint, label: "K" }] });
+      const g = bs(Object.assign({ S: S() }, o));
+      // 델타 접선
+      const x0 = S(), dx = 9000;
+      ctx.strokeStyle = P.accent2; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(c.X(x0 - dx), c.Y(g.price - g.delta * dx)); ctx.lineTo(c.X(x0 + dx), c.Y(g.price + g.delta * dx)); ctx.stroke();
+      knob(ctx, c.X(x0), c.Y(g.price), P, 6);
+      text(ctx, "금색 선의 기울기 = 델타", B.x + 6, B.y + 14, { color: P.accent2, size: 12, weight: 700 });
+      MB.stat("bs-o-p", MB.price(g.price));
+      MB.stat("bs-o-d", g.delta.toFixed(3));
+      MB.stat("bs-o-g", (g.gamma * 1000 >= 0 ? "+" : "") + (g.gamma * 1000).toFixed(4));
+      MB.stat("bs-o-t", span("down-t", (g.theta < 0 ? "−" : "") + MB.price(Math.abs(g.theta))));
+      MB.stat("bs-o-v", "+" + MB.price(g.vega));
+    }, { get height() { return narrow("bs-cv") ? 290 : 330; } });
+  })();
+
+  /* ---------------------------------------------------------- 8. 만기로 녹아드는 곡선 */
+  (function () {
+    const K = 72000, D0 = 180, LO = 45000, HI = 100000;
+    const p0 = bs({ S: S0, K, T: D0 / 365 }).price;
+    let playing = false, acc = 0;
+    const D = MB.range("ex-d", (v) => v + "일", () => cv.redraw());
+    const btn = document.getElementById("ex-play");
+    const curve = (d) => grid(LO, HI, 140).map((s) => [s, (d > 0 ? bs({ S: s, K, T: d / 365 }).price : Math.max(0, s - K)) - p0]);
+    const ghosts = [180, 120, 60, 20].map((d) => [d, curve(d)]);
+    const cv = MB.canvas("#ex-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = D();
+      const B = { x: 60, y: 16, w: w - 78, h: h - 62 };
+      const cur = curve(d), kink = curve(0);
+      const c = MB.chart(ctx, B, { x: [LO, HI], y: [-12000, 22000], xFmt: manAxis, yFmt: (v) => (v > 0 ? "+" : "") + MB.wonAxis(v), xLabel: "주가", yLabel: "1주당 손익" });
+      pnlFill(ctx, c, cur, P);
+      MB.chart(ctx, B, { x: [LO, HI], y: [-12000, 22000], xTicks: [], yTicks: [],
+        series: ghosts.map(([, g]) => ({ data: g, color: P.faint, width: 1 })).concat([{ data: kink, color: P.text, width: 1.6, dash: [5, 4] }, { data: cur, color: P.accent, width: 2.8 }]),
+        hlines: [{ y: 0, color: P.axis, dash: [] }], vlines: [{ x: S0, color: P.faint, label: "72,000" }] });
+      const now = d > 0 ? bs({ S: S0, K, T: d / 365 }).price : 0;
+      ctx.fillStyle = MB.toneColor(now - p0); ctx.beginPath(); ctx.arc(c.X(S0), c.Y(now - p0), 5, 0, TAU); ctx.fill();
+      text(ctx, "남은 " + d + "일", B.x + 6, B.y + 14, { color: P.accent, size: 13, weight: 700 });
+      text(ctx, "점선: 만기 손익", B.x + 6, B.y + 30, { color: P.dim, size: 12 });
+      text(ctx, "가는 선: 180·120·60·20일", B.x + 6, B.y + 46, { color: P.dim, size: 11 });
+      MB.stat("ex-o-p0", MB.price(p0));
+      MB.stat("ex-o-p", MB.price(now));
+      MB.stat("ex-o-pnl", span(MB.tone(now - p0), spr(now - p0)));
+    }, { get height() { return narrow("ex-cv") ? 290 : 320; } });
+    btn.addEventListener("click", () => { if (!playing && D() === 0) D.set(180); playing = !playing; btn.textContent = playing ? "멈춤" : "만기까지 재생"; });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return; acc += dt;
+      if (acc > 0.05) { acc = 0; const v = D() - 1; D.set(Math.max(0, v)); if (v <= 0) { playing = false; btn.textContent = "만기까지 재생"; } }
+    });
+  })();
+
+  /* ---------------------------------------------------------- 9. 내재변동성 */
+  (function () {
+    const OPTS = { atm: { K: 72000, T: 0.25, type: "call", label: "3개월 · 행사가 72,000 콜" }, otm: { K: 64000, T: 1 / 12, type: "put", label: "1개월 · 행사가 64,000 풋" } };
+    let mkt = { atm: 6500, otm: 900 }, C = null;
+    const o = MB.seg("iv-o", () => cv.redraw());
+    const cv = MB.canvas("#iv-cv", (ctx, w, h) => {
+      const P = MB.palette(), op = OPTS[o()], base = { S: S0, K: op.K, T: op.T, type: op.type };
+      const sx = grid(0.05, 1.2, 120), pv = sx.map((s) => bs(Object.assign({ sigma: s }, base)).price);
+      const ymax = Math.ceil((pv[pv.length - 1] * 1.05) / 1000) * 1000;
+      const B = { x: 60, y: 22, w: w - 78, h: h - 22 - bot(w) };
+      const p = MB.clamp(mkt[o()], pv[0] + 1, ymax * 0.98); mkt[o()] = p;
+      const iv = ST.impliedVol(p, Object.assign({ r: R, q: Q }, base));
+      const c = MB.chart(ctx, B, { x: [0, 1.2], y: [0, ymax], xTicks: [0, 0.2, 0.4, 0.6, 0.8, 1, 1.2], xFmt: (v) => Math.round(v * 100) + "%", yFmt: MB.wonAxis, xLabel: "변동성 σ", yLabel: "옵션 가격",
+        series: [{ data: sx.map((s, i) => [s, pv[i]]), color: P.accent, width: 2.6 }],
+        vlines: [{ x: SIG, color: P.dim, label: "역사적 38%" }] });
+      C = c; C.ymax = ymax;
+      ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(B.x, c.Y(p)); ctx.lineTo(B.x + B.w, c.Y(p)); ctx.stroke();
+      ctx.setLineDash([3, 3]); ctx.strokeStyle = P.accent2; ctx.beginPath(); ctx.moveTo(c.X(iv), c.Y(p)); ctx.lineTo(c.X(iv), B.y + B.h); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.arc(c.X(iv), c.Y(p), 5, 0, TAU); ctx.fill();
+      knob(ctx, B.x + B.w - 16, c.Y(p), P, 7, P.accent2);
+      text(ctx, "시장가 " + MB.price(p), B.x + B.w - 30, c.Y(p) - 8, { color: P.accent2, size: 12, align: "right", weight: 700 });
+      text(ctx, "IV " + Math.round(iv * 100) + "%", c.X(iv) + 6, B.y + B.h - 8, { color: P.accent2, size: 12, weight: 700 });
+      text(ctx, op.label, B.x + 4, B.y - 8, { color: P.dim, size: 12 });
+      MB.stat("iv-o-p", MB.price(p));
+      MB.stat("iv-o-iv", span(iv > SIG + 0.01 ? "warn-t" : "", (iv * 100).toFixed(1) + "%"));
+      MB.stat("iv-o-day", "±" + ((iv / Math.sqrt(252)) * 100).toFixed(2) + "%");
+    }, { get height() { return narrow("iv-cv") ? 320 : 320; } });
+    MB.drag(cv.canvas, { move(x, y) { if (!C) return; mkt[o()] = Math.round(invY(C, y, 0, C.ymax) / 10) * 10; cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 10. 그릭스 곡선 */
+  (function () {
+    const K = 72000, LO = 40000, HI = 110000;
+    let S = 72000, C = null;
+    const g = MB.seg("gk-g", () => cv.redraw());
+    const D = MB.range("gk-d", (v) => v + "일", () => cv.redraw());
+    const NAME = { delta: "델타", gamma: "감마(1,000원당)", theta: "세타(원/일)", vega: "베가(원/1%p)" };
+    const val = (k, s, d, type) => { const x = bs({ S: s, K, T: d / 365, type }); return k === "gamma" ? x.gamma * 1000 : x[k]; };
+    const cv = MB.canvas("#gk-cv", (ctx, w, h) => {
+      const P = MB.palette(), k = g(), d = D(), xs = grid(LO, HI, 180);
+      const two = k === "delta" || k === "theta";
+      const lines = [];
+      const add = (dd, type, color, width, dash) => lines.push({ data: xs.map((s) => [s, val(k, s, dd, type)]), color, width, dash });
+      add(180, "call", P.faint, 1.4, [5, 4]); if (two) add(180, "put", P.faint, 1.4, [5, 4]);
+      add(d, "call", P.accent, 2.6); if (two) add(d, "put", P.accent2, 2.6);
+      const all = [].concat.apply([], lines.map((l) => l.data.map((p) => p[1])));
+      let lo = Math.min(0, Math.min.apply(null, all)), hi = Math.max(0, Math.max.apply(null, all));
+      if (k === "delta") { lo = -1.05; hi = 1.05; }
+      const pad = (hi - lo) * 0.06; lo -= k === "delta" ? 0 : pad; hi += k === "delta" ? 0 : pad;
+      const B = { x: 62, y: 18, w: w - 80, h: h - 18 - bot(w) };
+      const fmt = k === "delta" ? (v) => v.toFixed(1) : k === "gamma" ? (v) => v.toFixed(3) : (v) => String(Math.round(v));
+      const c = MB.chart(ctx, B, { x: [LO, HI], y: [lo, hi], xFmt: manAxis, yFmt: fmt, xLabel: "주가", yLabel: NAME[k], series: lines,
+        vlines: [{ x: K, color: P.faint, label: "K" }], hlines: [{ y: 0, color: P.axis, dash: [] }] });
+      C = c;
+      const vc = val(k, S, d, "call"), vp = val(k, S, d, "put");
+      ctx.strokeStyle = P.dim; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(S), B.y); ctx.lineTo(c.X(S), B.y + B.h); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, c.X(S), c.Y(vc), P, 6);
+      if (two) knob(ctx, c.X(S), c.Y(vp), P, 6, P.accent2);
+      text(ctx, two ? "콜" : "콜·풋 같음", B.x + 6, B.y + 14, { color: P.accent, size: 12, weight: 700 });
+      if (two) text(ctx, "풋", B.x + 6, B.y + 30, { color: P.accent2, size: 12, weight: 700 });
+      const f2 = (v) => (k === "delta" ? v.toFixed(3) : k === "gamma" ? v.toFixed(4) : (v < 0 ? "−" : "") + MB.price(Math.abs(v)));
+      MB.stat("gk-o-s", MB.price(S));
+      MB.stat("gk-o-c", f2(vc));
+      MB.stat("gk-o-p", f2(vp));
+    }, { get height() { return narrow("gk-cv") ? 320 : 320; } });
+    MB.drag(cv.canvas, { move(x) { if (!C) return; S = Math.round(MB.clamp(invX(C, x, LO, HI), LO, HI) / 500) * 500; cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 11. 세타 소멸 */
+  (function () {
+    const D0 = 180, KS = [[72000, "등가격 72,000"], [82000, "외가격 82,000"], [58000, "내가격 58,000"]];
+    const tvOf = (K, d) => (d > 0 ? bs({ S: S0, K, T: d / 365 }).price : Math.max(0, S0 - K)) - Math.max(0, S0 - K);
+    const days = []; for (let d = D0; d >= 0; d--) days.push(d);
+    const series = KS.map(([K]) => days.map((d) => [d, tvOf(K, d)]));
+    let day = D0, playing = false, acc = 0;
+    const btn = document.getElementById("th-play");
+    const cv = MB.canvas("#th-cv", (ctx, w, h) => {
+      const P = MB.palette(), cols = [P.accent, P.accent2, P.dim];
+      const B = { x: 58, y: 18, w: w - 76, h: h - 64 };
+      const ymax = Math.ceil((series[0][0][1] * 1.1) / 1000) * 1000;
+      const c = MB.chart(ctx, B, { x: [D0, 0], y: [0, ymax], xTicks: [180, 150, 120, 90, 60, 30, 0], xFmt: (v) => v + "일", yFmt: MB.wonAxis, xLabel: "만기까지 남은 일수", yLabel: "시간가치",
+        series: series.map((s, i) => ({ data: s.filter((p) => p[0] >= day), color: cols[i], width: i ? 2 : 2.8 })).concat(series.map((s, i) => ({ data: s, color: cols[i], width: 1, dash: [2, 4] }))),
+        bands: [{ x0: 30, x1: 0, color: P.grid }] });
+      text(ctx, "마지막 30일", c.X(15), B.y + 14, { color: P.dim, size: 11, align: "center" });
+      series.forEach((s, i) => {
+        const v = tvOf(KS[i][0], day);
+        ctx.fillStyle = cols[i]; ctx.beginPath(); ctx.arc(c.X(day), c.Y(v), i ? 4 : 6, 0, TAU); ctx.fill();
+        text(ctx, KS[i][1], B.x + B.w * 0.3, B.y + 14 + i * 16, { color: cols[i], size: 12, weight: i ? 400 : 700 });
+      });
+      const a = tvOf(72000, day), a1 = tvOf(72000, Math.max(0, day - 1)), a0 = series[0][0][1];
+      MB.stat("th-o-d", day + "일");
+      MB.stat("th-o-tv", MB.price(a));
+      MB.stat("th-o-th", day > 0 ? span("down-t", "−" + MB.price(a - a1)) : "—");
+      MB.stat("th-o-gone", MB.pct(1 - a / a0, 0));
+    }, { get height() { return narrow("th-cv") ? 290 : 310; } });
+    btn.addEventListener("click", () => { if (day <= 0) day = D0; playing = !playing; btn.textContent = playing ? "멈춤" : "시간 흐르게"; cv.redraw(); });
+    document.getElementById("th-re").addEventListener("click", () => { day = D0; playing = false; btn.textContent = "시간 흐르게"; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return; acc += dt;
+      if (acc > 0.05) { acc = 0; day--; if (day <= 0) { day = 0; playing = false; btn.textContent = "시간 흐르게"; } cv.redraw(); }
+    });
+  })();
+
+  /* ---------------------------------------------------------- 12. 델타 헤지 */
+  (function () {
+    const K = 72000, DAYS = 60, IV = SIG, SH = 100;
+    let seed = 1, path, day = 60, res;
+    const mode = MB.seg("dh-mode", () => { cv.redraw(); stats(); });
+    const vol = MB.range("dh-vol", (v) => v + "%", () => { gen(); cv.redraw(); stats(); });
+    function gen() {
+      path = ST.gbm({ s0: S0, mu: 0, sigma: vol() / 100, days: DAYS, seed });
+      res = {};
+      const optV = (i) => bs({ S: path[i], K, T: (DAYS - i) / 365, sigma: IV }).price;
+      const prem = optV(0);
+      ["none", "week", "day"].forEach((m) => {
+        let delta = m === "none" ? 0 : bs({ S: path[0], K, T: DAYS / 365, sigma: IV }).delta, cash = prem * SH - delta * SH * path[0];
+        const pnl = [0], dl = [delta];
+        for (let i = 1; i <= DAYS; i++) {
+          cash *= Math.exp(R / 365);
+          const opt = i < DAYS ? optV(i) : Math.max(0, path[i] - K);
+          pnl.push(cash + delta * SH * path[i] - opt * SH);
+          if (m !== "none" && i < DAYS && (m === "day" || i % 5 === 0)) {
+            const nd = bs({ S: path[i], K, T: (DAYS - i) / 365, sigma: IV }).delta;
+            cash -= (nd - delta) * SH * path[i]; delta = nd;
+          }
+          dl.push(delta);
+        }
+        res[m] = { pnl, dl };
+      });
+      res.prem = prem;
+    }
+    gen();
+    const cv = MB.canvas("#dh-cv", (ctx, w, h) => {
+      const P = MB.palette(), m = mode();
+      const A = { x: 62, y: 22, w: w - 80, h: Math.round((h - 84) * 0.42) };
+      const B = { x: 62, y: A.y + A.h + 40, w: w - 80, h: h - (A.y + A.h + 40) - 36 };
+      const lo = Math.min(S0 * 0.8, Math.min.apply(null, path)), hi = Math.max(S0 * 1.2, Math.max.apply(null, path));
+      const c1 = MB.chart(ctx, A, { x: [0, DAYS], y: [lo, hi], xTicks: [], yFmt: manAxis,
+        series: [{ data: path.slice(0, day + 1).map((v, i) => [i, v]), color: P.dim, width: 2 }], hlines: [{ y: K, color: P.faint, label: "행사가" }] });
+      knob(ctx, c1.X(day), c1.Y(path[day]), P, 5);
+      text(ctx, "한빛반도체 주가 (가상 경로)", A.x + 4, A.y - 8, { color: P.dim, size: 12 });
+      const all = res.none.pnl.concat(res.week.pnl, res.day.pnl), mx = Math.max(500000, Math.max.apply(null, all.map(Math.abs))) * 1.1;
+      const sel = res[m].pnl.slice(0, day + 1).map((v, i) => [i, v]);
+      const c2 = MB.chart(ctx, B, { x: [0, DAYS], y: [-mx, mx], xTicks: [0, 10, 20, 30, 40, 50, 60], xFmt: (v) => "D+" + v, yFmt: (v) => (v > 0 ? "+" : "") + MB.wonAxis(v),
+        series: (m !== "none" ? [{ data: res.none.pnl.slice(0, day + 1).map((v, i) => [i, v]), color: P.faint, width: 1.6, dash: [4, 3] }] : []).concat([{ data: sel, color: P.accent, width: 2.4 }]),
+        hlines: [{ y: 0, color: P.axis, dash: [] }] });
+      const v = res[m].pnl[day];
+      ctx.fillStyle = MB.toneColor(v); ctx.beginPath(); ctx.arc(c2.X(day), c2.Y(v), 5, 0, TAU); ctx.fill();
+      text(ctx, "콜 매도자의 손익 (" + (m === "none" ? "헤지 안 함" : m === "week" ? "매주 헤지" : "매일 헤지") + ")", B.x + 4, B.y - 8, { color: P.accent, size: 12, weight: 700 });
+    }, { get height() { return narrow("dh-cv") ? 400 : 390; } });
+    function stats() {
+      const m = mode(), dl = res[m].dl[day];
+      MB.stat("dh-o-s", "D+" + day + " · " + MB.price(path[day], { short: true }));
+      MB.stat("dh-o-d", m === "none" ? "0 · 0주" : dl.toFixed(2) + " · " + Math.round(dl * SH) + "주");
+      MB.stat("dh-o-h", m === "none" ? "—" : swT(res[m].pnl[day]));
+      MB.stat("dh-o-n", swT(res.none.pnl[day]));
+    }
+    let run = false, acc = 0;
+    document.getElementById("dh-step").addEventListener("click", () => { day = day >= DAYS ? 0 : day + 1; run = false; cv.redraw(); stats(); });
+    document.getElementById("dh-run").addEventListener("click", () => { if (day >= DAYS) day = 0; run = true; });
+    document.getElementById("dh-new").addEventListener("click", () => { seed++; day = 0; run = false; gen(); cv.redraw(); stats(); });
+    MB.loop(cv.canvas, (dt) => { if (!run) return; acc += dt; if (acc > 0.04) { acc = 0; day++; if (day >= DAYS) { day = DAYS; run = false; } cv.redraw(); stats(); } });
+    stats();
+  })();
+
+  /* ---------------------------------------------------------- 13. 풋-콜 패리티 저울 */
+  (function () {
+    const K = 72000, T = 0.25;
+    let tilt = 0;
+    const upd = () => stats();
+    const S = MB.range("pp-S", (v) => MB.price(v, { short: true }), upd);
+    const gap = MB.range("pp-gap", (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + MB.price(Math.abs(v)), upd);
+    const vals = () => {
+      const s = S(), c = bs({ S: s, K, T }).price + gap(), p = bs({ S: s, K, T, type: "put" }).price;
+      const bond = K * Math.exp(-R * T), stock = s * Math.exp(-Q * T);
+      return { c, p, bond, stock, L: c + bond, Rr: p + stock };
+    };
+    const cv = MB.canvas("#pp-cv", (ctx, w, h) => {
+      const P = MB.palette(), v = vals(), cx = w / 2, py = 54, pw = Math.min(170, w / 2 - 20), arm = Math.min(190, w / 2 - pw / 2 - 8);
+      ctx.fillStyle = P.dim;
+      ctx.beginPath(); ctx.moveTo(cx - 34, h - 22); ctx.lineTo(cx + 34, h - 22); ctx.lineTo(cx, py); ctx.closePath(); ctx.globalAlpha = 0.25; ctx.fill(); ctx.globalAlpha = 1;
+      ctx.fillRect(cx - 50, h - 24, 100, 6);
+      const ex = Math.cos(tilt) * arm, ey = Math.sin(tilt) * arm;
+      ctx.strokeStyle = P.text; ctx.lineWidth = 4; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(cx - ex, py - ey); ctx.lineTo(cx + ex, py + ey); ctx.stroke(); ctx.lineCap = "butt";
+      ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(cx, py, 6, 0, TAU); ctx.fill();
+      const pan = (x, y, items, col, title) => {
+        const drop = 76;
+        ctx.strokeStyle = P.dim; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - pw / 2, y + drop); ctx.moveTo(x, y); ctx.lineTo(x + pw / 2, y + drop); ctx.stroke();
+        ctx.strokeStyle = P.text; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - pw / 2, y + drop); ctx.lineTo(x + pw / 2, y + drop); ctx.stroke();
+        let yy = y + drop - 4;
+        items.forEach(([lab, val, big]) => {
+          const bh = big ? 34 : 22;
+          ctx.fillStyle = big ? P.surface : col; ctx.globalAlpha = big ? 1 : 0.85;
+          ctx.fillRect(x - pw / 2 + 8, yy - bh, pw - 16, bh); ctx.globalAlpha = 1;
+          ctx.strokeStyle = P.border; ctx.strokeRect(x - pw / 2 + 8, yy - bh, pw - 16, bh);
+          text(ctx, lab + " " + MB.price(val, { short: true }), x, yy - bh / 2 + 1, { color: big ? P.text : "#fff", size: 12, align: "center", base: "middle", weight: 700 });
+          yy -= bh + 2;
+        });
+        text(ctx, title, x, y + drop + 18, { color: P.text, size: 13, align: "center", weight: 700 });
+        text(ctx, MB.price(items.reduce((s, it) => s + it[1], 0)), x, y + drop + 36, { color: P.dim, size: 12, align: "center", mono: true });
+      };
+      pan(cx - ex, py - ey, [["채권", v.bond, true], ["콜", v.c, false]], P.accent, "콜 + 채권");
+      pan(cx + ex, py + ey, [["주식", v.stock, true], ["풋", v.p, false]], P.accent2, "풋 + 주식");
+    }, { get height() { return narrow("pp-cv") ? 260 : 270; } });
+    function stats() {
+      const v = vals(), d = v.L - v.Rr;
+      MB.stat("pp-o-l", MB.price(v.L));
+      MB.stat("pp-o-r", MB.price(v.Rr));
+      MB.stat("pp-o-arb", Math.abs(d) < 25 ? span("ok-t", "균형 · 차익 없음") :
+        d > 0 ? span("warn-t", "콜 매도·풋 매수·주식 매수·차입 → +" + MB.won(d * 100) + "/100주") :
+          span("warn-t", "콜 매수·풋 매도·주식 공매도·예금 → +" + MB.won(-d * 100) + "/100주"));
+    }
+    MB.loop(cv.canvas, (dt) => {
+      const v = vals(), target = MB.clamp((v.L - v.Rr) / 1500, -1, 1) * -0.2;
+      if (Math.abs(target - tilt) > 0.0005) { tilt += (target - tilt) * Math.min(1, dt * 8); cv.redraw(); }
+    });
+    stats();
+  })();
+
+  /* ---------------------------------------------------------- 14. 전략 빌더 */
+  (function () {
+    const LO = 40000, HI = 110000, TD = 90, SH = 100;
+    const NAMES = { stock: "주식", call: "콜", put: "풋" };
+    const PRESETS = {
+      cc: [["stock", 1], ["call", -1, 80000]],
+      pp: [["stock", 1], ["put", 1, 65000]],
+      col: [["stock", 1], ["put", 1, 65000], ["call", -1, 80000]],
+      bull: [["call", 1, 72000], ["call", -1, 82000]],
+      str: [["call", 1, 72000], ["put", 1, 72000]],
+      sstr: [["call", -1, 72000], ["put", -1, 72000]],
+    };
+    let legs = [], drag = -1, C = null;
+    const prem = (l) => (l.type === "stock" ? 0 : bs({ S: S0, K: l.K, T: TD / 365, type: l.type }).price);
+    const toST = () => legs.map((l) => ({ type: l.type, K: l.K, qty: l.side * SH, premium: prem(l), price: S0 }));
+    const nowVal = (S, d) => legs.reduce((s, l) => {
+      if (l.type === "stock") return s + l.side * SH * (S - S0);
+      const v = d > 0 ? bs({ S, K: l.K, T: d / 365, type: l.type }).price : l.type === "call" ? Math.max(0, S - l.K) : Math.max(0, l.K - S);
+      return s + l.side * SH * (v - prem(l));
+    }, 0);
+    const D = MB.range("sb-d", (v) => v + "일", () => cv.redraw());
+    const legsEl = document.getElementById("sb-legs");
+    function renderLegs() {
+      legsEl.innerHTML = legs.length ? "" : '<span class="empty">다리가 없다. 위 버튼으로 추가한다.</span>';
+      legs.forEach((l, i) => {
+        const el = document.createElement("span");
+        el.className = "leg " + (l.side > 0 ? "long" : "short");
+        el.innerHTML = NAMES[l.type] + " " + (l.side > 0 ? "매수" : "매도") + (l.type === "stock" ? "" : " " + MB.wonAxis(l.K));
+        const x = document.createElement("button"); x.type = "button"; x.textContent = "×"; x.setAttribute("aria-label", "다리 삭제");
+        x.addEventListener("click", () => { legs.splice(i, 1); changed(); });
+        el.appendChild(x); legsEl.appendChild(el);
+      });
+    }
+    function changed() { renderLegs(); cv.redraw(); stats(); }
+    function preset(k) { legs = PRESETS[k].map(([type, side, K]) => ({ type, side, K: K || S0 })); changed(); }
+    document.querySelectorAll("#sb-pre button").forEach((b) => b.addEventListener("click", () => preset(b.dataset.p)));
+    document.querySelectorAll("#sb-add button[data-t]").forEach((b) => b.addEventListener("click", () => {
+      if (legs.length >= 6) legs.shift();
+      legs.push({ type: b.dataset.t, side: Number(b.dataset.s), K: S0 }); changed();
+    }));
+    document.getElementById("sb-clear").addEventListener("click", () => { legs = []; changed(); });
+    const cv = MB.canvas("#sb-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = D(), xs = grid(LO, HI, 280), sl = toST();
+      const B = { x: 64, y: 16, w: w - 82, h: h - 16 - bot(w) };
+      const exp = xs.map((s) => [s, ST.payoff(sl, s)]), cur = xs.map((s) => [s, nowVal(s, d)]);
+      const ys = exp.concat(cur).map((p) => p[1]);
+      const m = Math.max(500000, Math.max.apply(null, ys.map(Math.abs))) * 1.08;
+      const ymax = Math.min(m, 4000000);
+      const c = MB.chart(ctx, B, { x: [LO, HI], y: [-ymax, ymax], xFmt: manAxis, yFmt: (v) => (v > 0 ? "+" : "") + MB.wonAxis(v), xLabel: "만기 주가 (한빛반도체)", yLabel: "손익 (100주 단위)" });
+      C = c;
+      if (legs.length) pnlFill(ctx, c, exp, P);
+      MB.chart(ctx, B, { x: [LO, HI], y: [-ymax, ymax], xTicks: [], yTicks: [],
+        series: legs.length ? [{ data: cur, color: P.dim, width: 1.8, dash: [6, 4] }, { data: exp, color: P.accent, width: 2.8 }] : [],
+        hlines: [{ y: 0, color: P.axis, dash: [] }], vlines: [{ x: S0, color: P.faint, label: "현재 72,000" }] });
+      // 행사가 손잡이
+      const hy = B.y + B.h - 16;
+      legs.forEach((l, i) => {
+        if (l.type === "stock") return;
+        const x = c.X(l.K), col = l.side > 0 ? P.up : P.down;
+        ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(x, hy); ctx.lineTo(x - 8, hy + 13); ctx.lineTo(x + 8, hy + 13); ctx.closePath(); ctx.fill();
+        if (i === drag) { ctx.strokeStyle = P.text; ctx.lineWidth = 1.5; ctx.stroke(); }
+        ctx.strokeStyle = col; ctx.globalAlpha = 0.35; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(x, B.y); ctx.lineTo(x, hy); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+        text(ctx, MB.wonAxis(l.K), x, hy - 4, { color: col, size: 10, align: "center", weight: 700 });
+      });
+      if (!legs.length) text(ctx, "전략을 고르거나 다리를 추가한다", B.x + B.w / 2, B.y + B.h / 2 - 14, { color: P.dim, size: 14, align: "center" });
+      else {
+        text(ctx, "실선: 만기 손익", B.x + 6, B.y + 14, { color: P.accent, size: 12, weight: 700 });
+        text(ctx, "점선: 남은 " + d + "일 시점의 평가손익", B.x + 6, B.y + 30, { color: P.dim, size: 12 });
+      }
+    }, { get height() { return narrow("sb-cv") ? 360 : 380; } });
+    function stats() {
+      if (!legs.length) { ["prem", "max", "min", "be"].forEach((k) => MB.stat("sb-o-" + k, "—")); return; }
+      const sl = toST(), net = -legs.reduce((s, l) => s + l.side * SH * prem(l), 0);
+      const f = (s) => ST.payoff(sl, s), xs = grid(0, 250000, 2500), ys = xs.map(f);
+      const slopeR = f(1e6) - f(9e5), mx = Math.max.apply(null, ys), mn = Math.min.apply(null, ys);
+      MB.stat("sb-o-prem", net >= 0 ? span("up-t", "+" + MB.won(net) + " 받음") : span("down-t", MB.won(-net) + " 냄"));
+      MB.stat("sb-o-max", slopeR > 1 ? span("up-t", "무제한") : span(mx > 0 ? "up-t" : "", sw(mx)));
+      MB.stat("sb-o-min", slopeR < -1 ? span("bad-t", "무제한") : span(mn < 0 ? "down-t" : "", sw(mn)));
+      const be = [];
+      for (let i = 1; i < xs.length; i++) if ((ys[i - 1] < 0) !== (ys[i] < 0)) be.push(Math.round((xs[i - 1] + (xs[i] - xs[i - 1]) * (-ys[i - 1] / (ys[i] - ys[i - 1]))) / 100) * 100);
+      MB.stat("sb-o-be", be.length ? be.slice(0, 2).map((b) => MB.price(b, { short: true })).join(" · ") : "없음");
+    }
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        drag = -1; if (!C) return;
+        let best = 24;
+        legs.forEach((l, i) => { if (l.type === "stock") return; const dd = Math.abs(x - C.X(l.K)) + (y < C.box.y + C.box.h - 60 ? 12 : 0); if (dd < best) { best = dd; drag = i; } });
+      },
+      move(x) { if (drag < 0 || !C) return; legs[drag].K = Math.round(MB.clamp(invX(C, x, LO, HI), 50000, 100000) / 1000) * 1000; cv.redraw(); },
+      end() { if (drag >= 0) { drag = -1; changed(); } },
+    });
+    preset("cc");
+  })();
+
+  /* ---------------------------------------------------------- 15. 전략 맞히기 게임 */
+  (function () {
+    const K = 100, P0 = 6;
+    const ST_ = {
+      "콜 매수": [["call", 1, K]], "콜 매도": [["call", -1, K]], "풋 매수": [["put", 1, K]], "풋 매도": [["put", -1, K]],
+      "커버드콜": [["stock", 1], ["call", -1, 110]], "보호적 풋": [["stock", 1], ["put", 1, 90]],
+      "스트래들 매수": [["call", 1, K], ["put", 1, K]], "스트래들 매도": [["call", -1, K], ["put", -1, K]],
+      "강세 콜 스프레드": [["call", 1, 95], ["call", -1, 110]], "약세 풋 스프레드": [["put", 1, 105], ["put", -1, 90]],
+      "칼라": [["stock", 1], ["put", 1, 90], ["call", -1, 110]], "선물 매도": [["future", -1]],
+    };
+    const keys = Object.keys(ST_);
+    const prem = (t, k) => ST.bs({ S: 100, K: k, T: 0.25, r: R, sigma: 0.3, type: t }).price;
+    const legsOf = (name) => ST_[name].map(([type, q, k]) => ({ type, qty: q, K: k, premium: type === "call" || type === "put" ? prem(type, k) : 0, price: 100 }));
+    const rnd = MB.rng(20);
+    let ans, choices, picked = null, score = 0, total = 0;
+    const optsEl = document.getElementById("gs-opts");
+    function newQ() {
+      ans = keys[Math.floor(rnd() * keys.length)];
+      const pool = keys.filter((k) => k !== ans); const set = [ans];
+      while (set.length < 4) { const k = pool.splice(Math.floor(rnd() * pool.length), 1)[0]; set.push(k); }
+      choices = set.sort(() => rnd() - 0.5); picked = null;
+      optsEl.innerHTML = "";
+      choices.forEach((k) => {
+        const b = document.createElement("button"); b.className = "btn"; b.type = "button"; b.textContent = k;
+        b.addEventListener("click", () => {
+          if (picked) return; picked = k; total++; if (k === ans) score++;
+          [...optsEl.children].forEach((x) => { x.disabled = true; if (x.textContent === ans) x.classList.add("right"); else if (x.textContent === k) x.classList.add("wrong"); });
+          MB.stat("gs-o-score", score + " / " + total);
+          MB.stat("gs-o-msg", k === ans ? span("ok-t", "정답") : span("bad-t", "오답 · 정답은 " + ans));
+          cv.redraw();
+        });
+        optsEl.appendChild(b);
+      });
+      MB.stat("gs-o-msg", "고른다");
+      cv.redraw();
+    }
+    const cv = MB.canvas("#gs-cv", (ctx, w, h) => {
+      if (!ans) return;
+      const P = MB.palette(), L = legsOf(ans), xs = grid(60, 140, 160), data = xs.map((s) => [s, ST.payoff(L, s)]);
+      const B = { x: 30, y: 16, w: w - 48, h: h - 62 };
+      const c = MB.chart(ctx, B, { x: [60, 140], y: [-30, 30], xTicks: [70, 80, 90, 100, 110, 120, 130], yTicks: [0], xFmt: (v) => (v === 100 ? "현재가" : ""), yFmt: () => "0", xLabel: "만기 주가 →" });
+      pnlFill(ctx, c, data, P);
+      MB.chart(ctx, B, { x: [60, 140], y: [-30, 30], xTicks: [], yTicks: [], series: [{ data, color: P.accent, width: 3 }], hlines: [{ y: 0, color: P.axis, dash: [] }] });
+      text(ctx, "이익 ↑", B.x + 6, B.y + 14, { color: P.up, size: 12, weight: 700 });
+      text(ctx, "손실 ↓", B.x + 6, B.y + B.h - 8, { color: P.down, size: 12, weight: 700 });
+      if (picked) text(ctx, ans, B.x + B.w - 8, B.y + 18, { color: P.text, size: 15, weight: 700, align: "right" });
+    }, { get height() { return narrow("gs-cv") ? 230 : 260; } });
+    document.getElementById("gs-next").addEventListener("click", newQ);
+    newQ();
+  })();
+
+  /* ---------------------------------------------------------- 16. 옵션 매도 10년 */
+  (function () {
+    const IVS = 0.18, ACC0 = 1e8;
+    let world = 0, idx, months, show = 0, playing = false, acc = 0;
+    const otm = MB.range("ps-otm", (v) => v + "%", () => { calc(); show = months; cv.redraw(); });
+    const lev = MB.seg("ps-lev", () => { calc(); show = months; cv.redraw(); });
+    const playBtn = document.getElementById("ps-play");
+    let out;
+    function load() {
+      const daily = world === 0 ? ST.market().index : ST.gbm({ s0: 2000, mu: 0.07, sigma: 0.16, days: 2600, seed: 300 + world, jump: { lambda: 0.6, mean: -0.07, sd: 0.05 } });
+      idx = []; for (let i = 0; i < daily.length; i += 21) idx.push(daily[i]);
+      months = idx.length - 1;
+    }
+    function calc() {
+      const k = 1 - otm() / 100, L = Number(lev()), T = 1 / 12;
+      let a = ACC0, dead = -1;
+      const val = [a], pnl = [];
+      for (let m = 0; m < months; m++) {
+        if (dead >= 0) { val.push(0); pnl.push(0); continue; }
+        const S = idx[m], K = S * k, p = ST.bs({ S, K, T, r: R, sigma: IVS, type: "put" }).price, units = (a * L) / S;
+        const x = units * (p - Math.max(0, K - idx[m + 1])), r = x / a;
+        a += x; pnl.push(r);
+        if (a <= 0) { a = 0; dead = m + 1; }
+        val.push(a);
+      }
+      out = { val, pnl, dead };
+    }
+    load(); calc(); show = months;
+    const cv = MB.canvas("#ps-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = show;
+      const A = { x: 58, y: 24, w: w - 76, h: Math.round((h - 84) * 0.56) };
+      const B = { x: 58, y: A.y + A.h + 40, w: w - 76, h: h - (A.y + A.h + 40) - 34 };
+      const ix = idx.map((v) => (v / idx[0]) * ACC0);
+      const ymax = Math.max(Math.max.apply(null, ix), Math.max.apply(null, out.val)) * 1.08;
+      const c1 = MB.chart(ctx, A, { x: [0, months], y: [0, ymax], xTicks: [0, 24, 48, 72, 96, 120].filter((v) => v <= months), xFmt: (v) => v / 12 + "년", yFmt: MB.wonAxis,
+        series: [{ data: ix.slice(0, n + 1).map((v, i) => [i, v]), color: P.dim, width: 1.6, dash: [5, 4] }, { data: out.val.slice(0, n + 1).map((v, i) => [i, v]), color: P.accent, width: 2.4 }],
+        hlines: [{ y: ACC0, color: P.faint }] });
+      knob(ctx, c1.X(n), c1.Y(out.val[n]), P, 5);
+      text(ctx, "풋 매도 계좌", A.x + 6, A.y + 4, { color: P.accent, size: 12, weight: 700, base: "top" });
+      text(ctx, "지수만 보유(점선)", A.x + 6, A.y + 20, { color: P.dim, size: 12, base: "top" });
+      text(ctx, world === 0 ? "SB 종합지수 (가상 시장)" : "다른 가상 시장 #" + world, A.x + A.w - 4, A.y - 8, { color: P.dim, size: 11, align: "right" });
+      const lo = Math.min(-0.05, Math.min.apply(null, out.pnl)) * 1.1, hi = Math.max(0.05, Math.max.apply(null, out.pnl)) * 1.1;
+      const c2 = MB.chart(ctx, B, { x: [0, months], y: [lo, hi], xTicks: [], yTicks: [lo / 1.1, 0].concat(hi / 1.1 > 0.06 ? [hi / 1.1] : []), yFmt: (v) => MB.chg(v, 0) });
+      text(ctx, "월 손익률", B.x + 4, B.y - 8, { color: P.dim, size: 12 });
+      const bw = Math.max(1, (B.w / months) * 0.75);
+      for (let m = 0; m < n; m++) {
+        const v = out.pnl[m]; if (!v) continue;
+        ctx.fillStyle = v < -0.1 ? P.bad : MB.toneColor(v);
+        const y0 = c2.Y(0), y1 = c2.Y(v);
+        ctx.fillRect(c2.X(m + 0.5) - bw / 2, Math.min(y0, y1), bw, Math.max(1, Math.abs(y1 - y0)));
+      }
+      if (out.dead >= 0 && n >= out.dead) text(ctx, "계좌 소멸", c1.X(out.dead), c1.Y(0) - 10, { color: P.bad, size: 13, weight: 700, align: "center" });
+      const done = out.pnl.slice(0, n), wins = done.filter((v) => v > 0);
+      MB.stat("ps-o-win", done.length ? Math.round((wins.length / done.length) * 100) + "% <small>(" + wins.length + "/" + done.length + "달)</small>" : "—");
+      MB.stat("ps-o-avg", wins.length ? span("up-t", MB.chg(ST.mean(wins), 2)) : "—");
+      const worst = done.length ? Math.min.apply(null, done) : 0;
+      MB.stat("ps-o-worst", worst < 0 ? span(worst < -0.15 ? "bad-t" : "down-t", MB.chg(worst, 1)) : "—");
+      MB.stat("ps-o-end", out.val[n] <= 0 ? span("bad-t", "0원 (소멸)") : span(MB.tone(out.val[n] - ACC0), MB.won(out.val[n])));
+      MB.stat("ps-o-idx", span(MB.tone(ix[n] - ACC0), MB.won(ix[n])));
+    }, { get height() { return narrow("ps-cv") ? 400 : 400; } });
+    playBtn.addEventListener("click", () => { show = 0; playing = true; cv.redraw(); });
+    document.getElementById("ps-new").addEventListener("click", () => { world++; load(); calc(); show = months; playing = false; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (!playing) return; acc += dt; if (acc > 0.06) { acc = 0; show++; if (show >= months) { show = months; playing = false; } cv.redraw(); } });
+  })();
+})();
+</script>
+</body>
+</html>

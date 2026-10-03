@@ -1,0 +1,1028 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "책 전체의 주식 용어 300여 개를 한국어·영어·약어·초성으로 검색하고, 플래시카드·짝 맞추기·숫자 감각 퀴즈로 익힌 뒤, 25개 장을 아우르는 48문항 종합 퀴즈와 부별 정답률 레이더로 실력을 점검한다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>용어집 & 종합 퀴즈 · StockBook</title>
+<meta name="description" content="책 전체의 주식 용어 300여 개를 한국어·영어·약어·초성으로 검색하고, 플래시카드·짝 맞추기·숫자 감각 퀴즈로 익힌 뒤, 25개 장을 아우르는 48문항 종합 퀴즈와 부별 정답률 레이더로 실력을 점검한다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/glossary.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="용어집 &amp; 종합 퀴즈 · StockBook">
+<meta property="og:description" content="책 전체의 주식 용어 300여 개를 한국어·영어·약어·초성으로 검색하고, 플래시카드·짝 맞추기·숫자 감각 퀴즈로 익힌 뒤, 25개 장을 아우르는 48문항 종합 퀴즈와 부별 정답률 레이더로 실력을 점검한다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/glossary.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/glossary.html#chapter","name":"용어집 & 종합 퀴즈","headline":"용어집 & 종합 퀴즈 · StockBook","description":"책 전체의 주식 용어 300여 개를 한국어·영어·약어·초성으로 검색하고, 플래시카드·짝 맞추기·숫자 감각 퀴즈로 익힌 뒤, 25개 장을 아우르는 48문항 종합 퀴즈와 부별 정답률 레이더로 실력을 점검한다.","url":"https://stockbook.euiyun.com/chapters/glossary.html","position":26,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"26. 용어집 & 종합 퀴즈","item":"https://stockbook.euiyun.com/chapters/glossary.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  .jump { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 16px; font-size: 15px; }
+  .gl-tools { display: grid; gap: 10px; margin-bottom: 12px; }
+  .gl-tools .row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+  .gl-tools .cap { font-size: 13px; color: var(--text-dim); }
+  .gl-tools .seg button { font-size: 12.5px; padding: 4px 9px; }
+  .gl-search { margin-bottom: 0 !important; }
+  .gl-count { font-size: 13px; color: var(--text-faint); margin-left: auto; font-family: var(--mono); }
+  .gl-jump { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+  .gl-jump button { font: inherit; font-size: 13px; font-weight: 700; min-width: 32px; height: 30px; padding: 0 6px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-elev); color: var(--accent); cursor: pointer; }
+  .gl-jump button:hover:not(:disabled) { border-color: var(--accent); }
+  .gl-jump button:disabled { color: var(--text-faint); opacity: .5; cursor: default; }
+  #gl-list { position: relative; max-height: min(76vh, 960px); overflow-y: auto; overscroll-behavior: contain; padding: 2px 6px 2px 2px; border-radius: 12px; }
+  .gl-group { position: sticky; top: 0; z-index: 1; background: var(--bg); font-weight: 700; font-size: 13px; color: var(--accent); letter-spacing: .04em; margin: 14px 0 0; padding: 4px 0; border-bottom: 1px solid var(--border); }
+  .gl-group:first-child { margin-top: 0; }
+  .gl-item h4 { overflow-wrap: anywhere; }
+  .gl-item h4 .abbr { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent-2); background: var(--accent-2-soft); border-radius: 5px; padding: 1px 6px; margin-left: 6px; vertical-align: 1px; white-space: nowrap; }
+  .gl-item h4 .en { color: var(--text-faint); font-size: 13.5px; }
+  .gl-item .cat { font-size: 11.5px; padding: 1px 8px; border-radius: 999px; background: var(--surface); color: var(--text-dim); margin-right: 10px; }
+  .gl-item mark { background: color-mix(in srgb, var(--warn) 35%, transparent); color: inherit; border-radius: 3px; padding: 0 1px; }
+  .gl-empty { padding: 24px; text-align: center; color: var(--text-dim); border: 1px dashed var(--border); border-radius: 12px; }
+
+  .fc-wrap { perspective: 1200px; padding: 18px; overflow: hidden; }
+  .fc { display: grid; transition: transform .55s cubic-bezier(.3,.7,.2,1); transform-style: preserve-3d; cursor: pointer; outline: none; max-width: 560px; margin: 0 auto; }
+  .fc.flip { transform: rotateY(180deg); }
+  .fc:focus-visible .fc-face { box-shadow: 0 0 0 3px var(--accent-soft); }
+  .fc-face { grid-area: 1 / 1; -webkit-backface-visibility: hidden; backface-visibility: hidden; min-height: 210px; padding: 22px 22px 18px; border-radius: 14px; border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; gap: 8px; min-width: 0; }
+  .fc-front { background: linear-gradient(135deg, var(--accent-soft), var(--accent-2-soft)); }
+  .fc-back { background: var(--bg-elev); transform: rotateY(180deg); }
+  .fc-kicker { font-size: 12px; color: var(--text-faint); font-weight: 600; }
+  .fc-term { font-size: clamp(24px, 6vw, 32px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; overflow-wrap: anywhere; }
+  .fc-en { color: var(--text-dim); font-size: 14px; overflow-wrap: anywhere; }
+  .fc-def { font-size: 16px; line-height: 1.65; margin: 0; overflow-wrap: anywhere; }
+  .fc-tip { font-size: 12px; color: var(--text-faint); }
+  @media (prefers-reduced-motion: reduce) { .fc { transition: none; } }
+
+  .mt-wrap { padding: 16px 18px; display: grid; gap: 14px; }
+  .mt-terms { display: flex; flex-wrap: wrap; gap: 8px; }
+  .mt-defs { display: grid; gap: 8px; }
+  .mt-wrap button { font: inherit; text-align: left; border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 10px; cursor: pointer; transition: background .2s, border-color .2s; }
+  .mt-terms button { font-weight: 700; padding: 8px 14px; font-size: 15px; }
+  .mt-defs button { padding: 10px 14px; font-size: 14.5px; line-height: 1.55; color: var(--text-dim); }
+  .mt-wrap button:hover:not(:disabled) { border-color: var(--accent); }
+  .mt-wrap button.sel { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .mt-wrap button.ok { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--text); cursor: default; }
+  .mt-wrap button.ok .mt-tag { color: var(--ok); font-weight: 700; margin-right: 6px; }
+  .mt-wrap button.miss { border-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }
+
+  .ns-q { padding: 14px 18px 0; margin: 0 !important; font-weight: 700; font-size: 16px; }
+  .ns-q small { display: block; font-weight: 500; color: var(--text-dim); font-size: 13.5px; margin-top: 4px; }
+  .ns-exp { padding: 0 18px 12px; margin: 0 !important; font-size: 14px; color: var(--text-dim); min-height: 1.6em; }
+
+  .fq-bar-row { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin-bottom: 14px; }
+  .fq-status { position: sticky; top: calc(var(--nav-h) + 6px); z-index: 3; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; padding: 10px 16px; margin-bottom: 16px; border-radius: 12px; background: color-mix(in srgb, var(--bg-elev) 92%, transparent); border: 1px solid var(--border); box-shadow: var(--shadow); font-size: 14px; color: var(--text-dim); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .fq-status b { font-family: var(--mono); color: var(--text); }
+  .fq-bar { flex: 1 1 120px; height: 6px; background: var(--surface-2); border-radius: 3px; overflow: hidden; }
+  .fq-bar i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: width .3s ease; }
+  .quiz-q .qch { display: block; font-size: 12px; font-weight: 700; color: var(--accent); letter-spacing: .03em; margin-bottom: 4px; }
+  .quiz-q .quiz-exp a { font-weight: 600; }
+  .fq-result { margin-top: 20px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 20px; text-align: center; }
+  .fq-title { font-size: clamp(22px, 5vw, 30px); font-weight: 800; letter-spacing: -0.02em; margin: 4px 0; color: var(--accent); }
+  .fq-big { font-family: var(--mono); font-size: 40px; font-weight: 700; }
+  .fq-big small { font-size: 18px; color: var(--text-dim); }
+  .fq-dots { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin: 14px 0; }
+  .fq-dots a { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text); border: 1px solid var(--border); text-decoration: none; }
+  .fq-dots a.ok { background: color-mix(in srgb, var(--ok) 22%, transparent); border-color: var(--ok); }
+  .fq-dots a.bad { background: color-mix(in srgb, var(--bad) 18%, transparent); border-color: var(--bad); }
+  .fq-weak { text-align: left; display: grid; gap: 6px; margin: 0 0 6px; padding: 0; list-style: none; }
+  .fq-weak li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; padding: 8px 12px; border-radius: 8px; background: var(--surface); font-size: 14px; margin: 0 !important; }
+  .fq-weak li a { font-weight: 700; }
+  .fq-weak li span { color: var(--text-dim); }
+</style>
+</head>
+<body data-chapter="glossary">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 26</div>
+    <h1>용어집 &amp; 종합 퀴즈</h1>
+    <p class="lead">증권 앱과 뉴스의 말은 짧다. 상한가, 배당락, PBR, 반대매매, 내재변동성, 처분 효과… 낯선 단어 하나가 주문 버튼 앞에서 손을 멈추게 하고, 잘못 알아들은 단어 하나가 비싼 실수가 된다. 이 장은 책 전체에 흩어진 용어를 한곳에 모은 사전이고, 용어를 손으로 익히는 작은 게임들이며, 시장의 구조에서 투자자의 심리까지 전 범위를 점검하는 마무리 시험이다.</p>
+    <ul class="objectives">
+      <li>한국어·영어·약어·초성 어느 쪽으로든 용어를 찾아 뜻을 읽고, 그 용어를 가르치는 장으로 바로 이동한다.</li>
+      <li>플래시카드와 짝 맞추기로 용어를 외우는 대신 꺼내 보며 익힌다.</li>
+      <li>PER과 이익수익률, 손실과 회복, 레버리지와 반대매매의 숫자 감각을 슬라이더로 확인한다.</li>
+      <li>종합 퀴즈로 스스로를 점검하고, 부별 정답률 레이더로 다시 볼 장을 고른다.</li>
+    </ul>
+    <p class="jump"><a href="#glossary">→ 용어집</a><a href="#flashcard">→ 플래시카드</a><a href="#match">→ 짝 맞추기</a><a href="#numbers">→ 숫자 감각</a><a href="#quiz">→ 종합 퀴즈</a><a href="#radar">→ 자기 진단</a></p>
+  </header>
+
+  <section id="glossary">
+    <h2>용어집</h2>
+    <p>검색창에 한국어(예: <code>배당락</code>), 영어(예: <code>spread</code>), 약어(예: <code>PBR</code>), 또는 초성(예: <code>ㅂㄷㅁㅁ</code> → 반대매매)을 넣으면 바로 걸러진다. 정의 본문도 검색 대상이다. 분야 버튼으로 한 분야만 볼 수 있고, 자음 버튼을 누르면 목록이 그 자음으로 건너뛴다. 각 항목 아래 링크는 그 용어를 가르치는 장이다.</p>
+    <div class="gl-tools">
+      <input type="search" class="gl-search" id="gl-q" placeholder="용어 검색: 예) 스프레드, ROE, ㅅㄱㅊㅇ" autocomplete="off" aria-label="용어 검색">
+      <div class="row">
+        <span class="cap">분야</span>
+        <div class="seg" id="gl-cat">
+          <button data-value="all" class="on">전체</button>
+          <button data-value="m">시장·주문</button>
+          <button data-value="c">기업·재무</button>
+          <button data-value="v">가치평가</button>
+          <button data-value="p">가격·차트</button>
+          <button data-value="r">위험·포트폴리오</button>
+          <button data-value="s">전략·파생</button>
+          <button data-value="t">세금·제도</button>
+          <button data-value="b">심리</button>
+        </div>
+        <span class="gl-count" id="gl-count"></span>
+      </div>
+    </div>
+    <div class="gl-jump" id="gl-jump" aria-label="가나다 색인"></div>
+    <div class="gl-list" id="gl-list" aria-live="polite"></div>
+    <div class="callout warn"><strong>제도 수치는 바뀐다</strong> 용어 설명에 나오는 가격제한폭(±30%), 증권거래세(약 0.20%), 배당소득세(15.4%), 해외 주식 양도세(22%, 연 250만원 공제), 금융소득 종합과세 기준(연 2,000만원), 신용 담보유지비율(약 140%) 같은 숫자는 2026년 기준 대표값이다. 세법과 거래 제도는 자주 고쳐지고 증권사마다 다른 부분도 있으므로, 실제로 주문하거나 세금을 계산하기 전에는 그해의 공식 안내를 다시 확인한다.</div>
+  </section>
+
+  <section id="flashcard">
+    <h2>플래시카드</h2>
+    <p>읽기만 한 용어는 금방 흐려진다. 카드 앞면의 용어를 보고 뜻을 먼저 떠올린 뒤 뒤집어 확인하고, 스스로 알았는지 몰랐는지 표시한다. 꺼내 보려는 노력 자체가 기억을 단단하게 만든다. 몰랐던 카드는 따로 모아 다시 돌릴 수 있다.</p>
+    <div class="sim" id="sim-fc">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>용어 플래시카드</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view fc-wrap">
+          <div class="fc" id="fc-card" tabindex="0" role="button" aria-label="카드 뒤집기">
+            <div class="fc-face fc-front"><span class="fc-kicker" id="fc-kick"></span><div class="fc-term" id="fc-term"></div><div class="fc-en" id="fc-en"></div><span class="fc-tip">눌러서 뒤집기</span></div>
+            <div class="fc-face fc-back"><p class="fc-def" id="fc-def"></p><span class="fc-tip" id="fc-link"></span></div>
+          </div>
+        </div>
+        <div class="sim-controls">
+          <div class="seg" id="fc-set"><button data-value="all" class="on">모든 카드</button><button data-value="miss">모른 카드만</button></div>
+          <div class="seg" id="fc-cat"><button data-value="all" class="on">전체</button><button data-value="m">시장</button><button data-value="v">가치</button><button data-value="r">위험</button><button data-value="s">전략</button></div>
+          <div class="btn-row"><button class="btn" id="fc-flip">뒤집기</button><button class="btn primary" id="fc-yes">알았다</button><button class="btn" id="fc-no">몰랐다</button></div>
+          <div class="btn-row"><button class="btn sm" id="fc-shuffle">다시 섞기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">본 카드</span><span class="v" id="fc-o-seen">0</span></div>
+        <div class="stat"><span class="k">알았다</span><span class="v ok-t" id="fc-o-yes">0</span></div>
+        <div class="stat"><span class="k">몰랐다(복습 대기)</span><span class="v bad-t" id="fc-o-no">0</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 뒤집기 전에 소리 내어 뜻을 말해 본다. ② 열 장쯤 넘긴 뒤 ‘모른 카드만’으로 바꿔 다시 돌린다. ③ 분야를 ‘전략’으로 좁혀 파생상품 용어만 훑는다. 몰랐다고 표시한 카드는 아래 자기 진단 레이더에도 반영된다.</div>
+    </div>
+  </section>
+
+  <section id="match">
+    <h2>짝 맞추기</h2>
+    <p>정의를 보고 용어를 떠올리는 것은 용어를 보고 정의를 떠올리는 것과 다른 근육이다. 위의 용어 하나를 누른 다음 그 뜻에 해당하는 설명을 누른다. 설명 속 용어 이름은 ○○로 가려 두었다. 비슷한 개념(PER과 PBR, 콜과 풋)이 한 판에 섞이면 차이를 정확히 알아야 맞힐 수 있다.</p>
+    <div class="sim" id="sim-mt">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>용어 ↔ 정의 짝 맞추기</h3></div>
+      <div class="mt-wrap">
+        <div class="mt-terms" id="mt-terms"></div>
+        <div class="mt-defs" id="mt-defs"></div>
+      </div>
+      <div class="sim-controls">
+        <div class="seg" id="mt-size"><button data-value="4">4쌍</button><button data-value="5" class="on">5쌍</button><button data-value="6">6쌍</button></div>
+        <div class="btn-row"><button class="btn primary" id="mt-new">새 판</button></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">맞힌 짝</span><span class="v" id="mt-o-ok">0</span></div>
+        <div class="stat"><span class="k">틀린 시도</span><span class="v" id="mt-o-miss">0</span></div>
+        <div class="stat"><span class="k">걸린 시간</span><span class="v" id="mt-o-time">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 틀린 시도 0번으로 한 판을 끝내 본다. ② 6쌍으로 늘려 비슷한 용어가 섞일 때 헷갈리는 짝을 찾는다. ③ 틀린 용어는 위 용어집에서 검색해 관련 장으로 간다.</div>
+    </div>
+  </section>
+
+  <section id="numbers">
+    <h2>숫자 감각 퀴즈</h2>
+    <p>주식의 많은 판단은 정확한 계산보다 빠른 어림에서 시작한다. PER 20이 수익률로 몇 %인지, 반 토막 난 주식이 원금을 회복하려면 몇 % 올라야 하는지, 신용으로 산 주식이 얼마나 떨어지면 반대매매 선에 닿는지. 슬라이더로 답을 고르고 확인을 누르면, 수직선 위에 내 답과 정답의 거리가 그려진다. 허용 오차 띠 안에 들어오면 맞힌 것이다.</p>
+    <div class="sim" id="sim-ns">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>숫자 감각: 슬라이더로 답하기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view">
+          <p class="ns-q" id="ns-q"></p>
+          <canvas id="ns-cv"></canvas>
+          <p class="ns-exp" id="ns-exp"></p>
+        </div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>내 답 <output id="ns-a-out"></output></span><input type="range" id="ns-a" min="0" max="100" step="1" value="50"></label>
+          <div class="btn-row"><button class="btn primary" id="ns-go">확인</button><button class="btn" id="ns-next">다음 문제</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">문제</span><span class="v" id="ns-o-n">—</span></div>
+        <div class="stat"><span class="k">정답</span><span class="v" id="ns-o-ans">?</span></div>
+        <div class="stat"><span class="k">맞힌 수 / 푼 수</span><span class="v" id="ns-o-score">0 / 0</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 계산기 없이 먼저 감으로 고른 뒤 확인한다. ② 틀린 문제는 해설의 식을 따라 손으로 다시 계산해 본다. ③ 열 문제를 모두 돌면 처음 문제로 돌아온다. 손실과 회복, 레버리지 문제에서 직관이 가장 자주 빗나간다.</div>
+    </div>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>종합 퀴즈</h2>
+    <p>1장부터 25장까지 고르게 뽑은 48문항이다. 무작위 10문항 모드는 매번 다른 조합을 뽑아 짧게 점검하고, 전체 모드는 책 전체를 한 번에 훑는다. 문항마다 해설과 복습할 장의 링크가 있고, 끝까지 풀면 틀린 문제의 장을 모아 보여 준다.</p>
+    <div class="fq-bar-row">
+      <div class="seg" id="fq-mode"><button data-value="rand" class="on">무작위 10문항</button><button data-value="all">전체 48문항</button></div>
+      <div class="btn-row"><button class="btn sm" id="fq-new">새로 뽑기</button><button class="btn sm" id="fq-reset">처음부터</button></div>
+    </div>
+    <div class="fq-status" id="fq-status"><span>푼 문제 <b id="fq-done">0</b> / <b id="fq-total">0</b></span><span>정답 <b id="fq-right">0</b></span><div class="fq-bar"><i id="fq-fill"></i></div></div>
+    <div class="quiz" id="fq"></div>
+    <div class="fq-result" id="fq-result" hidden></div>
+  </section>
+
+  <section id="radar">
+    <h2>자기 진단 레이더</h2>
+    <p>위의 플래시카드, 짝 맞추기, 숫자 감각 퀴즈, 종합 퀴즈에서 맞히고 틀린 기록을 장별로 모아 이 책의 여섯 부(시장·기업·가격·위험·전략·환경)에 대한 정답률로 그린다. 바깥으로 넓게 퍼진 꼭짓점이 강한 부분이고, 안쪽으로 움푹 들어간 꼭짓점이 다시 읽을 곳이다. 막대 보기에서는 25개 장을 하나씩 본다. 기록은 이 페이지를 연 동안에만 남는다.</p>
+    <div class="sim" id="sim-rd">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>부별·장별 정답률</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="rd-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="seg" id="rd-mode"><button data-value="radar" class="on">레이더(여섯 부)</button><button data-value="bars">막대(장별)</button></div>
+          <div class="seg" id="rd-src"><button data-value="all" class="on">모든 활동</button><button data-value="quiz">종합 퀴즈만</button></div>
+          <div class="btn-row"><button class="btn" id="rd-clear">기록 지우기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">기록 수</span><span class="v" id="rd-o-n">0</span></div>
+        <div class="stat"><span class="k">전체 정답률</span><span class="v" id="rd-o-acc">—</span></div>
+        <div class="stat"><span class="k">다시 볼 곳</span><span class="v" id="rd-o-weak" style="font-size:15px;font-family:var(--font)">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 종합 퀴즈 전체 모드를 끝낸 뒤 레이더를 본다. ② ‘종합 퀴즈만’으로 바꿔 게임 기록을 뺀 모습과 비교한다. ③ 가장 낮은 부의 장을 다시 읽고 무작위 10문항을 몇 번 더 풀어 모양이 둥글어지는지 본다. 문항 수가 적은 장은 한두 문제로 정답률이 크게 흔들린다.</div>
+    </div>
+  </section>
+
+  <section class="keypoints" id="summary">
+    <h2>이 책을 마치며</h2>
+    <ol>
+      <li>주식은 회사의 한 조각이고, 가격은 호가창에서 주문이 만난 곳에서 정해진다. 오늘의 가격은 사실이지만 회사의 가치는 가정에 따라 달라지는 범위다.</li>
+      <li>재무제표와 지표는 회사를 읽는 언어다. 낮은 PER, 높은 배당수익률처럼 숫자 하나만 보면 함정에 빠진다. 숫자가 왜 그런지를 묻는다.</li>
+      <li>수익은 변동성과 함께 온다. −50% 뒤에는 +100%가 필요하고, 변동성은 복리를 갉아먹는다. 분산과 낮은 비용은 공짜에 가까운 몇 안 되는 개선이다.</li>
+      <li>과거에 잘 맞은 규칙은 미래를 보장하지 않는다. 백테스트, 레버리지, 파생상품은 무너지는 지점을 먼저 확인한 뒤에만 쓴다.</li>
+      <li>가장 큰 적은 시장이 아니라 흔들리는 마음일 때가 많다. 규칙을 미리 적어 두고, 제도와 세금은 해마다 다시 확인한다. 이 책의 모든 회사와 가격은 가상이며, 어떤 내용도 투자 권유가 아니다.</li>
+    </ol>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const CH = {};
+  MB.CHAPTERS.forEach((c) => (CH[c.slug] = c));
+  const chLink = (slug, pre = "→ ") => `<a href="${slug}.html">${pre}${Number(CH[slug].num)}장 ${esc(CH[slug].title)}</a>`;
+  const shuffle = (arr, r) => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+
+  /* ------------------------------------------------------------ 용어 데이터: [한글, 영문, 분야, 장, 정의, 약어] */
+  const CATS = { m: "시장·주문", c: "기업·재무", v: "가치평가", p: "가격·차트", r: "위험·포트폴리오", s: "전략·파생", t: "세금·제도", b: "심리" };
+  const RAW = [
+    ["주식", "Stock", "m", "overview", "회사의 소유권을 같은 크기로 잘게 나눈 증권이다. 가진 비율만큼 이익에 대한 몫과 의결권을 갖는다."],
+    ["주주", "Shareholder", "m", "overview", "주식을 가진 사람으로 회사의 공동 주인이다. 배당을 받고 주주총회에서 의결권을 행사한다."],
+    ["지분율", "Ownership stake", "m", "overview", "회사 전체 주식 가운데 내가 가진 주식의 비율이다. 새 주식이 발행되면 내 주식 수가 그대로여도 줄어든다."],
+    ["의결권", "Voting right", "m", "overview", "주주총회에서 이사 선임, 배당, 합병 같은 안건에 표를 던질 권리다. 보통 1주에 1표다."],
+    ["유한책임", "Limited liability", "m", "overview", "회사가 파산해도 주주는 투자한 금액까지만 잃고 회사의 빚을 대신 갚지 않는다는 원칙이다."],
+    ["잔여재산 청구권", "Residual claim", "m", "overview", "회사가 해산할 때 채권자에게 먼저 갚고 남은 재산을 주주가 나눠 갖는 권리다. 주주는 가장 마지막 순서다."],
+    ["보통주", "Common stock", "m", "overview", "의결권과 배당·잔여재산에 대한 권리를 함께 갖는 가장 일반적인 주식이다."],
+    ["우선주", "Preferred stock", "m", "overview", "보통 의결권이 없는 대신 배당을 보통주보다 조금 더 받거나 먼저 받는 주식이다. 거래량이 적어 보통주보다 싸게 거래되는 경우가 많다."],
+    ["발행주식 수", "Shares outstanding", "m", "market", "회사가 발행해 시장에 있는 주식의 총수다. EPS·BPS 같은 주당 지표의 분모가 된다."],
+    ["시가총액", "Market capitalization", "m", "market", "주가에 발행주식 수를 곱한 값으로, 시장이 매긴 회사 주식 전체의 값이다.", "시총"],
+    ["유동주식", "Free float", "m", "market", "대주주 지분과 자사주처럼 묶인 물량을 빼고 실제로 시장에서 거래될 수 있는 주식이다. 지수 편입 비중을 정할 때 쓴다."],
+    ["상장", "Listing", "m", "market", "회사 주식을 거래소에서 누구나 사고팔 수 있도록 등록하는 일이다. 공시 의무가 함께 생긴다."],
+    ["발행시장", "Primary market", "m", "market", "회사가 새 주식을 처음 팔아 자금을 모으는 시장이다. 공모와 유상증자가 여기서 일어난다."],
+    ["유통시장", "Secondary market", "m", "market", "이미 발행된 주식을 투자자끼리 사고파는 시장이다. 매일 보는 주가는 여기서 정해지고, 이 거래로 회사에 돈이 들어가지는 않는다."],
+    ["거래소", "Exchange", "m", "market", "주문을 모아 매매를 체결하고 시장 규칙을 운영하는 곳이다. 한국에서는 한국거래소가 유가증권시장과 코스닥시장을 운영한다."],
+    ["증권사", "Brokerage", "m", "market", "투자자의 주문을 거래소에 전달하고 계좌와 결제를 맡는 회사다. 그 대가로 수수료를 받는다."],
+    ["예수금", "Cash balance", "m", "market", "증권 계좌에 들어 있는 현금이다. 주식을 사면 결제일에 예수금에서 빠져나간다."],
+    ["결제", "Settlement", "m", "market", "매매가 체결된 뒤 실제로 돈과 주식이 오가는 일이다. 국내 주식은 체결일(T)로부터 2영업일 뒤에 결제된다.", "T+2"],
+    ["코스피", "KOSPI", "m", "market", "유가증권시장 또는 그 시장 전체의 주가 흐름을 나타내는 대표 지수다. 대형·성숙 기업이 많다."],
+    ["코스닥", "KOSDAQ", "m", "market", "기술·성장 기업 중심의 주식시장이자 그 지수다. 유가증권시장보다 작은 회사가 많고 변동성이 큰 편이다."],
+    ["가격제한폭", "Price limit", "m", "market", "한 종목이 하루에 전일 종가 대비 오르내릴 수 있는 한도다. 2026년 기준 국내 주식은 ±30%다."],
+    ["상한가", "Upper limit price", "m", "market", "가격제한폭 위쪽 끝, 하루에 오를 수 있는 가장 높은 가격이다. 전일 종가가 72,000원이면 93,600원이다."],
+    ["하한가", "Lower limit price", "m", "market", "가격제한폭 아래쪽 끝, 하루에 내릴 수 있는 가장 낮은 가격이다. 전일 종가가 72,000원이면 50,400원이다."],
+    ["서킷브레이커", "Circuit breaker", "m", "market", "지수가 하루에 크게(약 8%, 15%, 20%) 떨어지면 시장 전체의 매매를 잠시 멈추거나 그날 장을 끝내는 장치다."],
+    ["사이드카", "Sidecar", "m", "market", "선물 가격이 급변할 때 프로그램 매매 주문만 5분 동안 멈추는 장치다. 서킷브레이커보다 가벼운 단계다."],
+    ["변동성 완화장치", "Volatility interruption", "m", "market", "개별 종목 가격이 짧은 시간에 일정 폭 이상 움직이면 약 2분 동안 단일가 매매로 바꿔 열기를 식히는 장치다.", "VI"],
+    ["거래정지", "Trading halt", "m", "corporate", "중요한 공시, 불성실 공시, 상장폐지 사유 등으로 한 종목의 매매를 일시적으로 멈추는 조치다."],
+    ["정규장", "Regular session", "m", "market", "거래소의 정규 매매 시간으로, 국내는 오전 9시부터 오후 3시 30분까지다."],
+    ["시간외 거래", "After-hours trading", "m", "market", "정규장 전후에 열리는 거래다. 정해진 가격이나 단일가로 제한적으로 체결된다."],
+    ["대체거래소", "Alternative trading system", "m", "market", "거래소가 아닌 곳에서 주식 매매를 체결하는 시장이다. 국내에서는 2025년 문을 열어 정규장 앞뒤로 거래 시간을 넓혔다.", "ATS"],
+    ["호가", "Quote", "m", "orderbook", "사거나 팔겠다고 내놓은 가격이다. 사려는 가격이 매수호가, 팔려는 가격이 매도호가다."],
+    ["호가창", "Order book", "m", "orderbook", "가격대별로 쌓인 매수·매도 주문의 수량을 보여 주는 표다. 위쪽에 매도, 아래쪽에 매수 잔량이 있다."],
+    ["매수호가", "Bid", "m", "orderbook", "사겠다는 주문의 가격이다. 가장 높은 매수호가가 지금 바로 팔 때 받을 수 있는 가격이다."],
+    ["매도호가", "Ask", "m", "orderbook", "팔겠다는 주문의 가격이다. 가장 낮은 매도호가가 지금 바로 살 때 내야 하는 가격이다."],
+    ["스프레드", "Bid-ask spread", "m", "orderbook", "가장 낮은 매도호가와 가장 높은 매수호가의 차이다. 사자마자 팔면 이만큼을 잃으므로 거래 비용의 일부다."],
+    ["호가 단위", "Tick size", "m", "orderbook", "주문할 수 있는 가격의 최소 간격이다. 국내는 가격대별로 다르며 5만~20만원 구간은 100원이다."],
+    ["지정가 주문", "Limit order", "m", "orderbook", "원하는 가격을 정해 내는 주문이다. 그 가격이나 더 유리한 가격에만 체결되며, 맞는 상대가 없으면 호가창에 남는다."],
+    ["시장가 주문", "Market order", "m", "orderbook", "가격을 정하지 않고 지금 있는 상대 호가에 바로 체결시키는 주문이다. 빠르지만 잔량이 얇으면 불리한 가격까지 체결될 수 있다."],
+    ["가격·시간 우선 원칙", "Price-time priority", "m", "orderbook", "더 좋은 가격의 주문이 먼저, 같은 가격이면 먼저 낸 주문이 먼저 체결된다는 원칙이다."],
+    ["체결", "Execution", "m", "orderbook", "매수 주문과 매도 주문이 가격에서 만나 거래가 성립하는 일이다. 마지막 체결 가격이 현재가가 된다."],
+    ["잔량", "Resting quantity", "m", "orderbook", "호가창의 각 가격에 체결되지 않고 남아 있는 주문 수량이다."],
+    ["시장 충격", "Market impact", "m", "orderbook", "큰 주문이 여러 호가를 먹어 들어가며 가격을 스스로 불리하게 움직이는 효과다."],
+    ["슬리피지", "Slippage", "m", "orderbook", "주문을 낼 때 기대한 가격과 실제 평균 체결가의 차이다. 스프레드와 시장 충격에서 생긴다."],
+    ["유동성", "Liquidity", "m", "orderbook", "원하는 만큼을 가격을 크게 움직이지 않고 빨리 사고팔 수 있는 정도다. 스프레드가 좁고 잔량이 두꺼우면 유동성이 높다."],
+    ["동시호가", "Call auction", "m", "orderbook", "장 시작 전과 마감 직전에 주문을 모아 두었다가 거래량이 가장 많아지는 하나의 가격으로 한꺼번에 체결하는 방식이다. 단일가 매매라고도 한다."],
+    ["시장조성자", "Market maker", "m", "orderbook", "매수·매도 호가를 계속 내놓아 거래가 끊기지 않게 하는 참가자다. 스프레드에서 대가를 얻는다."],
+    ["공시", "Disclosure", "m", "corporate", "상장회사가 실적, 증자, 합병처럼 투자 판단에 중요한 정보를 모두에게 같은 시점에 알리는 일이다."],
+    ["관리종목", "Administrative issue", "m", "corporate", "실적 악화나 감사의견 문제 등으로 상장폐지 위험이 있다고 거래소가 지정한 종목이다."],
+    ["미국 시장 거래 시간", "US trading hours", "m", "global", "미국 정규장은 현지 시각 오전 9시 30분부터 오후 4시까지로, 한국 시간으로는 밤 11시 30분(서머타임에는 10시 30분)부터 새벽까지다."],
+
+    ["재무제표", "Financial statements", "c", "statements", "회사의 성적표 묶음이다. 손익계산서, 재무상태표, 현금흐름표가 핵심이다."],
+    ["손익계산서", "Income statement", "c", "statements", "일정 기간 동안 매출에서 비용을 빼 이익이 얼마나 남았는지 보여 주는 표다."],
+    ["재무상태표", "Balance sheet", "c", "statements", "어느 한 시점에 회사가 가진 자산과, 그 자산을 마련한 돈(부채와 자본)을 보여 주는 표다. 자산 = 부채 + 자본이다."],
+    ["현금흐름표", "Cash flow statement", "c", "statements", "일정 기간 실제로 현금이 들어오고 나간 것을 영업·투자·재무 활동으로 나눠 보여 주는 표다."],
+    ["매출액", "Revenue", "c", "statements", "회사가 상품과 서비스를 팔아 벌어들인 총액이다. 손익계산서의 맨 윗줄이다."],
+    ["매출원가", "Cost of goods sold", "c", "statements", "판 물건을 만들거나 사 오는 데 직접 든 비용이다."],
+    ["매출총이익", "Gross profit", "c", "statements", "매출액에서 매출원가를 뺀 값이다. 제품 자체가 얼마나 남는 장사인지 보여 준다."],
+    ["판매비와 관리비", "SG&A expenses", "c", "statements", "영업 활동에 드는 인건비, 광고비, 임차료 같은 비용이다. 줄여서 판관비라고 한다."],
+    ["영업이익", "Operating income", "c", "statements", "매출총이익에서 판관비를 뺀 값으로, 본업에서 번 이익이다."],
+    ["당기순이익", "Net income", "c", "statements", "영업이익에 이자·투자 손익을 더하고 빼고 법인세까지 낸 뒤 최종적으로 남은 이익이다."],
+    ["자산", "Assets", "c", "statements", "회사가 가진 현금, 재고, 설비, 받을 돈 등 경제적 가치가 있는 모든 것이다."],
+    ["부채", "Liabilities", "c", "statements", "회사가 앞으로 갚아야 할 빚이다. 차입금, 사채, 줄 대금 등이 있다."],
+    ["자본", "Shareholders' equity", "c", "statements", "자산에서 부채를 뺀 순자산으로, 장부상 주주의 몫이다."],
+    ["부채비율", "Debt-to-equity ratio", "c", "statements", "부채를 자본으로 나눈 비율이다. 높을수록 빚에 기댄 정도가 크다. 은행처럼 업종에 따라 정상 범위가 크게 다르다."],
+    ["유동비율", "Current ratio", "c", "statements", "1년 안에 현금화할 수 있는 자산을 1년 안에 갚을 부채로 나눈 비율이다. 단기 지급 능력을 본다."],
+    ["영업활동 현금흐름", "Operating cash flow", "c", "statements", "본업에서 실제로 들어온 현금이다. 이익은 나는데 이것이 계속 마이너스면 의심해 볼 신호다."],
+    ["투자활동 현금흐름", "Investing cash flow", "c", "statements", "설비 투자나 다른 회사 지분 취득처럼 미래를 위해 쓰거나, 자산을 팔아 생긴 현금의 흐름이다."],
+    ["재무활동 현금흐름", "Financing cash flow", "c", "statements", "차입, 상환, 증자, 배당, 자사주 매입처럼 자금 조달과 환원에서 생긴 현금의 흐름이다."],
+    ["잉여현금흐름", "Free cash flow", "c", "statements", "영업활동 현금흐름에서 유지·성장에 필요한 설비 투자를 뺀 돈이다. 채권자와 주주에게 돌려줄 수 있는 현금이다.", "FCF"],
+    ["감가상각", "Depreciation", "c", "statements", "설비 같은 자산의 구입 비용을 쓰는 기간에 나눠 비용으로 잡는 회계 처리다. 현금은 나가지 않지만 이익은 줄인다."],
+    ["발생주의", "Accrual accounting", "c", "statements", "현금이 오간 때가 아니라 거래가 일어난 때 수익과 비용을 기록하는 회계 원칙이다. 이 때문에 이익과 현금이 어긋난다."],
+    ["매출채권", "Accounts receivable", "c", "statements", "물건을 팔았지만 아직 받지 못한 돈이다. 매출보다 빨리 늘면 무리한 매출의 신호일 수 있다."],
+    ["현금 소진 기간", "Cash runway", "c", "statements", "적자 회사가 지금의 현금으로 버틸 수 있는 기간이다. 보유 현금을 연간 현금 소진액으로 나눠 어림한다."],
+    ["분식회계", "Accounting fraud", "c", "statements", "이익이나 자산을 실제보다 부풀리거나 숨기도록 재무제표를 꾸미는 일이다."],
+    ["감사의견", "Audit opinion", "c", "statements", "외부 회계감사인이 재무제표가 적정한지에 대해 내는 의견이다. 적정이 아닌 의견(한정·부적정·의견거절)은 상장 유지에 큰 위험 신호다."],
+    ["연결재무제표", "Consolidated statements", "c", "statements", "지배하는 자회사까지 하나의 회사처럼 합쳐 작성한 재무제표다."],
+    ["유상증자", "Rights offering", "c", "corporate", "회사가 돈을 받고 새 주식을 발행해 자금을 모으는 일이다. 참여하지 않으면 지분율이 희석된다."],
+    ["무상증자", "Bonus issue", "c", "corporate", "돈을 받지 않고 기존 주주에게 새 주식을 나눠 주는 일이다. 주식 수만 늘고 회사 가치는 그대로라 주가는 그만큼 조정된다."],
+    ["액면분할", "Stock split", "c", "corporate", "주식 1주를 여러 주로 쪼개는 일이다. 주당 가격이 낮아질 뿐 내 지분 가치는 그대로다."],
+    ["액면병합", "Reverse split", "c", "corporate", "여러 주를 1주로 합치는 일이다. 주식 수가 줄고 주당 가격이 올라가며, 가치는 그대로다."],
+    ["감자", "Capital reduction", "c", "corporate", "자본금을 줄이는 일이다. 쌓인 결손을 메우려고 대가 없이 주식 수를 줄이는 무상감자는 주주의 손실을 확정시키는 경우가 많다."],
+    ["희석", "Dilution", "c", "corporate", "새 주식이 발행되어 기존 주주의 지분율과 주당 이익이 줄어드는 일이다."],
+    ["권리락", "Ex-rights", "c", "corporate", "증자에서 새 주식을 받을 권리가 사라지는 날에 그 권리의 값만큼 기준 주가를 낮추는 일이다."],
+    ["전환사채", "Convertible bond", "c", "corporate", "정해진 가격에 주식으로 바꿀 수 있는 권리가 붙은 회사채다. 전환되면 주식 수가 늘어 희석이 생긴다.", "CB"],
+    ["신주인수권부사채", "Bond with warrant", "c", "corporate", "정해진 가격에 새 주식을 살 수 있는 권리(워런트)가 붙은 회사채다.", "BW"],
+    ["기업공개", "Initial public offering", "c", "corporate", "비상장 회사가 처음으로 주식을 일반 투자자에게 팔고 상장하는 일이다.", "IPO"],
+    ["공모가", "Offering price", "c", "corporate", "기업공개 때 투자자에게 새 주식을 파는 가격이다. 기관 투자자의 수요예측을 거쳐 정한다."],
+    ["보호예수", "Lock-up", "c", "corporate", "상장 직후 대주주나 기존 투자자가 일정 기간 주식을 팔지 못하게 묶어 두는 제도다. 풀리는 날 매도 물량이 나올 수 있다."],
+    ["인수합병", "Mergers and acquisitions", "c", "corporate", "다른 회사를 사들이거나 두 회사가 하나로 합치는 일이다.", "M&A"],
+    ["공개매수", "Tender offer", "c", "corporate", "가격과 기간을 미리 알리고 불특정 다수 주주에게서 주식을 사들이는 방법이다. 보통 시장가보다 웃돈을 준다."],
+    ["상장폐지", "Delisting", "c", "corporate", "주식이 거래소에서 더 이상 거래되지 못하게 되는 일이다. 정리매매가 끝나면 사고팔기가 매우 어려워진다."],
+    ["배당", "Dividend", "c", "dividend", "회사가 이익의 일부를 주주에게 현금이나 주식으로 나눠 주는 것이다. 지급 여부와 금액은 회사가 정한다."],
+    ["주당배당금", "Dividend per share", "c", "dividend", "1주당 지급하는 배당금이다.", "DPS"],
+    ["배당성향", "Payout ratio", "c", "dividend", "순이익 가운데 배당으로 나눠 준 비율이다. 너무 높으면 이익이 줄 때 배당을 유지하기 어렵다."],
+    ["배당기준일", "Record date", "c", "dividend", "이날 주주명부에 올라 있는 사람이 배당을 받는다. 결제가 T+2이므로 기준일 2영업일 전까지는 사야 한다."],
+    ["배당락", "Ex-dividend", "c", "dividend", "배당받을 권리가 없어지는 날로, 주가가 대략 배당금만큼 낮아져 출발한다."],
+    ["배당 재투자", "Dividend reinvestment", "c", "dividend", "받은 배당으로 다시 주식을 사는 것이다. 오래 할수록 복리 효과가 커진다."],
+    ["자사주 매입", "Share buyback", "c", "dividend", "회사가 시장에서 자기 회사 주식을 사들이는 일이다. 소각하면 남은 주주의 지분이 커진다."],
+    ["자사주 소각", "Share cancellation", "c", "dividend", "사들인 자사주를 없애 발행주식 수를 줄이는 일이다. 주당 이익과 주당 가치가 올라간다."],
+    ["주주환원", "Shareholder return", "c", "dividend", "배당과 자사주 매입·소각처럼 회사가 번 돈을 주주에게 돌려주는 모든 방법이다."],
+    ["분기배당", "Quarterly dividend", "c", "dividend", "1년에 한 번이 아니라 분기마다 나눠 주는 배당이다."],
+    ["경기민감주", "Cyclical stock", "c", "macro", "반도체, 철강, 화학처럼 경기에 따라 실적이 크게 오르내리는 업종의 주식이다."],
+    ["경기방어주", "Defensive stock", "c", "macro", "음식료, 통신, 전력처럼 경기와 관계없이 수요가 꾸준한 업종의 주식이다."],
+    ["성장주", "Growth stock", "c", "ratios", "이익이 빠르게 늘 것으로 기대되어 지금의 이익에 비해 비싸게(PER이 높게) 거래되는 주식이다."],
+    ["가치주", "Value stock", "c", "ratios", "이익이나 자산에 비해 싸게(PER·PBR이 낮게) 거래되는 주식이다."],
+    ["경기 순환", "Business cycle", "c", "macro", "경제가 확장, 정점, 수축, 저점을 되풀이하는 흐름이다. 주가는 대체로 경기보다 먼저 움직인다."],
+    ["업종 순환", "Sector rotation", "c", "macro", "경기 국면에 따라 상대적으로 강한 업종이 바뀌는 현상이다."],
+    ["실적 시즌", "Earnings season", "c", "macro", "상장회사들이 분기 실적을 몰아서 발표하는 기간이다."],
+    ["어닝 서프라이즈", "Earnings surprise", "c", "macro", "발표된 실적이 시장 예상치와 크게 다른 것이다. 예상보다 크게 나쁘면 어닝 쇼크라고 한다."],
+    ["컨센서스", "Consensus", "c", "macro", "여러 증권사 애널리스트가 낸 실적 예상치의 평균이다. 주가는 실적 자체보다 이 기대와의 차이에 반응한다."],
+
+    ["주당순이익", "Earnings per share", "v", "ratios", "순이익을 발행주식 수로 나눈 값으로, 1주가 번 이익이다.", "EPS"],
+    ["주당순자산", "Book value per share", "v", "ratios", "자본(순자산)을 발행주식 수로 나눈 값으로, 1주에 해당하는 장부상 순자산이다.", "BPS"],
+    ["주가수익비율", "Price-to-earnings ratio", "v", "ratios", "주가를 주당순이익으로 나눈 값이다. 지금 이익이 그대로라면 주가만큼 버는 데 몇 년이 걸리는지를 뜻한다.", "PER"],
+    ["주가순자산비율", "Price-to-book ratio", "v", "ratios", "주가를 주당순자산으로 나눈 값이다. 1보다 낮으면 시장이 장부상 순자산보다 낮게 평가한다는 뜻이다.", "PBR"],
+    ["주가매출비율", "Price-to-sales ratio", "v", "ratios", "시가총액을 매출액으로 나눈 값이다. 이익이 없는 회사를 비교할 때 쓴다.", "PSR"],
+    ["자기자본이익률", "Return on equity", "v", "ratios", "순이익을 자본으로 나눈 값으로, 주주의 돈으로 1년에 몇 %를 벌었는지 보여 준다. PBR = PER × ROE 관계가 있다.", "ROE"],
+    ["총자산이익률", "Return on assets", "v", "ratios", "순이익을 총자산으로 나눈 값이다. 빚으로 마련한 것까지 포함한 전체 자산으로 얼마나 버는지 본다.", "ROA"],
+    ["영업이익률", "Operating margin", "v", "ratios", "영업이익을 매출액으로 나눈 비율이다. 본업의 수익성을 보여 준다."],
+    ["듀퐁 분해", "DuPont analysis", "v", "ratios", "ROE를 순이익률 × 총자산회전율 × 재무 레버리지로 쪼개 어디서 나온 수익성인지 보는 방법이다."],
+    ["배당수익률", "Dividend yield", "v", "ratios", "주당배당금을 주가로 나눈 값이다. 주가가 급락해도 높아지므로 이것만 보고 고르면 함정에 빠질 수 있다."],
+    ["이익수익률", "Earnings yield", "v", "ratios", "PER의 역수(EPS ÷ 주가)다. PER 20이면 5%로, 채권 금리와 비교할 때 쓴다."],
+    ["기업가치", "Enterprise value", "v", "ratios", "시가총액에 순부채를 더한 값으로, 회사 전체를 빚까지 떠안고 살 때의 값이다.", "EV"],
+    ["EV/EBITDA", "EV to EBITDA", "v", "ratios", "기업가치를 EBITDA로 나눈 배수다. 부채 구조와 감가상각 방식이 다른 회사끼리 비교할 때 쓴다."],
+    ["EBITDA", "Earnings before interest, taxes, depreciation and amortization", "v", "ratios", "이자, 세금, 감가상각비를 빼기 전의 이익이다. 영업으로 버는 현금의 대략적인 크기다."],
+    ["순부채", "Net debt", "v", "valuation", "차입금에서 보유 현금을 뺀 값이다. 기업가치에서 이것을 빼면 주주 몫의 가치가 된다."],
+    ["PEG", "Price/earnings to growth", "v", "ratios", "PER을 이익 성장률(%)로 나눈 값이다. 성장 속도를 감안해도 PER이 비싼지 본다."],
+    ["내재가치", "Intrinsic value", "v", "valuation", "회사가 앞으로 벌어들일 현금을 현재가치로 합친 값이다. 시장 가격과 다를 수 있고, 가정에 따라 범위로 나온다."],
+    ["현재가치", "Present value", "v", "valuation", "미래의 돈을 할인율로 나눠 오늘의 돈으로 환산한 값이다.", "PV"],
+    ["할인율", "Discount rate", "v", "valuation", "미래 현금을 현재가치로 바꿀 때 쓰는 수익률이다. 높을수록 먼 미래 현금의 가치가 크게 줄어든다."],
+    ["현금흐름할인법", "Discounted cash flow", "v", "valuation", "미래의 잉여현금흐름을 추정하고 할인율로 현재가치로 바꿔 기업 가치를 구하는 방법이다.", "DCF"],
+    ["가중평균자본비용", "Weighted average cost of capital", "v", "valuation", "주주와 채권자가 요구하는 수익률을 자금 비중으로 평균한 값이다. DCF의 할인율로 쓴다.", "WACC"],
+    ["자기자본비용", "Cost of equity", "v", "valuation", "주주가 위험을 감수하는 대가로 요구하는 수익률이다. 흔히 CAPM으로 어림한다."],
+    ["영구성장률", "Terminal growth rate", "v", "valuation", "예측 기간 이후 현금흐름이 영원히 자란다고 가정하는 성장률이다. 0.5%p만 바꿔도 가치가 크게 달라진다."],
+    ["잔존가치", "Terminal value", "v", "valuation", "예측 기간 이후 모든 현금흐름을 한 덩어리로 묶은 값이다. DCF 가치의 절반 이상을 차지하는 경우가 많다."],
+    ["고든 성장 모형", "Gordon growth model", "v", "valuation", "배당이 매년 일정한 비율 g로 자란다고 보고 주가 = 다음 해 배당 ÷ (요구수익률 − g)로 계산하는 모형이다."],
+    ["배당할인모형", "Dividend discount model", "v", "valuation", "주식 가치를 앞으로 받을 배당의 현재가치 합으로 보는 모형이다.", "DDM"],
+    ["역DCF", "Reverse DCF", "v", "valuation", "지금 주가를 정답으로 놓고, 그 가격이 나오려면 앞으로 몇 % 성장해야 하는지 거꾸로 푸는 방법이다."],
+    ["안전마진", "Margin of safety", "v", "valuation", "추정한 가치와 매수 가격 사이의 여유다. 추정이 틀릴 수 있으니 충분히 싸게 사서 오차를 흡수한다."],
+    ["밸류 트랩", "Value trap", "v", "ratios", "지표상 싸 보이지만 이익이 계속 줄어 싼 이유가 있는 주식이다. 낮은 PER이 늘 싼 것은 아니다."],
+    ["기본적 분석", "Fundamental analysis", "v", "ratios", "재무제표, 산업, 경쟁력 같은 회사의 본질로 가치를 판단하는 분석이다."],
+    ["기준금리", "Policy rate", "v", "macro", "중앙은행이 정하는 정책 금리로, 시장 금리 전체의 기준이 된다. 오르면 할인율이 높아져 주식 가치에 부담이 된다."],
+    ["주식 듀레이션", "Equity duration", "v", "macro", "주식 가치가 얼마나 먼 미래의 현금흐름에 기대는지를 나타내는 개념이다. 길수록(성장주) 금리 변화에 민감하다."],
+    ["인플레이션", "Inflation", "v", "macro", "물가가 전반적으로 오르는 현상이다. 기업의 명목 매출을 키우기도 하지만 금리를 올려 주가에 부담을 주기도 한다."],
+    ["실질 수익률", "Real return", "v", "macro", "명목 수익률에서 물가 상승률을 뺀 수익률로, 실제로 늘어난 구매력이다."],
+    ["주식 위험 프리미엄", "Equity risk premium", "v", "portfolio", "주식이 무위험 자산보다 더 벌 것으로 기대되는 수익률 차이다. 변동을 견디는 대가다.", "ERP"],
+
+    ["수익률", "Return", "p", "return", "투자한 돈 대비 늘거나 준 비율이다. (끝 가격 − 처음 가격 + 받은 배당) ÷ 처음 가격으로 계산한다."],
+    ["로그 수익률", "Log return", "p", "return", "끝 가격 ÷ 처음 가격의 자연로그다. 기간별로 더하면 전체 수익률이 되어 계산이 편하다."],
+    ["총수익", "Total return", "p", "return", "가격 변화에 배당까지 포함한 수익이다. 배당을 빼면 장기 수익을 크게 과소평가한다."],
+    ["연환산 수익률", "Annualized return", "p", "return", "기간이 다른 수익률을 1년 기준으로 바꾼 값이다. 2년에 21%면 연 10%다."],
+    ["연평균 성장률", "Compound annual growth rate", "p", "return", "처음 값에서 끝 값까지 매년 같은 비율로 자랐다고 볼 때의 연 수익률이다. 기하평균 수익률과 같다.", "CAGR"],
+    ["산술평균 수익률", "Arithmetic mean return", "p", "return", "각 기간 수익률을 더해 기간 수로 나눈 값이다. 변동이 크면 실제로 쌓인 수익(기하평균)보다 높게 나온다."],
+    ["기하평균 수익률", "Geometric mean return", "p", "return", "각 기간의 (1 + 수익률)을 곱해 거듭제곱근을 구한 뒤 1을 뺀 값이다. 실제로 계좌가 자란 속도다."],
+    ["변동성 끌림", "Volatility drag", "p", "return", "변동성 때문에 기하평균이 산술평균보다 낮아지는 효과다. 대략 분산의 절반(σ²/2)만큼 깎인다."],
+    ["복리", "Compounding", "p", "return", "수익에 다시 수익이 붙어 불어나는 것이다. 기간이 길수록 효과가 지수적으로 커진다."],
+    ["72의 법칙", "Rule of 72", "p", "return", "72를 연 수익률(%)로 나누면 원금이 두 배가 되는 데 걸리는 햇수가 대략 나온다. 연 8%면 약 9년이다."],
+    ["시간가중수익률", "Time-weighted return", "p", "return", "입출금의 영향을 빼고 운용 실력만 본 수익률이다. 펀드 성과 비교에 쓴다.", "TWR"],
+    ["금액가중수익률", "Money-weighted return", "p", "return", "언제 얼마를 넣고 뺐는지까지 반영한 내 계좌의 실제 수익률이다. 내부수익률로 계산한다.", "MWR"],
+    ["내부수익률", "Internal rate of return", "p", "return", "현금흐름의 순현재가치를 0으로 만드는 할인율이다.", "IRR"],
+    ["캔들", "Candlestick", "p", "chart", "한 기간의 시가, 고가, 저가, 종가를 몸통과 꼬리로 그린 막대다. 봉이라고도 한다."],
+    ["양봉", "Bullish candle", "p", "chart", "종가가 시가보다 높은 캔들이다. 한국에서는 빨간색으로 그린다. 전날보다 올랐다는 뜻은 아니다."],
+    ["음봉", "Bearish candle", "p", "chart", "종가가 시가보다 낮은 캔들이다. 한국에서는 파란색으로 그린다."],
+    ["시가·고가·저가·종가", "Open, high, low, close", "p", "chart", "한 기간의 첫 체결가, 가장 높은 가격, 가장 낮은 가격, 마지막 체결가다.", "OHLC"],
+    ["거래량", "Volume", "p", "chart", "일정 기간 동안 체결된 주식의 수다. 가격 변화가 얼마나 많은 참여 속에 일어났는지 보여 준다."],
+    ["일봉·주봉·월봉", "Daily, weekly, monthly candles", "p", "chart", "캔들 하나가 하루, 한 주, 한 달을 나타내는 차트다. 같은 데이터도 주기에 따라 달라 보인다."],
+    ["이동평균선", "Moving average", "p", "chart", "최근 n일 종가의 평균을 이어 그린 선이다. 단기 흔들림을 걸러 추세를 보이게 한다.", "MA"],
+    ["골든크로스", "Golden cross", "p", "technical", "단기 이동평균선이 장기 이동평균선을 아래에서 위로 뚫는 것이다. 반대는 데드크로스다."],
+    ["데드크로스", "Death cross", "p", "technical", "단기 이동평균선이 장기 이동평균선을 위에서 아래로 뚫는 것이다."],
+    ["로그 축", "Log scale", "p", "chart", "같은 높이 간격이 같은 비율 변화를 뜻하는 축이다. 긴 기간 차트를 볼 때 쓴다."],
+    ["선형 축", "Linear scale", "p", "chart", "같은 높이 간격이 같은 금액 변화를 뜻하는 축이다. 긴 기간에서는 최근 움직임이 과장되어 보인다."],
+    ["수정주가", "Adjusted price", "p", "chart", "액면분할, 무상증자, 배당 등으로 생긴 가격 단절을 과거 가격을 고쳐 이어 붙인 주가다."],
+    ["추세", "Trend", "p", "technical", "가격이 일정 기간 한 방향으로 움직이는 경향이다."],
+    ["지지선", "Support", "p", "technical", "가격이 내려오다 여러 번 멈췄던 가격대다."],
+    ["저항선", "Resistance", "p", "technical", "가격이 오르다 여러 번 막혔던 가격대다."],
+    ["상대강도지수", "Relative strength index", "p", "technical", "최근 상승폭과 하락폭의 비율로 0~100을 매긴 지표다. 흔히 70 이상을 과매수, 30 이하를 과매도라 부른다.", "RSI"],
+    ["MACD", "Moving average convergence divergence", "p", "technical", "단기·장기 지수이동평균의 차이와 그 신호선으로 추세 변화를 보려는 지표다."],
+    ["볼린저 밴드", "Bollinger Bands", "p", "technical", "이동평균선 위아래로 표준편차의 2배만큼 띠를 그린 지표다. 변동성이 커지면 띠가 넓어진다."],
+    ["과매수·과매도", "Overbought, oversold", "p", "technical", "짧은 기간 너무 많이 올랐거나 내렸다고 보는 상태다. 그 상태가 오래 이어질 수도 있다."],
+    ["기술적 분석", "Technical analysis", "p", "technical", "과거 가격과 거래량의 패턴으로 앞으로의 움직임을 판단하려는 분석이다. 비용을 넣어 검증하면 남는 것이 적은 경우가 많다."],
+    ["갭", "Gap", "p", "chart", "전날 종가와 다음 날 시가 사이에 거래 없이 건너뛴 가격 구간이다."],
+    ["랜덤워크", "Random walk", "p", "price", "다음 움직임이 과거와 무관하게 무작위로 정해지는 경로다. 주가가 대체로 이에 가깝다는 관찰이 많다."],
+    ["효율적 시장 가설", "Efficient market hypothesis", "p", "price", "공개된 정보는 빠르게 가격에 반영되므로, 그 정보만으로는 꾸준히 시장을 이기기 어렵다는 가설이다.", "EMH"],
+    ["정보 비대칭", "Information asymmetry", "p", "price", "거래 당사자 사이에 가진 정보가 다른 상태다. 회사 내부의 미공개 정보를 이용한 매매는 불법이다."],
+    ["미공개정보 이용", "Insider trading", "p", "price", "공개되지 않은 중요한 정보로 주식을 사고파는 불법 행위다."],
+    ["시세조종", "Market manipulation", "p", "price", "거짓 주문이나 서로 짜고 하는 매매로 가격을 인위적으로 움직이는 불법 행위다."],
+
+    ["위험", "Risk", "r", "risk", "결과가 기대와 달라질 가능성이다. 투자에서는 흔히 수익률이 흩어진 정도(변동성)와 크게 잃을 가능성으로 잰다."],
+    ["변동성", "Volatility", "r", "risk", "수익률이 평균 주변에서 흔들리는 정도로, 수익률의 표준편차다. 연 변동성을 √252로 나누면 하루 변동성이 된다."],
+    ["표준편차", "Standard deviation", "r", "risk", "값들이 평균에서 평균적으로 얼마나 떨어져 있는지 나타내는 수다. 정규분포라면 약 68%가 ±1 표준편차 안에 든다."],
+    ["최대 낙폭", "Maximum drawdown", "r", "risk", "이전 고점에서 가장 깊이 떨어진 비율이다. 실제로 견뎌야 할 고통의 크기를 보여 준다.", "MDD"],
+    ["체계적 위험", "Systematic risk", "r", "risk", "경기, 금리처럼 시장 전체에 영향을 주는 위험이다. 분산으로 없앨 수 없다."],
+    ["비체계적 위험", "Idiosyncratic risk", "r", "risk", "한 회사에만 해당하는 위험이다. 여러 종목에 나눠 담으면 상당 부분 줄어든다."],
+    ["분산투자", "Diversification", "r", "risk", "서로 다르게 움직이는 여러 자산에 나눠 투자해 위험을 줄이는 것이다."],
+    ["상관계수", "Correlation coefficient", "r", "risk", "두 자산 수익률이 함께 움직이는 정도를 −1에서 1 사이로 나타낸 값이다. 낮을수록 분산 효과가 크다."],
+    ["공분산", "Covariance", "r", "risk", "두 수익률이 함께 움직이는 정도를 단위 그대로 나타낸 값이다. 두 표준편차의 곱으로 나누면 상관계수다."],
+    ["베타", "Beta", "r", "risk", "시장이 1% 움직일 때 종목이 평균적으로 몇 % 움직이는지 나타낸 값이다."],
+    ["알파", "Alpha", "r", "portfolio", "베타로 설명되는 수익을 넘어선 초과 수익이다."],
+    ["꼬리 위험", "Tail risk", "r", "risk", "드물지만 아주 큰 손실이 나는 위험이다. 실제 수익률은 정규분포가 예상하는 것보다 극단값이 자주 나온다."],
+    ["두꺼운 꼬리", "Fat tails", "r", "risk", "정규분포가 예상하는 것보다 극단적인 값이 훨씬 자주 나오는 분포의 성질이다."],
+    ["평균-분산 분석", "Mean-variance analysis", "r", "portfolio", "기대수익률과 변동성 두 가지로 포트폴리오를 비교하고 고르는 방법이다."],
+    ["효율적 투자선", "Efficient frontier", "r", "portfolio", "같은 위험에서 기대수익이 가장 높은 포트폴리오들을 이은 곡선이다."],
+    ["무위험 자산", "Risk-free asset", "r", "portfolio", "수익률이 확실하다고 보는 자산이다. 보통 단기 국채 금리로 대신한다."],
+    ["자본시장선", "Capital market line", "r", "portfolio", "무위험 자산과 최적 위험 포트폴리오를 섞어 얻는 위험-수익 직선이다.", "CML"],
+    ["샤프 비율", "Sharpe ratio", "r", "portfolio", "(수익률 − 무위험 수익률) ÷ 변동성이다. 위험 한 단위당 얼마나 초과 수익을 얻었는지 본다."],
+    ["소르티노 비율", "Sortino ratio", "r", "portfolio", "샤프 비율과 비슷하지만 분모에 하락 쪽 변동성만 쓴다."],
+    ["자본자산가격결정모형", "Capital asset pricing model", "r", "portfolio", "종목의 기대수익률 = 무위험 수익률 + 베타 × 시장 위험 프리미엄으로 보는 모형이다.", "CAPM"],
+    ["리밸런싱", "Rebalancing", "r", "portfolio", "가격 변화로 틀어진 자산 비중을 처음 정한 비중으로 되돌리는 일이다."],
+    ["자산배분", "Asset allocation", "r", "portfolio", "주식, 채권, 현금 등 자산군 사이에 돈을 나누는 결정이다. 장기 성과의 큰 부분을 결정한다."],
+    ["코어-위성 전략", "Core-satellite strategy", "r", "index", "계좌의 대부분(코어)은 지수 ETF로, 작은 부분(위성)은 개별 종목이나 테마로 운용하는 방식이다."],
+    ["벤치마크", "Benchmark", "r", "lab", "성과를 비교하는 기준이다. 보통 같은 기간 같은 돈을 시장 지수에 그대로 넣었을 때의 결과다."],
+    ["지수", "Index", "r", "index", "여러 종목의 가격을 하나의 숫자로 묶어 시장 전체의 움직임을 보여 주는 지표다."],
+    ["시가총액 가중", "Cap-weighted", "r", "index", "시가총액이 큰 종목일수록 지수 비중을 크게 주는 방식이다. 대부분의 대표 지수가 이 방식이다."],
+    ["동일가중", "Equal-weighted", "r", "index", "모든 종목에 같은 비중을 주는 방식이다. 작은 종목의 영향이 커지고 리밸런싱이 자주 필요하다."],
+    ["상장지수펀드", "Exchange-traded fund", "r", "index", "지수 등을 따라가도록 만든 펀드를 주식처럼 거래소에서 사고팔 수 있게 한 상품이다.", "ETF"],
+    ["설정·환매", "Creation and redemption", "r", "index", "지정참가회사가 바스켓 주식과 ETF를 맞바꿔 ETF 수량을 늘리거나 줄이는 과정이다. 이 과정이 가격을 순자산가치 근처로 묶어 둔다."],
+    ["지정참가회사", "Authorized participant", "r", "index", "ETF의 설정·환매를 직접 할 수 있는 증권사다.", "AP"],
+    ["순자산가치", "Net asset value", "r", "index", "펀드가 담은 자산의 가치를 좌수로 나눈 1좌당 가치다.", "NAV"],
+    ["괴리율", "Premium or discount", "r", "index", "ETF의 시장 가격이 순자산가치에서 벗어난 비율이다."],
+    ["추적오차", "Tracking error", "r", "index", "ETF 수익률이 따라가려는 지수 수익률과 어긋나는 정도다."],
+    ["총보수", "Total expense ratio", "r", "index", "펀드나 ETF가 운용 대가로 해마다 자산에서 떼 가는 비율이다. 수익과 무관하게 확실히 빠지는 비용이다.", "TER"],
+    ["레버리지 ETF", "Leveraged ETF", "r", "index", "지수 하루 수익률의 2배 등 배수를 따라가는 ETF다. 매일 배수를 맞추기 때문에 오르내림이 반복되면 장기 수익이 녹는다."],
+    ["인버스 ETF", "Inverse ETF", "r", "index", "지수 하루 수익률의 반대(−1배 등)를 따라가는 ETF다. 오래 들고 있으면 레버리지 ETF와 같은 녹는 효과가 있다."],
+    ["패시브 투자", "Passive investing", "r", "index", "시장 지수를 그대로 따라가며 낮은 비용으로 시장 수익을 얻으려는 투자다."],
+    ["액티브 투자", "Active investing", "r", "index", "종목 선택과 시점 판단으로 지수보다 높은 수익을 노리는 투자다. 비용을 빼면 대다수가 장기적으로 지수에 뒤진다."],
+    ["팩터", "Factor", "r", "factor", "여러 종목의 수익률 차이를 설명하는 공통 특성이다. 가치, 규모, 모멘텀, 퀄리티, 저변동성 등이 있다."],
+    ["가치 팩터", "Value factor", "r", "factor", "이익이나 장부가치에 비해 싼 주식이 장기적으로 더 벌었다는 경향이다. 10년 가까이 부진한 기간도 있었다."],
+    ["모멘텀", "Momentum", "r", "factor", "최근 몇 달에서 1년간 많이 오른 주식이 한동안 더 오르는 경향이다. 추세가 꺾일 때 급락하기도 한다."],
+    ["규모 팩터", "Size factor", "r", "factor", "작은 회사 주식이 큰 회사 주식보다 평균적으로 더 벌었다는 경향이다. 기간과 시장에 따라 약하다."],
+    ["퀄리티", "Quality factor", "r", "factor", "수익성이 높고 재무가 튼튼한 회사가 더 나은 성과를 냈다는 경향이다."],
+    ["저변동성", "Low volatility factor", "r", "factor", "덜 흔들리는 주식이 위험에 비해 더 나은 성과를 냈다는 경향이다."],
+    ["스마트 베타", "Smart beta", "r", "factor", "시가총액이 아닌 팩터 같은 규칙으로 비중을 정하는 지수와 ETF다."],
+    ["환율", "Exchange rate", "r", "global", "두 통화의 교환 비율이다. 원/달러 환율이 오르면 달러 자산의 원화 가치가 커진다."],
+    ["환헤지", "Currency hedge", "r", "global", "선물환 등으로 환율 변동의 영향을 없애는 일이다. 비용이 들고, 위기 때 환율이 주던 완충 효과도 사라진다."],
+    ["환노출", "Currency exposure", "r", "global", "해외 자산의 원화 가치가 환율에 따라 오르내리도록 그대로 두는 것이다."],
+    ["홈 바이어스", "Home bias", "r", "global", "자기 나라 주식에 지나치게 많이 투자하는 경향이다."],
+    ["국가 분산", "International diversification", "r", "global", "여러 나라 시장에 나눠 투자해 한 나라에 몰린 위험을 줄이는 것이다."],
+
+    ["백테스트", "Backtest", "s", "backtest", "전략을 과거 데이터에 적용해 성과를 시험하는 일이다. 과거에 잘 맞았다고 미래를 보장하지 않는다."],
+    ["생존 편향", "Survivorship bias", "s", "backtest", "지금 살아남은 종목만으로 과거를 시험해, 망해서 사라진 종목의 손실이 빠지는 왜곡이다."],
+    ["미래 참조 편향", "Look-ahead bias", "s", "backtest", "그 시점에는 알 수 없던 정보(나중에 발표된 실적, 장 마감 후의 종가 등)를 써서 백테스트가 좋아 보이는 오류다."],
+    ["과최적화", "Overfitting", "s", "backtest", "과거 데이터의 우연한 잡음까지 맞추도록 규칙을 다듬어, 표본 밖에서는 무너지는 상태다."],
+    ["데이터 스누핑", "Data snooping", "s", "backtest", "같은 데이터로 많은 전략을 시험하다 우연히 좋아 보이는 것을 고르는 오류다."],
+    ["표본 밖 검증", "Out-of-sample test", "s", "backtest", "전략을 만들 때 쓰지 않은 기간의 데이터로 다시 시험하는 일이다."],
+    ["워크포워드 분석", "Walk-forward analysis", "s", "backtest", "과거 일부로 규칙을 정하고 바로 다음 기간에 시험하는 과정을, 기간을 밀어 가며 되풀이하는 검증 방법이다."],
+    ["적립식 투자", "Dollar-cost averaging", "s", "strategy", "정해진 금액을 정해진 주기로 꾸준히 사는 방법이다. 시점 판단 부담을 줄인다.", "DCA"],
+    ["일시 투자", "Lump-sum investing", "s", "strategy", "가진 돈을 한 번에 투자하는 방법이다. 시장이 오르는 기간이 더 많아 평균적으로는 유리하지만, 직후 급락을 만나면 고통이 크다."],
+    ["손절", "Stop-loss", "s", "strategy", "미리 정한 손실 한도에 이르면 파는 규칙이다."],
+    ["익절", "Take-profit", "s", "strategy", "미리 정한 이익에 이르면 파는 규칙이다."],
+    ["포지션 크기", "Position sizing", "s", "strategy", "한 종목이나 한 거래에 계좌의 얼마를 넣을지 정하는 일이다."],
+    ["켈리 기준", "Kelly criterion", "s", "strategy", "장기 자산 성장률을 가장 크게 하는 베팅 비율이다. 승률 p, 손익비 b일 때 p − (1 − p) ÷ b이며, 실제로는 그 절반 이하가 안전하다."],
+    ["파산 확률", "Risk of ruin", "s", "strategy", "정한 규칙대로 매매할 때 계좌가 회복할 수 없는 수준까지 줄어들 확률이다."],
+    ["회전율", "Turnover", "s", "strategy", "일정 기간 사고판 금액이 계좌 대비 얼마인지 나타내는 비율이다. 높을수록 비용이 쌓인다."],
+    ["레버리지", "Leverage", "s", "leverage", "빌린 돈이나 파생상품으로 내 돈보다 큰 규모를 투자하는 것이다. 이익과 손실이 모두 커진다."],
+    ["신용거래", "Margin trading", "s", "leverage", "증권사에서 돈을 빌려 주식을 사는 거래다. 이자가 붙고, 주가가 떨어지면 반대매매 위험이 있다."],
+    ["보증금률", "Initial margin", "s", "leverage", "신용으로 살 때 내 돈으로 먼저 내야 하는 비율이다. 2026년 기준 대표값은 약 40%이며 증권사·종목마다 다르다."],
+    ["담보유지비율", "Maintenance ratio", "s", "leverage", "신용 대출금 대비 계좌 평가액의 최소 비율이다. 2026년 기준 대표값은 약 140%이며, 이 아래로 내려가면 추가 담보를 요구받는다."],
+    ["마진콜", "Margin call", "s", "leverage", "담보비율이 기준 아래로 떨어져 증권사가 추가 담보나 상환을 요구하는 것이다."],
+    ["반대매매", "Forced liquidation", "s", "leverage", "정해진 기한까지 담보를 채우지 못하면 증권사가 계좌의 주식을 강제로 파는 것이다. 하락장 바닥 근처에서 손실을 확정시키기 쉽다."],
+    ["미수거래", "Cash account credit", "s", "leverage", "결제일까지 대금 일부만 내고 주식을 사는 거래다. 결제일에 나머지를 못 채우면 반대매매된다."],
+    ["공매도", "Short selling", "s", "leverage", "빌린 주식을 먼저 팔고 나중에 사서 갚는 거래다. 가격이 내리면 벌고, 오르면 손실이 이론상 끝없이 커진다."],
+    ["대차거래", "Securities lending", "s", "leverage", "주식을 빌려주고 빌리는 거래다. 공매도의 재료가 된다."],
+    ["숏스퀴즈", "Short squeeze", "s", "leverage", "가격이 오르자 공매도한 투자자들이 손실을 막으려 한꺼번에 사들이며 가격이 더 치솟는 현상이다."],
+    ["숏커버링", "Short covering", "s", "leverage", "공매도한 주식을 갚기 위해 다시 사들이는 것이다."],
+    ["파생상품", "Derivatives", "s", "derivatives", "주식, 지수, 금리 같은 기초자산의 가격에 따라 값이 정해지는 계약이다."],
+    ["기초자산", "Underlying asset", "s", "derivatives", "파생상품의 값을 정하는 바탕 자산이다."],
+    ["선물", "Futures", "s", "derivatives", "정해진 날에 정해진 가격으로 기초자산을 사고팔기로 지금 약속하는 표준화된 계약이다."],
+    ["증거금", "Margin deposit", "s", "derivatives", "선물·옵션 거래의 이행을 보증하려고 맡기는 돈이다. 계약 금액보다 훨씬 작아 레버리지가 생긴다."],
+    ["일일정산", "Mark-to-market", "s", "derivatives", "선물 손익을 매일 종가로 계산해 증거금에 더하고 빼는 제도다."],
+    ["옵션", "Option", "s", "derivatives", "정해진 가격에 사거나 팔 수 있는 권리다. 사는 사람은 프리미엄을 내고 의무 없이 권리만 갖는다."],
+    ["콜옵션", "Call option", "s", "derivatives", "정해진 가격(행사가격)에 기초자산을 살 수 있는 권리다. 기초자산 가격이 오를수록 가치가 커진다."],
+    ["풋옵션", "Put option", "s", "derivatives", "정해진 가격에 기초자산을 팔 수 있는 권리다. 기초자산 가격이 내릴수록 가치가 커진다."],
+    ["행사가격", "Strike price", "s", "derivatives", "옵션으로 사거나 팔 수 있도록 정해 둔 가격이다."],
+    ["옵션 프리미엄", "Option premium", "s", "derivatives", "옵션을 사려고 내는 가격이다. 옵션 매수자의 최대 손실이다."],
+    ["만기", "Expiration", "s", "derivatives", "선물·옵션 계약이 끝나는 날이다."],
+    ["내가격·외가격", "In or out of the money", "s", "derivatives", "지금 행사하면 이익이 나는 옵션이 내가격, 행사해도 얻을 것이 없는 옵션이 외가격이다.", "ITM/OTM"],
+    ["옵션의 시간가치", "Time value", "s", "derivatives", "옵션 가격 가운데 지금 행사할 때의 가치를 넘는 부분이다. 만기가 다가올수록 녹아 0이 된다."],
+    ["블랙-숄즈 모형", "Black-Scholes model", "s", "derivatives", "주가가 로그정규분포를 따른다는 가정에서 유럽형 옵션의 가격을 구하는 공식이다."],
+    ["내재변동성", "Implied volatility", "s", "derivatives", "시장의 옵션 가격에서 거꾸로 풀어낸 변동성이다. 시장이 예상하는 앞으로의 흔들림이다.", "IV"],
+    ["그릭스", "Greeks", "s", "derivatives", "옵션 가격이 주가, 시간, 변동성 등에 얼마나 민감한지 나타내는 값들(델타, 감마, 세타, 베가)이다."],
+    ["델타", "Delta", "s", "derivatives", "기초자산 가격이 1원 오를 때 옵션 가격이 변하는 크기다."],
+    ["세타", "Theta", "s", "derivatives", "하루가 지날 때 옵션 가격이 줄어드는 크기다. 시간가치가 녹는 속도다."],
+    ["커버드콜", "Covered call", "s", "derivatives", "주식을 가진 채 콜옵션을 파는 전략이다. 프리미엄을 받는 대신 큰 상승의 이익을 포기한다."],
+    ["보호적 풋", "Protective put", "s", "derivatives", "주식을 가진 채 풋옵션을 사는 전략이다. 프리미엄을 내고 하락 손실을 제한하는 보험이다."],
+    ["헤지", "Hedge", "s", "derivatives", "반대로 움직이는 포지션을 더해 손실 위험을 줄이는 일이다."],
+    ["모의투자", "Paper trading", "s", "lab", "실제 돈 없이 가상의 계좌로 매매해 보는 연습이다. 진짜 돈이 걸리지 않으면 감정이 다르다는 한계가 있다."],
+
+    ["증권거래세", "Securities transaction tax", "t", "tax", "주식을 팔 때 매도 금액에 붙는 세금이다. 2026년 기준 국내 상장 주식은 약 0.20%다."],
+    ["매매 수수료", "Brokerage commission", "t", "tax", "증권사가 주문을 처리한 대가로 받는 비용이다. 비대면 계좌는 거래 금액의 약 0.015% 수준이다."],
+    ["왕복 비용", "Round-trip cost", "t", "tax", "한 번 사고팔 때 드는 총비용이다. 수수료 두 번과 거래세를 합치면 약 0.23%이고, 스프레드는 따로다."],
+    ["배당소득세", "Dividend income tax", "t", "tax", "배당에 붙는 세금이다. 2026년 기준 지방소득세를 포함해 15.4%를 원천징수한다."],
+    ["원천징수", "Withholding", "t", "tax", "소득을 지급하는 쪽이 세금을 미리 떼어 대신 내는 방식이다. 배당은 받을 때 이미 세금이 빠져 있다."],
+    ["금융소득 종합과세", "Comprehensive taxation of financial income", "t", "tax", "이자와 배당을 합친 금융소득이 연 2,000만원을 넘으면, 넘는 부분을 다른 소득과 합쳐 누진세율로 과세하는 제도다."],
+    ["해외 주식 양도소득세", "Capital gains tax on foreign stocks", "t", "tax", "해외 주식을 팔아 번 차익에 붙는 세금이다. 2026년 기준 연 250만원을 공제한 뒤 22%(지방소득세 포함)를 낸다."],
+    ["기본공제", "Basic deduction", "t", "tax", "세금을 계산하기 전에 빼 주는 금액이다. 해외 주식 양도차익은 연 250만원이다."],
+    ["손익통산", "Netting gains and losses", "t", "tax", "같은 해에 생긴 이익과 손실을 합쳐 순이익에만 세금을 매기는 것이다. 해외 주식 양도세와 ISA에 적용된다."],
+    ["대주주 양도세", "Capital gains tax for major shareholders", "t", "tax", "국내 상장 주식은 대주주(2026년 기준 종목당 약 50억원 이상 보유 등)가 아니면 양도차익에 세금이 없고, 대주주만 양도소득세를 낸다."],
+    ["개인종합자산관리계좌", "Individual Savings Account", "t", "tax", "한 계좌에서 여러 상품을 굴리고 이익과 손실을 합쳐 일정 금액(일반형 200만원)까지 비과세, 넘는 부분은 9.9%로 분리과세하는 절세 계좌다.", "ISA"],
+    ["연금저축", "Pension savings account", "t", "tax", "노후 대비 계좌로 납입액에 세액공제를 주고 운용 수익의 과세를 연금을 받을 때까지 미룬다. 중도에 빼면 혜택을 토해 낸다."],
+    ["개인형 퇴직연금", "Individual retirement pension", "t", "tax", "퇴직금을 받거나 스스로 추가로 넣어 운용하는 연금 계좌다. 연금저축과 합쳐 세액공제 한도가 있다.", "IRP"],
+    ["세액공제", "Tax credit", "t", "tax", "계산된 세금에서 직접 빼 주는 금액이다. 연금 계좌 납입액에 공제율을 곱해 돌려받는다."],
+    ["과세이연", "Tax deferral", "t", "tax", "세금을 지금 내지 않고 나중으로 미루는 것이다. 미룬 세금만큼도 계속 굴러가 복리 효과가 커진다."],
+    ["분리과세", "Separate taxation", "t", "tax", "다른 소득과 합치지 않고 정해진 세율로 따로 과세하고 끝내는 방식이다."],
+    ["외국 원천징수세", "Foreign withholding tax", "t", "global", "해외 주식 배당에서 그 나라가 먼저 떼어 가는 세금이다. 미국 주식 배당은 보통 15%가 원천징수된다."],
+    ["환전 비용", "FX spread", "t", "global", "원화를 외화로 바꾸거나 되돌릴 때 기준 환율에 얹어지는 비용이다. 해외 주식의 숨은 왕복 비용이다."],
+    ["예금자 보호 제외", "Not deposit-insured", "t", "market", "주식과 펀드 자체는 예금자 보호 대상이 아니다. 다만 증권 계좌에 남은 현금(예수금)은 보호 대상이다."],
+
+    ["손실 회피", "Loss aversion", "b", "psychology", "같은 크기라도 잃는 고통을 얻는 기쁨보다 약 2배 크게 느끼는 성향이다."],
+    ["전망 이론", "Prospect theory", "b", "psychology", "사람이 결과를 기준점 대비 이익과 손실로 느끼고, 손실에 더 민감하다는 이론이다."],
+    ["처분 효과", "Disposition effect", "b", "psychology", "오른 주식은 일찍 팔고 내린 주식은 오래 붙드는 경향이다."],
+    ["확증 편향", "Confirmation bias", "b", "psychology", "이미 믿는 것을 지지하는 정보만 찾고 반대 정보는 무시하는 경향이다."],
+    ["과잉확신", "Overconfidence", "b", "psychology", "자기 판단과 정보의 정확도를 실제보다 높게 믿는 경향이다. 과잉 매매로 이어진다."],
+    ["과잉 매매", "Overtrading", "b", "psychology", "너무 자주 사고팔아 비용과 세금으로 수익을 갉아먹는 것이다."],
+    ["군집 행동", "Herding", "b", "psychology", "다른 사람들이 사니까 사고, 파니까 파는 행동이다."],
+    ["버블", "Bubble", "b", "psychology", "가격이 내재가치와 동떨어지게 기대만으로 치솟는 현상이다. 결국 크게 꺼지는 경우가 많다."],
+    ["포모", "Fear of missing out", "b", "psychology", "남들이 버는 기회를 놓칠까 두려워 서둘러 사는 심리다.", "FOMO"],
+    ["앵커링", "Anchoring", "b", "psychology", "처음 본 숫자(내 매수가, 과거 고점)에 판단이 묶이는 경향이다."],
+    ["최근성 편향", "Recency bias", "b", "psychology", "최근 일어난 일이 앞으로도 이어질 것이라고 과하게 믿는 경향이다."],
+    ["사후확신 편향", "Hindsight bias", "b", "psychology", "결과를 알고 나서 원래부터 알았다고 믿는 경향이다."],
+    ["매몰비용 오류", "Sunk cost fallacy", "b", "psychology", "이미 써 버려 되찾을 수 없는 비용 때문에 잘못된 결정을 계속하는 것이다. 본전 생각이 대표적이다."],
+    ["심적 회계", "Mental accounting", "b", "psychology", "돈을 출처나 용도별로 마음속 계좌에 나눠 다르게 취급하는 경향이다."],
+    ["도박사의 오류", "Gambler's fallacy", "b", "psychology", "많이 내렸으니 이제 오를 차례라고 믿는 것처럼, 독립적인 사건에 흐름이 있다고 착각하는 것이다."],
+    ["패턴 착각", "Clustering illusion", "b", "technical", "무작위 데이터에서도 의미 있는 패턴을 보는 경향이다."],
+    ["근시안적 손실 회피", "Myopic loss aversion", "b", "psychology", "계좌를 자주 볼수록 손실을 더 자주 보게 되어 위험 자산을 덜 갖게 되는 현상이다."],
+    ["투자 정책서", "Investment policy statement", "b", "psychology", "목표, 자산 비중, 매매·리밸런싱 규칙, 하지 않을 일을 미리 적어 두는 한 장짜리 문서다. 감정이 흔들릴 때 판단을 대신한다.", "IPS"],
+    ["내러티브", "Narrative", "b", "psychology", "숫자보다 이야기로 투자를 판단하게 만드는 서사다. 좋은 이야기가 비싼 가격을 정당화하지는 않는다."],
+  ];
+
+  const CHO = ["ㄱ", "ㄲ", "ㄴ", "ㄷ", "ㄸ", "ㄹ", "ㅁ", "ㅂ", "ㅃ", "ㅅ", "ㅆ", "ㅇ", "ㅈ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ"];
+  const MERGE = { "ㄲ": "ㄱ", "ㄸ": "ㄷ", "ㅃ": "ㅂ", "ㅆ": "ㅅ", "ㅉ": "ㅈ" };
+  const GROUPS = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅎ", "A–Z"];
+  const choOf = (ch) => { const c = ch.charCodeAt(0); return c >= 0xac00 && c <= 0xd7a3 ? CHO[Math.floor((c - 0xac00) / 588)] : ch; };
+  const initial = (s) => { const j = choOf(s[0]); return CHO.includes(j) ? MERGE[j] || j : "A–Z"; };
+  const TERMS = RAW.map((r, i) => ({ id: i, ko: r[0], en: r[1], g: r[2], ch: r[3], def: r[4], abbr: r[5] || "", cho: [...r[0]].map(choOf).join(""), grp: initial(r[0]) }));
+  TERMS.sort((a, b) => GROUPS.indexOf(a.grp) - GROUPS.indexOf(b.grp) || a.ko.localeCompare(b.ko, "ko"));
+  const BYID = {};
+  TERMS.forEach((t) => (BYID[t.id] = t));
+
+  /* ------------------------------------------------------------ 기록: 자기 진단 레이더가 읽는다 */
+  const REC = new Map();
+  const record = (key, ch, ok) => { REC.set(key, { ch, ok, quiz: key.startsWith("q:") }); updateRadar(); };
+  const forget = (prefix) => { [...REC.keys()].forEach((k) => { if (k.startsWith(prefix)) REC.delete(k); }); updateRadar(); };
+  let rdCv = null;
+  function updateRadar() { if (rdCv) { rdCv.redraw(); radarReadout(); } }
+
+  /* ------------------------------------------------------------ 1. 용어집 */
+  const qEl = $("gl-q"), listEl = $("gl-list"), jumpEl = $("gl-jump");
+  const hl = (text, q) => {
+    if (!q) return esc(text);
+    const low = text.toLowerCase(); let out = "", i = 0, k;
+    while ((k = low.indexOf(q, i)) >= 0) { out += esc(text.slice(i, k)) + "<mark>" + esc(text.slice(k, k + q.length)) + "</mark>"; i = k + q.length; }
+    return out + esc(text.slice(i));
+  };
+  jumpEl.innerHTML = GROUPS.map((g) => `<button data-g="${g}" aria-label="${g} 항목으로">${g}</button>`).join("");
+  jumpEl.addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b || b.disabled) return;
+    const h = listEl.querySelector(`.gl-group[data-g="${b.dataset.g}"]`);
+    if (h) { listEl.scrollTop = h.offsetTop; listEl.scrollIntoView({ block: "nearest" }); }
+  });
+  function renderGlossary() {
+    const raw = qEl.value.trim(), q = raw.toLowerCase();
+    const choQ = /^[ㄱ-ㅎ]+$/.test(raw.replace(/\s/g, "")) ? raw.replace(/\s/g, "") : "";
+    const cat = glCat();
+    const hits = TERMS.filter((t) => (cat === "all" || t.g === cat) && (!q || (choQ ? t.cho.includes(choQ) : (t.ko + "\n" + t.en + "\n" + t.abbr + "\n" + t.def).toLowerCase().includes(q))));
+    const html = []; let last = "";
+    const present = new Set();
+    hits.forEach((t) => {
+      if (t.grp !== last) { html.push(`<div class="gl-group" data-g="${t.grp}">${t.grp}</div>`); last = t.grp; present.add(t.grp); }
+      const qq = choQ ? "" : q;
+      html.push(`<div class="gl-item" id="term-${t.id}"><h4>${hl(t.ko, qq)}<span class="en">${hl(t.en, qq)}</span>${t.abbr ? `<span class="abbr">${hl(t.abbr, qq)}</span>` : ""}</h4><p>${hl(t.def, qq)}</p><span class="cat">${CATS[t.g]}</span><span class="ch">${chLink(t.ch)}</span></div>`);
+    });
+    listEl.innerHTML = html.length ? html.join("") : `<div class="gl-empty">‘${esc(raw)}’에 맞는 용어가 없다. 철자를 바꾸거나 분야를 ‘전체’로 돌려 본다.</div>`;
+    listEl.scrollTop = 0;
+    jumpEl.querySelectorAll("button").forEach((b) => (b.disabled = !present.has(b.dataset.g)));
+    $("gl-count").textContent = `${hits.length} / ${TERMS.length}개`;
+  }
+  const glCat = MB.seg("gl-cat", renderGlossary);
+  qEl.addEventListener("input", MB.debounce(renderGlossary, 80));
+  renderGlossary();
+
+  /* ------------------------------------------------------------ 2. 플래시카드 */
+  const FC_CAT = { m: ["m", "c"], v: ["v", "c"], r: ["r", "p"], s: ["s", "t", "b"] };
+  const fc = { seed: 7, deck: [], i: 0, yes: new Set(), no: new Set(), seen: 0 };
+  const card = $("fc-card");
+  function fcBuild() {
+    const set = fcSet(), cat = fcCat();
+    let ids = TERMS.filter((t) => cat === "all" || FC_CAT[cat].includes(t.g)).map((t) => t.id);
+    if (set === "miss") ids = ids.filter((id) => fc.no.has(id));
+    fc.deck = shuffle(ids, MB.rng(fc.seed)); fc.i = 0;
+    fcShow();
+  }
+  function fcShow() {
+    card.classList.remove("flip");
+    const id = fc.deck[fc.i];
+    if (id == null) {
+      $("fc-kick").textContent = fcSet() === "miss" ? "복습할 카드 없음" : "카드 없음";
+      $("fc-term").textContent = fcSet() === "miss" ? "모른 카드가 없다" : "—";
+      $("fc-en").textContent = fcSet() === "miss" ? "‘모든 카드’에서 몰랐다고 표시한 카드가 여기 모인다" : "";
+      $("fc-def").textContent = ""; $("fc-link").innerHTML = "";
+    } else {
+      const t = BYID[id];
+      $("fc-kick").textContent = `${CATS[t.g]} · ${fc.i + 1} / ${fc.deck.length}`;
+      $("fc-term").textContent = t.ko;
+      $("fc-en").textContent = t.en + (t.abbr ? ` · ${t.abbr}` : "");
+      $("fc-def").textContent = t.def;
+      $("fc-link").innerHTML = chLink(t.ch);
+    }
+    MB.stat("fc-o-seen", fc.seen); MB.stat("fc-o-yes", fc.yes.size); MB.stat("fc-o-no", fc.no.size);
+  }
+  function fcMark(ok) {
+    const id = fc.deck[fc.i]; if (id == null) return;
+    fc.seen++;
+    if (ok) { fc.yes.add(id); fc.no.delete(id); } else { fc.no.add(id); fc.yes.delete(id); }
+    record("fc:" + id, BYID[id].ch, ok);
+    if (fcSet() === "miss" && ok) { fc.deck.splice(fc.i, 1); if (fc.i >= fc.deck.length) fc.i = 0; }
+    else fc.i = (fc.i + 1) % fc.deck.length;
+    fcShow();
+  }
+  const fcSet = MB.seg("fc-set", fcBuild), fcCat = MB.seg("fc-cat", fcBuild);
+  card.addEventListener("click", (e) => { if (!e.target.closest("a")) card.classList.toggle("flip"); });
+  card.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); card.classList.toggle("flip"); } });
+  $("fc-flip").addEventListener("click", () => card.classList.toggle("flip"));
+  $("fc-yes").addEventListener("click", () => fcMark(true));
+  $("fc-no").addEventListener("click", () => fcMark(false));
+  $("fc-shuffle").addEventListener("click", () => { fc.seed++; fcBuild(); });
+  fcBuild();
+
+  /* ------------------------------------------------------------ 3. 짝 맞추기 */
+  const mt = { seed: 21, pairs: [], sel: null, ok: 0, miss: 0, t0: 0, done: false };
+  const firstSentence = (s) => s.split(/(?<=다\.)\s/)[0];
+  const mask = (t) => {
+    let s = firstSentence(t.def);
+    [t.ko, t.abbr].filter(Boolean).forEach((w) => { s = s.split(w).join("○○"); });
+    return s;
+  };
+  function mtNew() {
+    const r = MB.rng(mt.seed), n = Number(mtSize());
+    const pool = shuffle(TERMS.filter((t) => t.ko.length <= 9), r);
+    const pick = [];
+    for (const t of pool) { if (pick.length >= n) break; if (pick.some((p) => p.g === t.g) && pick.length < 4) continue; pick.push(t); }
+    mt.pairs = pick; mt.sel = null; mt.ok = 0; mt.miss = 0; mt.t0 = 0; mt.done = false;
+    $("mt-terms").innerHTML = shuffle(pick, r).map((t) => `<button data-id="${t.id}" class="mt-t">${esc(t.ko)}</button>`).join("");
+    $("mt-defs").innerHTML = shuffle(pick, r).map((t) => `<button data-id="${t.id}" class="mt-d">${esc(mask(t))}</button>`).join("");
+    mtStat();
+  }
+  function mtStat() {
+    MB.stat("mt-o-ok", `${mt.ok} / ${mt.pairs.length}`);
+    MB.stat("mt-o-miss", mt.miss);
+    MB.stat("mt-o-time", mt.done ? ((mt.tEnd - mt.t0) / 1000).toFixed(1) + "초" : mt.t0 ? "진행 중" : "—");
+  }
+  $("sim-mt").querySelector(".mt-wrap").addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b || b.disabled || mt.done) return;
+    if (!mt.t0) mt.t0 = performance.now();
+    if (b.classList.contains("mt-t")) {
+      $("mt-terms").querySelectorAll("button").forEach((x) => x.classList.toggle("sel", x === b));
+      mt.sel = b; return;
+    }
+    if (!mt.sel) { b.classList.add("miss"); setTimeout(() => b.classList.remove("miss"), 350); return; }
+    const tid = Number(mt.sel.dataset.id), did = Number(b.dataset.id);
+    if (tid === did) {
+      const t = BYID[tid];
+      mt.sel.classList.remove("sel"); mt.sel.classList.add("ok"); mt.sel.disabled = true;
+      b.classList.add("ok"); b.disabled = true; b.innerHTML = `<span class="mt-tag">${esc(t.ko)}</span>${esc(firstSentence(t.def))}`;
+      mt.ok++; mt.sel = null;
+      if (!REC.has("mt:" + tid)) record("mt:" + tid, t.ch, true);
+      if (mt.ok === mt.pairs.length) { mt.done = true; mt.tEnd = performance.now(); }
+    } else {
+      mt.miss++; b.classList.add("miss"); setTimeout(() => b.classList.remove("miss"), 350);
+      record("mt:" + tid, BYID[tid].ch, false);
+    }
+    mtStat();
+  });
+  const mtSize = MB.seg("mt-size", mtNew);
+  $("mt-new").addEventListener("click", () => { mt.seed++; mtNew(); });
+  mtNew();
+
+  /* ------------------------------------------------------------ 4. 숫자 감각 */
+  const pct = (d) => (v) => v.toFixed(d) + "%";
+  const NS = [
+    { ch: "ratios", q: "PER이 20배인 주식의 이익수익률(EPS ÷ 주가)은?", hint: "PER의 역수를 떠올린다.", min: 0, max: 20, step: 0.5, tk: [0, 5, 10, 15, 20], ans: 5, tol: 0.5, fmt: pct(1),
+      exp: "이익수익률 = 1 ÷ PER = 1 ÷ 20 = 5%다. 이익이 그대로라면 주가 대비 해마다 5%를 버는 셈이고, 이 숫자를 채권 금리와 나란히 놓고 비교할 수 있다." },
+    { ch: "return", q: "주가가 −50% 떨어졌다. 원래 가격을 되찾으려면 몇 % 올라야 하는가?", hint: "반 토막 난 값에서 다시 시작한다.", min: 0, max: 200, step: 5, tk: [0, 50, 100, 150, 200], ans: 100, tol: 5, fmt: pct(0),
+      exp: "1 × 0.5 = 0.5에서 1로 돌아가려면 0.5 × (1 + x) = 1, x = 100%다. 손실이 클수록 회복에 필요한 상승률은 훨씬 빠르게 커진다(−30%면 +43%, −80%면 +400%)." },
+    { ch: "return", q: "연 8%로 굴리면 원금이 두 배가 되는 데 약 몇 년 걸리는가?", hint: "72의 법칙.", min: 1, max: 30, step: 0.5, tk: [1, 10, 20, 30], ans: 9, tol: 0.5, fmt: (v) => v.toFixed(1) + "년",
+      exp: "72 ÷ 8 = 9년이다. 정확히는 ln 2 ÷ ln 1.08 ≈ 9.0년이다. 연 4%면 약 18년, 연 12%면 약 6년이다." },
+    { ch: "market", q: "전일 종가가 72,000원인 국내 주식의 오늘 상한가는?", hint: "2026년 기준 가격제한폭 ±30%.", min: 72000, max: 108000, step: 100, tk: [72000, 84000, 96000, 108000], ans: 93600, tol: 100, fmt: (v) => MB.price(v),
+      exp: "72,000 × 1.3 = 93,600원이다(호가 단위에 맞춰 내림). 하한가는 72,000 × 0.7 = 50,400원이다. 하루에 움직일 수 있는 범위가 4만원이 넘는다." },
+    { ch: "price", q: "연 변동성이 38%인 주식의 하루 변동성(표준편차)은 대략 몇 %인가?", hint: "1년은 약 252거래일. 변동성은 시간의 제곱근에 비례한다.", min: 0, max: 10, step: 0.1, tk: [0, 2.5, 5, 7.5, 10], ans: 2.4, tol: 0.2, fmt: pct(1),
+      exp: "38% ÷ √252 ≈ 38 ÷ 15.9 ≈ 2.4%다. 하루 ±2.4% 정도는 평범한 날이고, ±5%를 넘는 날도 1년에 몇 번은 나온다." },
+    { ch: "leverage", q: "내 돈 1,000만원에 신용 1,000만원을 더해 2,000만원어치 샀다. 담보유지비율 140%(평가액 ÷ 대출금)에 닿는 주가 하락률은?", hint: "평가액이 대출금의 1.4배가 되는 지점.", min: 0, max: 60, step: 1, tk: [0, 15, 30, 45, 60], ans: 30, tol: 1, fmt: pct(0),
+      exp: "평가액이 1,000만원 × 1.4 = 1,400만원이 되면 기준선이다. 2,000만원에서 1,400만원은 −30%다. 이때 내 돈은 1,000만원에서 400만원으로 −60%가 되어 있다." },
+    { ch: "dividend", q: "배당금 100만원을 받았다. 배당소득세 15.4%를 떼고 계좌에 들어오는 돈은?", hint: "2026년 기준 배당소득세는 지방소득세 포함 15.4%.", min: 50, max: 100, step: 0.1, tk: [50, 60, 70, 80, 90, 100], ans: 84.6, tol: 0.3, fmt: (v) => v.toFixed(1) + "만원",
+      exp: "100만원 × (1 − 0.154) = 84만 6천원이다. 금융소득이 연 2,000만원을 넘지 않으면 여기서 과세가 끝난다." },
+    { ch: "tax", q: "한 해 해외 주식 양도차익이 1,000만원이다. 내야 할 양도소득세는?", hint: "2026년 기준 연 250만원 공제 후 22%.", min: 0, max: 300, step: 5, tk: [0, 100, 200, 300], ans: 165, tol: 5, fmt: (v) => v.toFixed(0) + "만원",
+      exp: "(1,000만원 − 250만원) × 22% = 165만원이다. 같은 해 다른 해외 주식에서 손실이 났다면 손익을 합친 뒤 계산한다." },
+    { ch: "index", q: "지수가 하루 +10%, 다음 날 −10% 움직였다. 매일 2배를 따라가는 레버리지 ETF의 이틀 수익률은?", hint: "지수는 1.1 × 0.9, ETF는 1.2 × 0.8.", min: -20, max: 5, step: 0.5, tk: [-20, -15, -10, -5, 0, 5], ans: -4, tol: 0.5, fmt: (v) => MB.chg(v / 100, 1),
+      exp: "지수는 1.1 × 0.9 = 0.99로 −1%지만, ETF는 1.2 × 0.8 = 0.96으로 −4%다. 2배가 아니라 4배를 잃었다. 오르내림이 반복될수록 이 차이는 커진다." },
+    { ch: "portfolio", q: "기대수익률 8%, 무위험 수익률 3%, 변동성 20%인 포트폴리오의 샤프 비율은?", hint: "(수익률 − 무위험) ÷ 변동성.", min: 0, max: 1, step: 0.05, tk: [0, 0.25, 0.5, 0.75, 1], ans: 0.25, tol: 0.025, fmt: (v) => v.toFixed(2),
+      exp: "(8% − 3%) ÷ 20% = 0.25다. 위험 1단위를 질 때마다 초과 수익 0.25단위를 기대한다는 뜻이다. 같은 샤프 비율이라도 레버리지로 변동성을 키우면 낙폭도 함께 커진다." },
+  ];
+  const ns = { i: 0, revealed: false, ok: 0, tried: 0, done: new Set() };
+  const nsA = MB.range("ns-a", (v) => NS[ns.i].fmt(v), () => { if (!ns.revealed) nsCv.redraw(); });
+  const nsBox = { x: 0, w: 0 };
+  const nsCv = MB.canvas("#ns-cv", (ctx, w, h) => {
+    const P = MB.palette(), Q = NS[ns.i];
+    const x0 = 24, x1 = w - 24, y = h * 0.55;
+    nsBox.x = x0; nsBox.w = x1 - x0;
+    const X = (v) => x0 + ((v - Q.min) / (Q.max - Q.min)) * (x1 - x0);
+    ctx.strokeStyle = P.axis; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+    ctx.font = MB.font(10.5, true); ctx.fillStyle = P.dim; ctx.textAlign = "center"; ctx.textBaseline = "top";
+    const tk = w < 420 && Q.tk.length > 5 ? Q.tk.filter((_, k) => k % 2 === 0 || k === Q.tk.length - 1) : Q.tk;
+    tk.forEach((v, k) => {
+      const px = X(v);
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(px, y - 4); ctx.lineTo(px, y + 4); ctx.stroke();
+      ctx.textAlign = k === 0 ? "left" : k === tk.length - 1 ? "right" : "center";
+      ctx.fillText(Q.fmt(v), px, y + 8);
+    });
+    const g = nsA(), gx = X(g);
+    if (ns.revealed) {
+      const ax = X(Q.ans), ok = Math.abs(g - Q.ans) <= Q.tol + 1e-9;
+      ctx.fillStyle = P.ok; ctx.globalAlpha = 0.18;
+      ctx.fillRect(Math.min(X(Q.ans - Q.tol), ax - 3), y - 26, Math.max(6, X(Q.ans + Q.tol) - X(Q.ans - Q.tol)), 52);
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = ok ? P.ok : P.bad; ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(gx, y - 18); ctx.lineTo(ax, y - 18); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = P.ok; ctx.beginPath(); ctx.arc(ax, y, 7, 0, Math.PI * 2); ctx.fill();
+      ctx.font = MB.font(12, false, 700); ctx.textBaseline = "bottom";
+      ctx.textAlign = ax < x0 + 60 ? "left" : ax > x1 - 60 ? "right" : "center";
+      ctx.fillText("정답 " + Q.fmt(Q.ans), ax, y - 28);
+    }
+    ctx.fillStyle = P.accent;
+    ctx.beginPath(); ctx.moveTo(gx, y - 3); ctx.lineTo(gx - 7, y - 15); ctx.lineTo(gx + 7, y - 15); ctx.closePath(); ctx.fill();
+    ctx.font = MB.font(12, false, 700); ctx.textBaseline = "top";
+    ctx.textAlign = gx < x0 + 50 ? "left" : gx > x1 - 50 ? "right" : "center";
+    ctx.fillText("내 답 " + Q.fmt(g), gx, y + 26);
+  }, { aspect: 0.3, minHeight: 130, maxHeight: 170 });
+  MB.drag(nsCv.canvas, { move(x) { if (ns.revealed) return; const Q = NS[ns.i]; const v = Q.min + MB.clamp((x - nsBox.x) / nsBox.w, 0, 1) * (Q.max - Q.min); nsA.set(Math.round(v / Q.step) * Q.step); } });
+  function nsLoad() {
+    const Q = NS[ns.i], el = nsA.el;
+    ns.revealed = false;
+    el.min = Q.min; el.max = Q.max; el.step = Q.step;
+    nsA.set(Q.min + Math.round(((Q.max - Q.min) / 2) / Q.step) * Q.step);
+    $("ns-q").innerHTML = `${ns.i + 1}. ${esc(Q.q)}<small>${esc(Q.hint)}</small>`;
+    $("ns-exp").textContent = "슬라이더나 수직선을 끌어 답을 고른 뒤 확인을 누른다.";
+    MB.stat("ns-o-n", `${ns.i + 1} / ${NS.length}`); MB.stat("ns-o-ans", "?");
+    $("ns-go").disabled = false;
+    nsCv.redraw();
+  }
+  $("ns-go").addEventListener("click", () => {
+    if (ns.revealed) return;
+    const Q = NS[ns.i], ok = Math.abs(nsA() - Q.ans) <= Q.tol + 1e-9;
+    ns.revealed = true; ns.tried++; if (ok) ns.ok++;
+    record("ns:" + ns.i, Q.ch, ok);
+    $("ns-exp").innerHTML = `<b class="${ok ? "ok-t" : "bad-t"}">${ok ? "맞았다." : "빗나갔다."}</b> ${esc(Q.exp)} ${chLink(Q.ch)}`;
+    MB.stat("ns-o-ans", Q.fmt(Q.ans)); MB.stat("ns-o-score", `${ns.ok} / ${ns.tried}`);
+    $("ns-go").disabled = true;
+    nsCv.redraw();
+  });
+  $("ns-next").addEventListener("click", () => { ns.i = (ns.i + 1) % NS.length; nsLoad(); });
+  nsLoad();
+
+  /* ------------------------------------------------------------ 5. 종합 퀴즈: 첫 보기가 정답, 화면에서는 섞는다 */
+  const QZ = [
+    { ch: "overview", q: "한빛반도체(가상)의 발행주식이 1억 주이고 주가가 72,000원이다. 1주를 가진 사람이 가진 것으로 가장 알맞은 것은?", o: ["회사의 이익과 순자산 가운데 1억분의 1에 대한 몫", "회사가 언젠가 72,000원을 돌려주겠다는 약속", "매년 정해진 이자를 받을 권리", "회사 빚의 1억분의 1을 갚을 의무"], e: "주식은 회사 소유권의 한 조각이다. 원금 상환이나 정해진 이자 약속은 채권의 성격이고, 주주는 유한책임이라 회사 빚을 대신 갚지 않는다." },
+    { ch: "overview", q: "투자한 회사가 파산했다. 주주가 잃을 수 있는 최대 금액은?", o: ["투자한 금액", "투자 금액의 2배", "회사의 남은 빚 가운데 지분율만큼", "한도가 없다"], e: "유한책임 원칙 때문에 투자한 금액까지만 잃는다. 다만 파산하면 채권자에게 먼저 갚고 남는 것이 있어야 주주 몫이 생기므로, 투자금 전부를 잃는 경우가 많다." },
+    { ch: "market", q: "전일 종가가 72,000원인 국내 주식의 오늘 상한가는?(2026년 기준)", o: ["93,600원", "79,200원", "86,400원", "100,800원"], e: "가격제한폭은 ±30%다. 72,000 × 1.3 = 93,600원, 하한가는 50,400원이다." },
+    { ch: "market", q: "월요일에 국내 주식을 샀다(그 주에 휴일 없음). 실제로 돈이 빠져나가고 주식이 계좌에 들어오는 결제일은?", o: ["수요일", "월요일 당일", "화요일", "다음 주 월요일"], e: "국내 주식은 체결일(T)로부터 2영업일 뒤(T+2)에 결제된다. 그래서 배당을 받으려면 배당기준일 2영업일 전까지 사야 한다." },
+    { ch: "orderbook", q: "매도호가가 72,100원에 120주, 72,200원에 300주 쌓여 있다. 200주를 시장가로 사면 평균 체결가는?", o: ["72,140원", "72,100원", "72,150원", "72,200원"], e: "120주는 72,100원, 나머지 80주는 72,200원에 체결된다. (120 × 72,100 + 80 × 72,200) ÷ 200 = 72,140원이다. 잔량이 얇을수록 시장가 주문의 평균 가격이 밀려 올라간다." },
+    { ch: "orderbook", q: "72,000원에 매수 지정가 주문이 여럿 쌓여 있는데 72,000원 매도 주문이 조금만 들어왔다. 누구의 매수 주문이 먼저 체결되는가?", o: ["같은 가격 가운데 가장 먼저 낸 주문", "수량이 가장 많은 주문", "가장 늦게 낸 주문", "무작위로 정한다"], e: "가격이 같으면 시간 우선이다. 더 좋은 가격(더 높은 매수가)이 있었다면 그 주문이 가장 먼저였을 것이다." },
+    { ch: "price", q: "효율적 시장 가설로 볼 때, 오늘 아침 신문의 호재 기사를 읽고 산 주식에 대한 가장 그럴듯한 설명은?", o: ["기사 내용은 이미 가격에 대부분 반영되었을 가능성이 크다", "기사를 읽은 사람은 반드시 초과수익을 얻는다", "호재는 몇 주에 걸쳐 천천히 가격에 반영된다", "공개된 정보는 가격에 반영되지 않는다"], e: "공개 정보는 빠르게 가격에 녹아든다. 모두가 읽은 기사로 꾸준히 시장을 이기기는 어렵다." },
+    { ch: "price", q: "연 변동성이 38%인 주식이 하루에 −3% 움직였다. 이 날은 어떤 날인가?", o: ["하루 변동성 약 2.4%의 1.3배쯤으로, 흔히 있는 날", "10년에 한 번 있을 극단적인 날", "하루 변동성이 38%이므로 아주 조용한 날", "회사에 큰 문제가 생겼다는 확실한 신호"], e: "38% ÷ √252 ≈ 2.4%다. −3%는 약 1.3 표준편차로, 정규분포라면 열흘에 한 번꼴로 이 정도 이상 하락한다." },
+    { ch: "statements", q: "영업이익은 흑자인데 영업활동 현금흐름이 몇 년째 마이너스다. 흔한 이유로 가장 알맞은 것은?", o: ["매출채권과 재고가 쌓여 이익만큼 현금이 들어오지 않았다", "감가상각비가 많아서", "배당을 많이 줘서", "유상증자를 해서"], e: "발생주의 회계에서는 팔기만 해도 이익이 잡힌다. 받을 돈과 재고가 쌓이면 현금은 들어오지 않는다. 감가상각은 오히려 현금흐름을 이익보다 좋게 만들고, 배당과 증자는 재무활동이다." },
+    { ch: "statements", q: "별빛바이오(가상)는 현금 1,200억원을 갖고 있고 해마다 약 450억원의 현금이 빠져나간다. 추가 조달 없이 버틸 수 있는 기간은?", o: ["약 2.7년", "약 0.4년", "약 4.5년", "약 12년"], e: "1,200 ÷ 450 ≈ 2.7년이다. 그 안에 신약이 성과를 내지 못하면 유상증자 같은 추가 조달이 필요해지고, 기존 주주는 희석된다." },
+    { ch: "ratios", q: "누리식품(가상)의 주가는 38,000원, 주당순이익(EPS)은 4,000원이다. PER은?", o: ["9.5배", "4배", "0.105배", "38배"], e: "PER = 주가 ÷ EPS = 38,000 ÷ 4,000 = 9.5배다. 이익이 그대로라면 주가만큼 버는 데 약 9.5년이 걸린다는 뜻이다." },
+    { ch: "ratios", q: "다온은행(가상)의 PBR이 0.3이라는 것은 무슨 뜻인가?", o: ["시가총액이 장부상 순자산의 30% 수준이다", "순이익이 주가의 30%다", "부채가 자본의 30%다", "배당수익률이 30%다"], e: "PBR = 주가 ÷ 주당순자산이다. 시장이 장부상 자산을 그대로 믿지 않거나 낮은 ROE를 반영한 것일 수 있다. 낮다고 늘 싼 것은 아니다." },
+    { ch: "ratios", q: "PER 10배, PBR 1.2배인 회사의 ROE는?", o: ["12%", "8.3%", "1.2%", "120%"], e: "PBR = PER × ROE이므로 ROE = 1.2 ÷ 10 = 12%다. 세 지표는 서로 묶여 있어 둘을 알면 나머지 하나가 나온다." },
+    { ch: "valuation", q: "DCF에서 할인율을 높이면 기업 가치는 어떻게 되는가?", o: ["낮아지고, 먼 미래의 현금흐름일수록 더 크게 깎인다", "높아진다", "변하지 않는다", "가까운 미래의 현금흐름만 깎인다"], e: "현재가치 = 미래 현금 ÷ (1 + 할인율)^기간이다. 기간이 길수록 할인율의 효과가 거듭제곱으로 커진다." },
+    { ch: "valuation", q: "다음 해 배당 1,000원, 요구수익률 8%, 배당이 영원히 연 3%씩 자란다면 고든 성장 모형의 주가는?", o: ["20,000원", "12,500원", "33,333원", "9,091원"], e: "1,000 ÷ (0.08 − 0.03) = 20,000원이다. 성장률을 4%로만 바꿔도 25,000원이 되어, 가정 하나에 가치가 크게 흔들린다." },
+    { ch: "dividend", q: "누리식품(가상) 100주를 가졌고 주당 배당금이 1,900원이다. 2026년 기준 세후 배당금은?", o: ["160,740원", "190,000원", "171,000원", "148,200원"], e: "190,000원 × 15.4% = 29,260원을 원천징수하고 160,740원이 들어온다." },
+    { ch: "dividend", q: "배당락일에 주가가 대략 배당금만큼 낮아져 출발하는 이유는?", o: ["그날부터 산 사람은 이번 배당을 받지 못하기 때문", "회사가 배당금만큼 주가를 깎으라고 지시하기 때문", "배당을 받은 사람들이 모두 팔기 때문", "배당소득세가 주가에서 빠지기 때문"], e: "배당으로 회사 밖으로 나간 현금만큼 회사 가치가 줄고, 새로 사는 사람은 그 배당을 못 받는다. 배당은 공짜 돈이 아니라 내 주식의 일부가 현금으로 바뀐 것이다." },
+    { ch: "corporate", q: "1주당 1주를 나눠 주는 무상증자를 했다. 다른 변화가 없다면 내 주식의 총가치는?", o: ["거의 그대로이고, 주가가 대략 절반으로 조정된다", "두 배가 된다", "절반이 된다", "새 주식만큼 회사 현금이 늘어 오른다"], e: "무상증자는 회사에 새 돈이 들어오지 않는다. 같은 회사를 더 많은 조각으로 나눌 뿐이라 주식 수가 2배, 주가가 약 1/2이 된다." },
+    { ch: "corporate", q: "유상증자로 주식 수가 25% 늘었다. 참여하지 않은 기존 주주의 지분율은 원래의 몇 %가 되는가?", o: ["80%", "75%", "125%", "변하지 않는다"], e: "1 ÷ 1.25 = 0.8이다. 지분율이 10%였다면 8%가 된다. 주식 수가 25% 늘었다고 지분율이 25% 주는 것은 아니다." },
+    { ch: "return", q: "주가가 첫해 −50%, 다음 해 +50%였다. 2년 동안의 수익률은?", o: ["−25%", "0%", "+25%", "−50%"], e: "0.5 × 1.5 = 0.75로 −25%다. 산술평균은 0%이지만 계좌는 줄었다. 손실 뒤의 같은 비율 상승은 손실을 메우지 못한다." },
+    { ch: "return", q: "4년 수익률이 +30%, −10%, +30%, −10%였다. 산술평균은 10%다. 실제 연평균 성장률(CAGR)은 약 얼마인가?", o: ["약 8.2%", "10%", "약 12%", "약 5%"], e: "1.3 × 0.9 = 1.17이 두 번이므로 1.17² ≈ 1.369, 4년 CAGR은 1.369^(1/4) − 1 ≈ 8.2%다. 변동성이 산술평균을 깎아 먹는 변동성 끌림이다." },
+    { ch: "chart", q: "로그 축 차트에서 같은 높이의 간격은 무엇을 뜻하는가?", o: ["같은 비율(%)의 변화", "같은 금액의 변화", "같은 거래량", "같은 기간"], e: "로그 축에서는 1만원→2만원과 5만원→10만원이 같은 높이다. 긴 기간 차트에서 과거의 움직임을 공정하게 비교할 수 있다." },
+    { ch: "chart", q: "한국식 차트에서 빨간 캔들(양봉)의 정확한 뜻은?", o: ["그 기간의 종가가 시가보다 높았다", "전날보다 주가가 올랐다", "거래량이 늘었다", "상한가에 도달했다"], e: "양봉·음봉은 같은 기간 안의 시가와 종가를 비교한다. 갭 하락으로 낮게 시작해 조금 올랐다면 전날보다 내렸어도 양봉이다." },
+    { ch: "technical", q: "무작위로 만든 가짜 차트에서도 골든크로스, 지지선, 머리어깨형 같은 패턴이 자주 보인다. 이것이 말해 주는 것은?", o: ["패턴이 보인다는 사실만으로는 예측력의 증거가 되지 않는다", "무작위 차트도 기술적 분석으로 예측할 수 있다", "진짜 차트에는 패턴이 없다", "패턴은 거래량이 많을 때만 생긴다"], e: "사람의 눈은 무작위 속에서도 모양을 찾는다. 규칙이 쓸모 있는지는 비용을 넣은 검증과 표본 밖 성과로 판단해야 한다." },
+    { ch: "technical", q: "1년에 100번 사고파는 단기 매매 전략이 있다. 왕복 비용(수수료+거래세)이 약 0.23%라면 1년 동안 비용만으로 빠지는 수익률은 대략?", o: ["약 23%", "약 0.23%", "약 2.3%", "비용은 수익률에 영향이 없다"], e: "0.23% × 100 ≈ 23%이고, 스프레드와 슬리피지를 더하면 더 커진다. 잦은 매매는 작은 비용을 거대한 비용으로 만든다." },
+    { ch: "risk", q: "종목 수를 아무리 늘려도 줄일 수 없는 위험은?", o: ["체계적 위험(시장 위험)", "비체계적 위험(개별 기업 위험)", "회계 부정 위험", "한 회사의 신약 실패 위험"], e: "경기·금리처럼 모든 주식에 함께 영향을 주는 위험은 분산으로 없앨 수 없다. 이것을 견디는 대가가 주식 위험 프리미엄이다." },
+    { ch: "risk", q: "베타가 1.5인 주식이 있다. 시장이 −10% 떨어지면 이 주식은 평균적으로 대략 얼마나 움직이는가?", o: ["약 −15%", "약 −10%", "약 −1.5%", "약 +15%"], e: "베타는 시장 1% 움직임에 대한 평균적인 민감도다. 개별 사건 때문에 실제 움직임은 이 값에서 크게 벗어날 수 있다." },
+    { ch: "portfolio", q: "수익률 8%, 무위험 수익률 3%, 변동성 20%인 포트폴리오의 샤프 비율은?", o: ["0.25", "0.4", "0.15", "2.5"], e: "(8 − 3) ÷ 20 = 0.25다. 위험 한 단위당 얻는 초과 수익이다." },
+    { ch: "portfolio", q: "변동성이 같은 두 자산을 반반 섞었다. 두 자산의 상관계수가 낮을수록 포트폴리오의 변동성은?", o: ["두 자산 변동성의 평균보다 더 작아진다", "평균보다 커진다", "상관계수와 무관하게 평균과 같다", "항상 0이 된다"], e: "서로 다르게 움직이면 한쪽의 하락을 다른 쪽이 일부 메운다. 상관계수가 1일 때만 평균과 같고, 낮을수록 줄어든다." },
+    { ch: "index", q: "연 6%(보수 차감 전) 시장을 30년 따라갈 때, 총보수 0.05%인 ETF는 0.5%인 ETF보다 최종 잔고가 대략 얼마나 많은가?", o: ["약 14%", "약 0.45%", "약 1.4%", "거의 차이 없다"], e: "1.0595³⁰ ÷ 1.055³⁰ ≈ 1.14다. 해마다 0.45%p의 작은 차이가 복리로 쌓인다. 보수는 미리 알 수 있는 거의 유일한 확실한 수익 차이다." },
+    { ch: "index", q: "지수가 하루 +10%, 다음 날 −10% 움직였다. 매일 2배를 따라가는 레버리지 ETF의 이틀 수익률은?", o: ["−4%", "−2%", "0%", "−1%"], e: "지수는 1.1 × 0.9 = 0.99로 −1%, ETF는 1.2 × 0.8 = 0.96으로 −4%다. 오르내림이 반복되면 레버리지 ETF는 지수의 2배보다 더 녹는다." },
+    { ch: "factor", q: "가치·모멘텀 같은 팩터 투자에 대한 설명으로 가장 알맞은 것은?", o: ["장기 평균으로는 초과 수익이 있었지만, 몇 년씩 시장보다 못한 기간이 있다", "해마다 꾸준히 시장을 이긴다", "한 번 발견되면 영원히 같은 크기로 작동한다", "위험이 전혀 없는 공짜 수익이다"], e: "팩터 프리미엄은 위험의 대가이거나 행동 편향의 결과로 설명되며, 긴 침체기를 견딜 수 있어야 얻을 수 있다." },
+    { ch: "backtest", q: "현재 상장된 종목만으로 지난 20년 전략을 시험했더니 결과가 아주 좋았다. 가장 의심해야 할 편향은?", o: ["생존 편향", "앵커링", "처분 효과", "홈 바이어스"], e: "그동안 상장폐지된 종목이 빠져 있으면 손실이 사라져 성과가 부풀려진다. 그 시점의 실제 종목 구성으로 시험해야 한다." },
+    { ch: "backtest", q: "규칙을 수십 번 다듬어 과거 10년 연 40%가 나온 전략이 그 뒤 기간에서는 시장보다 못했다. 가장 그럴듯한 이유는?", o: ["과최적화: 과거의 잡음까지 맞추도록 규칙이 다듬어졌다", "시장이 갑자기 비효율적이 되었다", "수수료가 갑자기 올랐다", "표본 밖 기간이 너무 길었다"], e: "규칙의 수와 다듬은 횟수가 늘수록 우연히 맞는 규칙이 나오기 쉽다. 만들 때 쓰지 않은 표본 밖 기간에서 다시 확인해야 한다." },
+    { ch: "strategy", q: "이길 확률 60%, 이기면 건 돈만큼 벌고 지면 건 돈을 잃는 게임이 있다. 켈리 기준의 베팅 비율은?", o: ["20%", "60%", "10%", "100%"], e: "f = p − (1 − p) ÷ b = 0.6 − 0.4 ÷ 1 = 0.2다. 켈리보다 많이 걸면 기대 성장률이 오히려 떨어지고 파산 위험이 커진다. 실제로는 절반 켈리 이하를 쓰는 경우가 많다." },
+    { ch: "strategy", q: "적립식 투자(매달 같은 금액 매수)의 장점으로 가장 정확한 것은?", o: ["시점 판단의 부담과 후회를 줄이고 규칙대로 꾸준히 투자하게 한다", "일시 투자보다 수익률이 항상 높다", "손실이 나지 않는다", "주가가 오를 때 더 많은 주식을 산다"], e: "같은 금액이면 쌀 때 더 많은 주식을 사게 된다. 다만 시장이 오르는 기간이 많아 평균적으로는 일시 투자가 유리한 경우가 많고, 적립식의 진짜 장점은 행동을 지키게 하는 데 있다." },
+    { ch: "leverage", q: "내 돈 1,000만원과 신용 1,000만원으로 2,000만원어치를 샀다. 담보유지비율 140%(평가액 ÷ 대출금) 아래로 내려가는 주가 하락률은?", o: ["−30%", "−14%", "−40%", "−50%"], e: "평가액이 1,400만원이 되는 지점이 −30%다. 이때 내 돈은 이미 −60%이고, 담보를 채우지 못하면 반대매매로 바닥 근처에서 손실이 확정된다." },
+    { ch: "leverage", q: "공매도의 이론상 최대 손실은?", o: ["한도가 없다", "투자한 금액", "주가의 30%", "빌린 주식 수만큼"], e: "주가는 0 아래로 떨어질 수 없지만 위로는 한도가 없다. 그래서 공매도는 이익은 제한되고 손실은 열려 있다." },
+    { ch: "derivatives", q: "행사가격 100,000원 콜옵션을 프리미엄 3,000원에 샀다. 만기에 주가가 110,000원이면 1주당 손익은?", o: ["+7,000원", "+10,000원", "+13,000원", "−3,000원"], e: "110,000 − 100,000 = 10,000원의 행사 가치에서 낸 프리미엄 3,000원을 빼면 7,000원이다. 주가가 103,000원 위에서 끝나야 이익이 난다." },
+    { ch: "derivatives", q: "주식을 가진 채 풋옵션을 사는 보호적 풋 전략의 성격은?", o: ["프리미엄을 내고 하락 손실을 제한하는 보험", "프리미엄을 받고 상승 이익을 포기하는 전략", "비용 없이 손실을 없애는 방법", "주가가 오르면 손실이 커지는 전략"], e: "풋은 정해진 가격에 팔 권리라 그 아래 손실을 막는다. 보험료(프리미엄)는 아무 일이 없으면 그대로 비용이 된다. 프리미엄을 받고 상승을 포기하는 것은 커버드콜이다." },
+    { ch: "macro", q: "기준금리 인상 소식에 고PER 성장주가 저PER 방어주보다 훨씬 크게 떨어지는 이유는?", o: ["가치의 큰 부분이 먼 미래 현금흐름에 있어 할인율 변화에 민감하다", "성장주는 빚이 전혀 없어서", "방어주는 금리와 아무 관계가 없어서", "성장주는 배당을 많이 줘서"], e: "먼 미래의 현금일수록 할인율이 거듭제곱으로 작용한다. 주식 듀레이션이 긴 성장주는 금리에 더 민감하다." },
+    { ch: "global", q: "미국 주식이 달러 기준 +10% 올랐고, 그 사이 원/달러 환율이 1,300원에서 1,430원(+10%)이 되었다. 원화 기준 수익률은 약 얼마인가?", o: ["약 +21%", "+10%", "+20%", "0%"], e: "1.10 × 1.10 = 1.21이다. 환율이 반대로 10% 내렸다면 1.10 × 0.90 = 0.99로 주가 상승이 거의 지워진다. 환노출은 수익과 위험을 함께 바꾼다." },
+    { ch: "global", q: "미국 주식 배당금을 받을 때 미국에서 보통 먼저 원천징수되는 세율은?", o: ["약 15%", "0%", "15.4%", "22%"], e: "한미 조세조약에 따라 보통 15%를 미국에서 뗀다. 국내 배당소득세율보다 높으므로 일반적으로 국내에서 추가로 떼지 않는다. 다만 금융소득 종합과세 계산에는 포함된다." },
+    { ch: "tax", q: "한 해 해외 주식 양도차익이 500만원이다. 2026년 기준 양도소득세는?", o: ["55만원", "110만원", "77만원", "0원"], e: "(500만원 − 250만원) × 22% = 55만원이다. 같은 해 손실이 난 해외 주식이 있다면 손익을 합친 뒤 계산한다." },
+    { ch: "tax", q: "국내 상장 주식 1,000만원어치를 팔았다. 2026년 기준 증권거래세는 대략 얼마인가?", o: ["약 2만원", "약 20만원", "약 2,000원", "없다"], e: "매도 금액의 약 0.20%다. 사고팔 때 수수료(약 0.015%씩)와 합치면 왕복 약 0.23%가 된다." },
+    { ch: "psychology", q: "오른 종목은 일찍 팔아 이익을 확정하고, 내린 종목은 본전이 올 때까지 오래 붙드는 경향을 무엇이라 하는가?", o: ["처분 효과", "확증 편향", "군집 행동", "최근성 편향"], e: "이익은 확정하고 싶고 손실은 확정하기 싫은 마음이다. 결과적으로 좋은 종목을 팔고 나쁜 종목을 남기기 쉽다." },
+    { ch: "psychology", q: "손실 회피 성향에 대한 설명으로 가장 알맞은 것은?", o: ["같은 크기라도 잃는 고통을 얻는 기쁨보다 약 2배 크게 느낀다", "손실을 피하려고 모든 위험 자산을 판다", "손실이 나면 반드시 손절한다", "이익과 손실을 같은 크기로 느낀다"], e: "이 성향 때문에 계좌를 자주 볼수록 손실을 더 자주 느끼고, 하락장에서 견디지 못하고 팔기 쉽다." },
+    { ch: "lab", q: "모의투자로 1년 동안 매매한 결과를 평가할 때 가장 공정한 비교 기준은?", o: ["같은 기간 같은 돈을 지수에 그대로 넣었을 때의 결과(비용·세금 포함)", "가장 많이 오른 종목의 수익률", "은행 예금 금리만", "매매 횟수"], e: "벤치마크와 비교해야 실력과 운, 시장 전체의 흐름을 구분할 수 있다. 수수료와 세금을 빼고 보면 잦은 매매가 실제보다 좋아 보인다." },
+  ];
+  const fqEl = $("fq");
+  fqEl.innerHTML = QZ.map((z, i) => {
+    const r = MB.rng(1000 + i * 7);
+    const opts = shuffle(z.o.map((t, k) => ({ t, ok: k === 0 })), r);
+    return `<div class="quiz-q" id="fq-${i}" data-i="${i}" data-ch="${z.ch}"><p><span class="qch" data-n></span>${esc(z.q)}</p><div class="opts">${opts.map((o) => `<button class="opt"${o.ok ? " data-correct" : ""}>${esc(o.t)}</button>`).join("")}</div><div class="quiz-exp">${esc(z.e)} ${chLink(z.ch, "→ 복습: ")}</div></div>`;
+  }).join("");
+  const QEL = [...fqEl.querySelectorAll(".quiz-q")];
+  const fq = { seed: 3, order: [], ans: {} };
+  function fqApply() {
+    const mode = fqMode();
+    fq.ans = {}; forget("q:");
+    fq.order = mode === "all" ? QZ.map((_, i) => i) : shuffle(QZ.map((_, i) => i), MB.rng(fq.seed)).slice(0, 10);
+    QEL.forEach((q) => {
+      q.hidden = true; q.classList.remove("done");
+      q.querySelectorAll("button.opt").forEach((b) => { b.disabled = false; b.classList.remove("right", "wrong"); });
+    });
+    fq.order.forEach((i, k) => {
+      const q = QEL[i], c = CH[QZ[i].ch];
+      q.hidden = false; fqEl.appendChild(q);
+      q.querySelector("[data-n]").textContent = `Q${k + 1} · ${Number(c.num)}장 ${c.title}`;
+    });
+    fqStatus();
+  }
+  function fqStatus() {
+    const n = fq.order.length, done = fq.order.filter((i) => i in fq.ans).length, right = fq.order.filter((i) => fq.ans[i]).length;
+    MB.stat("fq-done", done); MB.stat("fq-total", n); MB.stat("fq-right", right);
+    $("fq-fill").style.width = (n ? (done / n) * 100 : 0) + "%";
+    const res = $("fq-result");
+    if (done < n) { res.hidden = true; return; }
+    const rate = right / n;
+    const title = rate >= 0.9 ? "시장을 읽는 사람" : rate >= 0.7 ? "탄탄한 기초" : rate >= 0.5 ? "절반의 지도" : "다시 펼칠 때";
+    const wrong = fq.order.filter((i) => !fq.ans[i]);
+    const byCh = {};
+    wrong.forEach((i) => { const s = QZ[i].ch; byCh[s] = (byCh[s] || 0) + 1; });
+    res.innerHTML = `<div class="fq-title">${title}</div><div class="fq-big">${right}<small> / ${n}</small></div>
+      <div class="fq-dots">${fq.order.map((i, k) => `<a href="#fq-${i}" class="${fq.ans[i] ? "ok" : "bad"}" aria-label="${k + 1}번 ${fq.ans[i] ? "정답" : "오답"}">${k + 1}</a>`).join("")}</div>
+      ${wrong.length ? `<p style="margin:0 0 8px;color:var(--text-dim);font-size:14px">틀린 문제의 장을 다시 보자.</p><ul class="fq-weak">${Object.keys(byCh).sort((a, b) => CH[a].num - CH[b].num).map((s) => `<li>${chLink(s, "")}<span>${byCh[s]}문항</span></li>`).join("")}</ul>` : `<p style="margin:0;color:var(--text-dim)">모두 맞혔다. 전체 모드나 새로 뽑기로 다른 조합에 도전해 보자.</p>`}`;
+    res.hidden = false;
+  }
+  fqEl.addEventListener("answered", (e) => {
+    const q = e.target.closest(".quiz-q"); if (!q) return;
+    const i = Number(q.dataset.i);
+    fq.ans[i] = e.detail.correct;
+    record("q:" + i, QZ[i].ch, e.detail.correct);
+    fqStatus();
+  });
+  const fqMode = MB.seg("fq-mode", fqApply);
+  $("fq-new").addEventListener("click", () => { fq.seed++; if (fqMode() === "all") fqMode.set("rand"); else fqApply(); });
+  $("fq-reset").addEventListener("click", fqApply);
+  fqApply();
+
+  /* ------------------------------------------------------------ 6. 자기 진단 레이더 */
+  const CHS = MB.CHAPTERS.filter((c) => c.slug !== "glossary");
+  function aggregate() {
+    const quizOnly = rdSrc() === "quiz";
+    const ch = {}; let n = 0, ok = 0;
+    REC.forEach((r) => {
+      if (quizOnly && !r.quiz) return;
+      const a = (ch[r.ch] = ch[r.ch] || { n: 0, ok: 0 }); a.n++; n++;
+      if (r.ok) { a.ok++; ok++; }
+    });
+    const st = MB.STAGES.map(() => ({ n: 0, ok: 0 }));
+    CHS.forEach((c) => { const a = ch[c.slug]; if (a && c.stage != null) { st[c.stage].n += a.n; st[c.stage].ok += a.ok; } });
+    return { ch, st, n, ok };
+  }
+  function radarReadout() {
+    const A = aggregate();
+    MB.stat("rd-o-n", A.n);
+    MB.stat("rd-o-acc", A.n ? Math.round((A.ok / A.n) * 100) + "%" : "—");
+    let weak = -1, wr = 2;
+    A.st.forEach((s, i) => { if (s.n && s.ok / s.n < wr) { wr = s.ok / s.n; weak = i; } });
+    if (weak < 0 || wr >= 1) { MB.stat("rd-o-weak", A.n ? "고르게 강하다" : "—"); return; }
+    const chs = CHS.filter((c) => c.stage === weak);
+    let worst = chs[0], wv = 2;
+    chs.forEach((c) => { const a = A.ch[c.slug]; if (a && a.ok / a.n < wv) { wv = a.ok / a.n; worst = c; } });
+    MB.stat("rd-o-weak", `${MB.STAGES[weak].name} · ${chLink(worst.slug, "")}`);
+  }
+  const rdMode = MB.seg("rd-mode", () => rdCv.redraw());
+  const rdSrc = MB.seg("rd-src", updateRadar);
+  rdCv = MB.canvas("#rd-cv", (ctx, w, h) => {
+    const P = MB.palette(), A = aggregate();
+    if (rdMode() === "bars") {
+      const has = CHS.map((c) => !!A.ch[c.slug]);
+      const data = CHS.map((c) => { const a = A.ch[c.slug]; return a ? Math.max(1.5, (a.ok / a.n) * 100) : 0; });
+      MB.bars(ctx, { x: 44, y: 16, w: w - 56, h: h - 46 }, {
+        labels: CHS.map((c) => String(Number(c.num))), y: [0, 100], yFmt: (v) => v + "%", gap: 0.3,
+        stacks: [{ label: "정답률", data, color: (i, v) => (!has[i] ? P.faint : v >= 80 ? P.ok : v >= 50 ? P.warn : P.bad) }],
+        hlines: [{ y: 70, color: P.faint }],
+      });
+      if (!A.n) { ctx.fillStyle = P.dim; ctx.font = MB.font(13); ctx.textAlign = "center"; ctx.fillText("아직 기록이 없다. 위의 게임이나 퀴즈를 풀어 보자.", w / 2, h / 2 - 10); }
+      return;
+    }
+    const N = MB.STAGES.length, cx = w / 2, cy = h / 2 + 4;
+    const R = Math.max(60, Math.min(w / 2 - 76, h / 2 - 40));
+    const ang = (k) => -Math.PI / 2 + (k * 2 * Math.PI) / N;
+    const pt = (k, r) => [cx + Math.cos(ang(k)) * r, cy + Math.sin(ang(k)) * r];
+    ctx.lineWidth = 1;
+    [0.25, 0.5, 0.75, 1].forEach((f) => {
+      ctx.strokeStyle = f === 1 ? P.axis : P.grid; ctx.beginPath();
+      for (let k = 0; k <= N; k++) { const [x, y] = pt(k % N, R * f); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke();
+      const a = -Math.PI / 2 + Math.PI / N;
+      ctx.fillStyle = P.faint; ctx.font = MB.font(10, true); ctx.textAlign = "left"; ctx.textBaseline = "middle";
+      ctx.fillText(f * 100 + "%", cx + Math.cos(a) * R * f * 0.93 + 3, cy + Math.sin(a) * R * f * 0.93);
+    });
+    for (let k = 0; k < N; k++) { const [x, y] = pt(k, R); ctx.strokeStyle = P.grid; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x, y); ctx.stroke(); }
+    const v = A.st.map((s) => (s.n ? s.ok / s.n : 0));
+    if (A.n) {
+      ctx.beginPath();
+      v.forEach((f, k) => { const [x, y] = pt(k, R * Math.max(0.02, f)); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+      ctx.closePath();
+      ctx.fillStyle = P.accent; ctx.globalAlpha = 0.2; ctx.fill(); ctx.globalAlpha = 1;
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.stroke();
+      v.forEach((f, k) => {
+        if (!A.st[k].n) return;
+        const [x, y] = pt(k, R * Math.max(0.02, f));
+        ctx.fillStyle = f >= 0.8 ? P.ok : f >= 0.5 ? P.warn : P.bad;
+        ctx.beginPath(); ctx.arc(x, y, 4.5, 0, Math.PI * 2); ctx.fill();
+      });
+    }
+    MB.STAGES.forEach((s, k) => {
+      const [x, y] = pt(k, R + 16), c = Math.cos(ang(k));
+      ctx.textAlign = Math.abs(c) < 0.2 ? "center" : c > 0 ? "left" : "right"; ctx.textBaseline = "middle";
+      ctx.fillStyle = P.text; ctx.font = MB.font(13, false, 700);
+      ctx.fillText(s.name, x, y - 7);
+      ctx.fillStyle = P.dim; ctx.font = MB.font(11);
+      ctx.fillText(A.st[k].n ? `${Math.round(v[k] * 100)}% · ${A.st[k].n}` : "기록 없음", x, y + 8);
+    });
+    if (!A.n) { ctx.fillStyle = P.dim; ctx.font = MB.font(13); ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("아직 기록이 없다", cx, cy); }
+  }, { aspect: 0.72, minHeight: 330, maxHeight: 440 });
+  $("rd-clear").addEventListener("click", () => { REC.clear(); fqApply(); updateRadar(); });
+  updateRadar();
+})();
+</script>
+</body>
+</html>

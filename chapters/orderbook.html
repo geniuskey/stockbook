@@ -1,0 +1,1841 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "가격은 주문이 만난 곳에서 정해진다. 살아 있는 호가창에 직접 지정가·시장가 주문을 넣고, 가격·시간 우선의 줄 서기, 호가 단위, 스프레드와 시장 충격, 체결강도, 동시호가로 시가가 정해지는 방식, 허매수가 금지된 이유, 수수료·거래세까지 포함한 실제 체결 금액을 손으로 확인한다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>호가창과 체결 · StockBook</title>
+<meta name="description" content="가격은 주문이 만난 곳에서 정해진다. 살아 있는 호가창에 직접 지정가·시장가 주문을 넣고, 가격·시간 우선의 줄 서기, 호가 단위, 스프레드와 시장 충격, 체결강도, 동시호가로 시가가 정해지는 방식, 허매수가 금지된 이유, 수수료·거래세까지 포함한 실제 체결 금액을 손으로 확인한다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/orderbook.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="호가창과 체결 · StockBook">
+<meta property="og:description" content="가격은 주문이 만난 곳에서 정해진다. 살아 있는 호가창에 직접 지정가·시장가 주문을 넣고, 가격·시간 우선의 줄 서기, 호가 단위, 스프레드와 시장 충격, 체결강도, 동시호가로 시가가 정해지는 방식, 허매수가 금지된 이유, 수수료·거래세까지 포함한 실제 체결 금액을 손으로 확인한다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/orderbook.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/orderbook.html#chapter","name":"호가창과 체결","headline":"호가창과 체결 · StockBook","description":"가격은 주문이 만난 곳에서 정해진다. 살아 있는 호가창에 직접 지정가·시장가 주문을 넣고, 가격·시간 우선의 줄 서기, 호가 단위, 스프레드와 시장 충격, 체결강도, 동시호가로 시가가 정해지는 방식, 허매수가 금지된 이유, 수수료·거래세까지 포함한 실제 체결 금액을 손으로 확인한다.","url":"https://stockbook.euiyun.com/chapters/orderbook.html","position":3,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"3. 호가창과 체결","item":"https://stockbook.euiyun.com/chapters/orderbook.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  figure.diagram svg { max-width: 520px; margin: 0 auto; }
+  figure.diagram svg .t-mono { font-size: 12px; }
+  .ob-slip { margin: 0; border: 0; border-radius: 0; background: transparent; padding: 16px 18px; min-height: 200px; }
+  .ob-slip .row span:first-child { color: var(--text-dim); }
+  .ob-slip .head { font-weight: 700; padding-bottom: 6px; margin-bottom: 4px; border-bottom: 2px solid var(--text); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .ob-slip .head small { font-weight: 400; color: var(--text-dim); font-family: var(--mono); }
+  .ob-log { font-size: 13px; color: var(--text-dim); min-height: 2.6em; line-height: 1.45; }
+  .ob-log b { color: var(--text); }
+  .hoga-mini { max-width: 360px; margin: 18px auto; }
+</style>
+</head>
+<body data-chapter="orderbook">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 03</div>
+    <h1>호가창과 체결</h1>
+    <p class="lead">주식 앱에서 "현재가 72,000원"을 보면 그 값이 어딘가에 정해져 있는 것처럼 느껴진다. 실제로는 그렇지 않다. 그 숫자는 방금 누군가의 매수 주문과 누군가의 매도 주문이 만나 거래된 값일 뿐이고, 다음 순간에는 다른 주문이 만나 다른 값이 된다. 이 장에서는 주문들이 모여 있는 장부인 호가창을 직접 움직여 본다. 주문을 넣고, 줄을 서고, 큰 주문으로 호가를 먹어 올리고, 장 시작 전 동시호가에서 시가가 정해지는 순간을 끌어서 찾는다. 마지막에는 한결의 첫 주문 영수증을 한 줄씩 뜯어본다.</p>
+    <ul class="objectives">
+      <li>호가창에서 매도 잔량·매수 잔량, 최우선 호가, 스프레드를 읽는다.</li>
+      <li>지정가와 시장가 주문이 체결되는 방식과 가격 우선·시간 우선 원칙을 설명하고, 정정하면 줄 맨 뒤로 가는 이유를 안다.</li>
+      <li>호가 단위 표(2023년 개편)를 읽고, 주가에 따라 한 틱이 가격의 몇 %인지 어림한다.</li>
+      <li>스프레드와 시장 충격(미끄러짐)이 거래 비용이라는 점, 유동성이 적은 종목에서 그 비용이 커지는 이유를 숫자로 확인한다.</li>
+      <li>동시호가(단일가 매매)에서 체결량이 가장 많은 가격으로 시가·종가가 정해지는 원리를 안다.</li>
+      <li>허매수 같은 시세조종이 왜 금지되는지 이해하고, 수수료·거래세를 포함한 실제 결제 금액을 계산한다.</li>
+    </ul>
+  </header>
+
+  <section id="where">
+    <h2>가격은 어디서 정해지는가</h2>
+    <p>시장에서 사과 한 상자를 산다고 해 보자. 가게 주인이 2만원을 부르고, 나는 1만 8천원이면 사겠다고 한다. 둘이 1만 9천원에 합의하면 그것이 그 순간 사과 한 상자의 "시세"다. 주식시장도 원리는 같다. 다만 파는 사람과 사는 사람이 수십만 명이고, 흥정을 사람 대신 거래소의 컴퓨터가 한다는 점이 다르다.</p>
+    <p>거래소는 "이 가격이면 팔겠다", "이 가격이면 사겠다"는 주문을 가격별로 모아 둔다. 이 장부가 <span class="term">호가창</span><span class="en">(Order book)</span>이다. 호가(呼價)는 부르는 값이라는 뜻이다. 새 주문이 들어와 반대편의 주문과 가격이 맞으면 그 자리에서 거래가 성립하는데, 이것을 <span class="term">체결</span><span class="en">(Execution, fill)</span>이라고 한다. 앱에 뜨는 <b>현재가</b>는 가장 최근에 체결된 가격이다.</p>
+    <p>아래는 이 책의 가상 회사 한빛반도체(<a href="overview.html">1장</a>)의 호가창이다. 모든 주문은 가상의 참가자들이 무작위로 내고 있다. 가운데 세로줄이 가격이고, 왼쪽(파랑)은 팔려는 수량, 오른쪽(빨강)은 사려는 수량이다. 오른쪽에는 체결 내역이 흘러간다. 잠시 지켜보면서 현재가가 언제 바뀌는지 보자.</p>
+
+    <div class="sim" id="sim-live">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>살아 있는 호가창: 주문이 흘러들고 체결이 쌓인다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lv-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>속도</span>
+            <div class="seg" id="lv-speed"><button data-value="0.5">느리게</button><button data-value="1" class="on">보통</button><button data-value="3">빠르게</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="lv-play">일시정지</button><button class="btn" id="lv-re">처음부터</button></div>
+          <p class="ob-log" id="lv-log">주문을 기다리는 중</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">현재가</span><span class="v" id="lv-o-last">—</span></div>
+        <div class="stat"><span class="k">매도1호가 / 매수1호가</span><span class="v" id="lv-o-best">—</span></div>
+        <div class="stat"><span class="k">스프레드</span><span class="v" id="lv-o-spr">—</span></div>
+        <div class="stat"><span class="k">누적 거래량</span><span class="v" id="lv-o-vol">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① "느리게"로 바꾸고, 체결 내역에 새 줄이 생길 때 호가창의 어느 칸이 줄어드는지 본다. ② 빨간 체결(사는 쪽이 먼저 달려든 거래)은 매도 쪽 가격에서, 파란 체결은 매수 쪽 가격에서 일어나는지 확인한다. ③ 매도1호가 줄이 다 팔리면 현재가가 한 칸 올라가는 순간을 잡는다. (가상 참가자들이 지정가 주문, 시장가 주문, 취소를 무작위로 낸다)</div>
+    </div>
+
+    <p>지켜보면 규칙이 보인다. 현재가는 저절로 움직이지 않는다. <b>누군가 반대편의 주문을 받아들일 때만</b> 체결이 일어나고, 그 순간 현재가가 바뀐다. 가격이 한 칸 오르는 것은 매도1호가에 쌓여 있던 수량이 모두 팔렸다는 뜻이다. 주가가 "오른다"는 말을 기계적으로 풀면, 사려는 사람들이 팔려는 사람들의 줄을 하나씩 먹어 치운다는 뜻이다.</p>
+  </section>
+
+  <section id="read">
+    <h2>호가창 읽는 법</h2>
+    <p>호가창을 멈춰 놓고 한 칸씩 이름을 붙여 보자. 위쪽 절반은 <span class="term">매도 호가</span><span class="en">(Ask, offer)</span>, 곧 팔겠다는 주문이다. 아래쪽 절반은 <span class="term">매수 호가</span><span class="en">(Bid)</span>, 사겠다는 주문이다. 각 가격 옆의 숫자는 그 가격에 걸려 있는 주문 수량을 모두 더한 <span class="term">잔량</span>이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 440 330" role="img" aria-label="호가창 해부도: 매도 잔량, 매수 잔량, 최우선 호가, 스프레드, 현재가">
+        <defs><marker id="ob-ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <text class="lbl-dim" x="100" y="20" text-anchor="middle">매도 잔량</text>
+        <text class="lbl-dim" x="180" y="20" text-anchor="middle">가격</text>
+        <text class="lbl-dim" x="260" y="20" text-anchor="middle">매수 잔량</text>
+        <rect class="f-down-soft" x="60" y="30" width="80" height="26"/><rect class="f-down-soft" x="60" y="58" width="80" height="26"/><rect class="f-down-soft" x="60" y="86" width="80" height="26"/><rect class="f-down-soft" x="60" y="114" width="80" height="26"/>
+        <rect class="f-surface" x="142" y="30" width="76" height="26"/><rect class="f-surface" x="142" y="58" width="76" height="26"/><rect class="f-surface" x="142" y="86" width="76" height="26"/><rect class="f-surface" x="142" y="114" width="76" height="26"/>
+        <rect class="f-surface" x="142" y="150" width="76" height="26"/><rect class="f-surface" x="142" y="178" width="76" height="26"/><rect class="f-surface" x="142" y="206" width="76" height="26"/><rect class="f-surface" x="142" y="234" width="76" height="26"/>
+        <rect class="f-up-soft" x="220" y="150" width="80" height="26"/><rect class="f-up-soft" x="220" y="178" width="80" height="26"/><rect class="f-up-soft" x="220" y="206" width="80" height="26"/><rect class="f-up-soft" x="220" y="234" width="80" height="26"/>
+        <g class="t-mono">
+          <text x="132" y="48" text-anchor="end">310</text><text x="132" y="76" text-anchor="end">185</text><text x="132" y="104" text-anchor="end">240</text><text x="132" y="132" text-anchor="end">120</text>
+          <text class="lbl-down" x="180" y="48" text-anchor="middle">72,300</text><text class="lbl-down" x="180" y="76" text-anchor="middle">72,200</text><text class="lbl-down" x="180" y="104" text-anchor="middle">72,100</text><text class="lbl-down" x="180" y="132" text-anchor="middle">72,000</text>
+          <text class="lbl-up" x="180" y="168" text-anchor="middle">71,900</text><text class="lbl-up" x="180" y="196" text-anchor="middle">71,800</text><text class="lbl-up" x="180" y="224" text-anchor="middle">71,700</text><text class="lbl-up" x="180" y="252" text-anchor="middle">71,600</text>
+          <text x="228" y="168">80</text><text x="228" y="196">150</text><text x="228" y="224">95</text><text x="228" y="252">270</text>
+        </g>
+        <rect x="140" y="112" width="80" height="30" fill="none" class="s-acc"/>
+        <line class="s-acc2" x1="40" y1="145" x2="320" y2="145" stroke-dasharray="4 3"/>
+        <path class="s-line" d="M312 127 L322 127 L322 163 L312 163" fill="none"/>
+        <text class="lbl-b" x="330" y="141">스프레드</text>
+        <text class="lbl-dim" x="330" y="158">100원 = 1틱</text>
+        <text class="lbl-acc" x="330" y="104">현재가 72,000</text>
+        <text class="lbl-dim" x="330" y="120">(방금 체결된 값)</text>
+        <line class="s-acc" x1="326" y1="100" x2="224" y2="122" marker-end="url(#ob-ar)"/>
+        <text class="lbl-down" x="20" y="132" text-anchor="start">매도1</text>
+        <text class="lbl-up" x="20" y="168" text-anchor="start">매수1</text>
+        <text class="lbl-dim" x="100" y="282" text-anchor="middle">위로 갈수록 비싸게</text>
+        <text class="lbl-dim" x="100" y="298" text-anchor="middle">팔겠다는 주문</text>
+        <text class="lbl-dim" x="260" y="282" text-anchor="middle">아래로 갈수록 싸게</text>
+        <text class="lbl-dim" x="260" y="298" text-anchor="middle">사겠다는 주문</text>
+        <text class="lbl-dim" x="180" y="322" text-anchor="middle">지금 바로 72,000원에 사거나 71,900원에 팔 수 있다</text>
+      </svg>
+      <figcaption><b>그림 3-1. 호가창의 해부.</b> 매도 호가 중 가장 싼 값(매도1호가)과 매수 호가 중 가장 비싼 값(매수1호가)을 최우선 호가라고 한다. 둘 사이의 빈틈이 스프레드다. 현재가는 호가가 아니라 직전 체결 가격이다.</figcaption>
+    </figure>
+
+    <p>가장 중요한 두 칸은 가운데 경계에 붙은 두 가격이다. 매도 호가 중 가장 싼 <b>매도1호가</b>(72,000원)는 "지금 당장 살 수 있는 가장 싼 값"이고, 매수 호가 중 가장 비싼 <b>매수1호가</b>(71,900원)는 "지금 당장 팔 수 있는 가장 비싼 값"이다. 둘을 합쳐 <span class="term">최우선 호가</span>라고 한다. 둘 사이의 간격이 <span class="term">스프레드</span><span class="en">(Bid-ask spread)</span>다. 한빛반도체처럼 거래가 활발한 종목은 스프레드가 대개 한 칸(1틱)이다.</p>
+    <p>표로 쓰면 증권사 앱의 호가창과 같은 모양이 된다. 매도 잔량은 왼쪽, 매수 잔량은 오른쪽에 둔다(앱마다 위치는 조금씩 다르다).</p>
+    <div class="hoga-mini">
+      <table class="hoga">
+        <tr class="ask"><td class="q">240</td><td class="px">72,100</td><td></td></tr>
+        <tr class="ask"><td class="q">120</td><td class="px">72,000</td><td></td></tr>
+        <tr class="bid"><td></td><td class="px">71,900</td><td class="q">80</td></tr>
+        <tr class="bid"><td></td><td class="px">71,800</td><td class="q">150</td></tr>
+      </table>
+    </div>
+    <div class="callout tip">
+      <strong>호가창의 숫자는 약속이지 거래가 아니다</strong>
+      <p>잔량은 "이 가격이면 사겠다/팔겠다"는 주문이 대기하고 있다는 뜻일 뿐, 체결된 수량이 아니다. 주문을 낸 사람은 언제든 취소할 수 있다. 그래서 잔량이 많다는 것만으로 "이 가격은 잘 안 뚫린다"고 단정할 수 없다. 이 점은 뒤에서 허매수를 볼 때 다시 중요해진다.</p>
+    </div>
+  </section>
+
+  <section id="orders">
+    <h2>지정가 주문과 시장가 주문</h2>
+    <p>주문을 낼 때 정하는 것은 세 가지다. 사는가 파는가, 몇 주인가, 그리고 <b>가격을 어떻게 정하는가</b>. 가격을 정하는 방식에 따라 주문의 성격이 완전히 달라진다.</p>
+    <ul>
+      <li><span class="term">지정가 주문</span><span class="en">(Limit order)</span>: "72,000원 이하로만 사겠다"처럼 가격을 정한다. 그 가격 또는 더 좋은 가격에만 체결되고, 맞는 상대가 없으면 호가창에 남아 기다린다. 가격은 보장되지만 체결은 보장되지 않는다.</li>
+      <li><span class="term">시장가 주문</span><span class="en">(Market order)</span>: 가격을 정하지 않고 "지금 있는 가장 좋은 가격부터 바로 사겠다"고 한다. 체결은 거의 확실하지만 가격은 보장되지 않는다. 매도1호가 수량이 모자라면 그 위 가격까지 차례로 사들인다.</li>
+    </ul>
+    <p>호가창에 남아 기다리는 지정가 주문은 다른 사람에게 거래할 기회를 "만들어 주는" 주문이라서 유동성 공급자(maker)라고도 부르고, 남의 주문을 받아들여 바로 체결되는 주문은 유동성을 "가져가는" 쪽(taker)이라고 부른다. 아래 호가창에서 직접 주문을 넣어 보자. 호가창의 가격 줄을 누르면 지정가가 그 가격으로 바뀐다.</p>
+
+    <div class="sim" id="sim-my">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>내 주문 넣기: 지정가와 시장가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="my-cv"></canvas><span class="hint">가격 줄을 눌러 지정가를 고른다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>방향</span><div class="seg" id="my-side"><button data-value="buy" class="on">매수</button><button data-value="sell">매도</button></div></div>
+          <div class="ctrl"><span>주문 방식</span><div class="seg" id="my-type"><button data-value="limit" class="on">지정가</button><button data-value="market">시장가</button></div></div>
+          <label class="ctrl"><span>수량 <output id="my-q-out"></output></span><input type="range" id="my-q" min="10" max="400" step="10" value="50"></label>
+          <div class="btn-row"><button class="btn primary" id="my-go">주문 넣기</button><button class="btn" id="my-wait">시간 흐르기</button></div>
+          <div class="btn-row"><button class="btn sm" id="my-cancel">내 미체결 취소</button><button class="btn sm" id="my-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">지정가</span><span class="v" id="my-o-px">—</span></div>
+        <div class="stat"><span class="k">체결 수량</span><span class="v" id="my-o-fill">—</span></div>
+        <div class="stat"><span class="k">평균 체결가</span><span class="v" id="my-o-avg">—</span></div>
+        <div class="stat"><span class="k">미체결 잔량</span><span class="v" id="my-o-rest">—</span></div>
+      </div>
+      <div class="sim-note"><span id="my-log">결과가 여기에 나온다.</span><br>해볼 것: ① 매수, 지정가, 71,800원에 50주를 넣으면 체결 없이 호가창 오른쪽에 내 주문(보라 표시)이 생긴다. "시간 흐르기"를 몇 번 눌러 체결되는지 본다. ② 매수, 시장가, 400주를 넣으면 매도1호가만으로 모자라 위 가격까지 먹어 올라가고 평균 체결가가 72,000원보다 높아진다. ③ 매수 지정가를 72,200원처럼 매도1호가보다 높게 넣으면 시장가처럼 바로 체결되지만 72,200원을 넘는 가격에는 사지 않는다. (호가창의 다른 참가자들은 가상이다)</div>
+    </div>
+
+    <p>세 실험의 결과를 정리하면 이렇다. 매수1호가보다 낮은 지정가 매수는 줄을 서서 기다린다. 누군가 그 가격까지 내려와 팔아 줘야 체결되고, 끝내 체결되지 않을 수도 있다. 시장가 매수는 바로 체결되지만, 수량이 크면 여러 가격에 걸쳐 체결되어 평균 단가가 올라간다. 그리고 매도1호가 이상으로 낸 지정가 매수는 <b>상한선이 있는 시장가</b>처럼 움직인다. 바로 체결되되, 정해 둔 가격보다 비싸게는 사지 않는다. 처음 주식을 사는 사람에게 가장 무난한 방법이 바로 이것이다.</p>
+    <div class="callout">
+      <strong>현재가에 사지 못하는 이유</strong>
+      <p>현재가가 72,000원이라도 "72,000원에 사기"가 늘 가능한 것은 아니다. 현재가는 과거(방금 전)의 가격이고, 내가 지금 살 수 있는 가격은 매도1호가다. 직전 체결이 매수1호가에서 일어났다면 현재가는 71,900원인데 바로 사려면 72,000원을 내야 한다. 앱의 현재가 대신 호가창의 최우선 호가를 보는 습관이 필요하다.</p>
+    </div>
+  </section>
+
+  <section id="priority">
+    <h2>줄 서기: 가격 우선, 시간 우선</h2>
+    <p>같은 가격에 사겠다는 사람이 여럿이면 누가 먼저 체결될까? 거래소의 규칙은 단순하다. 첫째, <span class="term">가격 우선</span>: 사는 쪽은 더 비싸게 사겠다는 주문이, 파는 쪽은 더 싸게 팔겠다는 주문이 먼저다. 둘째, <span class="term">시간 우선</span>: 가격이 같으면 먼저 낸 주문이 먼저다. 은행 창구의 번호표와 같다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 440 236" role="img" aria-label="가격 우선 시간 우선: 매도 시장가 주문이 매수 호가의 줄을 앞에서부터 채우는 순서">
+        <defs><marker id="ob-ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+        <text class="lbl-b" x="18" y="22">매수 호가의 줄</text>
+        <text class="lbl-dim" x="422" y="22" text-anchor="end">먼저 온 주문 →</text>
+        <text class="lbl-up t-mono" x="18" y="62">71,900</text>
+        <text class="lbl-up t-mono" x="18" y="122">71,800</text>
+        <rect class="f-up-soft" x="300" y="42" width="56" height="30" rx="4"/><rect class="f-up-soft" x="238" y="42" width="58" height="30" rx="4"/><rect class="f-acc-soft" x="168" y="42" width="66" height="30" rx="4"/>
+        <rect class="f-up-soft" x="330" y="102" width="70" height="30" rx="4"/><rect class="f-up-soft" x="258" y="102" width="68" height="30" rx="4"/>
+        <g class="t-mono">
+          <text x="328" y="62" text-anchor="middle">A 30</text><text x="267" y="62" text-anchor="middle">B 40</text><text x="201" y="62" text-anchor="middle">나 50</text>
+          <text x="365" y="122" text-anchor="middle">C 60</text><text x="292" y="122" text-anchor="middle">D 20</text>
+        </g>
+        <circle class="f-elev s-acc2" cx="356" cy="40" r="9"/><text class="lbl-acc2 t-mono" x="356" y="44" text-anchor="middle">1</text>
+        <circle class="f-elev s-acc2" cx="296" cy="40" r="9"/><text class="lbl-acc2 t-mono" x="296" y="44" text-anchor="middle">2</text>
+        <circle class="f-elev s-acc2" cx="234" cy="40" r="9"/><text class="lbl-acc2 t-mono" x="234" y="44" text-anchor="middle">3</text>
+        <circle class="f-elev s-acc2" cx="400" cy="100" r="9"/><text class="lbl-acc2 t-mono" x="400" y="104" text-anchor="middle">4</text>
+        <line class="s-down" x1="420" y1="172" x2="420" y2="138" marker-end="url(#ob-ar2)"/>
+        <line class="s-down" x1="420" y1="172" x2="370" y2="78" marker-end="url(#ob-ar2)"/>
+        <text class="lbl-down" x="422" y="190" text-anchor="end">매도 시장가 150주가 들어오면</text>
+        <text class="lbl" x="18" y="212">① 비싼 가격(71,900)의 줄부터, ② 같은 가격에서는 먼저 온 순서대로.</text>
+        <text class="lbl-dim" x="18" y="230">A·B·나(120주)가 모두 체결되고, 남은 30주는 71,800원의 C가 받는다.</text>
+      </svg>
+      <figcaption><b>그림 3-2. 가격 우선, 시간 우선.</b> 매도 시장가 주문은 가장 비싸게 사 주는 매수 주문부터, 같은 가격에서는 먼저 줄 선 순서대로 체결된다.</figcaption>
+    </figure>
+
+    <p>그러니 지정가로 줄을 섰다면, 내 앞에 몇 주가 서 있는지가 체결 여부를 가른다. 아래에서 매수1호가(71,900원) 또는 그 아래(71,800원)에 내 주문을 세워 두고, 매도 시장가 주문이 들어와 줄을 앞에서부터 갉아먹는 모습을 보자. 주문을 <b>정정</b>하면 어떻게 되는지도 시험해 보자.</p>
+
+    <div class="sim" id="sim-queue">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>같은 가격의 줄: 내 앞에 몇 주가 있나</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="qu-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>내 주문 가격</span><div class="seg" id="qu-px"><button data-value="71900" class="on">71,900</button><button data-value="71800">71,800</button></div></div>
+          <div class="btn-row"><button class="btn primary" id="qu-mine">내 주문 50주 넣기</button></div>
+          <div class="btn-row"><button class="btn" id="qu-sell">매도 시장가 60주</button><button class="btn" id="qu-other">남이 줄 서기</button></div>
+          <div class="btn-row"><button class="btn sm" id="qu-amend">내 주문 정정(수량 −10)</button><button class="btn sm" id="qu-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">내 앞에 선 수량</span><span class="v" id="qu-o-ahead">—</span></div>
+        <div class="stat"><span class="k">내 주문 체결</span><span class="v" id="qu-o-fill">—</span></div>
+        <div class="stat"><span class="k">마지막 체결가</span><span class="v" id="qu-o-last">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 71,900원에 내 주문을 넣고 "매도 시장가 60주"를 눌러 앞사람부터 지워지는 순서를 본다. ② 처음부터 다시 해서 71,800원에 넣으면, 71,900원 줄이 다 사라지기 전까지 내 차례가 오지 않는다. ③ 줄 중간에서 "정정"을 누르면 수량을 줄였을 뿐인데 내 주문이 맨 뒤로 간다. (거래소 규칙을 단순화했다. 실제로는 수량을 줄이는 정정은 순서를 유지하는 경우도 있어, 증권사 안내를 확인하는 편이 좋다)</div>
+    </div>
+
+    <p><span class="term">정정</span>은 기존 주문을 고치는 것이고, <span class="term">취소</span>는 아직 체결되지 않은 주문을 거두는 것이다. 이미 체결된 부분은 되돌릴 수 없다. 가격을 바꾸는 정정은 사실상 "취소하고 새로 내기"이므로 줄의 맨 뒤로 간다. 조금 더 싸게 사 보겠다고 가격을 한 칸씩 고치다 보면 줄에서 계속 밀려나 결국 아무것도 사지 못하는 일이 흔하다.</p>
+  </section>
+
+  <section id="tick">
+    <h2>호가 단위: 가격이 움직이는 최소 칸</h2>
+    <p>호가창의 가격은 71,900, 72,000, 72,100처럼 100원 간격으로 늘어서 있다. 72,050원에 사겠다는 주문은 낼 수 없다. 이 최소 간격을 <span class="term">호가 단위</span><span class="en">(Tick size)</span>라고 하고, 한 칸을 흔히 "1틱"이라고 부른다. 호가 단위는 주가 수준에 따라 달라진다. 2023년 1월 개편 이후 KOSPI와 KOSDAQ이 같은 표를 쓴다(2026년 기준).</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>주가 구간</th><th class="num">호가 단위</th><th class="num">한 틱의 비율(구간 시작 → 끝)</th><th>예시(가상 회사)</th></tr></thead>
+      <tbody>
+        <tr><td>2,000원 미만</td><td class="num">1원</td><td class="num">0.10% 이하</td><td>—</td></tr>
+        <tr><td>2,000 ~ 5,000원 미만</td><td class="num">5원</td><td class="num">0.25% → 0.10%</td><td>—</td></tr>
+        <tr><td>5,000 ~ 20,000원 미만</td><td class="num">10원</td><td class="num">0.20% → 0.05%</td><td>별빛바이오 15,000원, 다온은행 13,500원</td></tr>
+        <tr><td>20,000 ~ 50,000원 미만</td><td class="num">50원</td><td class="num">0.25% → 0.10%</td><td>누리식품 38,000원</td></tr>
+        <tr><td>50,000 ~ 200,000원 미만</td><td class="num">100원</td><td class="num">0.20% → 0.05%</td><td>한빛반도체 72,000원, 모아플랫폼 120,000원</td></tr>
+        <tr><td>200,000 ~ 500,000원 미만</td><td class="num">500원</td><td class="num">0.25% → 0.10%</td><td>—</td></tr>
+        <tr><td>500,000원 이상</td><td class="num">1,000원</td><td class="num">0.20% 이하</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+    <p>표의 셋째 열이 흥미롭다. 호가 단위가 바뀌는 경계 바로 위(예: 20,000원)에서는 한 틱이 가격의 0.25%나 되고, 다음 경계 바로 아래(49,950원)에서는 0.10%로 줄어든다. 아래 그래프에서 손잡이를 끌어 가격을 바꿔 보자.</p>
+
+    <div class="sim" id="sim-tick">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>호가 단위 계단과 한 틱의 무게</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="tk-cv"></canvas><span class="hint">손잡이를 좌우로 끈다</span></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주가</span><span class="v" id="tk-o-p">—</span></div>
+        <div class="stat"><span class="k">호가 단위</span><span class="v" id="tk-o-t">—</span></div>
+        <div class="stat"><span class="k">한 틱 = 가격의</span><span class="v" id="tk-o-r">—</span></div>
+        <div class="stat"><span class="k">위아래 호가</span><span class="v" id="tk-o-n">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 손잡이를 19,990원에서 20,000원으로 넘겨 한 틱 비율이 0.05%에서 0.25%로 다섯 배 뛰는 것을 본다. ② 점으로 찍힌 다섯 가상 회사 중 한 틱이 가장 무거운 회사를 찾는다. ③ 위 그래프(호가 단위)는 계단, 아래 그래프(비율)는 톱니 모양인 이유를 생각해 본다. (가로축은 로그 눈금이다)</div>
+    </div>
+
+    <p>톱니의 높이는 가장 짧게 잡을 수 있는 스프레드의 크기다. 스프레드가 1틱이라도, 주가 38,000원인 누리식품은 0.13%, 72,000원인 한빛반도체는 0.14%, 15,000원인 별빛바이오는 0.07%가 된다. 호가 단위가 너무 크면 스프레드가 커져 거래 비용이 오르고, 너무 작으면 1원 차이로 줄 앞을 가로채는 주문이 넘쳐 호가창이 얇아진다. 2023년 개편은 KOSPI와 KOSDAQ의 단위를 통일하고 일부 구간을 촘촘하게 바꾼 것이다.</p>
+  </section>
+
+  <section id="spread">
+    <h2>스프레드: 보이지 않는 거래 비용</h2>
+    <p>한빛반도체를 시장가로 사서 바로 시장가로 팔면 어떻게 될까? 72,000원(매도1호가)에 사서 71,900원(매수1호가)에 판다. 주가가 전혀 움직이지 않았는데 한 주에 100원을 잃었다. 수수료나 세금 고지서에는 나오지 않지만, 바로 체결되는 편리함의 값으로 낸 분명한 비용이다.</p>
+    <p>이 비용은 가운데 값(mid, 71,950원)을 기준으로 생각하면 깔끔하다. 살 때 가운데보다 50원 비싸게, 팔 때 50원 싸게 거래했으니 한 번에 스프레드의 절반씩, 왕복으로 스프레드 전체를 낸다. 여기에 수수료(살 때와 팔 때 각각 약 0.015%)와 팔 때 내는 증권거래세(0.20%, 2026년 기준)가 더해진다.</p>
+    <div class="formula">$$\text{왕복 비용률} \approx \frac{\text{스프레드}}{\text{가운데 값}} + 2\times\text{수수료율} + \text{거래세율}$$<div class="where">한빛반도체(스프레드 100원): \(100/71{,}950 \approx 0.14\%\), 수수료 \(0.03\%\), 거래세 \(0.20\%\) → 왕복 약 0.37%</div></div>
+
+    <div class="sim" id="sim-spread">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>스프레드 비용 계산기: 사고팔기를 반복하면</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sp-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>종목</span><div class="seg" id="sp-co"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div></div>
+          <label class="ctrl"><span>스프레드 <output id="sp-s-out"></output></span><input type="range" id="sp-s" min="1" max="10" step="1" value="1"></label>
+          <label class="ctrl"><span>한 해 왕복 횟수 <output id="sp-n-out"></output></span><input type="range" id="sp-n" min="1" max="250" step="1" value="12"></label>
+          <label class="ctrl"><span>한 번에 거래하는 돈 <output id="sp-a-out"></output></span><input type="range" id="sp-a" min="1000000" max="10000000" step="500000" value="1000000"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">왕복 1회 비용</span><span class="v" id="sp-o-1">—</span></div>
+        <div class="stat"><span class="k">그중 스프레드</span><span class="v" id="sp-o-s">—</span></div>
+        <div class="stat"><span class="k">한 해 비용</span><span class="v" id="sp-o-y">—</span></div>
+        <div class="stat"><span class="k">한 해 비용 / 거래 금액</span><span class="v" id="sp-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한빛, 1틱, 한 해 12번이면 한 해에 거래 금액의 약 4.4%가 비용으로 나간다. ② 왕복 횟수를 250번(하루 한 번)으로 올리면 비용이 거래 금액의 90%를 넘는다. ③ 스프레드를 5틱으로 넓혀 유동성이 적은 종목을 흉내 내면 막대에서 스프레드 몫이 가장 커진다. (시장가로 사고팔아 스프레드 전체를 낸다고 가정. 수수료 0.015%, 거래세 0.20%, 2026년 기준 대표값)</div>
+    </div>
+
+    <p>한 번의 왕복 비용 0.37%는 작아 보인다. 그러나 이것은 <b>주가가 오르지 않아도 확실히 잃는 몫</b>이다. 한 달에 한 번씩 갈아타면 한 해에 약 4.4%, 매일 사고팔면 원금의 대부분이 비용으로 사라진다. 주식의 장기 기대수익률이 한 해 몇 %라는 점(<a href="https://moneybook.euiyun.com/chapters/risk.html">MoneyBook 12장</a>)을 떠올리면, 잦은 매매가 왜 불리한지 숫자로 보인다. 비용 전반은 <a href="tax.html">23장</a>에서 다시 정리한다.</p>
+  </section>
+
+  <section id="impact">
+    <h2>큰 주문은 호가를 먹는다: 시장 충격과 미끄러짐</h2>
+    <p>매도1호가에 120주가 있는데 500주를 시장가로 사면 어떻게 될까? 120주는 72,000원에, 그다음은 72,100원에, 그다음은 72,200원에… 위로 올라가며 사들인다. 이것을 "호가를 먹는다"고 한다. 내 주문 때문에 가격이 움직이는 현상을 <span class="term">시장 충격</span><span class="en">(Market impact)</span>, 그 결과 처음 본 가격보다 불리하게 체결된 차이를 <span class="term">미끄러짐</span><span class="en">(Slippage)</span>이라고 한다.</p>
+    <p>아래 그래프는 매도 호가를 싼 것부터 쌓아 올린 <b>누적 계단</b>이다. 가로는 지금까지 산 수량, 세로는 그 수량째에 내야 하는 가격이다. 손잡이를 오른쪽으로 끌어 주문 수량을 키워 보자.</p>
+
+    <div class="sim" id="sim-impact">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>시장가 주문 크기와 미끄러짐</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="im-cv"></canvas><span class="hint">손잡이를 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>방향</span><div class="seg" id="im-side"><button data-value="buy" class="on">시장가 매수</button><button data-value="sell">시장가 매도</button></div></div>
+          <label class="ctrl"><span>주문 수량 <output id="im-q-out"></output></span><input type="range" id="im-q" min="10" max="2000" step="10" value="100"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">평균 체결가</span><span class="v" id="im-o-avg">—</span></div>
+        <div class="stat"><span class="k">마지막 체결가</span><span class="v" id="im-o-worst">—</span></div>
+        <div class="stat"><span class="k">미끄러짐(가운데 값 대비)</span><span class="v" id="im-o-slip">—</span></div>
+        <div class="stat"><span class="k">미끄러짐 금액</span><span class="v" id="im-o-won">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 100주까지는 평균 체결가가 72,000원 그대로다. ② 500주면 마지막 체결가가 72,300원, 평균은 약 72,149원이 된다. ③ 1,500주를 넘기면 보이는 호가가 바닥나 주문 일부가 체결되지 못한다. 이때 그래프가 무너지는 모양을 본다. (ST.Book으로 깐 호가 10단계, 모두 1,511주. 시장가 주문의 남은 수량은 버린다고 가정)</div>
+    </div>
+
+    <p>미끄러짐은 주문이 클수록 빠르게 커진다. 평균 체결가는 계단 아래 넓이를 수량으로 나눈 값이어서, 수량을 두 배로 늘리면 미끄러짐은 두 배보다 더 커지기 쉽다. 그러면 같은 금액을 사더라도 <b>호가가 두꺼운 종목</b>과 얇은 종목은 전혀 다른 비용을 치른다. 호가창이 두껍고 스프레드가 좁아 큰 주문도 가격을 크게 움직이지 않고 체결되는 성질을 <span class="term">유동성</span><span class="en">(Liquidity)</span>이라고 한다.</p>
+
+    <div class="sim" id="sim-liq">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>유동성 많은 종목과 적은 종목: 같은 돈, 다른 비용</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lq-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>시장가로 살 금액 <output id="lq-a-out"></output></span><input type="range" id="lq-a" min="1000000" max="100000000" step="1000000" value="10000000"></label>
+          <div class="btn-row"><button class="btn" id="lq-re">호가 다시 뽑기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">많은 종목: 미끄러짐</span><span class="v" id="lq-o-a">—</span></div>
+        <div class="stat"><span class="k">적은 종목: 미끄러짐</span><span class="v" id="lq-o-b">—</span></div>
+        <div class="stat"><span class="k">적은 종목: 스프레드</span><span class="v" id="lq-o-s">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 1,000만원이면 왼쪽 종목은 매도1호가 한 칸 안에서 끝나지만 오른쪽은 여러 칸을 먹는다. ② 금액을 1억원으로 올리면 오른쪽 종목은 보이는 호가를 모두 먹고도 주문이 남는다. ③ 금액을 100만원으로 줄여도 오른쪽이 비싼 이유는 넓은 스프레드 때문이다. (두 종목 모두 기준가 15,000원의 가상 호가창, 호가 단위 10원)</div>
+    </div>
+
+    <p>유동성이 적은 종목은 두 번 손해를 본다. 스프레드가 넓어 사자마자 손실이 나고, 호가가 얇아 조금만 사도 가격이 밀린다. 팔 때도 같은 일이 반대 방향으로 일어난다. 그래서 큰 돈을 굴리는 기관은 한 번에 사지 않고 <b>주문을 잘게 나눠</b> 시간에 걸쳐 낸다. 일정한 시간 간격으로 똑같이 나눠 내는 방식을 TWAP(시간 가중 평균 가격)이라고 부른다. 나눠 내는 동안 호가창은 다시 채워지지만, 그 사이에 가격 자체가 움직일 위험도 생긴다.</p>
+
+    <div class="sim" id="sim-twap">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>한 번에 살까, 나눠 살까</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="tw-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>나누는 횟수 <output id="tw-n-out"></output></span><input type="range" id="tw-n" min="1" max="20" step="1" value="5"></label>
+          <label class="ctrl"><span>호가가 다시 채워지는 속도 <output id="tw-r-out"></output></span><input type="range" id="tw-r" min="0" max="1" step="0.05" value="0.5"></label>
+          <div class="btn-row"><button class="btn primary" id="tw-go">실행</button><button class="btn" id="tw-re">다른 날로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">한 번에: 평균가</span><span class="v" id="tw-o-1">—</span></div>
+        <div class="stat"><span class="k">나눠서: 평균가</span><span class="v" id="tw-o-n">—</span></div>
+        <div class="stat"><span class="k">차이(2,000주 전체)</span><span class="v" id="tw-o-d">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 나누는 횟수 1과 5를 비교해 나눠 사면 평균가가 얼마나 내려가는지 본다. ② 채워지는 속도를 0으로 내리면 나눠도 별 이득이 없다. 호가가 다시 차지 않으면 결국 같은 계단을 오르기 때문이다. ③ 20번으로 나누고 "다른 날로"를 여러 번 눌러 보면, 가격이 그사이 올라 버려 오히려 손해 보는 날도 있다. (2,000주를 사는 가상 실험. 조각 사이마다 호가창 전체가 무작위로 오르내린다. 막대 아래 끝은 그때의 기준 호가)</div>
+    </div>
+
+    <div class="callout warn">
+      <strong>호가가 비면 가격이 튄다: 변동성 완화장치</strong>
+      <p>얇은 호가창에 큰 시장가 주문이 들어오면 가격이 순식간에 몇 %씩 튈 수 있다. 그래서 한국 거래소는 한 종목의 가격이 짧은 시간에 크게 움직이면(직전 단일가 기준 약 ±10%, 직전 체결가 기준 약 ±2~3%) 2분 동안 연속 매매를 멈추고 단일가 매매로 바꾸는 변동성 완화장치(VI)를 둔다. 하루 전체로는 가격제한폭 ±30%가 있다(<a href="market.html">2장</a>). 제도의 세부 기준은 바뀔 수 있으니 거래 전에 거래소 안내를 확인하자.</p>
+    </div>
+  </section>
+
+  <section id="strength">
+    <h2>체결강도: 누가 더 서둘렀나</h2>
+    <p>체결 내역을 보면 거래마다 색이 다르다. 매도1호가에서 체결된 거래(빨강)는 사는 쪽이 먼저 달려들어 남의 매도 주문을 받아들인 것이고, 매수1호가에서 체결된 거래(파랑)는 파는 쪽이 서둘러 남의 매수 주문을 받아들인 것이다. 증권사 앱의 <span class="term">체결강도</span>는 이 둘의 비율이다.</p>
+    <div class="formula">$$\text{체결강도} = \frac{\text{매수 체결량(매도 호가에서 산 수량)}}{\text{매도 체결량(매수 호가에서 판 수량)}} \times 100\%$$<div class="where">100%보다 크면 서둘러 사는 쪽이 더 많았다는 뜻이다.</div></div>
+    <p>체결강도가 높으면 오를 것 같다는 말을 흔히 듣는다. 정말 그럴까? 아래에서 시장가 매수의 비중(매수 압력)을 높여 체결강도를 끌어올린 뒤, 가격이 실제로 어떻게 움직이는지 보자.</p>
+
+    <div class="sim" id="sim-cs">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>체결강도 게이지</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cs-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>시장가 주문 중 매수 비중 <output id="cs-b-out"></output></span><input type="range" id="cs-b" min="0.2" max="0.8" step="0.05" value="0.5"></label>
+          <div class="ctrl"><span>매도 지정가 대기 물량</span><div class="seg" id="cs-wall"><button data-value="0" class="on">보통</button><button data-value="1">두꺼움</button></div></div>
+          <div class="btn-row"><button class="btn" id="cs-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">체결강도</span><span class="v" id="cs-o-s">—</span></div>
+        <div class="stat"><span class="k">매수 / 매도 체결량</span><span class="v" id="cs-o-bs">—</span></div>
+        <div class="stat"><span class="k">시작 대비 가격</span><span class="v" id="cs-o-p">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 매수 비중을 0.7로 올리면 체결강도가 150%를 넘는다. 가격도 함께 오르는지 본다. ② 같은 상태에서 매도 대기 물량을 "두꺼움"으로 바꾸면 체결강도는 높은데 가격이 제자리에 머문다. 사려는 사람이 서두르는 만큼 팔려는 사람이 호가를 계속 채우기 때문이다. ③ 0.3으로 내리면 체결강도가 100% 아래로 떨어진다. (최근 체결 300건으로 계산. 가상의 주문 흐름)</div>
+    </div>
+
+    <p>체결강도는 "누가 더 급했는가"를 보여 줄 뿐, 가격의 방향을 보장하지 않는다. 서둘러 사는 사람이 많아도 위에 기다리는 매도 물량이 그만큼 두꺼우면 가격은 움직이지 않는다. 게다가 서두르는 쪽이 늘 정보가 많은 쪽도 아니다. 체결강도 하나로 매매를 결정하는 규칙이 비용을 이기기 어려운 이유는 <a href="technical.html">12장</a>의 백테스트에서 다시 확인한다.</p>
+  </section>
+
+  <section id="auction">
+    <h2>동시호가: 시가와 종가가 정해지는 법</h2>
+    <p>지금까지 본 방식은 주문이 들어오는 순간마다 바로 짝을 지어 주는 <span class="term">접속 매매</span><span class="en">(Continuous trading)</span>다. 그런데 장이 열리기 직전에는 밤사이 쌓인 정보 때문에 사려는 값과 팔려는 값이 멀리 흩어져 있다. 이때 먼저 온 주문부터 체결하면 첫 몇 주문이 엉뚱한 가격에 거래될 수 있다. 그래서 한국 거래소는 장 시작 전과 장 마감 직전에 주문을 일정 시간 <b>모아 두었다가 한 가격에 한꺼번에</b> 체결한다. 이것이 <span class="term">단일가 매매</span><span class="en">(Call auction)</span>, 흔히 말하는 <b>동시호가</b>다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 440 226" role="img" aria-label="한국 주식시장 하루 시간표: 장 시작 동시호가, 접속 매매, 장 마감 동시호가, 시간외 거래">
+        <line class="s-axis" x1="20" y1="92" x2="420" y2="92"/>
+        <rect class="f-acc2-soft" x="40" y="62" width="40" height="30"/>
+        <rect class="f-acc-soft" x="80" y="62" width="250" height="30"/>
+        <rect class="f-acc2-soft" x="330" y="62" width="22" height="30"/>
+        <rect class="f-surface" x="356" y="62" width="56" height="30"/>
+        <text class="lbl-acc2" x="60" y="56" text-anchor="middle">동시호가</text>
+        <text class="lbl-acc" x="205" y="82" text-anchor="middle">접속 매매(연속)</text>
+        <text class="lbl-acc2" x="341" y="56" text-anchor="middle">동시호가</text>
+        <text class="lbl-dim" x="384" y="82" text-anchor="middle">시간외</text>
+        <g class="t-mono">
+          <text x="40" y="110" text-anchor="middle">08:30</text>
+          <text x="80" y="124" text-anchor="middle">09:00</text>
+          <text x="318" y="110" text-anchor="middle">15:20</text>
+          <text x="352" y="124" text-anchor="middle">15:30</text>
+        </g>
+        <line class="s-dash" x1="80" y1="92" x2="80" y2="112"/><line class="s-dash" x1="352" y1="92" x2="352" y2="112"/>
+        <text class="lbl-b" x="80" y="146" text-anchor="middle">시가 결정</text>
+        <text class="lbl-b" x="352" y="146" text-anchor="middle">종가 결정</text>
+        <text class="lbl-dim" x="20" y="176">동시호가: 주문을 모아 두었다가 한 가격(단일가)으로 한꺼번에 체결한다.</text>
+        <text class="lbl-dim" x="20" y="196">접속 매매: 주문이 들어오는 즉시 가격·시간 우선으로 짝을 짓는다.</text>
+        <text class="lbl-dim" x="20" y="216">대체거래소(NXT)는 약 08:00~20:00에 따로 거래한다(2026년 기준, 약).</text>
+        <text class="lbl-dim" x="20" y="24">한국 정규시장의 하루(2026년 기준)</text>
+      </svg>
+      <figcaption><b>그림 3-3. 하루의 시간표.</b> 정규시장은 09:00~15:30이다. 장 시작 전 08:30~09:00과 마감 전 15:20~15:30에는 단일가 매매로 시가와 종가를 정한다. 장 마감 뒤에는 시간외 종가·단일가 거래가 이어진다.</figcaption>
+    </figure>
+
+    <p>한 가격은 어떻게 고를까? 원칙은 <b>체결되는 수량이 가장 많은 가격</b>이다. 어떤 가격 \(p\)를 정하면, \(p\) 이상에 사겠다는 주문은 모두 사고 \(p\) 이하에 팔겠다는 주문은 모두 판다. 가격을 올릴수록 살 사람은 줄고(수요 곡선) 팔 사람은 는다(공급 곡선). 실제로 거래되는 양은 둘 중 작은 쪽이므로, 두 곡선이 엇갈리는 가격 근처에서 체결량이 가장 커진다. 아래에서 가격 막대를 위아래로 끌어 그 가격을 직접 찾아보자.</p>
+
+    <div class="sim" id="sim-auction">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>동시호가: 체결량이 가장 많은 가격 찾기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><div class="legend"><span><i style="background:var(--up)"></i>매수 누적(이 가격 이상)</span><span><i style="background:var(--down)"></i>매도 누적(이 가격 이하)</span><span><i style="background:var(--accent-soft);height:10px"></i>체결 가능량</span></div><canvas id="au-cv"></canvas><span class="hint">가격 막대를 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="au-ans">정답 확인</button><button class="btn" id="au-re">주문 다시 뽑기</button></div>
+          <p class="ob-log" id="au-log">가격 막대를 끌어 체결량이 가장 많아지는 곳을 찾는다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">고른 가격</span><span class="v" id="au-o-p">—</span></div>
+        <div class="stat"><span class="k">이 값 이상 매수 / 이하 매도</span><span class="v" id="au-o-bs">—</span></div>
+        <div class="stat"><span class="k">체결 가능 수량</span><span class="v" id="au-o-v">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 막대를 맨 아래로 내리면 살 사람은 많은데 팔 사람이 적어 체결량이 작다. ② 맨 위로 올리면 반대다. ③ 두 곡선이 엇갈리는 곳에서 체결량이 최대가 되는지 확인하고 "정답 확인"으로 거래소 규칙(ST.auction)의 답과 비교한다. (가격을 정하지 않은 시장가 주문은 어느 가격에서나 체결되는 쪽으로 센다. 체결량이 같은 가격이 여럿이면 남는 잔량이 적은 쪽, 그다음은 기준가에 가까운 쪽을 고른다)</div>
+    </div>
+
+    <p>정답 가격에서는 사려는 사람 중 그 가격 이상을 부른 사람이 모두 같은 가격에 사고, 팔려는 사람 중 그 가격 이하를 부른 사람이 모두 같은 가격에 판다. 80,000원을 부른 매수자도 72,000원을 내고, 시장가로 낸 매도자도 72,000원을 받는다. 한쪽에 남는 수량은 체결되지 못한다. 동시호가 동안 앱에는 지금 마감하면 정해질 <b>예상 체결가</b>가 계속 바뀌며 표시된다. 장 시작 전 30분을 1분씩 진행해 보자.</p>
+
+    <div class="sim" id="sim-open">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>08:30~09:00: 예상 체결가가 움직이다 시가가 된다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="op-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="op-next">1분 진행</button><button class="btn" id="op-all">09:00까지</button><button class="btn" id="op-re">처음부터</button></div>
+          <p class="ob-log" id="op-log">08:30 동시호가 접수 시작</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">시각</span><span class="v" id="op-o-t">—</span></div>
+        <div class="stat"><span class="k">예상 체결가</span><span class="v" id="op-o-p">—</span></div>
+        <div class="stat"><span class="k">예상 체결량</span><span class="v" id="op-o-v">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 1분씩 진행하며 예상 체결가가 어떻게 움직이는지 본다. ② 08:50 무렵 누군가 큰 매수 주문을 넣어 예상 체결가가 뛰는 순간을 찾는다. ③ 그 주문이 08:59에 취소되면 예상 체결가가 어디로 돌아가는지 본다. 이 큰 주문을 보고 따라 산 사람은 어떻게 됐을까? (전일 종가 72,000원. 주문은 가상이다)</div>
+    </div>
+
+    <p>마지막 1분에 사라진 큰 주문은 처음부터 체결될 생각이 없었을 수도 있다. 예상 체결가를 끌어올려 다른 사람의 매수를 꾀어내고, 자신은 빠지는 것이다. 이런 행위가 왜 금지되는지는 이 장의 뒷부분에서 본다. 장 마감 동시호가도 같은 원리로 종가를 정한다. 종가는 다음 날 가격제한폭의 기준이 되고 펀드의 가치 평가에도 쓰이므로, 하루 중 가장 중요한 가격 중 하나다.</p>
+  </section>
+
+  <section id="conditions">
+    <h2>조건이 붙은 주문들</h2>
+    <p>지정가와 시장가 말고도 증권사 앱에는 여러 주문 방식이 있다. 대부분은 "얼마에"와 "남으면 어떻게"를 조합한 것이다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>주문</th><th>가격</th><th>체결되지 않은 수량은</th></tr></thead>
+      <tbody>
+        <tr><td>지정가</td><td>내가 정한 값까지</td><td>호가창에 남아 기다린다</td></tr>
+        <tr><td>시장가</td><td>있는 호가를 차례로</td><td>(호가가 바닥나면) 남는 수량은 취소되거나 남는다(시장·증권사마다 다름)</td></tr>
+        <tr><td>최유리지정가</td><td>지금 반대편 최우선 호가(매수라면 매도1호가) 한 가격</td><td>그 가격으로 남아 기다린다</td></tr>
+        <tr><td>최우선지정가</td><td>내 쪽 최우선 호가(매수라면 매수1호가)</td><td>줄 맨 뒤에 서서 기다린다</td></tr>
+        <tr><td>IOC(즉시 체결, 나머지 취소)</td><td>지정가 등과 함께 씀</td><td>바로 되는 만큼만 체결하고 나머지는 즉시 취소</td></tr>
+        <tr><td>FOK(전량 체결 아니면 전량 취소)</td><td>지정가 등과 함께 씀</td><td>전부 바로 체결될 수 없으면 아예 체결하지 않는다</td></tr>
+        <tr><td>조건부지정가</td><td>장중에는 지정가</td><td>장 마감까지 남으면 마감 동시호가에 시장가로 바뀐다</td></tr>
+      </tbody>
+    </table></div>
+    <p>같은 호가창에 같은 수량으로 여러 방식의 주문을 넣어 보면 차이가 선명하다.</p>
+
+    <div class="sim" id="sim-cond">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>같은 매수 300주, 주문 방식에 따라 달라지는 결과</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cd-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>주문 방식</span><div class="seg" id="cd-type"><button data-value="limit" class="on">지정가</button><button data-value="market">시장가</button><button data-value="best">최유리</button><button data-value="first">최우선</button><button data-value="ioc">IOC</button><button data-value="fok">FOK</button></div></div>
+          <label class="ctrl"><span>지정 가격 <output id="cd-p-out"></output></span><input type="range" id="cd-p" min="-2" max="3" step="1" value="1"></label>
+          <label class="ctrl"><span>수량 <output id="cd-q-out"></output></span><input type="range" id="cd-q" min="50" max="800" step="10" value="300"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">바로 체결</span><span class="v" id="cd-o-f">—</span></div>
+        <div class="stat"><span class="k">평균 체결가</span><span class="v" id="cd-o-a">—</span></div>
+        <div class="stat"><span class="k">호가창에 남음</span><span class="v" id="cd-o-r">—</span></div>
+        <div class="stat"><span class="k">취소됨</span><span class="v" id="cd-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 지정가 72,100원 300주는 72,000·72,100원에서 일부 체결되고 나머지가 72,100원에 남는다. 같은 조건의 IOC는 나머지를 버리고, FOK는 아예 체결하지 않는다. ② FOK에서 수량을 줄여 전부 체결 가능한 경계를 찾는다. ③ 최유리는 매도1호가 한 가격에서만, 최우선은 매수1호가에 줄만 선다. (지정 가격 슬라이더는 시장가·최유리·최우선에서는 쓰이지 않는다)</div>
+    </div>
+  </section>
+
+  <section id="mm">
+    <h2>호가를 채우는 사람들: 시장 조성자</h2>
+    <p>지금까지 호가창의 잔량은 저절로 생기는 것처럼 다뤘다. 실제로는 누군가 양쪽에 주문을 내 줘야 한다. 늘 매수 호가와 매도 호가를 동시에 내놓고, 오는 사람의 주문을 받아 주는 참가자를 <span class="term">시장 조성자</span><span class="en">(Market maker)</span>라고 한다. 한국 거래소는 거래가 적은 종목에 증권사 등과 계약해 시장 조성자를 두기도 한다.</p>
+    <p>시장 조성자는 싸게 사고(매수 호가) 비싸게 팔아(매도 호가) 스프레드를 번다. 그런데 공짜 돈은 아니다. 상대방 중 일부는 시장 조성자보다 많이 아는 사람이다. 좋은 뉴스를 먼저 안 사람은 시장 조성자의 매도 호가를 걷어 가고, 그 뒤 가격이 오르면 시장 조성자는 싸게 판 셈이 된다. 이것을 <b>역선택</b>이라고 한다. 아래에서 정보를 가진 거래자의 비중과 스프레드를 바꿔 시장 조성자의 손익을 보자.</p>
+
+    <div class="sim" id="sim-mm">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>시장 조성자의 장부: 스프레드 수입 대 역선택 손실</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="mm-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>스프레드 <output id="mm-s-out"></output></span><input type="range" id="mm-s" min="1" max="8" step="1" value="2"></label>
+          <label class="ctrl"><span>정보 가진 거래자 비중 <output id="mm-i-out"></output></span><input type="range" id="mm-i" min="0" max="0.6" step="0.05" value="0.2"></label>
+          <div class="btn-row"><button class="btn" id="mm-re">다시 뽑기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">거래 수</span><span class="v" id="mm-o-n">—</span></div>
+        <div class="stat"><span class="k">스프레드 수입</span><span class="v" id="mm-o-s">—</span></div>
+        <div class="stat"><span class="k">역선택 손실</span><span class="v" id="mm-o-a">—</span></div>
+        <div class="stat"><span class="k">순손익</span><span class="v" id="mm-o-p">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 정보 가진 거래자가 0%면 스프레드 1~2틱으로도 꾸준히 번다. ② 비중을 40%로 올리면 같은 스프레드로는 손실이 쌓인다. ③ 그 상태에서 스프레드를 넓혀 손익이 다시 0 위로 올라오는 지점을 찾는다. (진짜 가치는 가끔 뉴스로 뛴다. 정보 가진 거래자는 진짜 가치를 알고, 나머지는 무작위로 사고판다. 한 주씩 거래하고 받은 재고는 진짜 가치로 바로 정리한다고 본 단순 모형)</div>
+    </div>
+
+    <p>마지막 실험이 스프레드의 정체를 알려 준다. 스프레드는 시장 조성자가 <b>모르는 상대와 거래하는 위험의 값</b>이다. 정보가 고르게 퍼져 있지 않고 거래가 드문 종목일수록, 그 위험을 감당하려면 스프레드를 넓혀야 한다. 유동성이 적은 종목의 스프레드가 넓은 것은 우연이 아니다.</p>
+  </section>
+
+  <section id="fair">
+    <h2>불공정 거래: 허매수와 숨은 주문</h2>
+    <p>호가창의 잔량은 "체결될 의사가 있는 주문"이라는 믿음 위에서 의미가 있다. 그런데 체결될 생각이 없는 큰 주문을 일부러 걸어 두면 어떻게 될까? 아래는 그 수법을 단계별로 재현한 것이다. 가짜로 보이는 매수 주문을 거는 것을 <span class="term">허매수</span>, 해외에서는 <span class="term">스푸핑</span><span class="en">(Spoofing)</span>이라고 부른다.</p>
+
+    <div class="sim" id="sim-spoof">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>허매수 한 판: 걸고, 따라오게 하고, 팔고, 지운다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sf-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="sf-next">다음 단계</button><button class="btn" id="sf-re">처음부터</button></div>
+          <p class="ob-log" id="sf-log">0단계: 평범한 호가창</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">단계</span><span class="v" id="sf-o-st">—</span></div>
+        <div class="stat"><span class="k">매수 잔량 합계</span><span class="v" id="sf-o-bid">—</span></div>
+        <div class="stat"><span class="k">허매수자 이익</span><span class="v" id="sf-o-sp">—</span></div>
+        <div class="stat"><span class="k">따라 산 사람 평가손익</span><span class="v" id="sf-o-fl">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 1단계에서 매수 잔량 합계가 몇 배로 늘어나는지 본다. ② 2단계에서 "매수세가 강하다"고 믿은 사람들이 매도 호가를 먹어 올린다. ③ 4단계에서 큰 주문이 사라진 뒤 따라 산 사람의 평가손익을 확인한다. (허매수자는 처음부터 이 종목 1,000주를 갖고 있었다고 가정. 단순화한 재현이다)</div>
+    </div>
+
+    <p>허매수자는 체결될 생각이 없는 주문으로 다른 사람의 판단을 속여 이익을 얻었다. 피해는 그 신호를 믿고 높은 값에 산 사람에게 돌아간다. 이런 행위는 <b>자본시장법이 시세조종으로 금지</b>하며, 형사처벌과 과징금 대상이다. 거래소는 주문을 내고 취소하는 패턴을 감시해 이상 거래를 찾아낸다. 장 시작 전 동시호가에서 큰 주문을 냈다가 직전에 취소하는 것도 같은 문제로 다뤄질 수 있다.</p>
+    <p>반대로, 크게 사거나 팔 사람이 자신의 진짜 주문을 <b>숨기는 것</b>은 금지가 아니다. 큰 주문을 그대로 보여 주면 다른 사람이 앞질러 가격을 올려 버리므로, 큰 손은 주문을 잘게 쪼개 조금씩만 보이게 한다. 해외 거래소에는 보이는 수량만 걸어 두고 체결되면 숨은 수량에서 다시 채우는 <span class="term">아이스버그 주문</span><span class="en">(Iceberg order)</span>이 정식으로 있고, 그렇지 않은 시장에서도 알고리즘으로 비슷한 모습을 만든다. 허매수와의 차이는 하나다. 아이스버그는 <b>진짜로 체결되려는</b> 주문이다. 아래 게임에서 숨은 매도 주문이 있는 가격을 찾아보자.</p>
+
+    <div class="sim" id="sim-ice">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>숨은 매도 주문(아이스버그) 찾기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ic-cv"></canvas><span class="hint">숨은 주문이 있는 가격 줄을 누른다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="ic-next">다음 문제</button><button class="btn" id="ic-hint">단서 보기</button></div>
+          <p class="ob-log" id="ic-log">체결 내역을 보며 이상하게 잘 안 뚫리는 가격을 찾는다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">맞힌 문제</span><span class="v" id="ic-o-s">—</span></div>
+        <div class="stat"><span class="k">이번 문제</span><span class="v" id="ic-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 보이는 잔량은 50주 남짓인데 그 가격에서 체결된 누적 수량이 수백 주인 줄을 찾는다. ② "단서 보기"를 누르면 가격별 누적 체결량이 숫자로 나타난다. ③ 숨은 주문이 다 소진되면 가격이 그 위로 뚫고 올라간다. (가상의 주문 흐름. 사는 쪽이 조금 더 많도록 만들었다)</div>
+    </div>
+
+    <div class="callout warn">
+      <strong>호가창 "읽기" 비법을 경계하자</strong>
+      <p>호가창의 잔량 변화로 세력의 움직임을 읽는다는 강의가 많다. 그러나 보이는 잔량은 취소될 수 있고(허매수), 진짜 큰 주문은 보이지 않는다(쪼갠 주문). 보이는 것만으로 다음 가격을 맞히기 어려운 이유다. 이 장의 목적은 호가창으로 돈 버는 법이 아니라, 내 주문이 어떤 비용을 치르는지 아는 것이다.</p>
+    </div>
+  </section>
+
+  <section id="receipt">
+    <h2>실제로 낸 돈: 수수료와 거래세</h2>
+    <p>체결된 뒤에도 비용이 남아 있다. 증권사에 내는 <span class="term">위탁 수수료</span>(비대면 계좌는 대략 거래 금액의 0.015% 안팎, 증권사와 이벤트에 따라 다름)는 살 때와 팔 때 모두 낸다. 팔 때는 여기에 <span class="term">증권거래세</span>가 붙는다. 2026년 기준 KOSPI·KOSDAQ 모두 매도 금액의 0.20%(KOSPI는 농어촌특별세 포함)다. 엔진의 <code>ST.cost</code>가 이 계산을 한다. 아래에서 종목과 수량을 바꿔 영수증을 만들어 보자.</p>
+
+    <div class="sim" id="sim-receipt">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>체결 영수증 만들기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><div class="slip ob-slip" id="rc-slip"></div></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>종목</span><div class="seg" id="rc-co"><button data-value="hanbit" class="on">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button><button data-value="daon">다온</button><button data-value="moa">모아</button></div></div>
+          <div class="ctrl"><span>방향</span><div class="seg" id="rc-side"><button data-value="buy" class="on">매수</button><button data-value="sell">매도</button></div></div>
+          <label class="ctrl"><span>수량 <output id="rc-q-out"></output></span><input type="range" id="rc-q" min="1" max="200" step="1" value="10"></label>
+          <label class="ctrl"><span>체결가(현재가 대비) <output id="rc-k-out"></output></span><input type="range" id="rc-k" min="-5" max="5" step="1" value="0"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">비용 합계</span><span class="v" id="rc-o-c">—</span></div>
+        <div class="stat"><span class="k">거래 금액 대비</span><span class="v" id="rc-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한빛 10주 매수의 결제 금액이 720,108원인지 확인한다. ② 같은 10주를 매도로 바꾸면 거래세 1,440원이 붙어 비용이 열 배 이상 커진다. ③ 수량을 바꿔도 비용 비율은 거의 같다는 점을 본다. 수수료와 세금은 금액에 비례하기 때문이다. (수수료 0.015%, 거래세 0.20%, 원 미만은 그대로 표시. 실제 증권사는 원 단위로 절사하는 등 처리 방식이 다르다)</div>
+    </div>
+
+    <p>매수할 때 실제로 빠져나가는 돈은 "체결 금액 + 수수료"이고, 매도할 때 들어오는 돈은 "체결 금액 − 수수료 − 거래세"다. 그리고 그 돈이 실제로 계좌에 들어오고 나가는 날은 체결일이 아니라 2영업일 뒤(T+2)다(<a href="market.html">2장</a>). 매도 직후 예수금에 금액이 보여도 출금은 결제일 이후에 가능하다.</p>
+    <div class="callout warn">
+      <strong>제도와 숫자는 바뀐다</strong>
+      <p>증권거래세율은 최근 몇 해 사이에도 여러 번 바뀌었고, 호가 단위·거래 시간·변동성 완화장치 기준도 개편된 적이 있다. 이 장의 숫자는 2026년 기준 대표값이다. 실제로 주문하기 전에 거래소와 증권사의 최신 안내를 확인하자.</p>
+    </div>
+  </section>
+
+  <section id="practice">
+    <h2>종합: 장중에 직접 사고팔기</h2>
+    <p>이제 모든 조각을 한데 모아 보자. 아래 호가창은 첫 시뮬레이터처럼 쉬지 않고 움직인다. 시드머니 1,000만원으로 한빛반도체를 사고팔아 보자. 시장가와 지정가를 섞어 써 보고, 스프레드와 수수료·거래세가 손익에서 얼마나 빠지는지 지켜보자.</p>
+
+    <div class="sim" id="sim-final">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>모의 주문 창: 1,000만원으로 한빛반도체 사고팔기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="fn-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>수량 <output id="fn-q-out"></output></span><input type="range" id="fn-q" min="1" max="100" step="1" value="10"></label>
+          <div class="btn-row"><button class="btn primary" id="fn-mb">시장가 매수</button><button class="btn primary" id="fn-ms">시장가 매도</button></div>
+          <div class="btn-row"><button class="btn" id="fn-lb">매수1호가에 지정가 매수</button><button class="btn" id="fn-ls">매도1호가에 지정가 매도</button></div>
+          <div class="btn-row"><button class="btn sm" id="fn-cx">미체결 취소</button><button class="btn sm" id="fn-pause">일시정지</button><button class="btn sm" id="fn-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">예수금</span><span class="v" id="fn-o-cash">—</span></div>
+        <div class="stat"><span class="k">보유 / 평균 단가</span><span class="v" id="fn-o-pos">—</span></div>
+        <div class="stat"><span class="k">낸 수수료·세금</span><span class="v" id="fn-o-cost">—</span></div>
+        <div class="stat"><span class="k">총 손익(매수1호가로 평가)</span><span class="v" id="fn-o-pnl">—</span></div>
+      </div>
+      <div class="sim-note"><span id="fn-log">아직 주문이 없다.</span><br>해볼 것: ① 시장가 매수 10주 직후 총 손익이 바로 마이너스가 되는 이유(스프레드와 수수료)를 확인한다. ② 지정가 매수로 줄을 서서 체결되면, 시장가보다 한 틱 싸게 산 것이다. 대신 체결되지 않을 수도 있다. ③ 짧게 여러 번 사고팔아 "낸 수수료·세금"이 쌓이는 속도를 본다. (평가 손익은 지금 바로 팔 수 있는 매수1호가 기준. 결제일 T+2는 생략했다)</div>
+    </div>
+  </section>
+
+  <div class="casefile">
+    <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 3장</span></div>
+    <h4>첫 주문: 한빛반도체 10주</h4>
+    <p>계좌를 연 한결은 시드머니 1,000만원 가운데 먼저 72만원 남짓으로 한빛반도체 10주를 사 보기로 했다. 연습 삼아 작은 금액으로 주문 과정을 익히려는 것이다. 호가창은 매도1호가 72,000원(잔량 120주), 매수1호가 71,900원이었다. 스프레드는 100원, 1틱이다.</p>
+    <p>시장가로 사면 매도1호가 잔량이 넉넉해 72,000원에 모두 체결된다. 71,900원에 지정가로 줄을 서면 100원씩 싸게 살 수 있지만 언제 체결될지 모른다. 한결은 <b>72,000원 지정가</b>를 골랐다. 지금 잔량으로는 시장가와 똑같이 바로 체결되고, 혹시 그사이 호가가 바뀌어도 72,000원보다 비싸게 사지는 않는다. 결과는 72,000원에 10주 체결. 영수증은 체결 금액 720,000원, 수수료 108원, 결제 금액 <b>720,108원</b>이었다.</p>
+    <p>궁금해서 계산도 해 봤다. 만약 산 직후 바로 팔면 매수1호가 71,900원에 팔게 되고, 체결 금액 719,000원에서 수수료 약 108원과 거래세 1,438원을 떼면 <b>약 717,454원</b>을 받는다. 주가가 한 푼도 움직이지 않았는데 약 2,654원, 투자금의 약 0.37%가 사라진다. 그중 스프레드 몫이 1,000원(10주 × 100원), 나머지는 수수료와 거래세다. 한결은 노트에 적었다. "자주 사고팔수록 이 0.37%가 계속 빠져나간다."</p>
+    <div class="clue">
+      <div><b>이 장에서 정한 것</b>주문은 매도1호가 이하의 지정가로. 현재가가 아니라 최우선 호가를 보고, 거래가 활발해 스프레드가 1틱인 종목을 고른다.</div>
+      <div><b>아직 남은 문제</b>산 다음 날 주가가 움직이면 그 움직임이 큰 것인지 작은 것인지 판단할 기준이 없다.</div>
+      <div><b>다음 단계</b><a href="price.html">4장</a>에서 주가가 왜, 얼마나 움직이는지 본다.</div>
+    </div>
+  </div>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>호가창은 팔겠다는 주문(매도 호가)과 사겠다는 주문(매수 호가)을 가격별로 모은 장부다. 현재가는 직전 체결 가격이고, 지금 살 수 있는 값은 매도1호가, 팔 수 있는 값은 매수1호가다.</li>
+      <li>지정가 주문은 가격을 보장하고 체결을 보장하지 않는다. 시장가 주문은 체결을 보장하고 가격을 보장하지 않는다. 매도1호가 이상의 지정가 매수는 상한선이 있는 시장가처럼 움직인다.</li>
+      <li>체결 순서는 가격 우선, 시간 우선이다. 가격을 바꾸는 정정은 취소 후 새 주문과 같아 줄 맨 뒤로 간다.</li>
+      <li>호가 단위는 주가 구간마다 다르다(2023년 개편, 1원~1,000원). 한 틱은 가격의 약 0.05~0.25%이고, 이것이 가장 좁은 스프레드다.</li>
+      <li>시장가로 사고팔면 왕복으로 스프레드 전체를 낸다. 한빛반도체 1틱 스프레드에 수수료와 거래세를 더하면 왕복 약 0.37%이며, 잦은 매매는 이 비용을 계속 쌓는다.</li>
+      <li>큰 주문은 호가를 먹어 올라가며 미끄러짐을 만든다. 유동성이 적은 종목은 스프레드도 넓고 호가도 얇아 같은 금액에 더 큰 비용을 치른다.</li>
+      <li>체결강도는 서둘러 산 수량과 서둘러 판 수량의 비율일 뿐, 가격 방향을 보장하지 않는다.</li>
+      <li>장 시작과 마감에는 주문을 모아 체결량이 가장 많은 한 가격으로 체결하는 단일가 매매(동시호가)로 시가와 종가를 정한다.</li>
+      <li>체결될 생각이 없는 주문으로 다른 사람을 속이는 허매수는 시세조종으로 금지된다. 실제 결제 금액은 체결 금액에 수수료(양방향)와 거래세(매도, 0.20%)를 더하고 뺀 값이다(2026년 기준).</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 호가창에서 매도1호가가 72,000원(잔량 120주), 매수1호가가 71,900원이다. 지금 바로 10주를 시장가로 사면 체결 가격은?</p>
+        <div class="opts">
+          <button class="opt">71,900원</button>
+          <button class="opt">71,950원(가운데 값)</button>
+          <button class="opt" data-correct>72,000원</button>
+          <button class="opt">직전 체결가(현재가)</button>
+        </div>
+        <div class="quiz-exp">시장가 매수는 반대편, 곧 매도 호가 중 가장 싼 값부터 체결된다. 매도1호가에 120주가 있으므로 10주는 모두 72,000원에 체결된다. 현재가는 직전 체결가일 뿐 지금 살 수 있는 값이 아니다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 71,900원에 매수 지정가 50주를 걸어 두었다. 같은 가격에 내 앞에 80주가 먼저 서 있다. 매도 시장가 100주가 들어오고, 71,900원보다 비싼 매수 호가는 없다. 내 주문은?</p>
+        <div class="opts">
+          <button class="opt">50주 모두 체결된다</button>
+          <button class="opt" data-correct>20주만 체결되고 30주는 남는다</button>
+          <button class="opt">하나도 체결되지 않는다</button>
+          <button class="opt">수량 비율대로 나눠 체결된다</button>
+        </div>
+        <div class="quiz-exp">같은 가격에서는 시간 우선이다. 100주 중 앞의 80주가 먼저 채워지고, 남은 20주가 내 주문에 체결된다. 내 주문 30주는 줄 맨 앞에 남아 다음 매도를 기다린다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 주가 20,000원인 종목과 49,950원인 종목의 1틱 스프레드를 가격 대비 비율로 비교하면?</p>
+        <div class="opts">
+          <button class="opt">둘 다 호가 단위가 50원이라 같다</button>
+          <button class="opt">49,950원 종목이 더 크다</button>
+          <button class="opt" data-correct>20,000원 종목이 0.25%로 49,950원 종목(약 0.10%)보다 크다</button>
+          <button class="opt">호가 단위는 KOSPI와 KOSDAQ이 달라 비교할 수 없다</button>
+        </div>
+        <div class="quiz-exp">20,000~50,000원 미만 구간의 호가 단위는 50원이다. 50/20,000 = 0.25%, 50/49,950 ≈ 0.10%다. 같은 구간에서도 구간 시작 쪽 가격의 한 틱이 더 무겁다. 2023년 개편 이후 두 시장의 호가 단위는 같다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 동시호가에서 거래소가 시가를 정하는 원칙으로 가장 알맞은 것은?</p>
+        <div class="opts">
+          <button class="opt" data-correct>그 가격에서 체결되는 수량이 가장 많은 가격</button>
+          <button class="opt">가장 먼저 들어온 매수 주문의 가격</button>
+          <button class="opt">모든 주문 가격의 평균</button>
+          <button class="opt">전일 종가</button>
+        </div>
+        <div class="quiz-exp">단일가 매매는 각 가격에서 그 이상 매수 누적과 그 이하 매도 누적 중 작은 쪽(체결 가능량)을 계산해, 그것이 가장 큰 가격을 고른다. 체결된 모든 주문은 그 한 가격으로 거래된다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 한빛반도체 10주를 72,000원에 사서 바로 71,900원에 팔았다. 수수료 0.015%(양방향), 거래세 0.20%(매도)라면 총비용에 대해 옳은 것은?</p>
+        <div class="opts">
+          <button class="opt">주가가 움직이지 않았으므로 수수료 216원만 잃는다</button>
+          <button class="opt">스프레드 1,000원만 잃는다</button>
+          <button class="opt">거래세는 살 때도 내므로 약 2,880원이 세금이다</button>
+          <button class="opt" data-correct>스프레드 1,000원과 수수료·거래세를 합쳐 약 2,654원(약 0.37%)을 잃는다</button>
+        </div>
+        <div class="quiz-exp">매수 결제 금액은 720,000 + 108 = 720,108원, 매도로 받는 돈은 719,000 − 약 108 − 1,438 = 약 717,454원이다. 차이는 약 2,654원이다. 그중 1,000원이 스프레드이고, 거래세는 팔 때만 낸다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const narrow = (id) => document.getElementById(id).parentElement.clientWidth < 560;
+  const px = (x) => MB.price(x, { short: true });
+  const wonx = (x, d) => (x < 0 ? "−" : "") + Math.abs(x).toLocaleString("ko-KR", { maximumFractionDigits: d == null ? 0 : d }) + "원";
+  const swon = (x) => (x > 0 ? "+" : "") + wonx(Math.round(x));
+  const qty = (x) => Math.round(x).toLocaleString("ko-KR") + "주";
+  const tone = (cls, s) => '<span class="' + cls + '">' + s + "</span>";
+  const pctS = (x, d) => (isFinite(x) ? (x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 2 : d) + "%" : "—");
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function knob(ctx, x, y, P, r) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = P.bg; ctx.stroke();
+    ctx.restore();
+  }
+  function rrect(ctx, x, y, w, h, r) {
+    r = Math.min(r, w / 2, h / 2);
+    ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+  }
+  const sumAt = (orders, p) => orders.reduce((s, o) => s + (o.price === p ? o.qty : 0), 0);
+
+  /**
+   * 호가창 그리기. 가운데 값 위아래로 연속된 호가 n칸씩.
+   * o: {levels, last, flash(Map 가격→0~1), mine(Map 가격→수량), sel(가격), eaten(Map 가격→수량), note(Map 가격→문자열), max, header, font}
+   * → rows [{price, y, h}]
+   */
+  function ladder(ctx, B, book, o) {
+    o = o || {};
+    const P = MB.palette(), n = o.levels || 5, best = book.best();
+    const mid = best.bid != null && best.ask != null ? best.mid : best.ask != null ? ST.stepTick(best.ask, -1) + 0.5 : best.bid != null ? best.bid + 0.5 : book.last;
+    let up = ST.roundTick(mid, "up"); if (up <= mid) up = ST.stepTick(up, 1);
+    const dn = ST.stepTick(up, -1);
+    const prices = [];
+    for (let i = n - 1; i >= 0; i--) prices.push(ST.stepTick(up, i));
+    for (let i = 0; i < n; i++) prices.push(ST.stepTick(dn, -i));
+    const ask = new Map(), bid = new Map();
+    book.asks.forEach((x) => ask.set(x.price, (ask.get(x.price) || 0) + x.qty));
+    book.bids.forEach((x) => bid.set(x.price, (bid.get(x.price) || 0) + x.qty));
+    let mx = o.max || 1;
+    if (!o.max) prices.forEach((p) => { mx = Math.max(mx, ask.get(p) || 0, bid.get(p) || 0); });
+    const rh = B.h / (2 * n), qw = Math.round(B.w * 0.36), cx = B.x + qw, cw = B.w - 2 * qw, fs = o.font || (rh < 20 ? 11 : 12);
+    if (o.header) {
+      text(ctx, "매도 잔량", cx - 6, B.y - 7, { color: P.dim, align: "right", size: 11 });
+      text(ctx, "가격", cx + cw / 2, B.y - 7, { color: P.dim, align: "center", size: 11 });
+      text(ctx, "매수 잔량", cx + cw + 6, B.y - 7, { color: P.dim, size: 11 });
+    }
+    const rows = [];
+    prices.forEach((p, i) => {
+      const y = B.y + i * rh, isAsk = i < n, a = ask.get(p) || 0, b = bid.get(p) || 0;
+      ctx.fillStyle = P.surface; ctx.globalAlpha = 0.6; ctx.fillRect(cx + 1, y + 1, cw - 2, rh - 2); ctx.globalAlpha = 1;
+      const fl = o.flash && o.flash.get(p);
+      if (fl > 0) { ctx.fillStyle = P.accent2; ctx.globalAlpha = 0.28 * fl; ctx.fillRect(B.x, y + 1, B.w, rh - 2); ctx.globalAlpha = 1; }
+      if (o.sel === p) { ctx.fillStyle = P.accent; ctx.globalAlpha = 0.14; ctx.fillRect(B.x, y + 1, B.w, rh - 2); ctx.globalAlpha = 1; }
+      if (a) {
+        const bw = MB.clamp((a / mx) * (qw - 6), 2, qw - 6);
+        ctx.fillStyle = P.downSoft; ctx.fillRect(cx - bw - 2, y + 2, bw, rh - 4);
+        const e = o.eaten && o.eaten.get(p);
+        if (e) { const ew = Math.max(2, (Math.min(e, a) / mx) * (qw - 6)); ctx.fillStyle = P.accent; ctx.globalAlpha = 0.55; ctx.fillRect(cx - 2 - ew, y + 2, ew, rh - 4); ctx.globalAlpha = 1; }
+        text(ctx, a.toLocaleString("ko-KR"), cx - 6, y + rh / 2, { color: P.text, align: "right", base: "middle", size: fs, mono: true });
+      }
+      if (b) {
+        const bw = MB.clamp((b / mx) * (qw - 6), 2, qw - 6);
+        ctx.fillStyle = P.upSoft; ctx.fillRect(cx + cw + 2, y + 2, bw, rh - 4);
+        const e = o.eaten && o.eaten.get(p);
+        if (e) { const ew = Math.max(2, (Math.min(e, b) / mx) * (qw - 6)); ctx.fillStyle = P.accent; ctx.globalAlpha = 0.55; ctx.fillRect(cx + cw + 2, y + 2, ew, rh - 4); ctx.globalAlpha = 1; }
+        text(ctx, b.toLocaleString("ko-KR"), cx + cw + 6, y + rh / 2, { color: P.text, base: "middle", size: fs, mono: true });
+      }
+      text(ctx, px(p), cx + cw / 2, y + rh / 2, { color: isAsk ? P.down : P.up, align: "center", base: "middle", size: fs, mono: true, weight: 600 });
+      if (o.last === p) { ctx.strokeStyle = P.text; ctx.lineWidth = 1.5; ctx.strokeRect(cx + 2, y + 2, cw - 4, rh - 4); }
+      const m = o.mine && o.mine.get(p), nt = o.note && o.note.get(p);
+      if (m || nt) {
+        const s = nt || "내 " + m.toLocaleString("ko-KR"), tx = isAsk ? cx + cw + 6 : cx - 6;
+        text(ctx, s, tx, y + rh / 2, { color: nt && o.noteColor ? o.noteColor : P.accent, align: isAsk ? "left" : "right", base: "middle", size: 11, weight: 700 });
+      }
+      rows.push({ price: p, y, h: rh, ask: isAsk });
+    });
+    ctx.strokeStyle = P.axis; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(B.x, B.y + n * rh); ctx.lineTo(B.x + B.w, B.y + n * rh); ctx.stroke();
+    return rows;
+  }
+  const rowAt = (rows, y) => rows && rows.find((r) => y >= r.y && y < r.y + r.h);
+
+  /** 체결 내역 목록 */
+  function tape(ctx, B, list, o) {
+    o = o || {};
+    const P = MB.palette(), rh = o.rh || 18;
+    text(ctx, o.title || "체결 내역", B.x, B.y + 12, { color: P.dim, size: 11 });
+    const n = Math.max(0, Math.floor((B.h - 20) / rh));
+    if (!list.length) text(ctx, "아직 체결이 없다", B.x + 4, B.y + 32, { color: P.faint, size: 12 });
+    list.slice(0, n).forEach((t, i) => {
+      const y = B.y + 22 + i * rh, c = t.side === "buy" ? P.up : P.down, mine = t.buyer === "me" || t.seller === "me";
+      ctx.globalAlpha = Math.max(0.35, 1 - i / (n + 2));
+      if (mine) { ctx.fillStyle = P.accent; ctx.globalAlpha *= 0.18; ctx.fillRect(B.x, y, B.w, rh - 2); ctx.globalAlpha = Math.max(0.35, 1 - i / (n + 2)); }
+      text(ctx, px(t.price), B.x + 4, y + rh / 2, { color: c, base: "middle", size: 12, mono: true });
+      text(ctx, t.qty.toLocaleString("ko-KR"), B.x + B.w - 4, y + rh / 2, { color: P.text, align: "right", base: "middle", size: 12, mono: true });
+      if (mine) text(ctx, t.buyer === "me" ? "내 매수" : "내 매도", B.x + B.w * 0.55, y + rh / 2, { color: P.accent, align: "center", base: "middle", size: 11, weight: 700 });
+      ctx.globalAlpha = 1;
+    });
+  }
+
+  /**
+   * 가상 참가자들의 주문 흐름. f.step() → 이번 걸음의 체결 배열.
+   * fv(공정 가치)가 무작위로 걷고, 지정가·시장가·취소가 섞여 들어온다. owner "me"·"ice"·"spoof" 주문은 건드리지 않는다.
+   */
+  function Flow(ref, seed, o) {
+    o = o || {};
+    const size = o.size || 100;
+    const b = new ST.Book({ ref }).seed({ levels: 12, seed, size });
+    const r = ST.rng(seed * 7 + 1), g = ST.gauss(seed * 7 + 2);
+    const f = { b, fv: ref, bias: o.bias == null ? 0.5 : o.bias, vol: o.vol == null ? 0.0007 : o.vol, drift: o.drift || 0, k: o.k || 80, sellMult: 1, sellProb: 0.5, event: "", steps: 0 };
+    const crowd = (x) => x.owner !== "me" && x.owner !== "ice" && x.owner !== "spoof";
+    const levels = (q) => new Set(q.map((x) => x.price)).size;
+    f.step = function () {
+      f.steps++;
+      f.fv *= Math.exp(f.vol * g() + f.drift);
+      const bb = b.best(), mid = bb.mid || b.last, t = ST.tick(mid);
+      let fills = [];
+      const u = r();
+      if (u < 0.4) {
+        const side = r() < f.sellProb ? "sell" : "buy", k = Math.floor(r() * r() * 6);
+        const p = side === "sell" ? ST.stepTick(ST.roundTick(Math.max(f.fv + t / 2, (bb.bid || f.fv) + t), "up"), k) : ST.stepTick(ST.roundTick(Math.min(f.fv - t / 2, (bb.ask || f.fv) - t), "down"), -k);
+        const q = Math.max(1, Math.round(size * (0.15 + 0.6 * r()) * (side === "sell" ? f.sellMult : 1)));
+        fills = b.limit(side, p, q, "crowd");
+        f.event = (side === "buy" ? "매수" : "매도") + " 지정가 " + q + "주 @ " + px(p) + " 대기";
+      } else if (u < 0.7) {
+        const lean = MB.clamp(f.bias + ((f.fv - mid) / mid) * f.k, 0.05, 0.95);
+        const side = r() < lean ? "buy" : "sell", q = Math.max(1, Math.round(size * (0.05 + 0.6 * r() * r())));
+        fills = b.market(side, q, "crowd");
+        f.event = (side === "buy" ? "매수" : "매도") + " 시장가 " + q + "주 → " + (fills.length ? px(fills[fills.length - 1].price) + "까지 체결" : "상대 없음");
+      } else {
+        const q = r() < 0.5 ? b.asks : b.bids, cand = q.filter(crowd);
+        if (cand.length > 2) { const x = cand[1 + Math.floor(r() * (cand.length - 1))]; b.cancel(x.id); f.event = (q === b.asks ? "매도" : "매수") + " 주문 취소 " + x.qty + "주 @ " + px(x.price); }
+      }
+      const stale = [...b.asks.filter((x) => crowd(x) && x.price < f.fv - 2 * t), ...b.bids.filter((x) => crowd(x) && x.price > f.fv + 2 * t)];
+      if (stale.length) b.cancel(stale[0].id);
+      for (const [q, side] of [[b.asks, "sell"], [b.bids, "buy"]]) {
+        while (q.length > 50) { const far = [...q].reverse().find(crowd); if (!far) break; b.cancel(far.id); }
+        let guard = 0;
+        while (levels(q) < 12 && guard++ < 20) {
+          const edge = q.length ? q[q.length - 1].price : side === "sell" ? ST.roundTick(Math.max(f.fv, (b.best().bid || f.fv) + 1), "up") : ST.roundTick(Math.min(f.fv, (b.best().ask || f.fv) - 1), "down");
+          const p = q.length ? ST.stepTick(edge, side === "sell" ? 1 : -1) : edge;
+          b.limit(side, p, Math.max(1, Math.round(size * (0.5 + r()) * (side === "sell" ? f.sellMult : 1))), "crowd");
+        }
+      }
+      if (b.trades.length > 600) b.trades.splice(0, 300);
+      return fills;
+    };
+    return f;
+  }
+  const flashDecay = (m, dt) => { for (const [k, v] of m) { const nv = v - dt * 2.2; nv <= 0 ? m.delete(k) : m.set(k, nv); } };
+  const mineMap = (book) => { const m = new Map(); [...book.asks, ...book.bids].forEach((x) => { if (x.owner === "me") m.set(x.price, (m.get(x.price) || 0) + x.qty); }); return m; };
+  function sparkline(ctx, B, hist, o) {
+    o = o || {};
+    const P = MB.palette();
+    let lo = Math.min(...hist), hi = Math.max(...hist);
+    const t = ST.tick(hi); lo = Math.min(lo, o.ref || lo) - t; hi = Math.max(hi, o.ref || hi) + t;
+    const c = MB.chart(ctx, B, { x: [0, Math.max(o.len || 1, hist.length - 1)], y: [lo, hi], xTicks: [], yTicks: o.yTicks || [lo + t, (lo + hi) / 2, hi - t].map((v) => ST.roundTick(v)), yFmt: (v) => px(v),
+      series: [{ data: hist.map((v, i) => [i, v]), color: P.accent, width: 1.8 }], hlines: o.ref ? [{ y: o.ref, color: P.faint, label: o.refLabel || "" }] : [] });
+    return c;
+  }
+
+  /* ---------------------------------------------------------- 1. 살아 있는 호가창 */
+  (function () {
+    let flow, acc = 0, playing = true, vol = 0, list = [], hist = [], flash = new Map();
+    function reset() {
+      flow = Flow(72000, 5, { size: 100 }); list = []; hist = [72000]; vol = 0; flash = new Map(); acc = 0;
+      for (let i = 0; i < 150; i++) { flow.step().forEach((t) => { list.unshift(t); vol += t.qty; }); hist.push(flow.b.last); }
+      list.length = Math.min(list.length, 60);
+    }
+    reset();
+    const speed = MB.seg("lv-speed");
+    const cv = MB.canvas("#lv-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("lv-cv"), b = flow.b;
+      const LB = nar ? { x: 6, y: 22, w: w - 12, h: 300 } : { x: 8, y: 22, w: Math.min(330, w * 0.52), h: h - 32 };
+      ladder(ctx, LB, b, { levels: 8, last: b.last, flash, header: true });
+      const rx = nar ? 6 : LB.x + LB.w + 18, rw = nar ? w - 12 : w - rx - 8;
+      const cy = nar ? 340 : 8, chH = nar ? 130 : 150;
+      sparkline(ctx, { x: rx + 52, y: cy + 22, w: rw - 56, h: chH - 30 }, hist.slice(-160), { len: 160, ref: 72000 });
+      text(ctx, "현재가 흐름", rx + 52, cy + 12, { color: P.dim, size: 11 });
+      tape(ctx, { x: rx, y: cy + chH + 6, w: rw, h: h - cy - chH - 12 }, list);
+      const bb = b.best();
+      MB.stat("lv-o-last", tone(MB.tone(b.last - 72000), px(b.last)));
+      MB.stat("lv-o-best", px(bb.ask) + " / " + px(bb.bid));
+      MB.stat("lv-o-spr", bb.spread + "원 <small>" + Math.round(bb.spread / ST.tick(bb.bid)) + "틱</small>");
+      MB.stat("lv-o-vol", qty(vol));
+    }, { get height() { return narrow("lv-cv") ? 640 : 420; } });
+    const log = document.getElementById("lv-log");
+    const play = document.getElementById("lv-play");
+    play.addEventListener("click", () => { playing = !playing; play.textContent = playing ? "일시정지" : "재생"; });
+    document.getElementById("lv-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (playing) {
+        acc += dt * Number(speed());
+        while (acc > 0.16) {
+          acc -= 0.16;
+          const fills = flow.step();
+          fills.forEach((t) => { list.unshift(t); vol += t.qty; flash.set(t.price, 1); });
+          if (list.length > 60) list.length = 60;
+          hist.push(flow.b.last); if (hist.length > 400) hist.splice(0, 200);
+          log.textContent = flow.event;
+        }
+      }
+      flashDecay(flash, dt);
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 2. 내 주문 넣기 */
+  (function () {
+    let flow, sel, cur, curOrig, stat, list, rows = null, flash = new Map(), queue = 0, acc = 0;
+    const logEl = document.getElementById("my-log");
+    function reset() { flow = Flow(72000, 11, { size: 100 }); sel = 71800; cur = null; stat = { f: 0, c: 0 }; list = []; queue = 0; logEl.textContent = "결과가 여기에 나온다."; }
+    function absorb(fills) {
+      fills.forEach((t) => {
+        list.unshift(t); flash.set(t.price, 1);
+        if (cur != null && (t.maker === cur || t.taker === cur)) { stat.f += t.qty; stat.c += t.qty * t.price; }
+      });
+      if (list.length > 40) list.length = 40;
+    }
+    const side = MB.seg("my-side", () => cv.redraw());
+    const type = MB.seg("my-type", () => cv.redraw());
+    const Q = MB.range("my-q", (v) => v + "주", () => cv.redraw());
+    reset();
+    const cv = MB.canvas("#my-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("my-cv"), b = flow.b;
+      const LB = nar ? { x: 6, y: 22, w: w - 12, h: 300 } : { x: 8, y: 22, w: Math.min(360, w * 0.62), h: h - 32 };
+      rows = ladder(ctx, LB, b, { levels: 7, last: b.last, flash, header: true, mine: mineMap(b), sel: type() === "limit" ? sel : null });
+      const rx = nar ? 6 : LB.x + LB.w + 16, ry = nar ? 336 : 8;
+      tape(ctx, { x: rx, y: ry, w: nar ? w - 12 : w - rx - 8, h: h - ry - 26 }, list);
+      const rest = cur != null ? [...b.bids, ...b.asks].find((x) => x.id === cur) : null;
+      MB.stat("my-o-px", type() === "limit" ? px(sel) : "<small>시장가</small>");
+      MB.stat("my-o-fill", cur != null ? qty(stat.f) + " <small>/ " + curOrig + "</small>" : "—");
+      MB.stat("my-o-avg", stat.f ? px(stat.c / stat.f) : "—");
+      MB.stat("my-o-rest", cur != null ? qty(rest ? rest.qty : 0) : "—");
+    }, { get height() { return narrow("my-cv") ? 470 : 380; } });
+    MB.drag(cv.canvas, { start(x, y) { const r = rowAt(rows, y); if (r) { sel = r.price; if (type() !== "limit") type.set("limit"); cv.redraw(); } } });
+    document.getElementById("my-go").addEventListener("click", () => {
+      const b = flow.b, s = side(), q = Q();
+      const old = cur != null ? [...b.bids, ...b.asks].find((x) => x.id === cur) : null;
+      if (old) b.cancel(old.id);
+      stat = { f: 0, c: 0 }; curOrig = q;
+      let fills;
+      if (type() === "limit") { fills = b.limit(s, sel, q, "me"); cur = fills.id; }
+      else { cur = b.seq + 1; fills = b.market(s, q, "me"); }
+      absorb(fills);
+      const nm = (s === "buy" ? "매수 " : "매도 ") + (type() === "limit" ? "지정가 " + px(sel) + " " : "시장가 ") + q + "주: ";
+      const got = fills.reduce((a, t) => a + t.qty, 0);
+      let msg = got ? got + "주 즉시 체결(평균 " + px(stat.c / stat.f) + ")" : "즉시 체결 없음";
+      if (type() === "limit" && got < q) msg += ", " + (q - got) + "주는 호가창에서 대기";
+      if (type() === "market" && got < q) msg += ", 남은 " + (q - got) + "주는 상대가 없어 취소";
+      logEl.textContent = (old ? "이전 미체결 주문을 취소하고 " : "") + nm + msg;
+      cv.redraw();
+    });
+    document.getElementById("my-wait").addEventListener("click", () => { queue += 15; });
+    document.getElementById("my-cancel").addEventListener("click", () => {
+      const x = cur != null ? flow.b.cancel(cur) : null;
+      logEl.textContent = x ? "미체결 " + x.qty + "주를 취소했다. 이미 체결된 " + stat.f + "주는 그대로다." : "취소할 미체결 주문이 없다.";
+      cv.redraw();
+    });
+    document.getElementById("my-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      let dirty = flash.size > 0;
+      if (queue > 0) {
+        acc += dt;
+        while (acc > 0.09 && queue > 0) { acc -= 0.09; queue--; absorb(flow.step()); dirty = true; }
+        if (!queue) acc = 0;
+      }
+      flashDecay(flash, dt);
+      if (dirty) cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 3. 같은 가격의 줄 */
+  (function () {
+    let b, mine, mineOrig, myFill, pending, acc, last, names, flash;
+    function reset() {
+      b = new ST.Book({ ref: 72000 });
+      b.limit("buy", 71900, 30, "A"); b.limit("buy", 71900, 40, "B"); b.limit("buy", 71800, 60, "C"); b.limit("buy", 71800, 20, "D");
+      mine = null; mineOrig = 0; myFill = 0; pending = 0; acc = 0; last = null; names = "EFGHIJKLMNOPQRSTUVWXYZ".split(""); flash = 0;
+    }
+    reset();
+    const pxSel = MB.seg("qu-px");
+    const myOrder = () => b.bids.find((o) => o.owner === "me");
+    const cv = MB.canvas("#qu-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("qu-cv");
+      const lw = nar ? 58 : 76, x0 = lw + 8, x1 = w - 34, rowH = nar ? 46 : 54;
+      const lv = [71900, 71800];
+      const tot = Math.max(160, ...lv.map((p) => sumAt(b.bids, p) + 10));
+      const k = (x1 - x0) / tot;
+      text(ctx, "← 늦게 온 주문", x0, 20, { color: P.dim, size: 11 });
+      text(ctx, "먼저 온 주문 →", x1, 20, { color: P.dim, size: 11, align: "right" });
+      lv.forEach((p, li) => {
+        const y = 36 + li * (rowH + 26);
+        text(ctx, px(p), lw, y + rowH / 2, { color: P.up, align: "right", base: "middle", size: 13, mono: true, weight: 700 });
+        ctx.strokeStyle = P.grid; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, y + rowH + 6); ctx.lineTo(x1, y + rowH + 6); ctx.stroke();
+        let x = x1, order = 0;
+        b.bids.filter((o) => o.price === p).forEach((o) => {
+          const bw = Math.max(3, o.qty * k);
+          x -= bw;
+          const me = o.owner === "me";
+          rrect(ctx, x + 1, y, bw - 2, rowH, 5);
+          ctx.fillStyle = me ? P.accent : P.up; ctx.globalAlpha = me ? 0.85 : 0.22; ctx.fill(); ctx.globalAlpha = 1;
+          order++;
+          if (bw > 26) {
+            text(ctx, (me ? "나" : o.owner) + " " + o.qty, x + bw / 2, y + rowH / 2, { color: me ? P.bg : P.text, align: "center", base: "middle", size: 12, weight: 600 });
+          }
+          text(ctx, String(order), x + bw - 6, y - 4, { color: P.dim, align: "right", size: 10, mono: true });
+        });
+        if (!sumAt(b.bids, p)) text(ctx, "이 가격의 줄이 비었다", (x0 + x1) / 2, y + rowH / 2, { color: P.faint, align: "center", base: "middle", size: 12 });
+      });
+      if (pending > 0 || flash > 0) {
+        ctx.globalAlpha = Math.max(0.3, Math.min(1, flash + (pending > 0 ? 1 : 0)));
+        ctx.fillStyle = P.down; ctx.beginPath(); ctx.moveTo(w - 6, 50); ctx.lineTo(w - 26, 40); ctx.lineTo(w - 26, 60); ctx.closePath(); ctx.fill();
+        text(ctx, "매도", w - 16, 74, { color: P.down, align: "center", size: 11, weight: 700 });
+        text(ctx, String(Math.ceil(pending)), w - 16, 88, { color: P.down, align: "center", size: 11, mono: true });
+        ctx.globalAlpha = 1;
+      }
+      const m = myOrder();
+      let ahead = 0;
+      if (m) b.bids.forEach((o) => { if (o.price > m.price || (o.price === m.price && o.seq < m.seq)) ahead += o.qty; });
+      MB.stat("qu-o-ahead", m ? qty(ahead) : "—");
+      MB.stat("qu-o-fill", mineOrig ? qty(myFill) + " <small>/ " + mineOrig + "</small>" : "—");
+      MB.stat("qu-o-last", last ? px(last) : "—");
+    }, { get height() { return narrow("qu-cv") ? 190 : 210; } });
+    document.getElementById("qu-mine").addEventListener("click", () => {
+      if (myOrder()) return;
+      b.limit("buy", Number(pxSel()), 50, "me"); mineOrig += 50; cv.redraw();
+    });
+    document.getElementById("qu-sell").addEventListener("click", () => { pending += 60; });
+    document.getElementById("qu-other").addEventListener("click", () => {
+      const nm = names.shift() || "Z"; if (!names.length) names = "EFGHIJKLMNOPQRSTUVWXYZ".split("");
+      b.limit("buy", b.bids.length % 2 ? 71900 : 71800, 20 + 10 * (nm.charCodeAt(0) % 4), nm); cv.redraw();
+    });
+    document.getElementById("qu-amend").addEventListener("click", () => {
+      const m = myOrder(); if (!m) return;
+      b.cancel(m.id); mineOrig -= Math.min(10, m.qty);
+      if (m.qty > 10) b.limit("buy", m.price, m.qty - 10, "me");
+      cv.redraw();
+    });
+    document.getElementById("qu-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (pending <= 0 && flash <= 0) return;
+      if (pending > 0) {
+        acc += dt * 70;
+        const k = Math.min(Math.floor(acc), Math.ceil(pending));
+        if (k > 0) {
+          acc -= k;
+          const fills = b.market("sell", k, "seller");
+          fills.forEach((t) => { last = t.price; if (t.buyer === "me") myFill += t.qty; });
+          pending -= k;
+          if (!b.bids.length) pending = 0;
+          flash = 1;
+        }
+      } else flash -= dt * 1.5;
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 4. 호가 단위 계단 */
+  (function () {
+    let p = 19990, G = null;
+    const cv = MB.canvas("#tk-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("tk-cv");
+      const xt = nar ? [2000, 5000, 2e4, 5e4, 2e5, 5e5] : [1000, 2000, 5000, 1e4, 2e4, 5e4, 1e5, 2e5, 5e5, 1e6];
+      const top = { x: 58, y: 18, w: w - 76, h: (h - 90) * 0.42 };
+      const bot = { x: 58, y: top.y + top.h + 34, w: w - 76, h: h - top.h - 18 - 34 - 46 };
+      const xs = [];
+      for (let e = 3; e <= 6; e += 0.002) xs.push(Math.pow(10, e));
+      const steps = [];
+      xs.forEach((x) => steps.push([x, ST.tick(x)]));
+      const c1 = MB.chart(ctx, top, { x: [1000, 1e6], y: [0.5, 2000], logX: true, logY: true, xTicks: xt, xFmt: () => "", yTicks: [1, 10, 100, 1000], yFmt: (v) => v.toLocaleString("ko-KR"),
+        series: [{ data: steps, color: P.accent, width: 2 }] });
+      text(ctx, "호가 단위(원)", top.x + 6, top.y + 12, { color: P.dim, size: 11 });
+      const ratio = xs.map((x) => [x, (ST.tick(x) / x) * 100]);
+      const c2 = MB.chart(ctx, bot, { x: [1000, 1e6], y: [0, 0.3], logX: true, xTicks: xt, xFmt: (v) => MB.wonAxis(v), yTicks: [0, 0.1, 0.2, 0.3], yFmt: (v) => v.toFixed(1) + "%", xLabel: "주가(로그 눈금)",
+        series: [{ data: ratio, color: P.accent2, width: 1.8 }] });
+      text(ctx, "한 틱 ÷ 주가", bot.x + 6, bot.y + 12, { color: P.dim, size: 11 });
+      G = c2;
+      const cos = ST.COKEYS.map((k) => ST.CO[k]).sort((a, b) => a.price - b.price);
+      cos.forEach((c, i) => {
+        const x = c2.X(c.price), y = c2.Y((ST.tick(c.price) / c.price) * 100);
+        ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(x, y, 3.5, 0, TAU); ctx.fill();
+        text(ctx, c.name.slice(0, 2), x, i % 2 ? y + 15 : y - 8, { color: P.dim, align: "center", size: 11, weight: 600 });
+      });
+      const t = ST.tick(p), r = (t / p) * 100, X = c2.X(p);
+      ctx.strokeStyle = P.accent; ctx.setLineDash([4, 3]); ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(X, top.y); ctx.lineTo(X, bot.y + bot.h); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(X, c1.Y(t), 4, 0, TAU); ctx.fill();
+      const lbl = px(p) + "원 · 틱 " + t + "원";
+      const lx = MB.clamp(X, top.x + 70, top.x + top.w - 70);
+      text(ctx, lbl, lx, top.y + top.h + 22, { color: P.accent, align: "center", size: 12, weight: 700 });
+      knob(ctx, X, c2.Y(r), P, 7);
+      MB.stat("tk-o-p", px(p) + "원");
+      MB.stat("tk-o-t", t.toLocaleString("ko-KR") + "원");
+      MB.stat("tk-o-r", r.toFixed(3) + "%");
+      MB.stat("tk-o-n", px(ST.stepTick(p, -1)) + " · " + px(ST.stepTick(p, 1)));
+    }, { get height() { return narrow("tk-cv") ? 380 : 400; } });
+    MB.drag(cv.canvas, { move(x) {
+      if (!G) return;
+      const e = 3 + MB.clamp((x - G.box.x) / G.box.w, 0, 1) * 3;
+      p = MB.clamp(ST.roundTick(Math.pow(10, e), "down"), 1000, 999000);
+      cv.redraw();
+    } });
+  })();
+
+  /* ---------------------------------------------------------- 5. 스프레드 비용 계산기 */
+  (function () {
+    const co = MB.seg("sp-co", () => cv.redraw());
+    const S = MB.range("sp-s", (v) => v + "틱", () => cv.redraw());
+    const N = MB.range("sp-n", (v) => v + "번", () => cv.redraw());
+    const A = MB.range("sp-a", (v) => MB.won(v), () => cv.redraw());
+    function rt(k, s, amt) {
+      const c = ST.CO[k], bid = c.price, t = ST.tick(bid), ask = bid + s * t, q = Math.max(1, Math.floor(amt / ask));
+      const buy = ST.cost({ side: "buy", price: ask, qty: q, market: c.market }), sell = ST.cost({ side: "sell", price: bid, qty: q, market: c.market });
+      return { q, amount: buy.amount, spread: q * (ask - bid), fee: buy.fee + sell.fee, tax: sell.tax, total: buy.total - sell.total };
+    }
+    const cv = MB.canvas("#sp-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("sp-cv"), k = co(), s = S(), n = N(), amt = A();
+      const r = rt(k, s, amt);
+      const parts = [["스프레드", r.spread, P.accent], ["수수료", r.fee, P.accent2], ["거래세", r.tax, P.warn]];
+      const bx = { x: 16, y: 34, w: nar ? w - 32 : w * 0.4 - 24, h: 26 };
+      text(ctx, "왕복 1회 비용의 구성", bx.x, 20, { color: P.dim, size: 12 });
+      let x = bx.x;
+      parts.forEach(([, v, c]) => { const ww = (v / r.total) * bx.w; ctx.fillStyle = c; ctx.globalAlpha = 0.8; ctx.fillRect(x, bx.y, ww, bx.h); ctx.globalAlpha = 1; x += ww; });
+      parts.forEach(([nm, v, c], i) => {
+        const y = bx.y + bx.h + 22 + i * 20;
+        ctx.fillStyle = c; ctx.fillRect(bx.x, y - 9, 10, 10);
+        text(ctx, nm, bx.x + 16, y, { color: P.text, size: 12 });
+        text(ctx, wonx(v, 0) + " (" + Math.round((v / r.total) * 100) + "%)", bx.x + bx.w, y, { color: P.text, align: "right", size: 12, mono: true });
+      });
+      text(ctx, ST.CO[k].name + " " + r.q + "주, 왕복 " + wonx(r.total), bx.x, bx.y + bx.h + 92, { color: P.dim, size: 12 });
+      const cb = nar ? { x: 58, y: 200, w: w - 76, h: h - 200 - 46 } : { x: w * 0.4 + 54, y: 16, w: w * 0.6 - 72, h: h - 62 };
+      const ymax = Math.max(r.total * 250, 1);
+      const c = MB.chart(ctx, cb, { x: [0, 250], y: [0, ymax], yFmt: MB.wonAxis, xLabel: "한 해 왕복 횟수", xTicks: [0, 50, 100, 150, 200, 250],
+        series: [{ data: [[0, 0], [250, r.total * 250]], color: P.accent, width: 2 }],
+        hlines: [{ y: r.amount, color: P.bad, label: "거래 금액 " + MB.wonAxis(r.amount) }],
+        points: [{ x: n, y: r.total * n, color: P.accent, r: 5 }] });
+      text(ctx, MB.won(r.total * n), MB.clamp(c.X(n) + 8, cb.x, cb.x + cb.w - 80), c.Y(r.total * n) - 8, { color: P.text, size: 12, weight: 700 });
+      MB.stat("sp-o-1", wonx(r.total) + " <small>" + pctS(r.total / r.amount) + "</small>");
+      MB.stat("sp-o-s", wonx(r.spread) + " <small>" + pctS(r.spread / r.amount) + "</small>");
+      MB.stat("sp-o-y", MB.won(r.total * n));
+      const yr = (r.total * n) / r.amount;
+      MB.stat("sp-o-r", tone(yr > 0.5 ? "bad-t" : yr > 0.05 ? "warn-t" : "", pctS(yr, 1)));
+    }, { get height() { return narrow("sp-cv") ? 440 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 6. 시장가 주문 크기와 미끄러짐 */
+  (function () {
+    const book = new ST.Book({ ref: 72000 }).seed({ levels: 10, seed: 3, size: 100 });
+    const QMAX = 2000;
+    let G = null;
+    const side = MB.seg("im-side", () => cv.redraw());
+    const Q = MB.range("im-q", (v) => v.toLocaleString("ko-KR") + "주", () => cv.redraw());
+    const cv = MB.canvas("#im-cv", (ctx, w, h) => {
+      const P = MB.palette(), s = side(), q = Q(), buy = s === "buy";
+      const opp = buy ? book.asks : book.bids, bb = book.best(), mid = bb.mid;
+      const total = ST.sum(opp.map((o) => o.qty));
+      const steps = []; let cum = 0;
+      opp.forEach((o) => { steps.push([cum, o.price]); cum += o.qty; steps.push([cum, o.price]); });
+      const pLast = opp[opp.length - 1].price, pFirst = opp[0].price;
+      const lo = Math.min(pFirst, pLast, mid), hi = Math.max(pFirst, pLast, mid);
+      const pad = (hi - lo) * 0.08;
+      const im = book.impact(s, q);
+      const c = MB.chart(ctx, { x: 64, y: 16, w: w - 82, h: h - 62 }, { x: [0, QMAX], y: [lo - pad, hi + pad], yFmt: (v) => px(v), xLabel: "주문 수량(주)",
+        yTicks: [lo, (lo + hi) / 2, hi].map((v) => ST.roundTick(v)),
+        hlines: [{ y: mid, color: P.faint, label: "가운데 값 " + px(mid) }] });
+      G = c;
+      // 먹은 부분
+      ctx.save(); ctx.beginPath(); ctx.rect(c.box.x, c.box.y, c.box.w, c.box.h); ctx.clip();
+      ctx.fillStyle = P.accent; ctx.globalAlpha = 0.2;
+      let acc = 0;
+      for (const o of opp) { if (acc >= q) break; const a = Math.min(o.qty, q - acc); ctx.fillRect(c.X(acc), c.Y(o.price), c.X(acc + a) - c.X(acc), c.Y(mid) - c.Y(o.price)); acc += a; }
+      ctx.globalAlpha = 1;
+      if (q > total) { ctx.fillStyle = P.bad; ctx.globalAlpha = 0.12; ctx.fillRect(c.X(total), c.box.y, c.X(QMAX) - c.X(total), c.box.h); ctx.globalAlpha = 1; }
+      ctx.strokeStyle = buy ? P.down : P.up; ctx.lineWidth = 2; ctx.beginPath();
+      steps.forEach(([x, y], i) => (i ? ctx.lineTo(c.X(x), c.Y(y)) : ctx.moveTo(c.X(x), c.Y(y)))); ctx.stroke();
+      if (isFinite(im.avg)) {
+        ctx.strokeStyle = P.accent2; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.moveTo(c.box.x, c.Y(im.avg)); ctx.lineTo(c.X(Math.min(q, total)), c.Y(im.avg)); ctx.stroke(); ctx.setLineDash([]);
+        text(ctx, "평균 " + px(Math.round(im.avg)), c.box.x + 6, c.Y(im.avg) + (buy ? -6 : 14), { color: P.accent2, size: 12, weight: 700 });
+      }
+      ctx.restore();
+      if (q > total) text(ctx, "보이는 호가가 바닥났다", c.X((total + QMAX) / 2), c.box.y + 18, { color: P.bad, align: "center", size: 12, weight: 700 });
+      text(ctx, buy ? "매도 호가를 싼 것부터 쌓은 계단" : "매수 호가를 비싼 것부터 쌓은 계단", c.box.x + 6, buy ? c.box.y + 14 : c.box.y + c.box.h - 8, { color: P.dim, size: 11 });
+      knob(ctx, c.X(Math.min(q, QMAX)), c.Y(im.worst != null ? im.worst : pFirst), P, 7);
+      MB.stat("im-o-avg", isFinite(im.avg) ? px(Math.round(im.avg * 10) / 10) + "원" : "—");
+      MB.stat("im-o-worst", im.worst != null ? px(im.worst) + "원" : "—");
+      MB.stat("im-o-slip", tone(im.slip > 0.003 ? "bad-t" : "", pctS(im.slip, 3)) + (q > total ? " <small>" + (q - total) + "주 미체결</small>" : ""));
+      MB.stat("im-o-won", wonx(Math.abs(im.avg - mid) * im.filled));
+    }, { get height() { return narrow("im-cv") ? 300 : 330; } });
+    MB.drag(cv.canvas, { move(x) { if (!G) return; Q.set(MB.clamp(Math.round(((x - G.box.x) / G.box.w) * QMAX / 10) * 10, 10, QMAX)); } });
+  })();
+
+  /* ---------------------------------------------------------- 7. 유동성 비교 */
+  (function () {
+    let seed = 1, thick, thin;
+    function build() {
+      thick = new ST.Book({ ref: 15000 }).seed({ levels: 12, seed: 40 + seed, size: 3000 });
+      thin = new ST.Book({ ref: 15000 });
+      const r = ST.rng(70 + seed);
+      let a = ST.stepTick(15000, 1 + Math.floor(r() * 3)), bq = ST.stepTick(15000, -(3 + Math.floor(r() * 3)));
+      for (let i = 0; i < 12; i++) {
+        thin.limit("sell", a, Math.round(40 + r() * 320), "mm");
+        thin.limit("buy", bq, Math.round(40 + r() * 320), "mm");
+        a = ST.stepTick(a, 1 + Math.floor(r() * r() * 4)); bq = ST.stepTick(bq, -(1 + Math.floor(r() * r() * 4)));
+      }
+    }
+    build();
+    const A = MB.range("lq-a", (v) => MB.won(v), () => cv.redraw());
+    function panel(ctx, B, book, amt, title) {
+      const P = MB.palette(), bb = book.best(), q = Math.floor(amt / bb.ask), im = book.impact("buy", q);
+      text(ctx, title, B.x + B.w / 2, B.y + 12, { color: P.text, align: "center", size: 13, weight: 700 });
+      const eaten = new Map(); let left = q;
+      for (const o of book.asks) { if (left <= 0) break; const e = Math.min(left, o.qty); eaten.set(o.price, (eaten.get(o.price) || 0) + e); left -= e; }
+      ladder(ctx, { x: B.x, y: B.y + 24, w: B.w, h: B.h - 74 }, book, { levels: 7, eaten });
+      const y = B.y + B.h - 34;
+      text(ctx, q.toLocaleString("ko-KR") + "주 중 " + im.filled.toLocaleString("ko-KR") + "주 체결", B.x + B.w / 2, y, { color: P.dim, align: "center", size: 12 });
+      text(ctx, "평균 " + px(Math.round(im.avg)) + " · 미끄러짐 " + pctS(im.slip), B.x + B.w / 2, y + 18, { color: im.slip > 0.005 ? P.bad : P.text, align: "center", size: 12, weight: 600 });
+      return { im, q, bb };
+    }
+    const cv = MB.canvas("#lq-cv", (ctx, w, h) => {
+      const nar = narrow("lq-cv"), amt = A();
+      const ra = panel(ctx, nar ? { x: 4, y: 6, w: w - 8, h: h / 2 - 8 } : { x: 6, y: 8, w: w / 2 - 14, h: h - 14 }, thick, amt, "유동성 많은 종목");
+      const rb = panel(ctx, nar ? { x: 4, y: h / 2 + 4, w: w - 8, h: h / 2 - 8 } : { x: w / 2 + 8, y: 8, w: w / 2 - 14, h: h - 14 }, thin, amt, "유동성 적은 종목");
+      MB.stat("lq-o-a", pctS(ra.im.slip, 3));
+      MB.stat("lq-o-b", tone("bad-t", pctS(rb.im.slip, 2)) + (rb.im.filled < rb.q ? " <small>" + (rb.q - rb.im.filled).toLocaleString("ko-KR") + "주 남음</small>" : ""));
+      MB.stat("lq-o-s", rb.bb.spread + "원 <small>" + pctS(rb.bb.spread / rb.bb.mid) + "</small>");
+    }, { get height() { return narrow("lq-cv") ? 640 : 380; } });
+    document.getElementById("lq-re").addEventListener("click", () => { seed++; build(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 8. 한 번에 vs 나눠서 */
+  (function () {
+    const QTOT = 2000, L = 40;
+    let seed = 3, base, res = null, shown = 0, acc = 0, running = false;
+    function mkBase() { const r = ST.rng(500 + seed); base = Array.from({ length: L }, (_, i) => Math.round(150 * (0.6 + 0.8 * r()) * (1 + i * 0.03))); }
+    function simulate(n, rho) {
+      const g = ST.gauss(900 + seed), rem = base.slice();
+      let off = 0;
+      const once = (() => { let left = QTOT, cost = 0; for (let i = 0; left > 0 && i < L; i++) { const a = Math.min(left, base[i]); cost += a * ST.stepTick(72000, i); left -= a; } return cost / QTOT; })();
+      const slices = [];
+      for (let k = 0; k < n; k++) {
+        if (k) for (let i = 0; i < L; i++) rem[i] += (base[i] - rem[i]) * rho;
+        let left = QTOT / n, cost = 0;
+        for (let i = 0; left > 1e-9 && i < L; i++) { const take = Math.min(left, rem[i]); cost += take * ST.stepTick(72000, off + i); rem[i] -= take; left -= take; }
+        slices.push({ t: k, avg: cost / (QTOT / n), mid: ST.stepTick(72000, off) });
+        off += Math.round(g());
+      }
+      return { once, slices, avg: ST.mean(slices.map((x) => x.avg)) };
+    }
+    mkBase();
+    const N = MB.range("tw-n", (v) => v + "번", () => { res = null; cv.redraw(); });
+    const R = MB.range("tw-r", (v) => Math.round(v * 100) + "%", () => { res = null; cv.redraw(); });
+    const cv = MB.canvas("#tw-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = N();
+      const sim = res || simulate(n, R());
+      const vis = res ? sim.slices.slice(0, shown) : [];
+      const all = sim.slices.map((s) => s.avg).concat(sim.slices.map((s) => s.mid), [sim.once, 72000]);
+      const lo = Math.min(...all) - 100, hi = Math.max(...all) + 100;
+      const c = MB.chart(ctx, { x: 64, y: 16, w: w - 82, h: h - 62 }, { x: [-0.5, Math.max(n, 2) - 0.5], y: [lo, hi], yFmt: (v) => px(v), xLabel: "주문 조각(1분 간격)",
+        xTicks: Array.from({ length: Math.max(n, 2) }, (_, i) => i).filter((i) => n <= 10 || i % 5 === 0), xFmt: (v) => String(v + 1),
+        hlines: [{ y: sim.once, color: P.bad, label: "한 번에 평균 " + px(Math.round(sim.once)) }] });
+      if (vis.length) {
+        ctx.strokeStyle = P.faint; ctx.lineWidth = 1.5; ctx.beginPath();
+        vis.forEach((s, i) => (i ? ctx.lineTo(c.X(s.t), c.Y(s.mid)) : ctx.moveTo(c.X(s.t), c.Y(s.mid)))); ctx.stroke();
+        const bw = Math.min(26, ((c.box.w / Math.max(n, 2)) * 0.6));
+        vis.forEach((s) => { ctx.fillStyle = P.accent; ctx.globalAlpha = 0.75; ctx.fillRect(c.X(s.t) - bw / 2, c.Y(s.avg), bw, c.Y(s.mid) - c.Y(s.avg)); ctx.globalAlpha = 1; });
+        const a = ST.mean(vis.map((s) => s.avg));
+        ctx.strokeStyle = P.accent; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(c.box.x, c.Y(a)); ctx.lineTo(c.box.x + c.box.w, c.Y(a)); ctx.stroke(); ctx.setLineDash([]);
+        text(ctx, "나눠서 평균 " + px(Math.round(a)), c.box.x + 6, c.Y(a) + 14, { color: P.accent, size: 12, weight: 700 });
+      } else text(ctx, "\"실행\"을 누르면 조각이 1분마다 체결된다", c.box.x + c.box.w / 2, c.box.y + c.box.h / 2, { color: P.dim, align: "center", size: 13 });
+      text(ctx, "막대: 각 조각의 평균가", c.box.x + c.box.w - 4, c.box.y + c.box.h - 8, { color: P.dim, align: "right", size: 11 });
+      MB.stat("tw-o-1", px(Math.round(sim.once)) + "원");
+      if (res && shown >= sim.slices.length) {
+        MB.stat("tw-o-n", px(Math.round(sim.avg)) + "원");
+        const d = (sim.avg - sim.once) * QTOT;
+        MB.stat("tw-o-d", tone(d < 0 ? "ok-t" : "bad-t", (d < 0 ? "나눠서 " : "한 번에 ") + MB.won(Math.abs(d)) + " 절약"));
+      } else { MB.stat("tw-o-n", "—"); MB.stat("tw-o-d", "—"); }
+    }, { get height() { return narrow("tw-cv") ? 300 : 320; } });
+    document.getElementById("tw-go").addEventListener("click", () => { res = simulate(N(), R()); shown = 0; acc = 0; running = true; cv.redraw(); });
+    document.getElementById("tw-re").addEventListener("click", () => { seed++; mkBase(); res = simulate(N(), R()); shown = 0; acc = 0; running = true; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!running || !res) return;
+      acc += dt;
+      if (acc > Math.max(0.08, 1.2 / res.slices.length)) { acc = 0; shown++; if (shown >= res.slices.length) running = false; cv.redraw(); }
+    });
+  })();
+
+  /* ---------------------------------------------------------- 9. 체결강도 게이지 */
+  (function () {
+    let flow, win, hist, acc;
+    const Bs = MB.range("cs-b", (v) => Math.round(v * 100) + "%", () => tune());
+    const wall = MB.seg("cs-wall", () => tune());
+    function tune() {
+      const thick = wall() === "1";
+      flow.bias = Bs(); flow.drift = (Bs() - 0.5) * 0.0004 * (thick ? 0.04 : 1);
+      flow.sellMult = thick ? 4 : 1; flow.sellProb = thick ? 0.7 : 0.5;
+    }
+    function reset() {
+      flow = Flow(72000, 21, { size: 100, vol: 0.00015, k: 40 }); win = []; hist = [72000]; acc = 0; tune();
+      for (let i = 0; i < 300; i++) { flow.step().forEach((t) => win.push(t)); hist.push(flow.b.last); }
+      win = win.slice(-300);
+    }
+    reset();
+    const cv = MB.canvas("#cs-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("cs-cv");
+      const bq = ST.sum(win.filter((t) => t.side === "buy").map((t) => t.qty)), sq = ST.sum(win.filter((t) => t.side === "sell").map((t) => t.qty));
+      const s = sq ? (bq / sq) * 100 : 100;
+      const R = nar ? Math.min(w * 0.36, 110) : Math.min(h * 0.55, 130), cx = nar ? w / 2 : 30 + R, cy = nar ? R + 26 : h / 2 + R * 0.45;
+      const ang = (v) => Math.PI + (MB.clamp(v, 0, 500) / 500) * Math.PI;
+      ctx.lineWidth = 16;
+      ctx.strokeStyle = P.downSoft; ctx.beginPath(); ctx.arc(cx, cy, R, Math.PI, ang(100)); ctx.stroke();
+      ctx.strokeStyle = P.upSoft; ctx.beginPath(); ctx.arc(cx, cy, R, ang(100), TAU); ctx.stroke();
+      [0, 100, 200, 300, 400, 500].forEach((v) => { const a = ang(v); text(ctx, v + "%", cx + Math.cos(a) * (R + 18), cy + Math.sin(a) * (R + 18), { color: P.dim, align: "center", base: "middle", size: 10, mono: true }); });
+      const a = ang(s);
+      ctx.strokeStyle = s >= 100 ? P.up : P.down; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * (R - 4), cy + Math.sin(a) * (R - 4)); ctx.stroke();
+      ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(cx, cy, 5, 0, TAU); ctx.fill();
+      text(ctx, Math.round(s) + "%", cx, cy + 26, { color: s >= 100 ? P.up : P.down, align: "center", size: 20, weight: 700, mono: true });
+      text(ctx, "체결강도", cx, cy + 44, { color: P.dim, align: "center", size: 11 });
+      const cb = nar ? { x: 58, y: cy + 66, w: w - 70, h: h - cy - 76 } : { x: cx + R + 80, y: 16, w: w - (cx + R + 80) - 14, h: h - 32 };
+      sparkline(ctx, cb, hist.slice(-240), { len: 240, ref: 72000, refLabel: "시작 72,000" });
+      text(ctx, "현재가", cb.x + 6, cb.y + 14, { color: P.dim, size: 11 });
+      MB.stat("cs-o-s", tone(s >= 100 ? "up-t" : "down-t", Math.round(s) + "%"));
+      MB.stat("cs-o-bs", bq.toLocaleString("ko-KR") + " / " + sq.toLocaleString("ko-KR"));
+      const ch = flow.b.last / 72000 - 1;
+      MB.stat("cs-o-p", tone(MB.tone(ch), MB.chg(ch)));
+    }, { get height() { return narrow("cs-cv") ? 470 : 300; } });
+    document.getElementById("cs-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      acc += dt;
+      let dirty = false;
+      while (acc > 0.05) {
+        acc -= 0.05;
+        flow.step().forEach((t) => win.push(t));
+        if (win.length > 300) win.splice(0, win.length - 300);
+        hist.push(flow.b.last); if (hist.length > 600) hist.splice(0, 300);
+        dirty = true;
+      }
+      if (dirty) cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 10. 동시호가 곡선 */
+  (function () {
+    let seed = 2, orders, sel = 71700, G = null, revealed = false, res;
+    const logEl = document.getElementById("au-log");
+    function gen() {
+      const r = ST.rng(300 + seed), g = ST.gauss(310 + seed), center = ST.stepTick(72000, Math.round(g() * 2));
+      orders = [];
+      for (let i = 0; i < 14; i++) orders.push({ side: "buy", price: ST.stepTick(center, Math.round(g() * 2.5) - 1), qty: 10 * Math.round(2 + r() * 12) });
+      for (let i = 0; i < 14; i++) orders.push({ side: "sell", price: ST.stepTick(center, Math.round(g() * 2.5) + 1), qty: 10 * Math.round(2 + r() * 12) });
+      orders.push({ side: "buy", price: null, qty: 10 * Math.round(3 + r() * 6) }, { side: "sell", price: null, qty: 10 * Math.round(3 + r() * 6) });
+      res = ST.auction(orders, 72000);
+      revealed = false; sel = ST.stepTick(res.price, -4);
+      logEl.textContent = "가격 막대를 끌어 체결량이 가장 많아지는 곳을 찾는다.";
+    }
+    gen();
+    const at = (p) => {
+      const buy = ST.sum(orders.filter((o) => o.side === "buy" && (o.price == null || o.price >= p)).map((o) => o.qty));
+      const sell = ST.sum(orders.filter((o) => o.side === "sell" && (o.price == null || o.price <= p)).map((o) => o.qty));
+      return { buy, sell, vol: Math.min(buy, sell) };
+    };
+    const cv = MB.canvas("#au-cv", (ctx, w, h) => {
+      const P = MB.palette();
+      const ps = orders.filter((o) => o.price != null).map((o) => o.price);
+      const lo = ST.stepTick(Math.min(...ps), -1), hi = ST.stepTick(Math.max(...ps), 1);
+      const grid = []; for (let p = lo; p <= hi; p = ST.stepTick(p, 1)) grid.push(p);
+      const pts = grid.map((p) => ({ p, ...at(p) }));
+      const xmax = Math.max(...pts.map((d) => Math.max(d.buy, d.sell))) * 1.08;
+      const t = ST.tick(lo);
+      const c = MB.chart(ctx, { x: 64, y: 16, w: w - 82, h: h - 62 }, { x: [0, xmax], y: [lo - t / 2, hi + t / 2], yFmt: (v) => px(v), xLabel: "누적 수량(주)",
+        yTicks: grid.filter((_, i) => i % Math.ceil(grid.length / 7) === 0) });
+      G = c;
+      const stair = (key, color) => {
+        ctx.strokeStyle = color; ctx.lineWidth = 2.2; ctx.beginPath();
+        pts.forEach((d, i) => { const y0 = c.Y(d.p - t / 2), y1 = c.Y(d.p + t / 2), x = c.X(d[key]); i ? ctx.lineTo(x, y0) : ctx.moveTo(x, y0); ctx.lineTo(x, y1); });
+        ctx.stroke();
+      };
+      ctx.save(); ctx.beginPath(); ctx.rect(c.box.x, c.box.y, c.box.w, c.box.h); ctx.clip();
+      pts.forEach((d) => { ctx.fillStyle = P.accent; ctx.globalAlpha = 0.14; ctx.fillRect(c.X(0), c.Y(d.p + t / 2) + 1, c.X(d.vol) - c.X(0), c.Y(d.p - t / 2) - c.Y(d.p + t / 2) - 2); ctx.globalAlpha = 1; });
+      stair("buy", P.up); stair("sell", P.down);
+      ctx.restore();
+      if (revealed) {
+        const y = c.Y(res.price);
+        ctx.strokeStyle = P.ok; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(c.box.x, y); ctx.lineTo(c.box.x + c.box.w, y); ctx.stroke(); ctx.setLineDash([]);
+        text(ctx, "거래소 답 " + px(res.price), c.box.x + c.box.w - 4, y + 15, { color: P.ok, align: "right", size: 12, weight: 700 });
+      }
+      const d = at(sel), y = c.Y(sel);
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(c.box.x, y); ctx.lineTo(c.box.x + c.box.w, y); ctx.stroke();
+      ctx.fillStyle = P.accent; ctx.beginPath(); ctx.arc(c.X(d.buy), y, 4, 0, TAU); ctx.arc(c.X(d.sell), y, 4, 0, TAU); ctx.fill();
+      knob(ctx, c.box.x + c.box.w - 10, y, P, 8);
+      MB.stat("au-o-p", px(sel) + "원");
+      MB.stat("au-o-bs", d.buy + " / " + d.sell);
+      MB.stat("au-o-v", qty(d.vol));
+    }, { get height() { return narrow("au-cv") ? 340 : 360; } });
+    MB.drag(cv.canvas, { move(x, y) {
+      if (!G) return;
+      const ps = orders.filter((o) => o.price != null).map((o) => o.price);
+      const lo = ST.stepTick(Math.min(...ps), -1), hi = ST.stepTick(Math.max(...ps), 1), t = ST.tick(lo);
+      const v = lo + ((G.box.y + G.box.h - y) / G.box.h) * (hi - lo + t) - t / 2;
+      sel = MB.clamp(ST.roundTick(v), lo, hi); cv.redraw();
+    } });
+    document.getElementById("au-ans").addEventListener("click", () => {
+      revealed = true;
+      const mine = at(sel).vol;
+      logEl.innerHTML = mine === res.volume ? (sel === res.price ? "정답이다. " : "체결량은 최대와 같다. 거래소는 동률이면 잔량이 적은 가격을 고른다. ") + "시가 <b>" + px(res.price) + "원</b>, " + res.volume + "주 체결."
+        : "고른 가격의 체결량은 " + mine + "주. 최대는 <b>" + px(res.price) + "원</b>에서 " + res.volume + "주다.";
+      cv.redraw();
+    });
+    document.getElementById("au-re").addEventListener("click", () => { seed++; gen(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 11. 장 시작 동시호가 진행 */
+  (function () {
+    const REF = 72000, SPOOF = { side: "buy", price: 72400, qty: 1500, tag: "big" };
+    let minute, orders, path, acc = 0, auto = false;
+    const logEl = document.getElementById("op-log");
+    const sched = (() => {
+      const r = ST.rng(5), g = ST.gauss(6), out = [];
+      for (let m = 0; m <= 30; m++) {
+        const k = m === 0 ? 20 : 1 + Math.floor(r() * 3), list = [];
+        for (let i = 0; i < k; i++) {
+          const side = r() < 0.5 ? "buy" : "sell", drift = m > 20 ? 1 : 0;
+          const price = r() < 0.08 ? null : ST.stepTick(REF, Math.round(g() * 3) + drift + (side === "buy" ? -1 : 1));
+          list.push({ side, price, qty: 10 * Math.round(3 + r() * 15) });
+        }
+        out.push(list);
+      }
+      return out;
+    })();
+    const clock = (m) => (m >= 30 ? "09:00" : "08:" + String(30 + m).padStart(2, "0"));
+    function reset() { minute = 0; orders = sched[0].slice(); path = [ST.auction(orders, REF)]; auto = false; logEl.textContent = "08:30 동시호가 접수 시작. 주문이 쌓이기 시작한다."; }
+    function next() {
+      if (minute >= 30) return;
+      minute++;
+      sched[minute].forEach((o) => orders.push(o));
+      let msg = clock(minute) + " 새 주문 " + sched[minute].length + "건.";
+      if (minute === 20) { orders.push(SPOOF); msg = clock(minute) + " 누군가 72,400원에 1,500주 매수 주문을 냈다!"; }
+      if (minute === 29) { orders = orders.filter((o) => o !== SPOOF); msg = clock(minute) + " 큰 매수 주문 1,500주가 취소됐다."; }
+      const a = ST.auction(orders, REF); path.push(a);
+      if (minute === 30) msg = "09:00 시가 " + px(a.price) + "원 확정, " + a.volume.toLocaleString("ko-KR") + "주가 이 한 가격에 체결됐다.";
+      logEl.textContent = msg;
+    }
+    reset();
+    const cv = MB.canvas("#op-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("op-cv"), a = path[path.length - 1];
+      const cb = nar ? { x: 58, y: 16, w: w - 82, h: 170 } : { x: 64, y: 16, w: w * 0.56 - 84, h: h - 62 };
+      const ys = path.map((d) => d.price), lo = Math.min(...ys, REF) - 300, hi = Math.max(...ys, REF) + 300;
+      const c = MB.chart(ctx, cb, { x: [0, 30], y: [lo, hi], xTicks: [0, 10, 20, 30], xFmt: (v) => clock(v), yFmt: (v) => px(v), xLabel: nar ? "" : "시각",
+        series: [{ data: path.map((d, i) => [i, d.price]), color: P.accent, width: 2.2 }], hlines: [{ y: REF, color: P.faint, label: "전일 종가" }],
+        bands: minute >= 20 ? [{ x0: 20, x1: Math.min(minute, 29), color: P.accent2 + "22" }] : [] });
+      path.forEach((d, i) => { ctx.fillStyle = i === 30 ? P.ok : P.accent; ctx.beginPath(); ctx.arc(c.X(i), c.Y(d.price), i === 30 ? 6 : 2.5, 0, TAU); ctx.fill(); });
+      text(ctx, "예상 체결가", cb.x + 6, cb.y + 12, { color: P.dim, size: 11 });
+      // 오른쪽: 가격별 매수·매도 주문량
+      const R = nar ? { x: 8, y: cb.y + cb.h + 46, w: w - 16, h: h - cb.y - cb.h - 52 } : { x: w * 0.56 + 6, y: 22, w: w * 0.44 - 14, h: h - 30 };
+      const levels = []; for (let i = 5; i >= -5; i--) levels.push(ST.stepTick(a.price, i));
+      const bq = (p) => ST.sum(orders.filter((o) => o.side === "buy" && o.price === p).map((o) => o.qty));
+      const sq = (p) => ST.sum(orders.filter((o) => o.side === "sell" && o.price === p).map((o) => o.qty));
+      const mx = Math.max(50, ...levels.map((p) => Math.max(bq(p), sq(p))));
+      const rh = R.h / levels.length, qw = R.w * 0.38, cx = R.x + qw, cw = R.w - 2 * qw;
+      text(ctx, "매도 주문", cx - 6, R.y - 6, { color: P.dim, size: 11, align: "right" });
+      text(ctx, "매수 주문", cx + cw + 6, R.y - 6, { color: P.dim, size: 11 });
+      levels.forEach((p, i) => {
+        const y = R.y + i * rh, s = sq(p), b = bq(p);
+        if (p === a.price) { ctx.fillStyle = P.accent; ctx.globalAlpha = 0.14; ctx.fillRect(R.x, y, R.w, rh); ctx.globalAlpha = 1; }
+        if (s) { const bw = (Math.min(s, mx) / mx) * (qw - 6); ctx.fillStyle = P.downSoft; ctx.fillRect(cx - 2 - bw, y + 2, bw, rh - 4); text(ctx, s.toLocaleString("ko-KR"), cx - 6, y + rh / 2, { color: P.text, align: "right", base: "middle", size: 11, mono: true }); }
+        if (b) { const bw = (Math.min(b, mx) / mx) * (qw - 6); ctx.fillStyle = P.upSoft; ctx.fillRect(cx + cw + 2, y + 2, bw, rh - 4); text(ctx, b.toLocaleString("ko-KR"), cx + cw + 6, y + rh / 2, { color: P.text, base: "middle", size: 11, mono: true }); }
+        text(ctx, px(p), cx + cw / 2, y + rh / 2, { color: p === a.price ? P.accent : P.dim, align: "center", base: "middle", size: 11, mono: true, weight: p === a.price ? 700 : 400 });
+      });
+      MB.stat("op-o-t", minute === 30 ? "09:00" : clock(minute));
+      MB.stat("op-o-p", tone(MB.tone(a.price - REF), px(a.price) + "원"));
+      MB.stat("op-o-v", qty(a.volume));
+    }, { get height() { return narrow("op-cv") ? 520 : 340; } });
+    document.getElementById("op-next").addEventListener("click", () => { auto = false; next(); cv.redraw(); });
+    document.getElementById("op-all").addEventListener("click", () => { auto = true; });
+    document.getElementById("op-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!auto) return;
+      acc += dt;
+      if (acc > 0.18) { acc = 0; next(); cv.redraw(); if (minute >= 30) auto = false; }
+    });
+  })();
+
+  /* ---------------------------------------------------------- 12. 조건부 주문 */
+  (function () {
+    const fresh = () => new ST.Book({ ref: 72000 }).seed({ levels: 8, seed: 3, size: 100 });
+    const type = MB.seg("cd-type", () => cv.redraw());
+    const Pk = MB.range("cd-p", (v) => (["market", "best", "first"].includes(type()) ? "(쓰지 않음)" : px(ST.stepTick(72000, v)) + "원"), () => cv.redraw());
+    const Q = MB.range("cd-q", (v) => v + "주", () => cv.redraw());
+    const NAME = { limit: "지정가", market: "시장가", best: "최유리지정가", first: "최우선지정가", ioc: "IOC 지정가", fok: "FOK 지정가" };
+    function run(tp, k, q) {
+      const b = fresh(), before = fresh(), bb = b.best();
+      let price = ST.stepTick(72000, k), fills = [], rest = 0, canceled = 0;
+      if (tp === "market") { fills = b.market("buy", q, "me"); canceled = q - ST.sum(fills.map((t) => t.qty)); price = null; }
+      else if (tp === "best" || tp === "first") { price = tp === "best" ? bb.ask : bb.bid; fills = b.limit("buy", price, q, "me"); rest = fills.rest ? fills.rest.qty : 0; }
+      else if (tp === "fok") {
+        const avail = ST.sum(b.asks.filter((o) => o.price <= price).map((o) => o.qty));
+        if (avail >= q) fills = b.limit("buy", price, q, "me"); else canceled = q;
+      } else {
+        fills = b.limit("buy", price, q, "me"); rest = fills.rest ? fills.rest.qty : 0;
+        if (tp === "ioc" && rest) { b.cancel(fills.rest.id); canceled = rest; rest = 0; }
+      }
+      const f = ST.sum(fills.map((t) => t.qty)), cost = ST.sum(fills.map((t) => t.qty * t.price));
+      return { before, price, fills, f, avg: f ? cost / f : NaN, rest, canceled };
+    }
+    const cv = MB.canvas("#cd-cv", (ctx, w, h) => {
+      const P = MB.palette(), tp = type(), q = Q(), r = run(tp, Pk(), q), nar = narrow("cd-cv");
+      document.getElementById("cd-p-out").textContent = ["market", "best", "first"].includes(tp) ? "(쓰지 않음)" : px(ST.stepTick(72000, Pk())) + "원";
+      const eaten = new Map(); r.fills.forEach((t) => eaten.set(t.price, (eaten.get(t.price) || 0) + t.qty));
+      const mine = new Map(); if (r.rest) mine.set(r.price, r.rest);
+      const B = { x: 6, y: 66, w: Math.min(w - 12, 400), h: h - 74 };
+      B.x = (w - B.w) / 2;
+      ladder(ctx, B, r.before, { levels: 6, eaten, mine, header: true, sel: r.price });
+      const head = NAME[tp] + (r.price != null && !["market"].includes(tp) ? " " + px(r.price) : "") + " 매수 " + q + "주";
+      text(ctx, head, w / 2, 16, { color: P.text, align: "center", size: 13, weight: 700 });
+      const res = r.f ? r.f + "주 즉시 체결" : "즉시 체결 없음";
+      const tail = r.rest ? ", " + r.rest + "주 대기" : r.canceled ? ", " + r.canceled + "주 취소" : "";
+      text(ctx, res + tail, w / 2, 34, { color: r.canceled ? P.bad : P.dim, align: "center", size: nar ? 11 : 12 });
+      MB.stat("cd-o-f", qty(r.f));
+      MB.stat("cd-o-a", r.f ? px(Math.round(r.avg)) + "원" : "—");
+      MB.stat("cd-o-r", r.rest ? qty(r.rest) + " <small>@" + px(r.price) + "</small>" : "0주");
+      MB.stat("cd-o-c", r.canceled ? tone("bad-t", qty(r.canceled)) : "0주");
+    }, { get height() { return narrow("cd-cv") ? 360 : 380; } });
+  })();
+
+  /* ---------------------------------------------------------- 13. 시장 조성자 */
+  (function () {
+    const T = 100, STEPS = 800;
+    let seed = 1, res = null, shown = 0;
+    const S = MB.range("mm-s", (v) => v + "틱(" + v * T + "원)", () => recompute());
+    const I = MB.range("mm-i", (v) => Math.round(v * 100) + "%", () => recompute());
+    function simulate(s, pi) {
+      const r = ST.rng(40 + seed), half = (s * T) / 2;
+      let V = 72000, m = 72000, pnl = 0, spreadInc = 0, n = 0;
+      const out = [];
+      for (let i = 0; i < STEPS; i++) {
+        if (r() < 0.015) V += (r() < 0.5 ? -1 : 1) * T * (3 + Math.floor(r() * 6));
+        const bid = m - half, ask = m + half;
+        let side = null;
+        if (r() < pi) side = V > ask ? "buy" : V < bid ? "sell" : null;
+        else side = r() < 0.5 ? "buy" : "sell";
+        if (side === "buy") { pnl += ask - V; spreadInc += half; n++; m += T * 0.2; }
+        else if (side === "sell") { pnl += V - bid; spreadInc += half; n++; m -= T * 0.2; }
+        out.push({ V, m, bid, ask, pnl, spreadInc, adv: pnl - spreadInc, n });
+      }
+      return out;
+    }
+    function recompute() { res = simulate(S(), I()); shown = 0; }
+    recompute();
+    const cv = MB.canvas("#mm-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("mm-cv"), k = Math.max(1, Math.min(shown, STEPS)), vis = res.slice(0, k);
+      const top = { x: 64, y: 26, w: w - 80, h: (h - 82) * 0.48 }, bot = { x: 64, y: top.y + top.h + 22, w: w - 80, h: h - top.h - 14 - 22 - 46 };
+      const vs = res.map((d) => d.V).concat(res.map((d) => d.ask), res.map((d) => d.bid));
+      const c1 = MB.chart(ctx, top, { x: [0, STEPS], y: [Math.min(...vs) - 200, Math.max(...vs) + 200], xTicks: [], yFmt: (v) => px(v), yTicks: undefined,
+        series: [{ data: vis.map((d, i) => [i, d.V]), color: P.accent2, width: 2 }] });
+      ctx.save(); ctx.beginPath(); ctx.rect(top.x, top.y, top.w, top.h); ctx.clip();
+      ctx.fillStyle = P.accent; ctx.globalAlpha = 0.22; ctx.beginPath();
+      vis.forEach((d, i) => (i ? ctx.lineTo(c1.X(i), c1.Y(d.ask)) : ctx.moveTo(c1.X(i), c1.Y(d.ask))));
+      for (let i = vis.length - 1; i >= 0; i--) ctx.lineTo(c1.X(i), c1.Y(vis[i].bid));
+      ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; ctx.restore();
+      text(ctx, "금색: 진짜 가치 · 보라 띠: 조성자의 매수~매도 호가", top.x, 14, { color: P.dim, size: 11 });
+      const ps = res.map((d) => d.pnl).concat(res.map((d) => d.spreadInc), res.map((d) => d.adv));
+      const ymin = Math.min(0, ...ps), ymax = Math.max(1000, ...ps);
+      MB.chart(ctx, bot, { x: [0, STEPS], y: [ymin, ymax], xLabel: "시간(거래 기회)", yFmt: MB.wonAxis, xTicks: [0, 200, 400, 600, 800],
+        series: [{ data: vis.map((d, i) => [i, d.spreadInc]), color: P.ok, width: 1.5, dash: [4, 3] }, { data: vis.map((d, i) => [i, d.adv]), color: P.bad, width: 1.5, dash: [4, 3] }, { data: vis.map((d, i) => [i, d.pnl]), color: P.text, width: 2.2 }],
+        hlines: [{ y: 0, color: P.faint }] });
+      const lg = [["스프레드 수입", P.ok], ["역선택 손실", P.bad], ["순손익", P.text]];
+      let lx = bot.x + 6;
+      lg.forEach(([nm, c]) => { ctx.fillStyle = c; ctx.fillRect(lx, bot.y + 6, 12, 3); text(ctx, nm, lx + 16, bot.y + 11, { color: P.dim, size: 11 }); lx += ctx.measureText(nm).width + 32; });
+      const d = vis[vis.length - 1];
+      MB.stat("mm-o-n", d.n + "건");
+      MB.stat("mm-o-s", tone("ok-t", swon(d.spreadInc)));
+      MB.stat("mm-o-a", tone(d.adv < 0 ? "bad-t" : "", swon(d.adv)));
+      MB.stat("mm-o-p", tone(d.pnl >= 0 ? "ok-t" : "bad-t", swon(d.pnl)));
+    }, { height: 380 });
+    document.getElementById("mm-re").addEventListener("click", () => { seed++; recompute(); });
+    MB.loop(cv.canvas, (dt) => { if (shown >= STEPS) return; shown = Math.min(STEPS, shown + Math.ceil(dt * 400)); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 14. 허매수 단계 */
+  (function () {
+    const REF = 15000, OWN = 1000;
+    let b, stage, spoofId, fol, spoofSold, flash;
+    const logEl = document.getElementById("sf-log");
+    const LOG = [
+      "0단계: 평범한 호가창. 허매수자는 이미 이 종목 1,000주를 갖고 있다. 지금 팔면 매수1호가 근처에서 팔 수 있다.",
+      "1단계: 매수1호가 몇 칸 아래에 5,000주짜리 큰 매수 주문을 건다. 체결될 생각은 없다. 호가창 아래쪽이 갑자기 두꺼워 보인다.",
+      "2단계: \"받쳐 주는 매수가 크다\"고 믿은 사람들이 시장가로 사기 시작한다. 매도 호가가 먹히며 가격이 오른다.",
+      "3단계: 허매수자는 오른 가격에 매도 주문을 내고, 계속 따라 사는 사람들에게 자기 주식 1,000주를 판다.",
+      "4단계: 다 팔자마자 5,000주 매수 주문을 취소한다. 받침이 사라지자 실망한 매도가 나오고 가격이 되밀린다.",
+    ];
+    function reset() {
+      b = new ST.Book({ ref: REF }).seed({ levels: 10, seed: 8, size: 120 });
+      stage = 0; spoofId = null; fol = { q: 0, c: 0 }; spoofSold = { q: 0, c: 0 }; flash = new Map();
+      logEl.textContent = LOG[0];
+    }
+    const absorb = (fills) => fills.forEach((t) => {
+      flash.set(t.price, 1);
+      if (t.buyer === "follower") { fol.q += t.qty; fol.c += t.qty * t.price; }
+      if (t.seller === "spoof") { spoofSold.q += t.qty; spoofSold.c += t.qty * t.price; }
+    });
+    function next() {
+      if (stage >= 4) return;
+      stage++;
+      const bb = b.best();
+      if (stage === 1) spoofId = b.limit("buy", ST.stepTick(bb.bid, -2), 5000, "spoof").id;
+      if (stage === 2) [90, 140, 120, 160, 130].forEach((q) => absorb(b.market("buy", q, "follower")));
+      if (stage === 3) {
+        let p = b.best().ask, left = OWN;
+        [300, 400, 300].forEach((q) => { const f = b.limit("sell", ST.stepTick(p, -1) > b.best().bid ? ST.stepTick(p, -1) : p, q, "spoof"); absorb(f); left -= q; });
+        [250, 300, 250, 200].forEach((q) => absorb(b.market("buy", q, "follower")));
+      }
+      if (stage === 4) {
+        b.cancel(spoofId);
+        b.asks.filter((o) => o.owner === "spoof").forEach((o) => b.cancel(o.id));
+        [120, 150, 130].forEach((q) => absorb(b.market("sell", q, "panic")));
+      }
+      logEl.textContent = LOG[stage];
+    }
+    reset();
+    const cv = MB.canvas("#sf-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("sf-cv");
+      const note = new Map();
+      [...b.bids, ...b.asks].filter((o) => o.owner === "spoof").forEach((o) => note.set(o.price, (o.side === "buy" ? "허수 " : "허매수자 매도 ") + o.qty.toLocaleString("ko-KR")));
+      const B = { x: 6, y: 24, w: nar ? w - 12 : Math.min(420, w - 12), h: h - 34 };
+      if (!nar) B.x = (w - B.w) / 2;
+      ladder(ctx, B, b, { levels: 7, last: b.last, flash, header: true, note, noteColor: P.bad, max: 600 });
+      const bidTot = ST.sum(b.bids.slice(0, 200).filter((o) => o.price >= ST.stepTick(b.best().bid, -6)).map((o) => o.qty));
+      const bid1 = b.best().bid;
+      const spProfit = spoofSold.q ? spoofSold.c - spoofSold.q * 14990 : 0;
+      const folPnl = fol.q ? fol.q * bid1 - fol.c : 0;
+      MB.stat("sf-o-st", stage + " / 4");
+      MB.stat("sf-o-bid", qty(bidTot));
+      MB.stat("sf-o-sp", spoofSold.q ? tone("bad-t", swon(spProfit)) + " <small>" + spoofSold.q + "주 매도</small>" : "—");
+      MB.stat("sf-o-fl", fol.q ? tone(folPnl >= 0 ? "up-t" : "down-t", swon(folPnl)) + " <small>" + fol.q + "주</small>" : "—");
+    }, { get height() { return narrow("sf-cv") ? 380 : 400; } });
+    document.getElementById("sf-next").addEventListener("click", () => { next(); cv.redraw(); });
+    document.getElementById("sf-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (!flash.size) return; flashDecay(flash, dt * 0.6); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 15. 아이스버그 찾기 */
+  (function () {
+    let round = 0, score = 0, tries = 0, flow, ice, hidden, iceId, volAt, list, rows = null, flash = new Map(), guessed = null, hint = false, acc = 0;
+    const logEl = document.getElementById("ic-log");
+    function start() {
+      round++;
+      flow = Flow(72000, 600 + round * 13, { size: 60 });
+      flow.bias = 0.64; flow.drift = 0.00012;
+      const r = ST.rng(900 + round);
+      ice = ST.stepTick(flow.b.best().ask, 1 + Math.floor(r() * 3));
+      hidden = 1400; volAt = new Map(); list = []; guessed = null; hint = false;
+      iceId = flow.b.limit("sell", ice, 40, "ice").id; hidden -= 40;
+      for (let i = 0; i < 40; i++) flow.step().forEach((t) => { list.unshift(t); volAt.set(t.price, (volAt.get(t.price) || 0) + t.qty); });
+      if (!flow.b.asks.some((o) => o.id === iceId)) { iceId = flow.b.limit("sell", ice, 40, "ice").id; hidden -= 40; }
+      list.length = Math.min(list.length, 40);
+      logEl.textContent = "체결 내역을 보며 이상하게 잘 안 뚫리는 가격을 찾는다.";
+    }
+    start();
+    const cv = MB.canvas("#ic-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ic-cv"), b = flow.b;
+      const note = new Map();
+      if (hint) for (const [p, v] of volAt) if (v > 0) note.set(p, "체결 " + v.toLocaleString("ko-KR"));
+      if (guessed != null) note.set(ice, "숨은 " + (hidden + (b.asks.find((o) => o.id === iceId) || { qty: 0 }).qty).toLocaleString("ko-KR"));
+      const LB = nar ? { x: 6, y: 22, w: w - 12, h: 300 } : { x: 8, y: 22, w: Math.min(380, w * 0.62), h: h - 32 };
+      rows = ladder(ctx, LB, b, { levels: 7, last: b.last, flash, header: true, note, noteColor: guessed != null ? P.ok : P.accent2, sel: guessed });
+      const rx = nar ? 6 : LB.x + LB.w + 16, ry = nar ? 336 : 8;
+      tape(ctx, { x: rx, y: ry, w: nar ? w - 12 : w - rx - 8, h: h - ry - 26 }, list);
+      MB.stat("ic-o-s", score + " / " + tries);
+      MB.stat("ic-o-r", guessed == null ? "찾는 중" : guessed === ice ? tone("ok-t", "정답") : tone("bad-t", "오답"));
+    }, { get height() { return narrow("ic-cv") ? 480 : 380; } });
+    MB.drag(cv.canvas, { start(x, y) {
+      if (guessed != null) return;
+      const r = rowAt(rows, y); if (!r) return;
+      if (!r.ask) { logEl.textContent = "숨은 주문은 매도 쪽(위쪽 파란 가격)에 있다."; return; }
+      guessed = r.price; tries++;
+      if (guessed === ice) { score++; logEl.innerHTML = "정답이다. <b>" + px(ice) + "원</b>에 보이는 잔량보다 훨씬 많은 매도 주문이 숨어 있었다."; }
+      else logEl.innerHTML = "아니다. 숨은 주문은 <b>" + px(ice) + "원</b>에 있었다. 그 가격의 누적 체결량을 보자.";
+      hint = true; cv.redraw();
+    } });
+    document.getElementById("ic-next").addEventListener("click", () => { start(); cv.redraw(); });
+    document.getElementById("ic-hint").addEventListener("click", () => { hint = !hint; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      acc += dt;
+      while (acc > 0.14) {
+        acc -= 0.14;
+        flow.step().forEach((t) => { list.unshift(t); volAt.set(t.price, (volAt.get(t.price) || 0) + t.qty); flash.set(t.price, 1); });
+        if (list.length > 40) list.length = 40;
+        if (hidden > 0 && !flow.b.asks.some((o) => o.id === iceId)) { const q = Math.min(40, hidden); iceId = flow.b.limit("sell", ice, q, "ice").id; hidden -= q; }
+      }
+      flashDecay(flash, dt);
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 16. 체결 영수증 */
+  (function () {
+    const slip = document.getElementById("rc-slip");
+    const co = MB.seg("rc-co", () => draw());
+    const side = MB.seg("rc-side", () => draw());
+    const Q = MB.range("rc-q", (v) => v + "주", () => draw());
+    const K = MB.range("rc-k", (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "틱", () => draw());
+    const row = (k, v, cls) => '<div class="row' + (cls ? " " + cls : "") + '"><span>' + k + "</span><span>" + v + "</span></div>";
+    function draw() {
+      const c = ST.CO[co()], s = side(), q = Q(), p = ST.stepTick(c.price, K()), r = ST.cost({ side: s, price: p, qty: q, market: c.market });
+      const buy = s === "buy", taxRate = ST.KR.sellTax[c.market];
+      slip.innerHTML = '<div class="head"><span>' + c.name + " " + (buy ? "매수" : "매도") + " 체결 확인</span><small>" + c.market + " · 체결일 T, 결제일 T+" + ST.KR.settle + "</small></div>" +
+        row("체결가 × 수량", px(p) + "원 × " + q + "주") +
+        row("체결 금액", wonx(r.amount)) +
+        row("수수료(" + (ST.KR.fee * 100).toFixed(3) + "%)", (buy ? "+" : "−") + wonx(r.fee, 2)) +
+        row("증권거래세(" + (taxRate * 100).toFixed(2) + "%, 매도만)", buy ? "0원" : "−" + wonx(r.tax, 2)) +
+        row(buy ? "결제할 금액(T+2에 빠져나감)" : "받을 금액(T+2에 들어옴)", wonx(r.total, 2), "total");
+      MB.stat("rc-o-c", wonx(r.fee + r.tax, 2));
+      MB.stat("rc-o-r", pctS((r.fee + r.tax) / r.amount, 3));
+    }
+    draw();
+  })();
+
+  /* ---------------------------------------------------------- 17. 종합: 모의 주문 창 */
+  (function () {
+    const START = 1e7;
+    let flow, cash, pos, avg, costs, hist, marks, list, flash = new Map(), acc = 0, playing = true;
+    const logEl = document.getElementById("fn-log");
+    function reset() {
+      flow = Flow(72000, 31, { size: 100 });
+      cash = START; pos = 0; avg = 0; costs = 0; hist = [72000]; marks = []; list = [];
+      for (let i = 0; i < 150; i++) { flow.step().forEach((t) => list.unshift(t)); hist.push(flow.b.last); }
+      list.length = Math.min(list.length, 40);
+      logEl.textContent = "아직 주문이 없다.";
+    }
+    function absorb(fills) {
+      fills.forEach((t) => {
+        list.unshift(t); flash.set(t.price, 1);
+        if (t.buyer === "me") {
+          const c = ST.cost({ side: "buy", price: t.price, qty: t.qty });
+          cash -= c.total; costs += c.fee; avg = (avg * pos + t.price * t.qty) / (pos + t.qty); pos += t.qty;
+          marks.push({ i: hist.length - 1, price: t.price, buy: true });
+          logEl.textContent = "매수 체결 " + t.qty + "주 @ " + px(t.price) + "원, 수수료 " + wonx(c.fee, 2);
+        }
+        if (t.seller === "me") {
+          const c = ST.cost({ side: "sell", price: t.price, qty: t.qty });
+          cash += c.total; costs += c.fee + c.tax; pos -= t.qty; if (!pos) avg = 0;
+          marks.push({ i: hist.length - 1, price: t.price, buy: false });
+          logEl.textContent = "매도 체결 " + t.qty + "주 @ " + px(t.price) + "원, 수수료·세금 " + wonx(c.fee + c.tax, 2);
+        }
+      });
+      if (list.length > 40) list.length = 40;
+    }
+    reset();
+    const Q = MB.range("fn-q", (v) => v + "주");
+    const pendingSell = () => ST.sum(flow.b.asks.filter((o) => o.owner === "me").map((o) => o.qty));
+    const pendingBuy = () => ST.sum(flow.b.bids.filter((o) => o.owner === "me").map((o) => o.qty * o.price));
+    function order(side, kind) {
+      const b = flow.b, q = Q(), bb = b.best();
+      if (side === "buy") {
+        const need = q * (kind === "market" ? bb.ask * 1.01 : bb.bid) * (1 + ST.KR.fee) + pendingBuy();
+        if (need > cash) { logEl.textContent = "예수금이 모자란다."; return; }
+      } else if (pos - pendingSell() < q) { logEl.textContent = "팔 수 있는 보유 수량이 모자란다(공매도는 이 창에서 안 된다)."; return; }
+      if (kind === "market") absorb(b.market(side, q, "me"));
+      else {
+        const f = b.limit(side, side === "buy" ? bb.bid : bb.ask, q, "me");
+        absorb(f);
+        if (f.rest) logEl.textContent = (side === "buy" ? "매수" : "매도") + " 지정가 " + q + "주 @ " + px(f.rest.price) + "원 대기 중(줄 맨 뒤)";
+      }
+      cv.redraw();
+    }
+    const cv = MB.canvas("#fn-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("fn-cv"), b = flow.b, bb = b.best();
+      const LB = nar ? { x: 6, y: 22, w: w - 12, h: 250 } : { x: 8, y: 22, w: Math.min(320, w * 0.5), h: h - 32 };
+      ladder(ctx, LB, b, { levels: 6, last: b.last, flash, header: true, mine: mineMap(b) });
+      const rx = nar ? 6 : LB.x + LB.w + 16, rw = nar ? w - 12 : w - rx - 8, cy = nar ? 286 : 8, chH = nar ? 150 : 200;
+      const off = Math.max(0, hist.length - 240), hs = hist.slice(off);
+      const c = sparkline(ctx, { x: rx + 52, y: cy + 22, w: rw - 56, h: chH - 30 }, hs, { len: 240, ref: 72000 });
+      marks.forEach((m) => {
+        const i = m.i - off; if (i < 0) return;
+        const x = c.X(i), y = c.Y(m.price);
+        ctx.fillStyle = m.buy ? P.up : P.down; ctx.beginPath();
+        if (m.buy) { ctx.moveTo(x, y + 2); ctx.lineTo(x - 5, y + 10); ctx.lineTo(x + 5, y + 10); } else { ctx.moveTo(x, y - 2); ctx.lineTo(x - 5, y - 10); ctx.lineTo(x + 5, y - 10); }
+        ctx.closePath(); ctx.fill();
+      });
+      text(ctx, "▲ 내 매수 ▼ 내 매도", rx + 52, cy + 12, { color: P.dim, size: 11 });
+      tape(ctx, { x: rx, y: cy + chH + 4, w: rw, h: h - cy - chH - 10 }, list);
+      const pnl = cash + pos * bb.bid - START;
+      MB.stat("fn-o-cash", wonx(Math.round(cash)));
+      MB.stat("fn-o-pos", pos ? pos + "주 <small>@" + px(Math.round(avg)) + "</small>" : "0주");
+      MB.stat("fn-o-cost", wonx(costs, 0));
+      MB.stat("fn-o-pnl", tone(MB.tone(pnl), swon(pnl)));
+    }, { get height() { return narrow("fn-cv") ? 600 : 420; } });
+    document.getElementById("fn-mb").addEventListener("click", () => order("buy", "market"));
+    document.getElementById("fn-ms").addEventListener("click", () => order("sell", "market"));
+    document.getElementById("fn-lb").addEventListener("click", () => order("buy", "limit"));
+    document.getElementById("fn-ls").addEventListener("click", () => order("sell", "limit"));
+    document.getElementById("fn-cx").addEventListener("click", () => {
+      const mine = [...flow.b.bids, ...flow.b.asks].filter((o) => o.owner === "me");
+      mine.forEach((o) => flow.b.cancel(o.id));
+      logEl.textContent = mine.length ? "미체결 " + ST.sum(mine.map((o) => o.qty)) + "주를 취소했다." : "취소할 미체결 주문이 없다.";
+      cv.redraw();
+    });
+    const pb = document.getElementById("fn-pause");
+    pb.addEventListener("click", () => { playing = !playing; pb.textContent = playing ? "일시정지" : "재생"; });
+    document.getElementById("fn-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (playing) {
+        acc += dt;
+        while (acc > 0.2) { acc -= 0.2; absorb(flow.step()); hist.push(flow.b.last); if (hist.length > 2000) { hist.splice(0, 1000); marks = marks.map((m) => ({ ...m, i: m.i - 1000 })).filter((m) => m.i >= 0); } }
+      }
+      flashDecay(flash, dt);
+      cv.redraw();
+    });
+  })();
+})();
+</script>
+</body>
+</html>

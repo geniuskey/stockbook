@@ -1,0 +1,1555 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "빌린 돈으로 사면 수익과 손실이 함께 커진다. 레버리지의 산수와 파산선, 신용거래와 담보비율 140%, 반대매매 가격 계산, 미수거래, 급락장의 연쇄 반대매매, 변동성 끌림과 최적 레버리지, 공매도와 숏스퀴즈, 한국 공매도 제도와 CFD를 시뮬레이터로 직접 무너뜨려 본다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>레버리지·신용·공매도 · StockBook</title>
+<meta name="description" content="빌린 돈으로 사면 수익과 손실이 함께 커진다. 레버리지의 산수와 파산선, 신용거래와 담보비율 140%, 반대매매 가격 계산, 미수거래, 급락장의 연쇄 반대매매, 변동성 끌림과 최적 레버리지, 공매도와 숏스퀴즈, 한국 공매도 제도와 CFD를 시뮬레이터로 직접 무너뜨려 본다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/leverage.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="레버리지·신용·공매도 · StockBook">
+<meta property="og:description" content="빌린 돈으로 사면 수익과 손실이 함께 커진다. 레버리지의 산수와 파산선, 신용거래와 담보비율 140%, 반대매매 가격 계산, 미수거래, 급락장의 연쇄 반대매매, 변동성 끌림과 최적 레버리지, 공매도와 숏스퀴즈, 한국 공매도 제도와 CFD를 시뮬레이터로 직접 무너뜨려 본다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/leverage.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/leverage.html#chapter","name":"레버리지·신용·공매도","headline":"레버리지·신용·공매도 · StockBook","description":"빌린 돈으로 사면 수익과 손실이 함께 커진다. 레버리지의 산수와 파산선, 신용거래와 담보비율 140%, 반대매매 가격 계산, 미수거래, 급락장의 연쇄 반대매매, 변동성 끌림과 최적 레버리지, 공매도와 숏스퀴즈, 한국 공매도 제도와 CFD를 시뮬레이터로 직접 무너뜨려 본다.","url":"https://stockbook.euiyun.com/chapters/leverage.html","position":19,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"19. 레버리지·신용·공매도","item":"https://stockbook.euiyun.com/chapters/leverage.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  .lv-scale { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin: 18px 0; }
+  .lv-scale > div { background: var(--bg-elev); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 14px; }
+  .lv-scale b { display: block; font-family: var(--mono); font-size: 20px; }
+</style>
+</head>
+<body data-chapter="leverage">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 19</div>
+    <h1>레버리지·신용·공매도</h1>
+    <p class="lead">"신용 2배로 사면 수익도 2배야." 맞는 말이다. 손실도 2배이고, 이자는 매일 붙고, 주가가 어느 선 아래로 내려가면 내 뜻과 상관없이 증권사가 주식을 판다. 이 장에서는 빌린 돈으로 사고, 빌린 주식으로 팔 때 계좌에 무슨 일이 일어나는지 직접 끌어 보고 무너뜨려 본다.</p>
+    <ul class="objectives">
+      <li>레버리지 n배에서 수익과 손실이 함께 n배가 되고, 주가가 −1/n만큼 떨어지면 내 돈이 0이 된다는 것을 그림으로 확인한다.</li>
+      <li>신용거래의 담보비율과 유지비율 140%를 이해하고, 반대매매가 일어나는 주가를 직접 계산한다.</li>
+      <li>미수거래와 주식담보대출, 급락장의 연쇄 반대매매가 어떻게 돌아가는지 본다.</li>
+      <li>변동성 끌림 때문에 장기 성장률을 가장 크게 만드는 레버리지가 따로 있다는 것을 안다.</li>
+      <li>공매도의 구조, 무한 손실 가능성, 차입 비용, 숏스퀴즈, 한국 공매도 제도의 변화와 CFD를 이해한다.</li>
+    </ul>
+  </header>
+
+  <!-- ============================================================ 1 -->
+  <section id="arithmetic">
+    <h2>레버리지의 산수: 함께 n배, 파산선은 −1/n</h2>
+    <p>1,000만원으로 주식을 사면 주가가 10% 오를 때 100만원을 번다. 1,000만원을 더 빌려 2,000만원어치를 사면 같은 10% 상승에 200만원을 번다. 내 돈 기준으로 +20%다. 이렇게 내 돈보다 큰 금액을 굴리는 것을 <span class="term">레버리지</span><span class="en">(Leverage)</span>라고 한다. 지렛대처럼 작은 힘(내 돈)으로 큰 물건(투자 금액)을 움직인다는 뜻이다. 굴리는 금액이 내 돈의 몇 배인지가 <b>레버리지 배수</b> n이다.</p>
+    <p>지렛대는 양쪽으로 똑같이 작동한다. 주가가 10% 내리면 2,000만원어치 주식에서 200만원이 사라지는데, 빌린 1,000만원은 그대로 갚아야 하므로 손실은 전부 내 돈에서 나간다. 내 돈 기준 −20%다. 주가가 50% 내리면 내 돈 1,000만원이 모두 사라진다. 이 지점이 <b>파산선</b>이다. n배 레버리지의 파산선은 주가 변화 \(-1/n\)이다. 2배면 −50%, 3배면 약 −33%, 5배면 −20%, 10배면 −10%다.</p>
+    <div class="lv-scale">
+      <div>1배 (빌리지 않음)<b class="down-t">−100%</b>회사가 망해야 0</div>
+      <div>2배<b class="down-t">−50%</b>지수 급락 한 번</div>
+      <div>3배<b class="down-t">−33%</b>약세장 한 번</div>
+      <div>5배<b class="bad-t">−20%</b>나쁜 몇 주</div>
+      <div>10배<b class="bad-t">−10%</b>나쁜 사흘</div>
+    </div>
+    <p>아래 그림에서 배수를 바꾸고, 가로축의 손잡이를 끌어 주가 변화를 정해 보자. 회색 점선은 빌리지 않았을 때(1배), 보라색 직선이 n배다. 기울기가 n이므로 오른쪽 위로도, 왼쪽 아래로도 n배 빠르게 움직인다.</p>
+
+    <div class="sim" id="sim-line">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>레버리지 n배: 주가 변화와 내 돈의 변화</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ln-cv"></canvas><span class="hint">손잡이를 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>레버리지 배수 <output id="ln-L-out"></output></span><input type="range" id="ln-L" min="1" max="10" step="0.5" value="2"></label>
+          <label class="check"><input type="checkbox" id="ln-debt" checked> 파산선 아래(빚)도 그리기</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주가 변화</span><span class="v" id="ln-o-x">—</span></div>
+        <div class="stat"><span class="k">내 돈의 변화</span><span class="v" id="ln-o-e">—</span></div>
+        <div class="stat"><span class="k">1,000만원이면</span><span class="v" id="ln-o-w">—</span></div>
+        <div class="stat"><span class="k">파산선</span><span class="v" id="ln-o-b">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 배수 2에서 손잡이를 −50%까지 끌어 내 돈이 정확히 0이 되는 것을 본다. ② 배수를 5, 10으로 올리면 빨간 파산 구역이 얼마나 오른쪽(0% 가까이)으로 다가오는지 본다. ③ 파산선보다 더 끌면 내 돈이 마이너스, 즉 주식을 다 팔아도 빚이 남는다. (이자·비용·반대매매는 아직 넣지 않았다. 다음 시뮬레이터부터 하나씩 넣는다)</div>
+    </div>
+
+    <p>직선 하나에 레버리지의 핵심이 다 들어 있다. 기울기가 커질수록 이익도 커 보이지만, 파산선이 0% 쪽으로 다가온다. 주식은 하루에 몇 %씩 흔들리는 것이 보통이므로(<a href="price.html">4장</a>), 10배 레버리지라면 운 나쁜 사흘이면 끝난다. 그리고 실제로는 파산선에 닿기 훨씬 전에 증권사가 먼저 개입한다. 그 장치가 다음 절의 담보비율과 반대매매다.</p>
+    <div class="callout">
+      <strong>대칭처럼 보이지만 대칭이 아니다</strong>
+      직선은 위아래로 대칭이지만, 결과는 대칭이 아니다. 내 돈이 −50%가 되면 다시 원금으로 돌아가는 데 +100%가 필요하다(<a href="return.html">10장</a>). 레버리지는 손실을 n배로 키우므로, 회복에 필요한 수익은 그보다 훨씬 빨리 커진다. 그리고 0이 된 돈은 다시 불어나지 않는다.
+    </div>
+  </section>
+
+  <!-- ============================================================ 2 -->
+  <section id="margin">
+    <h2>신용거래융자: 증권사에서 돈을 빌려 사기</h2>
+    <p>개인이 주식을 사려고 돈을 빌리는 가장 흔한 길이 <span class="term">신용거래융자</span><span class="en">(Margin loan)</span>다. 증권사가 주식 매수 대금의 일부를 빌려주고, 그렇게 산 주식을 담보로 잡는다. 간단히 '신용', '빚투'라고도 부른다. 몇 가지 숫자가 이 거래를 정한다(2026년 기준 대표값, 증권사·종목마다 다르다).</p>
+    <ul>
+      <li><span class="term">보증금률</span><span class="en">(Initial margin)</span>: 사는 금액 가운데 내 돈으로 내야 하는 비율. 약 40%다. 1,000만원이 있으면 최대 2,500만원어치(약 2.5배)까지 살 수 있다는 뜻이다. 변동성이 큰 종목은 더 높거나 아예 신용이 안 된다.</li>
+      <li><span class="term">담보비율</span><span class="en">(Collateral ratio)</span>: 담보(계좌의 주식 평가액)가 빌린 돈의 몇 배인지. 처음 2배로 사면(내 돈 = 대출) 200%에서 시작한다.</li>
+      <li><span class="term">담보유지비율</span><span class="en">(Maintenance ratio)</span>: 담보비율이 이 아래로 내려가면 안 되는 선. 대부분 약 140%다.</li>
+      <li><span class="term">신용 이자</span>: 빌린 기간만큼 붙는다. 기간이 길수록 높아지는 구조가 많고, 대표값으로 연 약 8.5%를 쓴다.</li>
+    </ul>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 270" role="img" aria-label="신용거래융자 구조: 내 돈과 증권사 대출을 합쳐 주식을 사고, 그 주식이 대출의 담보가 된다">
+        <defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <rect x="16" y="26" width="120" height="58" rx="10" class="f-acc-soft"/>
+        <text x="76" y="51" text-anchor="middle" class="lbl-b">내 돈</text>
+        <text x="76" y="72" text-anchor="middle" class="t-mono">10,000,000</text>
+        <rect x="16" y="150" width="120" height="58" rx="10" class="f-acc2-soft"/>
+        <text x="76" y="175" text-anchor="middle" class="lbl-b">증권사 대출</text>
+        <text x="76" y="196" text-anchor="middle" class="t-mono">10,000,000</text>
+        <path d="M138,58 L196,104" class="s-acc" marker-end="url(#ar1)"/>
+        <path d="M138,176 L196,136" class="s-acc2" marker-end="url(#ar1)"/>
+        <rect x="200" y="86" width="116" height="66" rx="10" class="f-surface"/>
+        <text x="258" y="113" text-anchor="middle" class="lbl-b">주식 2,000만</text>
+        <text x="258" y="136" text-anchor="middle" class="lbl-dim">계좌에 묶인다</text>
+        <path d="M316,119 C380,119 390,196 300,200" class="s-dash" marker-end="url(#ar1)"/>
+        <text x="384" y="168" class="lbl-dim">담보</text>
+        <rect x="160" y="196" width="140" height="40" rx="8" class="f-elev"/>
+        <text x="230" y="221" text-anchor="middle" class="lbl">담보비율 200%</text>
+        <text x="230" y="258" text-anchor="middle" class="lbl-dim">= 평가액 2,000만 ÷ 대출 1,000만</text>
+        <rect x="336" y="26" width="112" height="58" rx="10" class="f-bad-soft"/>
+        <text x="392" y="50" text-anchor="middle" class="lbl-bad">140% 아래</text>
+        <text x="392" y="71" text-anchor="middle" class="lbl-dim">→ 반대매매</text>
+      </svg>
+      <figcaption><b>그림 19-1. 신용거래융자의 구조.</b> 내 돈과 빌린 돈으로 산 주식은 계좌에 묶여 대출의 담보가 된다. 증권사는 주식 평가액이 대출의 1.4배 아래로 떨어지지 않는지 매일 본다.</figcaption>
+    </figure>
+
+    <p>담보비율은 주가와 함께 움직인다. 빌린 돈은 그대로인데 주식 평가액만 변하기 때문이다.</p>
+    <div class="formula">$$\text{담보비율} = \frac{\text{주식 평가액}}{\text{대출금}}, \qquad \text{반대매매 주가 } P^{*} = P_0 \times m \times \frac{D}{E + D}$$
+      <div class="where">\(P_0\): 산 가격, \(m\): 담보유지비율(1.4), \(E\): 내 돈, \(D\): 빌린 돈. 평가액 \(\frac{E+D}{P_0}\times P\)가 \(m \times D\)가 되는 가격이 \(P^{*}\)다(이자는 뺐다).</div>
+    </div>
+    <p>내 돈 1,000만원에 1,000만원을 빌려 2배로 샀다면 \(D/(E+D) = 1/2\)이므로 \(P^{*} = P_0 \times 1.4 \times 0.5 = 0.7P_0\)다. <b>주가가 30% 떨어지면 반대매매선</b>이다. 1절의 파산선(−50%)보다 한참 위에서 증권사가 먼저 움직인다. 담보비율이 유지비율 아래로 내려가면 증권사는 <span class="term">추가 담보</span><span class="en">(Margin call)</span>를 요구한다. 정해진 기간(보통 약 2거래일) 안에 돈을 넣거나 주식 일부를 팔아 비율을 되돌리지 못하면, 증권사가 계좌의 주식을 강제로 판다. 이것이 <span class="term">반대매매</span><span class="en">(Forced liquidation)</span>다.</p>
+    <p>아래 계좌에서 한빛반도체(가상의 회사) 72,000원에 신용으로 산 뒤, 왼쪽 가격 막대의 손잡이를 위아래로 끌어 주가를 바꿔 보자. 가운데 막대는 평가액이 대출(회색)과 내 몫(보라)으로 어떻게 나뉘는지, 오른쪽 계기판은 담보비율이다.</p>
+
+    <div class="sim" id="sim-dash">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>신용 계좌 대시보드: 주가를 끌면 담보비율이 움직인다</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ds-cv"></canvas><span class="hint">가격 손잡이를 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>매수 배수(내 돈 1,000만원)</span>
+            <div class="seg" id="ds-L"><button data-value="1.5">1.5배</button><button data-value="2" class="on">2배</button><button data-value="2.5">2.5배</button></div>
+          </div>
+          <div class="btn-row"><button class="btn" id="ds-pay">300만원 갚기</button><button class="btn primary" id="ds-wait">이틀 지나기</button><button class="btn" id="ds-re">처음으로</button></div>
+          <p class="sim-msg" id="ds-msg" style="margin:0;font-size:14px;color:var(--text-dim)">주가를 끌어 내려 보자.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주가</span><span class="v" id="ds-o-p">—</span></div>
+        <div class="stat"><span class="k">평가액</span><span class="v" id="ds-o-v">—</span></div>
+        <div class="stat"><span class="k">대출</span><span class="v" id="ds-o-d">—</span></div>
+        <div class="stat"><span class="k">내 몫</span><span class="v" id="ds-o-e">—</span></div>
+        <div class="stat"><span class="k">담보비율</span><span class="v" id="ds-o-r">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 2배에서 주가를 50,400원 아래로 끌면 계기판이 140% 아래 빨간 구간으로 넘어간다. ② 그 상태에서 "이틀 지나기"를 누르면 반대매매로 주식이 모두 팔린다. ③ 다시 시작해 140% 아래에서 "300만원 갚기"를 눌러 보면 비율이 회복된다. 대신 그 300만원은 이미 손실 난 주식에 더 묶인다. ④ 2.5배(보증금률 40% 최대)에서는 반대매매선이 얼마나 가까운지 본다. (이자 생략, 반대매매는 계좌 전부를 현재 주가에 파는 것으로 단순화)</div>
+    </div>
+
+    <p>2배일 때 반대매매선은 50,400원으로, 72,000원의 −30%다. 공교롭게도 72,000원 종목의 하루 하한가와 같은 값이다(<a href="market.html">2장</a>). 한 번의 하한가로 반대매매선에 닿을 수 있다는 뜻이다. 2.5배라면 반대매매선이 약 60,480원으로, −16%만 떨어져도 닿는다. 반대매매 직전 내 몫은 2배일 때 약 400만원으로, 이미 원금의 60%가 사라진 상태다. 반대매매는 손실을 막아 주는 장치가 아니라 <b>손실을 확정하는</b> 장치다. 그리고 그 뒤에 주가가 회복해도 나는 더 이상 주식을 갖고 있지 않다.</p>
+  </section>
+
+  <!-- ============================================================ 3 -->
+  <section id="liq-price">
+    <h2>반대매매가 일어나는 가격 계산하기</h2>
+    <p>반대매매 주가 공식은 세 숫자만 알면 된다. 얼마를 내 돈으로, 얼마를 빌려서 샀는지, 그리고 유지비율. 아래 계산기에서 숫자를 바꿔 보자. 그래프의 직선은 주가에 따른 담보비율이고, 그것이 유지비율 선을 지나는 곳이 반대매매 주가다.</p>
+
+    <div class="sim" id="sim-calc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>반대매매 가격 계산기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>내 돈 <output id="cc-E-out"></output></span><input type="range" id="cc-E" min="100" max="5000" step="100" value="1000"></label>
+          <label class="ctrl"><span>빌린 돈 <output id="cc-D-out"></output></span><input type="range" id="cc-D" min="0" max="5000" step="100" value="1000"></label>
+          <label class="ctrl"><span>담보유지비율 <output id="cc-m-out"></output></span><input type="range" id="cc-m" min="120" max="170" step="5" value="140"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">배수</span><span class="v" id="cc-o-L">—</span></div>
+        <div class="stat"><span class="k">반대매매 주가</span><span class="v" id="cc-o-p">—</span></div>
+        <div class="stat"><span class="k">버틸 수 있는 하락</span><span class="v" id="cc-o-d">—</span></div>
+        <div class="stat"><span class="k">그때 내 돈</span><span class="v" id="cc-o-e">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 내 돈과 빌린 돈이 같으면(2배) 내 돈을 얼마로 바꾸든 반대매매 주가는 50,400원으로 같다. 금액이 아니라 <b>비율</b>이 정한다. ② 빌린 돈을 내 돈의 1.5배(보증금률 40% 한도)보다 크게 하면 한도 초과 경고가 뜬다. ③ 유지비율이 높은 증권사일수록 반대매매가 빨리 온다. (산 가격은 한빛반도체 72,000원, 이자 생략)</div>
+    </div>
+
+    <p>계산기에서 본 것처럼 반대매매 주가는 <b>배수</b>와 <b>유지비율</b>만으로 정해진다. 내 돈이 100만원이든 1억원이든 2배로 샀다면 −30%가 선이다. 견딜 수 있는 하락 폭을 표로 정리하면 다음과 같다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>배수 (총매수 ÷ 내 돈)</th><th class="num">처음 담보비율</th><th class="num">반대매매선 (유지 140%)</th><th class="num">그때 내 돈 손실</th><th class="num">파산선</th></tr></thead>
+      <tbody>
+        <tr><td>1.25배</td><td class="num">500%</td><td class="num">−72%</td><td class="num">−90%</td><td class="num">−80%</td></tr>
+        <tr><td>1.5배</td><td class="num">300%</td><td class="num">−53%</td><td class="num">−80%</td><td class="num">−67%</td></tr>
+        <tr><td>2배</td><td class="num">200%</td><td class="num">−30%</td><td class="num">−60%</td><td class="num">−50%</td></tr>
+        <tr><td>2.5배 (보증금률 40%)</td><td class="num">167%</td><td class="num">−16%</td><td class="num">−40%</td><td class="num">−40%</td></tr>
+      </tbody>
+    </table></div>
+    <p>이제 감을 시험해 보자. 무작위로 나오는 계좌의 반대매매 주가를 머릿속으로 계산해서, 가격 축 위의 선을 끌어 놓고 "확인"을 누른다.</p>
+
+    <div class="sim" id="sim-guess">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>반대매매 주가 맞히기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gs-cv"></canvas><span class="hint">점선을 위아래로 끈다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="gs-ok">확인</button><button class="btn" id="gs-next">다음 문제</button><button class="btn" id="gs-re">처음부터</button></div>
+          <p id="gs-msg" style="margin:0;font-size:14px;color:var(--text-dim)">반대매매가 일어나는 주가에 점선을 놓는다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">문제</span><span class="v" id="gs-o-n">—</span></div>
+        <div class="stat"><span class="k">내 답</span><span class="v" id="gs-o-g">—</span></div>
+        <div class="stat"><span class="k">오차</span><span class="v" id="gs-o-e">—</span></div>
+        <div class="stat"><span class="k">점수</span><span class="v" id="gs-o-s">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 먼저 배수 \(L = (E+D)/E\)를 구하고 \(D/(E+D) = (L-1)/L\)을 떠올린다. ② 반대매매 주가 = 산 가격 × 유지비율 × (L−1)/L. ③ 오차 3% 안이면 3점, 8% 안이면 1점. 다섯 문제를 푼다.</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 4 -->
+  <section id="misu">
+    <h2>미수거래와 주식담보대출</h2>
+    <p>신용거래융자 말고도 레버리지를 만드는 길이 두 가지 더 있다.</p>
+    <p><span class="term">미수거래</span><span class="en">(Buying on unsettled credit)</span>는 결제일 제도의 틈을 쓴다. 한국 주식은 사고 이틀 뒤(T+2)에 돈이 실제로 빠져나간다(<a href="market.html">2장</a>). 그래서 주문할 때는 주문 금액의 일부, 즉 <b>증거금</b>(종목에 따라 약 20~100%)만 있으면 살 수 있다. 모자란 돈이 <b>미수금</b>이고, 결제일까지 채워 넣어야 한다. 이자가 없어 보이지만 기간이 이틀뿐이다. 결제일까지 채우지 못하면 다음 날(T+3) 아침 증권사가 주식을 반대매매하고, 그 뒤 약 30일 동안 그 계좌는 증거금 100%로만 살 수 있게 묶인다(<b>미수동결</b>). 미수금에는 연체 이자도 붙는다.</p>
+    <p>미수 반대매매에는 고약한 점이 하나 있다. 팔 수량을 정할 때 <b>전날 종가의 하한가</b>로 계산하는 경우가 많다. 아침에 주가가 얼마일지 모르니, 가장 나쁜 가격에 팔려도 미수금이 갚아지게 넉넉히 판다. 실제 체결은 그보다 높은 시초가 근처에서 되므로, 필요한 것보다 훨씬 많은 주식이 팔린다. 아래에서 하루씩 진행해 보자.</p>
+
+    <div class="sim" id="sim-misu">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>미수거래 나흘: T일부터 T+3일까지</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ms-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>결제일(T+2)에</span>
+            <div class="seg" id="ms-pay"><button data-value="no" class="on">돈을 못 넣음</button><button data-value="yes">600만원 입금</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="ms-next">다음 날</button><button class="btn" id="ms-re">처음으로</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">날짜</span><span class="v" id="ms-o-d">—</span></div>
+        <div class="stat"><span class="k">미수금</span><span class="v" id="ms-o-m">—</span></div>
+        <div class="stat"><span class="k">보유 주식</span><span class="v" id="ms-o-q">—</span></div>
+        <div class="stat"><span class="k">계좌 평가</span><span class="v" id="ms-o-v">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① "돈을 못 넣음"으로 T+3까지 진행해 1,000주 가운데 몇 주가 팔리는지 센다. 미수금 600만원을 갚는 데 필요한 주식은 약 680주인데, 하한가 기준으로 계산하면 그보다 훨씬 많다. ② "600만원 입금"으로 바꿔 같은 나흘을 진행하고 남은 주식을 비교한다. (예수금 400만원으로 1만원짜리 주식 1,000주를 증거금률 40%로 산 예. 반대매매 수량 계산은 증권사마다 조금 다르다)</div>
+    </div>
+
+    <p><span class="term">주식담보대출</span><span class="en">(Stock-secured loan)</span>은 이미 가진 주식을 맡기고 현금을 빌리는 것이다. 빌린 돈을 생활비로 써도 되고 다른 주식을 사도 된다. 주가의 약 40~70%까지 빌려주며, 담보비율이 유지비율(역시 대개 약 140%) 아래로 내려가면 똑같이 추가 담보를 요구하고 반대매매한다. 이름만 다를 뿐 구조는 신용거래융자와 같다. 빌린 돈으로 다시 주식을 사면 레버리지가 겹쳐 반대매매선이 더 가까워진다.</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th></th><th>신용거래융자</th><th>미수거래</th><th>주식담보대출</th></tr></thead>
+      <tbody>
+        <tr><td>무엇을 빌리나</td><td>매수 대금</td><td>결제까지 이틀의 시간</td><td>보유 주식을 맡기고 현금</td></tr>
+        <tr><td>기간</td><td>약 90~180일(연장 가능)</td><td>2거래일</td><td>약 90일~1년</td></tr>
+        <tr><td>비용</td><td>이자 연 약 5~10%</td><td>이자 없음(연체 시 이자)</td><td>이자 연 약 5~10%</td></tr>
+        <tr><td>강제 매도</td><td>유지비율 미달 → 반대매매</td><td>결제일 미입금 → T+3 반대매매</td><td>유지비율 미달 → 반대매매</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ============================================================ 5 -->
+  <section id="interest">
+    <h2>이자의 무게: 신용 매수의 손익분기</h2>
+    <p>빌린 돈에는 이자가 붙는다. 1,000만원을 연 8.5%로 1년 빌리면 85만원이다. 2배로 산 사람은 주가가 0%면 내 돈 기준 −8.5%다. 주가가 올라도 이자만큼은 먼저 벌어야 본전이다. 손익분기 주가 수익률은 다음과 같다.</p>
+    <ul>
+      <li><b>본전</b>: \(L \cdot R - (L-1) \cdot i \cdot t = 0\) → \(R = \frac{L-1}{L} \, i \, t\). 2배, 연 8.5%, 1년이면 주가가 +4.25%는 올라야 본전이다.</li>
+      <li><b>빌리지 않은 것보다 나으려면</b>: \(L R - (L-1) i t > R\) → \(R > i \, t\). 배수와 상관없이 <b>주가 상승률이 이자율보다 커야</b> 빌린 의미가 있다.</li>
+    </ul>
+    <p>두 번째 조건이 핵심이다. 빌린 돈으로 산 몫은 "이자율보다 더 오를 것"에 거는 베팅이다. 주식의 장기 기대수익률이 연 7~8% 안팎이라면(<a href="return.html">10장</a>) 이자 8.5%짜리 신용은 평균적으로 손해 보는 거래다. 아래에서 이자율과 기간을 바꿔 보자.</p>
+
+    <div class="sim" id="sim-be">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>이자 비용과 손익분기 수익률</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="be-cv"></canvas><span class="hint">손잡이를 좌우로 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>신용 이자(연) <output id="be-i-out"></output></span><input type="range" id="be-i" min="0" max="12" step="0.5" value="8.5"></label>
+          <label class="ctrl"><span>보유 기간 <output id="be-t-out"></output></span><input type="range" id="be-t" min="1" max="24" step="1" value="12"></label>
+          <label class="ctrl"><span>배수 <output id="be-L-out"></output></span><input type="range" id="be-L" min="1.5" max="2.5" step="0.1" value="2"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">주가 수익률</span><span class="v" id="be-o-r">—</span></div>
+        <div class="stat"><span class="k">신용 매수 수익률</span><span class="v" id="be-o-l">—</span></div>
+        <div class="stat"><span class="k">본전 주가 수익률</span><span class="v" id="be-o-b">—</span></div>
+        <div class="stat"><span class="k">1배를 이기는 선</span><span class="v" id="be-o-w">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 이자를 0%로 내리면 두 선이 원점에서 만난다. 이자가 오를수록 신용 선이 아래로 평행 이동한다. ② 보유 기간을 24개월로 늘리면 이자 부담이 두 배가 된다. ③ "1배를 이기는 선"이 배수와 상관없이 이자 × 기간과 같다는 것을 확인한다. (수수료·세금 제외)</div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 6 -->
+  <section id="crash">
+    <h2>급락장에서 신용 2배를 들고 있었다면</h2>
+    <p>이제 진짜(가상) 시장으로 가 보자. 이 책의 가상 시장(<code>ST.market()</code>, 교육용으로 만든 가짜 가격)에는 약 40거래일 동안 지수가 −34% 빠지는 <b>급락</b> 구간이 있고, 바로 뒤에 +45%의 <b>급반등</b>이 온다. 2020년 3월의 급락과 반등을 닮은 구간이다. 급락이 시작되기 한 달쯤 전에 1,000만원을 넣고, 1배와 신용으로 각각 샀다고 하자. "재생"을 누르면 하루씩 진행된다.</p>
+
+    <div class="sim" id="sim-crash">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>가상 시장의 급락 구간에 신용을 얹으면</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cr-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>종목</span>
+            <div class="seg" id="cr-k"><button data-value="index" class="on">지수</button><button data-value="hanbit">한빛</button><button data-value="nuri">누리</button><button data-value="byeol">별빛</button></div>
+          </div>
+          <label class="ctrl"><span>신용 배수 <output id="cr-L-out"></output></span><input type="range" id="cr-L" min="1.2" max="2.5" step="0.1" value="2"></label>
+          <div class="btn-row"><button class="btn primary" id="cr-play">재생</button><button class="btn" id="cr-end">끝까지</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">날짜</span><span class="v" id="cr-o-d">—</span></div>
+        <div class="stat"><span class="k">담보비율</span><span class="v" id="cr-o-r">—</span></div>
+        <div class="stat"><span class="k">1배 계좌</span><span class="v" id="cr-o-1">—</span></div>
+        <div class="stat"><span class="k">신용 계좌</span><span class="v" id="cr-o-2">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 지수 2배로 끝까지 재생해, 반대매매 뒤 급반등을 신용 계좌가 하나도 누리지 못하는 것을 본다. ② 누리식품(방어주)은 2배여도 버티는지 본다. ③ 배수를 1.5배로 낮추면 지수에서 살아남는지 확인한다. (가상 시장 데이터, 급락 20거래일 전부터 급반등 끝까지. 이자 연 8.5%, 담보비율이 140% 아래로 내려간 다음 날 종가에 전량 반대매매)</div>
+    </div>
+
+    <p>지수를 2배 신용으로 들고 있었다면 급락 바닥 근처에서 반대매매를 당하고 계좌에 약 340만원만 남는다. 1배로 들고 버틴 계좌는 급반등이 끝날 때 약 970만원으로 거의 원금을 회복한다. 같은 시장, 같은 시점, 같은 종목이었다. 차이는 <b>바닥을 버틸 수 있었는가</b> 하나다. 레버리지는 방향을 맞혀도 경로 때문에 진다.</p>
+
+    <h3>반대매매가 반대매매를 부른다</h3>
+    <p>급락장에서는 한 사람의 반대매매로 끝나지 않는다. 반대매매는 시장가에 가까운 매도이고, 그 물량이 주가를 더 누른다. 주가가 더 내려가면 조금 더 아래에 반대매매선을 둔 사람들의 담보비율이 무너진다. 그들의 매도가 다시 주가를 누른다. 도미노다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="연쇄 반대매매의 고리: 주가 하락, 담보비율 미달, 반대매매 매도, 추가 하락이 반복된다">
+        <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <rect x="160" y="14" width="140" height="48" rx="10" class="f-down-soft"/>
+        <text x="230" y="44" text-anchor="middle" class="lbl-b">주가 하락</text>
+        <rect x="318" y="100" width="130" height="48" rx="10" class="f-warn-soft"/>
+        <text x="383" y="130" text-anchor="middle" class="lbl">담보비율 미달</text>
+        <rect x="160" y="186" width="140" height="48" rx="10" class="f-bad-soft"/>
+        <text x="230" y="216" text-anchor="middle" class="lbl-bad">반대매매</text>
+        <rect x="12" y="100" width="130" height="48" rx="10" class="f-surface"/>
+        <text x="77" y="122" text-anchor="middle" class="lbl">시장가 매도</text>
+        <text x="77" y="140" text-anchor="middle" class="lbl-dim">물량 쏟아짐</text>
+        <path d="M300,46 C350,52 375,70 380,96" class="s-line" marker-end="url(#ar2)"/>
+        <path d="M380,150 C375,178 345,200 304,206" class="s-line" marker-end="url(#ar2)"/>
+        <path d="M158,206 C115,200 85,178 80,152" class="s-bad" marker-end="url(#ar2)"/>
+        <path d="M80,98 C85,70 110,52 156,46" class="s-line" marker-end="url(#ar2)"/>
+        <text x="230" y="118" text-anchor="middle" class="lbl-dim">한 바퀴 돌 때마다</text>
+        <text x="230" y="138" text-anchor="middle" class="lbl-dim">더 아래의 선이 무너진다</text>
+      </svg>
+      <figcaption><b>그림 19-2. 연쇄 반대매매의 고리.</b> 반대매매 매도가 주가를 내리고, 내린 주가가 다른 사람의 반대매매를 부른다. 신용 잔고가 많을수록 고리가 세게 돈다.</figcaption>
+    </figure>
+
+    <p>아래 시뮬레이터의 점 하나하나는 신용으로 주식을 산 투자자다. 점의 높이가 그 사람의 반대매매 주가다. 모두 다른 가격에, 다른 배수로 샀기 때문에 반대매매선이 흩어져 있다. "충격 주기"를 누르면 악재로 주가가 한 번 떨어지고, 그 아래로 내려간 점들이 반대매매되어 매도 물량이 된다. 그 물량만큼 주가가 또 내려간다.</p>
+
+    <div class="sim" id="sim-domino">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>연쇄 반대매매 도미노</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dm-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>첫 충격(악재) <output id="dm-s-out"></output></span><input type="range" id="dm-s" min="2" max="15" step="1" value="6"></label>
+          <label class="ctrl"><span>신용 잔고(유통주식 대비) <output id="dm-c-out"></output></span><input type="range" id="dm-c" min="1" max="10" step="0.5" value="3"></label>
+          <div class="btn-row"><button class="btn primary" id="dm-go">충격 주기</button><button class="btn" id="dm-re">다시</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">라운드</span><span class="v" id="dm-o-n">—</span></div>
+        <div class="stat"><span class="k">반대매매된 투자자</span><span class="v" id="dm-o-q">—</span></div>
+        <div class="stat"><span class="k">첫 충격</span><span class="v" id="dm-o-s">—</span></div>
+        <div class="stat"><span class="k">최종 하락</span><span class="v" id="dm-o-f">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 신용 잔고 3%, 충격 −6%에서 연쇄가 몇 라운드 만에 멈추는지 본다. ② 신용 잔고를 7% 이상으로 올리고 같은 충격을 주면 도미노가 몇 라운드나 이어지는지 본다. ③ 신용 잔고가 1%면 충격 −15%를 줘도 최종 하락이 충격과 거의 같다. (교육용 모형: 투자자 80명, 반대매매 물량이 유통주식의 1%일 때 주가가 약 5% 내려가고, 한 라운드 하락은 하한가 −30%로 막힌다)</div>
+    </div>
+
+    <p>같은 −6%의 악재가 신용 잔고 1%인 종목에서는 약 −7%로 끝나고, 3%면 약 −11%, 7%면 약 −27%, 10%면 −40%를 넘는다. 그래서 급락장 뉴스에는 "신용 잔고"와 "반대매매 금액"이 함께 나온다. 주가가 떨어질 때 신용 투자자는 다른 투자자의 매도에 휩쓸리는 데서 그치지 않고, <b>스스로 매도 물량의 원천</b>이 된다. 신용 잔고가 많이 쌓인 종목은 그 자체로 위험 신호다.</p>
+  </section>
+
+  <!-- ============================================================ 7 -->
+  <section id="vol-drag">
+    <h2>변동성 끌림과 최적 레버리지</h2>
+    <p>반대매매가 없다고 해도 레버리지에는 숨은 비용이 하나 더 있다. <a href="return.html">10장</a>에서 본 <span class="term">변동성 끌림</span><span class="en">(Volatility drag)</span>이다. −10% 다음 +10%면 0이 아니라 −1%다. 2배로 하면 −20% 다음 +20%이고, 결과는 −4%다. 흔들림을 n배로 키우면 끌림은 n²배로 커진다. 장기 성장률(로그 수익률의 평균)을 근사하면 다음과 같다.</p>
+    <div class="formula">$$g(L) = r + L(\mu - r) - \tfrac{1}{2}L^2\sigma^2, \qquad L^{*} = \frac{\mu - r}{\sigma^2}$$
+      <div class="where">\(L\): 레버리지 배수(늘 같은 배수를 유지한다고 가정), \(\mu\): 주식의 기대수익률(산술 평균, 연), \(\sigma\): 변동성(연), \(r\): 빌리는 이자율(연). 첫 두 항은 배수에 비례해 늘지만 마지막 항은 배수의 제곱으로 커진다. 그래서 \(g\)는 산 모양이고, 꼭대기가 \(L^*\)다. 이 값은 <a href="strategy.html">18장</a>의 연속형 켈리 비중과 같다.</div>
+    </div>
+    <p>숫자로 보자. 지수(기대수익 8%, 변동성 16.5%)를 이자 3.5%로 빌려 산다면 \(L^* = 0.045 / 0.027 \approx 1.65\)배다. 그런데 신용 이자가 8.5%라면 \(\mu - r\)이 음수가 되어 \(L^*\)은 1보다 작다. 즉 <b>신용 이자로는 빌리지 않는 쪽이 장기 성장률이 더 높다</b>. 변동성 38%인 한빛반도체 같은 종목은 이자 3.5%라도 \(L^* \approx 0.31\)배다. 한 종목에 돈을 다 넣는 것조차 장기 성장률로는 과하다는 뜻이다(<a href="risk.html">13장</a>). 곡선의 손잡이를 끌어 보자.</p>
+
+    <div class="sim" id="sim-growth">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>레버리지와 장기 성장률: 산 모양 곡선</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="gr-cv"></canvas><span class="hint">곡선 위 손잡이를 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>변동성 σ <output id="gr-s-out"></output></span><input type="range" id="gr-s" min="10" max="60" step="0.5" value="16.5"></label>
+          <label class="ctrl"><span>기대수익률 μ <output id="gr-m-out"></output></span><input type="range" id="gr-m" min="4" max="14" step="0.5" value="8"></label>
+          <label class="ctrl"><span>빌리는 이자 r <output id="gr-r-out"></output></span><input type="range" id="gr-r" min="0" max="10" step="0.5" value="3.5"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">선택한 배수</span><span class="v" id="gr-o-L">—</span></div>
+        <div class="stat"><span class="k">장기 성장률</span><span class="v" id="gr-o-g">—</span></div>
+        <div class="stat"><span class="k">최적 배수 L*</span><span class="v" id="gr-o-s">—</span></div>
+        <div class="stat"><span class="k">성장률이 0이 되는 배수</span><span class="v" id="gr-o-z">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값에서 손잡이를 L*(1.65배)에 놓고, 그 두 배(약 3.3배)로 끌면 성장률이 빌리는 이자율 3.5%까지 내려오는 것을 본다. ② 이자를 8.5%로 올리면 꼭대기가 1배 왼쪽으로 넘어간다. ③ 변동성을 38%(한빛)나 65%(별빛)로 올리면 산이 얼마나 낮고 좁아지는지 본다. (매일 같은 배수를 유지하는 연속 모형, 반대매매·비용 없음)</div>
+    </div>
+
+    <p>곡선이 말해 주는 것은 두 가지다. 첫째, 최적보다 적게 빌리면 성장률을 조금 놓치지만, 최적보다 많이 빌리면 성장률이 빠르게 무너진다. 최적의 두 배를 빌리면 장기 성장률은 정확히 빌리는 이자율 \(r\)로 떨어진다. 주식을 사지 않고 그 이자를 받는 예금과 같은 성장률에, 흔들림만 몇 배다. 둘째, \(\mu\)와 \(\sigma\)는 정확히 알 수 없는 값이다. 추정이 조금만 낙관적이어도 \(L^*\)이 크게 부풀려진다. 그래서 켈리를 아는 사람들도 대개 계산값의 절반 이하만 쓴다(<a href="strategy.html">18장</a>).</p>
+    <p>곡선은 평균의 이야기다. 실제로 한 사람이 겪는 것은 하나의 경로다. 같은 기대수익의 종목을 100번 굴려 보자. 각 선이 한 사람의 1년이다. 빨간 ×는 그 경로에서 반대매매가 일어난 지점이다.</p>
+
+    <div class="sim" id="sim-mc">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>몬테카를로 100개 경로: 몇 명이 반대매매를 당하나</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="mc-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>방식</span>
+            <div class="seg" id="mc-mode"><button data-value="1">1배</button><button data-value="credit" class="on">신용 2배</button><button data-value="daily">매일 2배</button></div>
+          </div>
+          <label class="ctrl"><span>변동성 σ <output id="mc-s-out"></output></span><input type="range" id="mc-s" min="15" max="65" step="1" value="38"></label>
+          <label class="ctrl"><span>기간 <output id="mc-y-out"></output></span><input type="range" id="mc-y" min="1" max="5" step="1" value="1"></label>
+          <div class="btn-row"><button class="btn" id="mc-re">다시 뽑기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">반대매매</span><span class="v" id="mc-o-l">—</span></div>
+        <div class="stat"><span class="k">손실 본 경로</span><span class="v" id="mc-o-n">—</span></div>
+        <div class="stat"><span class="k">중앙값</span><span class="v" id="mc-o-m">—</span></div>
+        <div class="stat"><span class="k">평균</span><span class="v" id="mc-o-a">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값(변동성 38%, 1년, 신용 2배)에서 100명 중 몇 명이 반대매매를 당하는지 센다. ② 같은 경로를 1배로 바꿔 손실 본 사람 수와 비교한다. ③ 변동성을 16%(지수 수준)로 낮추면 반대매매가 얼마나 줄어드는지 본다. ④ "매일 2배"(15장의 레버리지 ETF 방식)는 반대매매는 없지만 중앙값이 평균보다 크게 낮다. (기대수익 연 8%, 내 돈 1에서 시작, 이자 연 8.5%. 신용은 담보비율 140% 미달 다음 날 전량 반대매매)</div>
+    </div>
+
+    <p>기대수익이 연 8%인 종목인데도 변동성이 한빛반도체 수준(38%)이면 신용 2배를 1년 들고 있던 100명 중 54명이 반대매매를 당하고, 72명이 손실을 본다. 중앙값은 약 −55%인데 평균은 약 −14%다. 살아남은 소수의 큰 수익이 평균을 끌어올리기 때문이다. <b>평균보다 중앙값, 즉 보통 사람의 결과가 훨씬 나쁘다</b>. 광고에 나오는 것은 살아남은 사람의 수익률이다.</p>
+  </section>
+
+  <!-- ============================================================ 8 -->
+  <section id="short">
+    <h2>공매도: 빌려서 먼저 팔기</h2>
+    <p>지금까지는 오를 것에 돈을 빌려 걸었다. 반대로 내릴 것에 거는 방법이 <span class="term">공매도</span><span class="en">(Short selling)</span>다. 갖고 있지 않은 주식을 빌려서 먼저 팔고, 나중에 사서 갚는다. 72,000원에 빌려 판 주식을 50,000원에 사서 갚으면 22,000원이 남는다. 순서만 거꾸로일 뿐, 싸게 사서 비싸게 판다는 점은 같다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 270" role="img" aria-label="공매도의 흐름: 대여자에게 주식을 빌려 시장에 팔고, 나중에 시장에서 사서 대여자에게 돌려준다">
+        <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <rect x="14" y="20" width="128" height="62" rx="10" class="f-acc2-soft"/>
+        <text x="78" y="46" text-anchor="middle" class="lbl-b">빌려주는 쪽</text>
+        <text x="78" y="68" text-anchor="middle" class="lbl-dim">연기금·증권금융</text>
+        <rect x="166" y="104" width="128" height="62" rx="10" class="f-acc-soft"/>
+        <text x="230" y="131" text-anchor="middle" class="lbl-b">공매도자</text>
+        <text x="230" y="152" text-anchor="middle" class="lbl-dim">담보를 맡긴다</text>
+        <rect x="318" y="20" width="128" height="62" rx="10" class="f-surface"/>
+        <text x="382" y="46" text-anchor="middle" class="lbl-b">시장</text>
+        <text x="382" y="68" text-anchor="middle" class="lbl-dim">다른 투자자</text>
+        <path d="M100,84 L180,104" class="s-acc2" marker-end="url(#ar3)"/>
+        <text x="100" y="114" class="lbl-dim" text-anchor="middle">① 주식 빌림</text>
+        <path d="M282,104 L352,84" class="s-acc" marker-end="url(#ar3)"/>
+        <text x="372" y="114" class="lbl-dim" text-anchor="middle">② 72,000원에 팖</text>
+        <path d="M382,84 C420,170 360,214 296,186" class="s-dash" marker-end="url(#ar3)"/>
+        <text x="410" y="200" class="lbl-dim" text-anchor="middle">③ 나중에 삼</text>
+        <path d="M166,160 C90,200 60,140 70,86" class="s-dash" marker-end="url(#ar3)"/>
+        <text x="58" y="196" class="lbl-dim" text-anchor="middle">④ 돌려줌</text>
+        <rect x="128" y="214" width="204" height="44" rx="8" class="f-elev"/>
+        <text x="230" y="234" text-anchor="middle" class="lbl">손익 = 판 값 − 산 값</text>
+        <text x="230" y="251" text-anchor="middle" class="lbl-dim">− 빌린 비용 − 배당 상당액</text>
+      </svg>
+      <figcaption><b>그림 19-3. 공매도의 네 단계.</b> 주식을 빌리는 것을 기관 사이에서는 <span class="term">대차거래</span>, 개인이 증권사·증권금융에서 빌리는 것을 <span class="term">대주거래</span>라고 한다. 빌린 동안 수수료를 내고, 배당이 나오면 그만큼을 빌려준 쪽에 물어 준다.</figcaption>
+    </figure>
+
+    <p>공매도는 손익의 모양이 매수와 정반대다. 매수한 사람은 주가가 0이 되면 −100%가 최대 손실이고, 이익에는 한계가 없다. 공매도한 사람은 주가가 0이 되어도 이익이 +100%에서 멈추고, <b>손실에는 한계가 없다</b>. 주가가 두 배가 되면 −100%, 세 배가 되면 −200%다. 아래 그래프에서 미래 주가를 끌어 보자.</p>
+
+    <div class="sim" id="sim-asym">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>공매도의 손익 비대칭</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="as-cv"></canvas><span class="hint">미래 주가 손잡이를 좌우로 끈다</span></div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">미래 주가</span><span class="v" id="as-o-p">—</span></div>
+        <div class="stat"><span class="k">매수한 사람</span><span class="v" id="as-o-l">—</span></div>
+        <div class="stat"><span class="k">공매도한 사람</span><span class="v" id="as-o-s">—</span></div>
+        <div class="stat"><span class="k">공매도 최대 이익</span><span class="v" id="as-o-m">+100%</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 손잡이를 0원까지 끌어 공매도 이익이 +100%에서 멈추는 것을 본다. ② 오른쪽 끝(4배)까지 끌어 공매도 손실이 −300%가 되는 것을 본다. 그래프를 넓히면 손실은 끝없이 내려간다. ③ 두 선은 15,000원(판 가격)에서 만나 좌우 대칭처럼 보이지만, 가능한 범위가 왼쪽은 0에서 막히고 오른쪽은 열려 있다. (별빛바이오 15,000원에 1주를 사거나 공매도한 경우, 비용 제외)</div>
+    </div>
+
+    <p>여기에 공매도에만 있는 비용이 붙는다. 주식을 빌린 대가로 <b>대차 수수료</b>(대여 수수료)를 낸다. 많은 사람이 빌리려는 종목일수록 비싸져서 연 수십 %까지 오르기도 한다. 빌린 동안 배당기준일이 지나면 주식의 원래 주인이 받았어야 할 <b>배당만큼을 물어 줘야</b> 한다. 사고팔 때의 거래세와 수수료도 그대로 낸다. 즉 공매도자는 주가가 가만히 있으면 시간이 갈수록 손해를 본다.</p>
+
+    <div class="sim" id="sim-scost">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>공매도의 진짜 손익: 수수료·배당까지</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>주가 변화 <output id="sc-x-out"></output></span><input type="range" id="sc-x" min="-40" max="20" step="1" value="-10"></label>
+          <label class="ctrl"><span>대차 수수료(연) <output id="sc-f-out"></output></span><input type="range" id="sc-f" min="0.5" max="20" step="0.5" value="4"></label>
+          <label class="ctrl"><span>빌린 기간 <output id="sc-d-out"></output></span><input type="range" id="sc-d" min="10" max="360" step="10" value="90"></label>
+          <label class="check"><input type="checkbox" id="sc-div" checked> 빌린 동안 배당기준일 지남(1,440원)</label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">가격 손익</span><span class="v" id="sc-o-g">—</span></div>
+        <div class="stat"><span class="k">비용 합계</span><span class="v" id="sc-o-c">—</span></div>
+        <div class="stat"><span class="k">순손익</span><span class="v" id="sc-o-n">—</span></div>
+        <div class="stat"><span class="k">본전 하락률</span><span class="v" id="sc-o-b">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 주가 변화를 0%로 두면 순손익이 비용만큼 마이너스다. ② 대차 수수료를 15% 이상으로 올리고 기간을 1년으로 늘리면 주가가 10% 내려도 손해일 수 있다. ③ 배당을 끄고 켜며 배당 상당액이 얼마나 큰지 본다. (한빛반도체 72,000원 100주 공매도, 수수료 0.015%, 매도 시 거래세 0.20%, 대차 수수료는 판 금액에 일할 계산)</div>
+    </div>
+
+    <p>공매도는 나쁜 회사를 찾아 내는 사람에게 보상을 주고, 거품 낀 가격을 끌어내리는 역할도 한다. 동시에 개인에게는 위험이 매우 큰 도구다. 손실에 한계가 없고, 시간 비용이 있고, 무엇보다 다음 절의 숏스퀴즈가 있다.</p>
+  </section>
+
+  <!-- ============================================================ 9 -->
+  <section id="squeeze">
+    <h2>숏스퀴즈: 공매도자들이 한꺼번에 사야 할 때</h2>
+    <p>공매도한 주식은 언젠가 사서 갚아야 한다. 이것을 <span class="term">환매수</span><span class="en">(Short covering)</span>라고 한다. 주가가 오르면 공매도자는 손실을 줄이려고, 또는 담보 부족으로 강제로 환매수한다. 환매수는 매수 주문이므로 주가를 더 올린다. 오른 주가는 다른 공매도자를 또 환매수로 몰아넣는다. 반대매매 도미노를 위아래로 뒤집은 모습이고, 이것을 <span class="term">숏스퀴즈</span><span class="en">(Short squeeze)</span>라고 한다. 공매도 잔고가 많은 종목일수록, 거래되는 주식 수가 적은 종목일수록 세게 일어난다.</p>
+    <p>아래 게임에서 당신은 15,000원짜리 종목을 100주 공매도했다. 하루씩 진행하다가 언제든 "환매수"를 눌러 포지션을 닫을 수 있다. 공매도 잔고가 클 때 호재 하나가 터지면 무슨 일이 일어나는지 보자. 한국 시장에는 상한가(+30%)가 있어서, 사려는 사람이 너무 많으면 상한가에 매수 주문이 쌓인 채 <b>사고 싶어도 못 사는</b> 날이 생긴다.</p>
+
+    <div class="sim" id="sim-sq">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>숏스퀴즈 게임: 언제 갚을 것인가</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="sq-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>공매도 잔고(유통주식 대비) <output id="sq-si-out"></output></span><input type="range" id="sq-si" min="2" max="30" step="1" value="20"></label>
+          <div class="btn-row"><button class="btn primary" id="sq-next">다음 날</button><button class="btn" id="sq-cover">환매수</button><button class="btn" id="sq-re">새 게임</button></div>
+          <p id="sq-msg" style="margin:0;font-size:14px;color:var(--text-dim)">"다음 날"을 눌러 시작한다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">날짜</span><span class="v" id="sq-o-d">—</span></div>
+        <div class="stat"><span class="k">주가</span><span class="v" id="sq-o-p">—</span></div>
+        <div class="stat"><span class="k">남은 공매도 잔고</span><span class="v" id="sq-o-s">—</span></div>
+        <div class="stat"><span class="k">내 손익</span><span class="v" id="sq-o-g">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 잔고 20%로 진행하다 호재가 나오면 며칠 동안 주가가 어디까지 가는지 본다. ② 상한가에 잠긴 날 환매수를 눌러 보면 체결되지 않는다. ③ 잔고를 3%로 낮추고 새 게임을 하면 같은 호재가 하루 소동으로 끝난다. ④ 손실이 담보(150만원)를 넘으면 강제 환매수된다. (교육용 모형: 다른 공매도자 50명이 각자 정한 손실 한도에서 환매수하고, 그 매수가 주가를 올린다. 시드 고정, "새 게임"마다 바뀐다)</div>
+    </div>
+
+    <p>숏스퀴즈의 꼭대기는 대개 오래가지 않는다. 환매수할 사람이 다 사고 나면 주가를 밀어 올리던 힘이 사라지기 때문이다. 하지만 그 꼭대기에서 강제로 갚아야 했던 공매도자의 손실은 되돌아오지 않는다. "결국 내려갈 것"이 맞더라도 <b>그때까지 버틸 수 있어야</b> 맞힌 것이 돈이 된다. 신용 매수의 반대매매와 똑같은 교훈이다. 레버리지와 공매도의 적은 방향보다 경로다.</p>
+  </section>
+
+  <!-- ============================================================ 10 -->
+  <section id="korea-short">
+    <h2>한국의 공매도 제도</h2>
+    <p>한국은 공매도 제도가 자주 바뀌어 온 시장이다. 큰 위기 때마다 공매도를 금지했다가 다시 열었고, 그때마다 규칙이 고쳐졌다. 대략적인 흐름은 다음과 같다(날짜와 세부 내용은 '약').</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th>시기</th><th>내용</th></tr></thead>
+      <tbody>
+        <tr><td>2008년 10월</td><td>금융위기로 전 종목 공매도 금지. 약 1년 뒤 비금융주부터 재개.</td></tr>
+        <tr><td>2020년 3월</td><td>코로나19 급락으로 전 종목 공매도 금지.</td></tr>
+        <tr><td>2021년 5월</td><td>KOSPI200·KOSDAQ150 대형주만 부분 재개. 나머지는 계속 금지.</td></tr>
+        <tr><td>2023년 11월</td><td>불법(무차입) 공매도 적발이 이어지자 전 종목 공매도 다시 전면 금지.</td></tr>
+        <tr><td>2025년 3월</td><td>전 종목 재개(약). 기관 공매도 전산 감시 시스템, 불법 공매도 처벌 강화, 개인과 기관의 담보·상환 조건 일원화.</td></tr>
+      </tbody>
+    </table></div>
+    <p>2026년 기준 주요 규칙은 이렇다. <b>무차입 공매도</b>(빌리지 않고 파는 것)는 금지이고, 반드시 먼저 빌려야 한다. 공매도 주문은 직전 가격보다 낮게 낼 수 없다(<span class="term">업틱 룰</span>). 일정 규모 이상의 공매도 잔고는 보고·공시해야 한다. 개인도 증권사의 대주 서비스로 공매도할 수 있지만, 대주 상환 기간(약 90일, 연장 포함 최대 약 1년)과 담보비율(약 105% 이상) 조건이 붙고, 처음 하는 개인은 사전 교육과 모의거래를 이수해야 한다.</p>
+    <div class="callout warn">
+      <strong>제도는 바뀐다</strong>
+      공매도는 한국에서 가장 자주 바뀐 제도 가운데 하나다. 위의 금지·재개 시기, 개인 대주 조건, 담보비율, 신용거래 보증금률·유지비율·이자율은 모두 2026년 기준 대표값이고 정부 정책과 증권사에 따라 달라진다. 신용·공매도를 쓰기 전에는 반드시 쓰는 증권사의 현재 조건을 확인한다.
+    </div>
+    <div class="callout">
+      <strong>공매도 잔고는 무엇을 말해 주나</strong>
+      공매도 잔고가 많다는 것은 많은 사람이 그 주식이 내릴 것에 걸었다는 뜻이다. 그들이 맞을 수도 있다. 동시에 그 잔고는 언젠가 사야 할 <b>잠재적 매수 물량</b>이기도 하다. 그래서 공매도 잔고가 많은 종목은 악재에도 호재에도 크게 움직인다. 잔고 숫자만 보고 방향을 맞히려 하지 않는다.
+    </div>
+  </section>
+
+  <!-- ============================================================ 11 -->
+  <section id="cfd">
+    <h2>차액결제거래(CFD)와 레버리지 ETF</h2>
+    <p><span class="term">차액결제거래</span><span class="en">(Contract for Difference, CFD)</span>는 주식을 실제로 사지 않고, 진입 가격과 청산 가격의 <b>차이만 현금으로 주고받기로</b> 증권사와 맺는 장외 계약이다. 증거금(약 40% 이상)만 내고 최대 약 2.5배로 오를 쪽이나 내릴 쪽(사실상 공매도)에 걸 수 있다. 한국에서는 전문투자자만 쓸 수 있다. 실제 주식은 증권사(또는 그 뒤의 외국 증권사)가 헤지용으로 사고팔기 때문에, 시장에서는 누가 실제 투자자인지 잘 보이지 않는다. 2023년 봄 CFD 계좌를 이용한 주가 조작과 그 뒤의 연쇄 반대매매로 몇몇 종목이 며칠 만에 크게 빠진 사건이 있었고, 그 뒤 실제 투자자를 표시하고 잔고를 공개하는 쪽으로 규칙이 강화되었다(약). 구조는 신용과 같다. 증거금이 부족해지면 반대매매된다.</p>
+    <p><a href="index.html">15장</a>의 <b>레버리지 ETF</b>도 2배를 준다. 신용과 무엇이 다른가?</p>
+    <div class="table-wrap"><table>
+      <thead><tr><th></th><th>신용 2배</th><th>레버리지 ETF 2배</th><th>CFD</th></tr></thead>
+      <tbody>
+        <tr><td>2배가 걸리는 기준</td><td>산 날 기준. 주가가 오르면 배수가 줄고, 내리면 커진다</td><td>매일 다시 2배로 맞춘다(하루 수익률의 2배)</td><td>산 날 기준(신용과 같음)</td></tr>
+        <tr><td>최대 손실</td><td>내 돈 이상 가능(급락·갭)</td><td>투자금까지</td><td>증거금 이상 가능</td></tr>
+        <tr><td>반대매매</td><td>있음(담보 140% 미달)</td><td>없음</td><td>있음(증거금 미달)</td></tr>
+        <tr><td>비용</td><td>신용 이자</td><td>보수 + 펀드 안의 차입 비용</td><td>수수료 + 금융 비용</td></tr>
+        <tr><td>오래 들면</td><td>반대매매 위험이 쌓인다</td><td>변동성 끌림으로 녹는다</td><td>신용과 같음</td></tr>
+      </tbody>
+    </table></div>
+    <p>레버리지 ETF는 반대매매가 없는 대신 매일 배수를 다시 맞추느라 흔들리는 시장에서 녹는다(<a href="index.html">15장</a>). 신용은 녹지 않는 대신 한 번의 급락에 계좌가 사라질 수 있다. 어느 쪽도 공짜 2배는 아니다.</p>
+  </section>
+
+  <!-- ============================================================ 12 -->
+  <section id="lab">
+    <h2>종합: 10년 시장 어디에서 시작하든</h2>
+    <p>마지막으로 가상 시장 10년 전체에서 시험해 보자. 위쪽 차트의 손잡이를 끌어 매수 시작일을 정하면, 그날부터 정한 기간 동안 1배, 신용, 매일 재조정 레버리지 세 계좌가 어떻게 되는지 아래에 그려진다. 맨 아래 띠는 <b>모든 시작일</b>에 대해 신용 계좌가 그 기간 안에 반대매매를 당했는지(빨강) 아닌지를 보여 준다.</p>
+
+    <div class="sim" id="sim-lab">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>시작일을 끌어 보는 세 계좌: 1배·신용·매일 재조정</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lb-cv"></canvas><span class="hint">위 차트에서 시작일을 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>종목</span>
+            <div class="seg" id="lb-k"><button data-value="index" class="on">지수</button><button data-value="hanbit">한빛</button><button data-value="moa">모아</button></div>
+          </div>
+          <label class="ctrl"><span>배수 <output id="lb-L-out"></output></span><input type="range" id="lb-L" min="1.2" max="2.5" step="0.1" value="2"></label>
+          <label class="ctrl"><span>보유 기간 <output id="lb-y-out"></output></span><input type="range" id="lb-y" min="1" max="5" step="1" value="3"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">1배</span><span class="v" id="lb-o-1">—</span></div>
+        <div class="stat"><span class="k">신용</span><span class="v" id="lb-o-c">—</span></div>
+        <div class="stat"><span class="k">매일 재조정</span><span class="v" id="lb-o-d">—</span></div>
+        <div class="stat"><span class="k">반대매매된 시작일</span><span class="v" id="lb-o-p">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 지수 2배 3년에서 빨간 띠가 몰린 곳을 찾는다. 대개 급락·약세장 바로 앞, 즉 시장이 가장 좋아 보이던 때다. ② 시작일을 빨간 띠 위에 놓고 세 계좌를 비교한다. ③ 한빛·모아(변동성 약 40%)로 바꾸면 빨간 띠가 얼마나 넓어지는지 본다. ④ 배수를 1.3배로 낮추면 띠가 거의 사라지는지 본다. (가상 시장 데이터. 신용 이자 연 8.5%, 140% 미달 다음 날 전량 반대매매. 매일 재조정은 보수 연 0.65%, 차입 비용 연 3%)</div>
+    </div>
+
+    <p>빨간 띠는 무작위로 흩어져 있지 않다. 시장이 오래 올라 모두가 낙관할 때 시작한 신용이 가장 많이 무너진다. 그때가 신용 잔고가 가장 많이 쌓이는 때이기도 하다. 레버리지를 쓰고 싶은 마음이 가장 강할 때가 가장 위험한 때다.</p>
+  </section>
+
+  <!-- ============================================================ case -->
+  <div class="casefile">
+    <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 19장</span></div>
+    <h4>"신용 2배로 하면 금방 두 배야": 거절한 이유</h4>
+    <p>계좌를 연 지 얼마 안 된 한결에게 지인이 말했다. "한빛반도체는 곧 오른다. 1,000만원 넣을 거면 신용으로 1,000만원 더 빌려서 2배로 사." 한결은 이 장의 계산기로 직접 따져 봤다. 내 돈 1,000만원과 대출 1,000만원으로 72,000원에 사면 277주다. 처음 담보비율은 200%, 반대매매 주가는 72,000 × 1.4 × ½ = <b>50,400원</b>, 즉 <b class="bad-t">−30%</b>다. 그 순간 한결의 몫은 약 400만원으로, 원금의 60%가 이미 사라진 상태다. 50,400원은 72,000원 종목의 하루 하한가와 같은 값이어서, 나쁜 날 하루면 닿을 수도 있다.</p>
+    <p>이자도 따졌다. 1,000만원을 연 8.5%로 빌리면 1년에 85만원이다. 1년 뒤 본전이 되려면 주가가 +4.25%는 올라야 하고, 빌리지 않은 것보다 나으려면 +8.5%를 넘어야 한다. 한빛과 같은 변동성(38%), 기대수익 연 8%로 1년짜리 경로 100개를 굴리자 신용 2배 계좌 중 54개가 반대매매를 당했다. 1배라면 같은 100개 경로에서 반대매매는 하나도 없다. 한결이 정한 감내선은 평가손실 −30%였는데(<a href="https://moneybook.euiyun.com/chapters/risk.html">MoneyBook 12장</a>), 신용 2배라면 주가 −15%에 이미 계좌가 −30%이고 주가 −30%면 강제로 끝난다. 한결은 정중히 거절했다. 공매도와 숏스퀴즈는 뉴스를 이해하는 데 쓰기로 하고, 직접 하지는 않기로 했다.</p>
+    <div class="clue">
+      <div><b>이 장에서 정한 것</b>신용·미수·주식담보대출·공매도는 쓰지 않는다. 계좌의 레버리지는 1배를 넘지 않는다.</div>
+      <div><b>아직 남은 문제</b>보유한 한빛반도체 100주의 하락 위험을 레버리지 없이 줄이거나, 그 대가로 수익을 조금 포기하는 방법은 없을까.</div>
+      <div><b>다음 단계</b>선물과 옵션의 손익 구조를 본다(<a href="derivatives.html">20장</a>).</div>
+    </div>
+  </div>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>레버리지 n배는 수익과 손실을 함께 n배로 만든다. 파산선은 주가 변화 −1/n이다(2배 −50%, 5배 −20%).</li>
+      <li>신용거래융자의 담보비율 = 평가액 ÷ 대출. 유지비율(약 140%) 아래로 내려가면 추가 담보 요구 뒤 반대매매된다. 반대매매 주가 = 산 가격 × 유지비율 × D/(E+D). 2배면 −30%다.</li>
+      <li>미수거래는 결제일(T+2)까지 돈을 못 넣으면 T+3 아침에 반대매매되고, 하한가 기준 수량 계산 때문에 필요보다 많이 팔린다. 주식담보대출도 같은 구조다.</li>
+      <li>빌린 돈이 의미가 있으려면 주가 상승률이 이자율보다 커야 한다. 이자 연 8.5%면 신용은 평균적으로 손해 보는 거래다.</li>
+      <li>급락장에서 반대매매는 매도 물량을 만들어 주가를 더 내리고, 다른 사람의 반대매매를 부른다. 신용 잔고가 많을수록 도미노가 길다.</li>
+      <li>장기 성장률 g(L) = r + L(μ−r) − ½L²σ²는 산 모양이고, 최적 배수는 (μ−r)/σ²다. 신용 이자가 기대수익보다 높거나 변동성이 크면 최적 배수는 1보다 작다.</li>
+      <li>공매도는 빌려서 먼저 판다. 이익은 최대 100%, 손실은 한계가 없고 대차 수수료와 배당 상당액이 든다. 공매도 잔고가 많으면 숏스퀴즈가 일어날 수 있다.</li>
+      <li>한국은 2023년 11월 공매도를 전면 금지했다가 2025년 3월 재개했다(약). 제도는 자주 바뀌므로 현재 조건을 확인한다.</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 레버리지 3배로 주식을 샀다. 주가가 얼마나 떨어지면 내 돈이 모두 사라지는가? (이자·반대매매는 생각하지 않는다)</p>
+        <div class="opts">
+          <button class="opt">−10%</button>
+          <button class="opt" data-correct>약 −33%</button>
+          <button class="opt">−50%</button>
+          <button class="opt">−100%</button>
+        </div>
+        <div class="quiz-exp">파산선은 −1/n이다. 3배면 주가가 1/3 떨어질 때 투자 금액의 손실(내 돈의 3배 × 1/3)이 내 돈과 같아진다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 내 돈 500만원과 신용 대출 500만원으로 주식을 샀다. 담보유지비율이 140%라면 주가가 얼마나 떨어질 때 반대매매선에 닿는가?</p>
+        <div class="opts">
+          <button class="opt">−14%</button>
+          <button class="opt">−50%</button>
+          <button class="opt" data-correct>−30%</button>
+          <button class="opt">−40%</button>
+        </div>
+        <div class="quiz-exp">평가액 1,000만원이 대출 500만원의 1.4배인 700만원이 되는 지점이다. 1,000만 → 700만은 −30%다. 금액과 상관없이 2배면 −30%다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 신용 이자가 연 8.5%이고 2배로 1년 보유한다. 빌리지 않고 1배로 산 것보다 나은 결과를 내려면 주가가 1년에 얼마보다 더 올라야 하는가?</p>
+        <div class="opts">
+          <button class="opt" data-correct>8.5%</button>
+          <button class="opt">4.25%</button>
+          <button class="opt">17%</button>
+          <button class="opt">0%</button>
+        </div>
+        <div class="quiz-exp">2R − 8.5% > R 이려면 R > 8.5%다. 본전(2R − 8.5% = 0)은 4.25%지만, 빌린 몫이 의미가 있으려면 주가 상승률이 이자율을 넘어야 한다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 어떤 자산의 기대수익률이 빌리는 이자율보다 4%p 높고, 변동성은 20%다. 장기 성장률을 가장 크게 만드는 레버리지 배수는?</p>
+        <div class="opts">
+          <button class="opt">0.2배</button>
+          <button class="opt">2배</button>
+          <button class="opt">5배</button>
+          <button class="opt" data-correct>1배</button>
+        </div>
+        <div class="quiz-exp">L* = (μ − r)/σ² = 0.04 / 0.04 = 1이다. 이보다 더 빌리면 변동성 끌림(배수의 제곱에 비례)이 늘어난 기대수익을 먹어 치운다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 공매도에 대한 설명으로 옳은 것은?</p>
+        <div class="opts">
+          <button class="opt">주가가 0이 되면 공매도자의 이익은 한계가 없다.</button>
+          <button class="opt">공매도한 주식은 갚을 필요가 없어 시간이 지날수록 유리하다.</button>
+          <button class="opt" data-correct>공매도 잔고가 많은 종목은 호재에 환매수가 몰려 주가가 급등할 수 있다.</button>
+          <button class="opt">한국에서는 2023년 이후 공매도가 다시 허용된 적이 없다.</button>
+        </div>
+        <div class="quiz-exp">공매도 이익은 최대 100%이고 손실은 한계가 없다. 빌린 동안 대차 수수료가 들고, 언젠가 사서 갚아야 한다. 그 환매수가 한꺼번에 몰리는 것이 숏스퀴즈다. 한국은 2025년 3월 공매도를 재개했다(약).</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const MR = ST.KR.margin;
+  const narrow = (id) => document.getElementById(id).parentElement.clientWidth < 560;
+  const pct = (x, d) => (isFinite(x) ? (x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%" : "—");
+  const spct = (x, d) => (isFinite(x) ? (x > 0.00049 ? "+" : x < -0.00049 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%" : "—");
+  const tone = (x, s) => '<span class="' + MB.tone(x) + '">' + s + "</span>";
+  const cls = (c, s) => '<span class="' + c + '">' + s + "</span>";
+  const swon = (x) => (x > 0 ? "+" : "") + MB.won(x);
+  const invX = (c, px, a, b) => a + ((px - c.box.x) / c.box.w) * (b - a);
+  const invY = (c, py, a, b) => b - ((py - c.box.y) / c.box.h) * (b - a);
+  function knob(ctx, x, y, P, color, r) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = color || P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = P.bg; ctx.stroke();
+    ctx.restore();
+  }
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  /* 배경을 깐 글자(선 위에 겹쳐도 읽히게) */
+  function tag(ctx, s, x, y, P, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 11.5, o.mono, o.weight || 600);
+    const tw = ctx.measureText(s).width, pad = 4, hh = (o.size || 11.5) + 6;
+    let x0 = o.align === "right" ? x - tw - pad * 2 : o.align === "center" ? x - tw / 2 - pad : x;
+    if (o.clampW) x0 = MB.clamp(x0, 2, o.clampW - tw - pad * 2 - 2);
+    ctx.save(); ctx.globalAlpha = 0.88; ctx.fillStyle = P.bg; ctx.fillRect(x0, y - hh / 2, tw + pad * 2, hh); ctx.restore();
+    ctx.fillStyle = o.color || P.text; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    ctx.fillText(s, x0 + pad, y + 0.5);
+  }
+  const alphaRect = (ctx, color, a, x, y, w, h) => { ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = color; ctx.fillRect(x, y, w, h); ctx.restore(); };
+
+  /* ---------------------------------------------------------- 1. 레버리지 직선 */
+  (function () {
+    let x = -0.2, geo = null;
+    const L = MB.range("ln-L", (v) => v + "배", () => cv.redraw());
+    const debt = document.getElementById("ln-debt");
+    const cv = MB.canvas("#ln-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = L(), showDebt = debt.checked, b = -1 / n;
+      const yLo = showDebt ? -3 : -1.25, yHi = 3;
+      const box = { x: 58, y: 14, w: w - 76, h: h - 60 };
+      const c = MB.chart(ctx, box, {
+        x: [-1, 1], y: [yLo, yHi], xTicks: [-1, -0.5, 0, 0.5, 1], yTicks: showDebt ? [-3, -2, -1, 0, 1, 2, 3] : [-1, 0, 1, 2, 3],
+        xFmt: (v) => spct(v, 0), yFmt: (v) => spct(v, 0), xLabel: "주가 변화", yLabel: "내 돈의 변화",
+        series: [{ data: [[-1, -1], [1, 1]], color: P.dim, width: 1.5, dash: [5, 4] }],
+      });
+      alphaRect(ctx, P.bad, 0.1, c.X(-1), box.y, c.X(b) - c.X(-1), box.h);
+      ctx.save(); ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+      ctx.strokeStyle = P.bad; ctx.lineWidth = 1.2; ctx.setLineDash([4, 4]);
+      ctx.beginPath(); ctx.moveTo(box.x, c.Y(-1)); ctx.lineTo(box.x + box.w, c.Y(-1)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.lineWidth = 3; ctx.strokeStyle = P.accent;
+      ctx.beginPath(); ctx.moveTo(c.X(b), c.Y(-1)); ctx.lineTo(c.X(1), c.Y(n)); ctx.stroke();
+      ctx.strokeStyle = P.bad;
+      if (showDebt) { ctx.setLineDash([7, 4]); ctx.beginPath(); ctx.moveTo(c.X(-1), c.Y(-n)); ctx.lineTo(c.X(b), c.Y(-1)); ctx.stroke(); ctx.setLineDash([]); }
+      else { ctx.beginPath(); ctx.moveTo(c.X(-1), c.Y(-1)); ctx.lineTo(c.X(b), c.Y(-1)); ctx.stroke(); }
+      ctx.restore();
+      tag(ctx, "파산선 " + spct(b, 0), c.X(b) + 4, box.y + 12, P, { color: P.bad });
+      tag(ctx, "내 돈 0", box.x + box.w - 2, c.Y(-1) - 10, P, { color: P.bad, align: "right" });
+      tag(ctx, n + "배", c.X(Math.min(1, (yHi - 0.25) / n)) - 6, c.Y(Math.min(n, yHi - 0.25)) + 4, P, { color: P.accent, align: "right", weight: 700 });
+      const e = n * x, ey = showDebt ? e : Math.max(-1, e);
+      const kx = c.X(x), ky = c.Y(MB.clamp(ey, yLo, yHi));
+      ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(kx, box.y + box.h); ctx.lineTo(kx, ky); ctx.lineTo(box.x, ky); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, kx, ky, P, e <= -1 ? P.bad : P.accent);
+      geo = c;
+      MB.stat("ln-o-x", tone(x, spct(x, 0)));
+      MB.stat("ln-o-e", e <= -1 ? cls("bad-t", spct(e, 0)) : tone(e, spct(e, 0)));
+      const left = 1e7 * (1 + e);
+      MB.stat("ln-o-w", left < 0 ? cls("bad-t", "빚 " + MB.won(-left)) : MB.won(left));
+      MB.stat("ln-o-b", cls("bad-t", "주가 " + spct(b, 1)));
+    }, { get height() { return narrow("ln-cv") ? 300 : 340; } });
+    MB.drag(cv.canvas, { move(px) { if (!geo) return; x = MB.clamp(Math.round(invX(geo, px, -1, 1) * 100) / 100, -1, 1); cv.redraw(); } });
+    debt.addEventListener("change", () => cv.redraw());
+  })();
+
+  /* ---------------------------------------------------------- 2. 신용 계좌 대시보드 */
+  (function () {
+    const P0 = 72000, OWN = 1e7, PMAX = 110000;
+    let price, loan, shares, state, anim, extra, cash, rail = null;
+    const msg = (s) => { document.getElementById("ds-msg").innerHTML = s; };
+    const lev = MB.seg("ds-L", () => { reset(); cv.redraw(); });
+    function reset() {
+      const n = Number(lev());
+      shares = (OWN * n) / P0; loan = OWN * (n - 1); price = P0; state = "hold"; anim = 0; extra = 0; cash = 0;
+      msg("주가를 끌어 내려 보자.");
+    }
+    reset();
+    const callPrice = () => (MR.maintenance * loan) / shares;
+    const cv = MB.canvas("#ds-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ds-cv");
+      const top = 22, rh = nar ? 210 : h - 56;
+      const R = { x: 62, y: top, w: 26, h: rh };
+      const Yp = (p) => R.y + R.h - (p / PMAX) * R.h;
+      rail = { R, Yp };
+      // 가격 축
+      ctx.font = MB.font(11, true); ctx.fillStyle = P.dim; ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (let p = 0; p <= PMAX; p += 20000) { ctx.fillText(MB.price(p, { short: true }), R.x - 6, Yp(p)); ctx.strokeStyle = P.grid; ctx.beginPath(); ctx.moveTo(R.x, Yp(p)); ctx.lineTo(R.x + R.w, Yp(p)); ctx.stroke(); }
+      ctx.fillStyle = P.surface; ctx.strokeStyle = P.border; ctx.fillRect(R.x, R.y, R.w, R.h); ctx.strokeRect(R.x, R.y, R.w, R.h);
+      const cp = loan > 0 ? callPrice() : 0;
+      if (state !== "sold" && cp > 0) {
+        alphaRect(ctx, P.bad, 0.22, R.x, Yp(cp), R.w, R.y + R.h - Yp(cp));
+        ctx.strokeStyle = P.bad; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(R.x - 3, Yp(cp)); ctx.lineTo(R.x + R.w + 6, Yp(cp)); ctx.stroke(); ctx.lineWidth = 1;
+        text(ctx, "반대매매선", R.x + R.w + 8, Yp(cp) - 3, { color: P.bad, size: 11, weight: 700 });
+        text(ctx, MB.price(Math.round(cp), { short: true }), R.x + R.w + 8, Yp(cp) + 11, { color: P.bad, size: 11, mono: true });
+      }
+      ctx.strokeStyle = P.accent; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(R.x, Yp(P0)); ctx.lineTo(R.x + R.w + 6, Yp(P0)); ctx.stroke(); ctx.setLineDash([]);
+      text(ctx, "산 가격", R.x + R.w + 8, Yp(P0) + 4, { color: P.accent, size: 11 });
+      knob(ctx, R.x + R.w / 2, Yp(price), P, state === "hold" && loan > 0 && price < cp ? P.bad : P.accent, 8);
+      text(ctx, "주가", R.x + R.w / 2, R.y - 8, { color: P.dim, size: 11, align: "center" });
+
+      // 평가액 막대
+      const sold = state === "selling" ? anim : state === "sold" ? 1 : 0;
+      const sh = shares * (1 - sold), val = sh * price, ln = loan * (1 - sold);
+      const proceeds = shares * price - loan;
+      const csh = sold * proceeds;
+      const B = { x: 168, y: top, w: nar ? Math.min(80, w - 180) : 78, h: rh };
+      const vmax = Math.max(shares * PMAX, loan * 1.2) * 0.75;
+      const Hs = (v) => (v / vmax) * B.h;
+      const base = B.y + B.h;
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(B.x - 6, base); ctx.lineTo(B.x + B.w + 6, base); ctx.stroke();
+      if (val > 0 || ln > 0) {
+        const hv = Math.min(B.h, Hs(val)), hl = Math.min(B.h, Hs(ln));
+        ctx.fillStyle = P.surface; ctx.strokeStyle = P.border; ctx.fillRect(B.x, base - hl, B.w, hl); ctx.strokeRect(B.x, base - hl, B.w, hl);
+        if (val >= ln) {
+          ctx.fillStyle = P.accent; ctx.globalAlpha = 0.8; ctx.fillRect(B.x, base - hv, B.w, hv - hl); ctx.globalAlpha = 1;
+          if (hv - hl > 16) text(ctx, "내 몫", B.x + B.w / 2, base - (hv + hl) / 2 + 4, { color: P.bg, size: 12, weight: 700, align: "center" });
+        } else {
+          alphaRect(ctx, P.bad, 0.35, B.x, base - hl, B.w, hl - hv);
+          text(ctx, "모자람", B.x + B.w / 2, base - (hl + hv) / 2 + 4, { color: P.bad, size: 12, weight: 700, align: "center" });
+        }
+        if (hl > 16) text(ctx, "대출", B.x + B.w / 2, base - Math.min(hl, hv) / 2 + 4, { color: P.dim, size: 12, align: "center" });
+        ctx.strokeStyle = P.text; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(B.x - 4, base - hv); ctx.lineTo(B.x + B.w + 4, base - hv); ctx.stroke(); ctx.lineWidth = 1;
+      }
+      if (csh !== 0) {
+        const hc = Math.min(B.h * 0.9, Hs(Math.abs(csh)));
+        const cx0 = B.x + B.w * 0.15, cw = B.w * 0.7;
+        ctx.fillStyle = csh > 0 ? P.accent2 : P.bad; ctx.globalAlpha = 0.85; ctx.fillRect(cx0, base - hc, cw, hc); ctx.globalAlpha = 1;
+      }
+      text(ctx, state === "sold" ? (cash >= 0 ? "남은 현금" : "남은 빚") : "평가액", B.x + B.w / 2, B.y - 8, { color: P.dim, size: 11, align: "center" });
+
+      // 담보비율 계기판
+      const ratio = state === "sold" ? NaN : ln > 0 ? val / ln : Infinity;
+      const gx = nar ? w / 2 : (B.x + B.w + w) / 2 + 6, gy = nar ? top + rh + 120 : top + rh * 0.62;
+      const GR = nar ? Math.min(92, w / 2 - 30) : Math.max(40, Math.min((w - B.x - B.w) / 2 - 26, rh * 0.5));
+      const lo = 0.8, hi = 2.6, ang = (r) => Math.PI + (MB.clamp(r, lo, hi) - lo) / (hi - lo) * Math.PI;
+      const arc = (a, b, color) => { ctx.strokeStyle = color; ctx.lineWidth = 14; ctx.beginPath(); ctx.arc(gx, gy, GR, ang(a), ang(b)); ctx.stroke(); };
+      ctx.globalAlpha = 0.85; arc(lo, MR.maintenance, P.bad); arc(MR.maintenance, 1.7, P.warn); arc(1.7, hi, P.ok); ctx.globalAlpha = 1; ctx.lineWidth = 1;
+      [1, 1.4, 2, 2.5].forEach((r) => {
+        const a = ang(r), x1 = gx + Math.cos(a) * (GR + 9), y1 = gy + Math.sin(a) * (GR + 9);
+        text(ctx, Math.round(r * 100) + "%", gx + Math.cos(a) * (GR + 14), gy + Math.sin(a) * (GR + 14), { color: r === 1.4 ? P.bad : P.dim, size: 10.5, mono: true, align: Math.cos(a) < -0.2 ? "right" : Math.cos(a) > 0.2 ? "left" : "center", base: "middle" });
+        ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(gx + Math.cos(a) * (GR + 7), gy + Math.sin(a) * (GR + 7)); ctx.lineTo(x1, y1); ctx.stroke();
+      });
+      if (isFinite(ratio)) {
+        const a = ang(ratio);
+        ctx.strokeStyle = P.text; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(gx + Math.cos(a) * (GR - 4), gy + Math.sin(a) * (GR - 4)); ctx.stroke(); ctx.lineWidth = 1;
+      }
+      ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(gx, gy, 5, 0, TAU); ctx.fill();
+      const rtxt = state === "sold" ? "청산됨" : isFinite(ratio) ? Math.round(ratio * 100) + "%" : "대출 없음";
+      text(ctx, rtxt, gx, gy + 26, { color: state !== "hold" || ratio < MR.maintenance ? P.bad : P.text, size: 18, weight: 700, align: "center", mono: isFinite(ratio) });
+      text(ctx, "담보비율", gx, gy + 44, { color: P.dim, size: 11, align: "center" });
+
+      MB.stat("ds-o-p", MB.price(Math.round(price)) + " " + tone(price - P0, spct(price / P0 - 1)));
+      MB.stat("ds-o-v", MB.won(val));
+      MB.stat("ds-o-d", MB.won(ln));
+      const eq = state === "sold" ? cash : val - ln;
+      MB.stat("ds-o-e", (eq < 0 ? cls("bad-t", MB.won(eq)) : MB.won(eq)) + " " + tone(eq - OWN - extra, spct(eq / (OWN + extra) - 1, 0)));
+      MB.stat("ds-o-r", state === "sold" ? cls("bad-t", "반대매매") : !isFinite(ratio) ? "—" : ratio < MR.maintenance ? cls("bad-t", Math.round(ratio * 100) + "%") : Math.round(ratio * 100) + "%");
+    }, { get height() { return narrow("ds-cv") ? 450 : 300; } });
+    MB.drag(cv.canvas, {
+      move(px, py) {
+        if (!rail || state !== "hold" || px > rail.R.x + rail.R.w + 70) return;
+        const p = MB.clamp(((rail.R.y + rail.R.h - py) / rail.R.h) * PMAX, 1000, PMAX);
+        price = ST.roundTick(p); cv.redraw();
+        if (loan > 0 && price < callPrice()) msg('<span class="bad-t">담보비율이 140% 아래다. 증권사가 추가 담보를 요구한다.</span> 돈을 넣거나(300만원 갚기) 이틀을 넘기면 반대매매된다.');
+        else msg("담보비율이 유지비율 위에 있다.");
+      },
+    });
+    document.getElementById("ds-pay").addEventListener("click", () => {
+      if (state !== "hold" || loan <= 0) return;
+      const p = Math.min(3e6, loan); loan -= p; extra += p;
+      msg("300만원을 넣어 대출을 줄였다. 담보비율은 올랐지만 이 돈도 같은 주식에 묶였다. 지금까지 넣은 돈 " + MB.won(OWN + extra) + ".");
+      cv.redraw();
+    });
+    document.getElementById("ds-wait").addEventListener("click", () => {
+      if (state !== "hold") return;
+      if (loan > 0 && price < callPrice()) { state = "selling"; anim = 0; msg('<span class="bad-t">반대매매: 다음 날 아침 동시호가에 주식이 모두 팔린다.</span>'); }
+      else msg("담보비율이 140% 이상이라 아무 일도 없다. 이자만 붙는다.");
+    });
+    document.getElementById("ds-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (state !== "selling") return;
+      anim = Math.min(1, anim + dt / 1.4);
+      if (anim >= 1) {
+        cash = shares * price - loan; state = "sold";
+        msg(cash >= 0 ? '<span class="bad-t">반대매매 완료.</span> 주식은 0주, 대출을 갚고 남은 현금은 ' + MB.won(cash) + "이다. 이제 주가가 회복해도 돌려받을 것이 없다." : '<span class="bad-t">반대매매로도 대출을 다 못 갚았다.</span> 증권사에 ' + MB.won(-cash) + "의 빚이 남는다.");
+      }
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 3. 반대매매 가격 계산기 */
+  (function () {
+    const P0 = 72000;
+    const E = MB.range("cc-E", (v) => MB.won(v * 1e4), () => cv.redraw());
+    const D = MB.range("cc-D", (v) => MB.won(v * 1e4), () => cv.redraw());
+    const m = MB.range("cc-m", (v) => v + "%", () => cv.redraw());
+    const cv = MB.canvas("#cc-cv", (ctx, w, h) => {
+      const P = MB.palette(), e = E() * 1e4, d = D() * 1e4, mm = m() / 100;
+      const L = (e + d) / e, ps = d > 0 ? (P0 * mm * d) / (e + d) : 0;
+      const ratio = (p) => (d > 0 ? ((e + d) / P0) * p / d : NaN);
+      const box = { x: 58, y: 16, w: w - 76, h: h - 62 };
+      const c = MB.chart(ctx, box, {
+        x: [0, 90000], y: [0, 4], xTicks: [0, 20000, 40000, 60000, 80000], yTicks: [0, 1, 1.4, 2, 3, 4],
+        xFmt: (v) => MB.price(v, { short: true }), yFmt: (v) => Math.round(v * 100) + "%", xLabel: "주가", yLabel: "담보비율",
+      });
+      if (d > 0) {
+        alphaRect(ctx, P.bad, 0.1, box.x, box.y, c.X(Math.min(90000, ps)) - box.x, box.h);
+        ctx.save(); ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+        ctx.strokeStyle = P.bad; ctx.lineWidth = 1.5; ctx.setLineDash([5, 4]);
+        ctx.beginPath(); ctx.moveTo(box.x, c.Y(mm)); ctx.lineTo(box.x + box.w, c.Y(mm)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(c.X(ps), box.y); ctx.lineTo(c.X(ps), box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+        ctx.strokeStyle = P.accent; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(c.X(0), c.Y(0)); ctx.lineTo(c.X(90000), c.Y(ratio(90000))); ctx.stroke();
+        ctx.restore();
+        tag(ctx, "유지비율 " + Math.round(mm * 100) + "%", box.x + box.w - 2, c.Y(mm) + 12, P, { color: P.bad, align: "right" });
+        if (ps < 90000) { tag(ctx, "반대매매 " + MB.price(Math.round(ps), { short: true }), c.X(ps) + 4, box.y + 12, P, { color: P.bad, clampW: w }); knob(ctx, c.X(ps), c.Y(mm), P, P.bad, 6); }
+        const r0 = ratio(P0);
+        if (r0 <= 4) { knob(ctx, c.X(P0), c.Y(r0), P, P.accent, 6); tag(ctx, "산 가격 " + Math.round(r0 * 100) + "%", c.X(P0) - 10, c.Y(r0) - 14, P, { color: P.accent, align: "right" }); }
+        else tag(ctx, "산 가격의 담보비율 " + Math.round(r0 * 100) + "% (그래프 위)", box.x + box.w - 2, box.y + 12, P, { color: P.accent, align: "right" });
+      } else tag(ctx, "빌린 돈이 없으면 반대매매도 없다", box.x + 10, box.y + 16, P, { color: P.dim });
+      const over = d > e * 1.5 + 1;
+      MB.stat("cc-o-L", MB.fmt(L, 3) + "배" + (over ? " " + cls("bad-t", "한도 초과") : ""));
+      MB.stat("cc-o-p", d > 0 ? cls("bad-t", MB.price(Math.round(ps))) : "없음");
+      MB.stat("cc-o-d", d > 0 ? (ps >= P0 ? cls("bad-t", "사자마자") : tone(-1, spct(ps / P0 - 1))) : "—");
+      const eq = d > 0 ? ((e + d) / P0) * ps - d : NaN;
+      MB.stat("cc-o-e", d > 0 ? MB.won(eq) + " " + tone(-1, spct(eq / e - 1, 0)) : "—");
+    }, { get height() { return narrow("cc-cv") ? 290 : 320; } });
+  })();
+
+  /* ---------------------------------------------------------- 4. 반대매매 주가 맞히기 */
+  (function () {
+    let seed = 19, rnd, round, score, sc, guess, revealed, geo = null;
+    const pick = (a) => a[Math.floor(rnd() * a.length)];
+    function scenario() {
+      const co = ST.CO[pick(ST.COKEYS)], e = pick([300, 500, 800, 1000, 2000, 3000]) * 1e4;
+      const d = e * pick([0.25, 0.5, 0.75, 1, 1.25, 1.5]), mm = pick([1.4, 1.4, 1.4, 1.3, 1.5]);
+      return { co, P0: co.price, e, d, mm, ans: (co.price * mm * d) / (e + d) };
+    }
+    function reset() { seed++; rnd = ST.rng(seed); round = 1; score = 0; sc = scenario(); guess = sc.P0 * 0.85; revealed = false; msg("반대매매가 일어나는 주가에 점선을 놓는다."); }
+    const msg = (s) => { document.getElementById("gs-msg").innerHTML = s; };
+    reset();
+    const cv = MB.canvas("#gs-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("gs-cv");
+      const lines = [sc.co.name + " " + MB.price(sc.P0) + "에 매수", "내 돈 " + MB.won(sc.e) + ", 빌린 돈 " + MB.won(sc.d), "담보유지비율 " + Math.round(sc.mm * 100) + "%"];
+      let box;
+      if (nar) {
+        lines.forEach((s, i) => text(ctx, s, 14, 24 + i * 20, { color: i ? P.dim : P.text, size: 13, weight: i ? 400 : 700 }));
+        box = { x: 64, y: 96, w: w - 84, h: h - 116 };
+      } else {
+        text(ctx, "문제 " + round + " / 5", 16, 30, { color: P.accent, size: 12, weight: 700 });
+        lines.forEach((s, i) => text(ctx, s, 16, 58 + i * 24, { color: i ? P.dim : P.text, size: 14, weight: i ? 400 : 700 }));
+        box = { x: Math.max(230, w * 0.48) + 56, y: 18, w: w - Math.max(230, w * 0.48) - 76, h: h - 40 };
+      }
+      const yHi = sc.P0 * 1.1;
+      const c = MB.chart(ctx, box, { x: [0, 1], y: [0, yHi], xTicks: [], yFmt: (v) => MB.price(v, { short: true }) });
+      geo = c;
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(box.x, c.Y(sc.P0)); ctx.lineTo(box.x + box.w, c.Y(sc.P0)); ctx.stroke();
+      tag(ctx, "산 가격", box.x + 4, c.Y(sc.P0) - 11, P, { color: P.accent });
+      ctx.strokeStyle = P.accent2; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(box.x, c.Y(guess)); ctx.lineTo(box.x + box.w, c.Y(guess)); ctx.stroke(); ctx.setLineDash([]);
+      tag(ctx, "내 답 " + MB.price(Math.round(guess), { short: true }), box.x + 4, c.Y(guess) + (revealed && guess < sc.ans ? 12 : -11), P, { color: P.accent2 });
+      knob(ctx, box.x + box.w - 12, c.Y(guess), P, P.accent2);
+      if (revealed) {
+        ctx.strokeStyle = P.bad; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(box.x, c.Y(sc.ans)); ctx.lineTo(box.x + box.w, c.Y(sc.ans)); ctx.stroke(); ctx.lineWidth = 1;
+        tag(ctx, "정답 " + MB.price(Math.round(sc.ans), { short: true }), box.x + box.w * 0.45, c.Y(sc.ans) + (guess < sc.ans ? -11 : 12), P, { color: P.bad });
+      }
+      MB.stat("gs-o-n", round + " / 5");
+      MB.stat("gs-o-g", MB.price(Math.round(guess)));
+      MB.stat("gs-o-e", revealed ? spct(guess / sc.ans - 1) : "—");
+      MB.stat("gs-o-s", score + "점");
+    }, { get height() { return narrow("gs-cv") ? 380 : 300; } });
+    MB.drag(cv.canvas, { move(px, py) { if (!geo || revealed) return; guess = MB.clamp(invY(geo, py, 0, sc.P0 * 1.1), 0, sc.P0 * 1.1); cv.redraw(); } });
+    document.getElementById("gs-ok").addEventListener("click", () => {
+      if (revealed) return;
+      revealed = true;
+      const err = Math.abs(guess / sc.ans - 1), pt = err < 0.03 ? 3 : err < 0.08 ? 1 : 0;
+      score += pt;
+      const L = (sc.e + sc.d) / sc.e;
+      msg((pt ? '<span class="ok-t">+' + pt + "점.</span> " : "0점. ") + "배수 " + MB.fmt(L, 3) + "배 → " + MB.price(sc.P0, { short: true }) + " × " + sc.mm + " × " + MB.fmt(sc.d / (sc.e + sc.d), 3) + " = " + MB.price(Math.round(sc.ans)) + " (" + spct(sc.ans / sc.P0 - 1) + ")");
+      cv.redraw();
+    });
+    document.getElementById("gs-next").addEventListener("click", () => {
+      if (!revealed) { msg("먼저 ‘확인’을 누른다."); return; }
+      if (round >= 5) { msg("다섯 문제 끝. 점수 " + score + " / 15점. ‘처음부터’를 누르면 새 문제가 나온다."); return; }
+      round++; sc = scenario(); guess = sc.P0 * 0.85; revealed = false; msg("반대매매가 일어나는 주가에 점선을 놓는다."); cv.redraw();
+    });
+    document.getElementById("gs-re").addEventListener("click", () => { reset(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 5. 미수거래 나흘 */
+  (function () {
+    const QTY = 1000, BUY = 10000, DEP = 4e6, MISU = BUY * QTY - DEP;
+    const PX = [10000, 9600, 9050, 8780];
+    const lower = ST.limits(PX[2]).lower, sellQ = Math.min(QTY, Math.ceil(MISU / lower));
+    let step, anim;
+    const pay = MB.seg("ms-pay", () => { step = 0; anim = 0; cv.redraw(); });
+    step = 0; anim = 0;
+    function acct() {
+      const paid = pay() === "yes" && step >= 2;
+      let misu = paid ? 0 : MISU, q = QTY, cash = 0, note = "";
+      if (step === 0) note = "T일: 예수금 400만원으로 1,000만원어치 매수(증거금 40%). 미수금 600만원은 T+2까지.";
+      if (step === 1) note = "T+1: 주가 −4%. 아직 아무 일도 없다. 내일이 결제일이다.";
+      if (step === 2) note = paid ? "T+2: 600만원을 넣어 결제했다. 미수 끝." : "T+2: 결제일인데 600만원을 못 넣었다. 미수 발생.";
+      if (step === 3) {
+        if (paid) note = "T+3: 결제가 끝난 계좌. 주가가 내려 평가손실은 있지만 주식은 그대로다.";
+        else {
+          const s = Math.round(sellQ * Math.min(1, anim));
+          q = QTY - s; const proceeds = s * PX[3] - ST.cost({ side: "sell", price: PX[3], qty: s, market: "KOSPI" }).fee - s * PX[3] * ST.KR.sellTax.KOSPI;
+          misu = Math.max(0, MISU - proceeds); cash = Math.max(0, proceeds - MISU);
+          note = "T+3 아침: 미수금 ÷ 전날 종가의 하한가(" + MB.price(lower, { short: true }) + "원) = " + sellQ + "주를 시초가 " + MB.price(PX[3], { short: true }) + "원에 반대매매. 이후 약 30일 미수동결.";
+        }
+      }
+      return { misu, q, cash, note, px: PX[step] };
+    }
+    const cv = MB.canvas("#ms-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ms-cv"), a = acct();
+      // 시간축
+      const tx0 = 40, tx1 = w - 40, ty = 34;
+      ctx.strokeStyle = P.axis; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(tx0, ty); ctx.lineTo(tx1, ty); ctx.stroke(); ctx.lineWidth = 1;
+      ["T", "T+1", "T+2", "T+3"].forEach((s, i) => {
+        const x = tx0 + ((tx1 - tx0) * i) / 3, on = i <= step, cur = i === step;
+        const bad = i === 3 && step === 3 && pay() === "no", c = bad ? P.bad : on ? P.accent : P.faint;
+        ctx.fillStyle = cur ? c : on ? c : P.surface; ctx.strokeStyle = c; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(x, ty, cur ? 9 : 6, 0, TAU); ctx.fill(); ctx.stroke(); ctx.lineWidth = 1;
+        text(ctx, s, x, ty - 16, { color: on ? P.text : P.faint, size: 12, weight: 700, align: "center", mono: true });
+        if (on) text(ctx, MB.price(PX[i], { short: true }) + (i === 3 ? " 시초" : ""), x, ty + 24, { color: MB.toneColor(PX[i] - BUY), size: 11, align: "center", mono: true });
+      });
+      // 주식 격자 1,000주
+      const gx = 16, gy = 78, gw = nar ? w - 32 : Math.min(w * 0.56, 420), cols = 40, rows = 25, cs = Math.floor(gw / cols);
+      const soldN = QTY - a.q;
+      for (let k = 0; k < QTY; k++) {
+        const r = Math.floor(k / cols), cc = k % cols, isSold = k >= QTY - soldN;
+        ctx.fillStyle = isSold ? P.bad : P.accent; ctx.globalAlpha = isSold ? 0.9 : 0.55;
+        ctx.fillRect(gx + cc * cs, gy + r * cs, cs - 1, cs - 1);
+      }
+      ctx.globalAlpha = 1;
+      text(ctx, "보유 1,000주 (한 칸 = 1주)" + (soldN ? ", 빨강 = 반대매매" : ""), gx, gy + rows * cs + 16, { color: P.dim, size: 11.5 });
+      // 계좌 요약
+      const sx = nar ? 16 : gx + cols * cs + 24, sy = nar ? gy + rows * cs + 40 : gy + 6;
+      const rowsT = [["주식 평가", MB.won(a.q * a.px), P.text], ["현금", MB.won(a.cash), P.text], ["미수금", a.misu > 0 ? "−" + MB.won(a.misu) : "0", a.misu > 0 ? P.bad : P.text]];
+      rowsT.forEach(([k, v, c], i) => { text(ctx, k, sx, sy + i * 22, { color: P.dim, size: 13 }); text(ctx, v, sx + 150, sy + i * 22, { color: c, size: 13, weight: 700, align: "right" }); });
+      // 설명 줄바꿈
+      const maxW = nar ? w - 32 : w - sx - 12;
+      ctx.font = MB.font(12.5); let line = "", ly = sy + 3 * 22 + 12;
+      a.note.split(" ").forEach((word) => {
+        const t = line ? line + " " + word : word;
+        if (ctx.measureText(t).width > maxW && line) { text(ctx, line, sx, ly, { color: step === 3 && pay() === "no" ? P.bad : P.text, size: 12.5 }); line = word; ly += 18; }
+        else line = t;
+      });
+      if (line) text(ctx, line, sx, ly, { color: step === 3 && pay() === "no" ? P.bad : P.text, size: 12.5 });
+      MB.stat("ms-o-d", ["T", "T+1", "T+2", "T+3"][step]);
+      MB.stat("ms-o-m", a.misu > 0 ? cls("bad-t", MB.won(a.misu)) : "0");
+      MB.stat("ms-o-q", a.q.toLocaleString("ko-KR") + "주");
+      MB.stat("ms-o-v", MB.won(a.q * a.px + a.cash - a.misu));
+    }, { get height() { return narrow("ms-cv") ? 440 : 330; } });
+    document.getElementById("ms-next").addEventListener("click", () => { if (step < 3) { step++; anim = 0; cv.redraw(); } });
+    document.getElementById("ms-re").addEventListener("click", () => { step = 0; anim = 0; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (step === 3 && pay() === "no" && anim < 1) { anim = Math.min(1, anim + dt / 1.5); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 6. 이자와 손익분기 */
+  (function () {
+    let x = 0.06, geo = null;
+    const I = MB.range("be-i", (v) => v + "%", () => cv.redraw());
+    const T = MB.range("be-t", (v) => v + "개월", () => cv.redraw());
+    const L = MB.range("be-L", (v) => v.toFixed(1) + "배", () => cv.redraw());
+    const cv = MB.canvas("#be-cv", (ctx, w, h) => {
+      const P = MB.palette(), it = (I() / 100) * (T() / 12), n = L();
+      const f = (r) => n * r - (n - 1) * it;
+      const box = { x: 58, y: 14, w: w - 76, h: h - 60 };
+      const c = MB.chart(ctx, box, {
+        x: [-0.2, 0.3], y: [-0.7, 0.8], xTicks: [-0.2, -0.1, 0, 0.1, 0.2, 0.3], yTicks: [-0.6, -0.4, -0.2, 0, 0.2, 0.4, 0.6, 0.8],
+        xFmt: (v) => spct(v, 0), yFmt: (v) => spct(v, 0), xLabel: "보유 기간의 주가 수익률", yLabel: "내 돈의 수익률",
+        series: [{ data: [[-0.2, -0.2], [0.3, 0.3]], color: P.dim, width: 1.5, dash: [5, 4] }, { data: [[-0.2, f(-0.2)], [0.3, f(0.3)]], color: P.accent, width: 3 }],
+        hlines: [{ y: 0, color: P.axis, dash: [] }],
+      });
+      const xb = ((n - 1) * it) / n;
+      if (xb <= 0.3) { knob(ctx, c.X(xb), c.Y(0), P, P.warn, 5); tag(ctx, "본전 " + spct(xb), c.X(xb) + 6, c.Y(0) + 14, P, { color: P.warn, clampW: w }); }
+      if (it <= 0.3) { knob(ctx, c.X(it), c.Y(it), P, P.accent2, 5); tag(ctx, "1배와 같아지는 점 " + spct(it), c.X(it) - 8, c.Y(it) - 14, P, { color: P.accent2, align: "right" }); }
+      tag(ctx, "1배", c.X(0.27), c.Y(0.27) + 14, P, { color: P.dim });
+      tag(ctx, "신용 " + n.toFixed(1) + "배", c.X(-0.18), c.Y(f(-0.18)) + 14, P, { color: P.accent });
+      const ky = c.Y(MB.clamp(f(x), -0.7, 0.8));
+      ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(x), box.y + box.h); ctx.lineTo(c.X(x), ky); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, c.X(x), ky, P, P.accent);
+      geo = c;
+      MB.stat("be-o-r", tone(x, spct(x)));
+      MB.stat("be-o-l", tone(f(x), spct(f(x))) + (f(x) < x ? ' <small class="down-t">1배보다 나쁨</small>' : ""));
+      MB.stat("be-o-b", spct(xb, 2));
+      MB.stat("be-o-w", spct(it, 2));
+    }, { get height() { return narrow("be-cv") ? 300 : 330; } });
+    MB.drag(cv.canvas, { move(px) { if (!geo) return; x = MB.clamp(Math.round(invX(geo, px, -0.2, 0.3) * 200) / 200, -0.2, 0.3); cv.redraw(); } });
+  })();
+  const MK = ST.market();
+  const seriesOf = (k) => (k === "index" ? MK.index : MK.closes[k]);
+  const lvlFmt = (k) => (k === "index" ? (v) => Math.round(v).toLocaleString("ko-KR") : (v) => MB.price(v, { short: true }));
+
+  /* ---------------------------------------------------------- 7. 급락 구간 + 신용 */
+  (function () {
+    const rg = MK.regimes.find((r) => r.name === "급락"), rb = MK.regimes.find((r) => r.name === "급반등");
+    const s0 = rg.from - 20, s1 = rb.to;
+    let path, mp, one, day, playing = false, acc = 0;
+    function compute() {
+      path = seriesOf(key()).slice(s0, s1 + 1);
+      mp = ST.marginPath(path, { own: 1e7, loanRatio: Lr() - 1 });
+      one = path.map((p) => (1e7 * p) / path[0]);
+    }
+    const key = MB.seg("cr-k", () => { compute(); if (!playing) day = path.length - 1; cv.redraw(); });
+    const Lr = MB.range("cr-L", (v) => v.toFixed(1) + "배", () => { compute(); cv.redraw(); });
+    compute(); day = path.length - 1;
+    const play = document.getElementById("cr-play");
+    const cv = MB.canvas("#cr-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = path.length - 1, k = key();
+      const h1 = Math.round((h - 40) * 0.4);
+      const A = { x: 64, y: 14, w: w - 82, h: h1 - 14 }, B = { x: 64, y: h1 + 26, w: w - 82, h: h - h1 - 26 - 40 };
+      const lo = Math.min.apply(null, path) * 0.95, hi = Math.max.apply(null, path) * 1.04;
+      const cA = MB.chart(ctx, A, { x: [0, n], y: [lo, hi], xTicks: [], yTicks: [lo / 0.95, (lo / 0.95 + hi / 1.04) / 2, hi / 1.04], yFmt: lvlFmt(k),
+        series: [{ data: path.slice(0, day + 1).map((v, i) => [i, v]), color: P.text, width: 1.6 }] });
+      tag(ctx, "급락", cA.X((rg.from + rg.to) / 2 - s0), A.y + 10, P, { color: P.bad, align: "center" });
+      tag(ctx, "급반등", cA.X((rb.from + rb.to) / 2 - s0), A.y + 10, P, { color: P.dim, align: "center" });
+      const eqMax = Math.max(1.6e7, Math.max.apply(null, one) * 1.05);
+      const credit = mp.equity.slice(0, day + 1).map((v, i) => [i, Math.max(0, v)]);
+      const cB = MB.chart(ctx, B, { x: [0, n], y: [0, eqMax], yFmt: MB.wonAxis, xTicks: [rg.from - s0, Math.round((rg.to - s0 + n) / 2), n],
+        xFmt: (i) => MK.dates[s0 + Math.round(i)].slice(2, 7).replace(/-/g, "."),
+        hlines: [{ y: 1e7, color: P.faint }],
+        series: [{ data: one.slice(0, day + 1).map((v, i) => [i, v]), color: P.dim, width: 2 }, { data: credit, color: mp.liquidatedAt >= 0 && day >= mp.liquidatedAt ? P.bad : P.accent, width: 2.6 }] });
+      [A, B].forEach((bx) => alphaRect(ctx, P.faint, 0.15, cA.X(rg.from - s0), bx.y, cA.X(rg.to - s0) - cA.X(rg.from - s0), bx.h));
+      const li = mp.liquidatedAt;
+      if (li >= 0 && day >= li) {
+        const x = cB.X(li), y = cB.Y(Math.max(0, mp.equity[li]));
+        ctx.strokeStyle = P.bad; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x - 7, y - 7); ctx.lineTo(x + 7, y + 7); ctx.moveTo(x + 7, y - 7); ctx.lineTo(x - 7, y + 7); ctx.stroke(); ctx.lineWidth = 1;
+        tag(ctx, "반대매매", x + 10, y + 14, P, { color: P.bad, clampW: w });
+        const px = cA.X(li);
+        ctx.strokeStyle = P.bad; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(px, A.y); ctx.lineTo(px, B.y + B.h); ctx.stroke(); ctx.setLineDash([]);
+      }
+      tag(ctx, "원금 1,000만", B.x + B.w * 0.5, cB.Y(1e7) - 11, P, { color: P.dim, align: "center" });
+      tag(ctx, "1배", cB.X(day) - 4, cB.Y(one[day]) + 13, P, { color: P.dim, align: "right" });
+      tag(ctx, "신용 " + Lr().toFixed(1) + "배", B.x + 6, B.y + 12, P, { color: mp.liquidatedAt >= 0 && day >= mp.liquidatedAt ? P.bad : P.accent });
+      const r = mp.ratio[day];
+      MB.stat("cr-o-d", MK.dates[s0 + day]);
+      MB.stat("cr-o-r", r == null ? cls("bad-t", "청산") : r < MR.maintenance ? cls("bad-t", Math.round(r * 100) + "%") : Math.round(r * 100) + "%");
+      MB.stat("cr-o-1", MB.won(one[day]));
+      MB.stat("cr-o-2", (mp.liquidatedAt >= 0 && day >= mp.liquidatedAt ? cls("bad-t", MB.won(mp.equity[day])) : MB.won(mp.equity[day])));
+    }, { get height() { return narrow("cr-cv") ? 400 : 380; } });
+    play.addEventListener("click", () => {
+      if (playing) { playing = false; play.textContent = "재생"; return; }
+      if (day >= path.length - 1) day = 0;
+      playing = true; play.textContent = "멈춤";
+    });
+    document.getElementById("cr-end").addEventListener("click", () => { playing = false; play.textContent = "재생"; day = path.length - 1; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return;
+      acc += dt;
+      while (acc > 0.04) { acc -= 0.04; day++; }
+      if (day >= path.length - 1) { day = path.length - 1; playing = false; play.textContent = "재생"; }
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 8. 연쇄 반대매매 도미노 */
+  (function () {
+    const N = 80, LAMBDA = 5;
+    const r = ST.rng(77), rj = ST.rng(78);
+    const inv = [];
+    for (let i = 0; i < N; i++) inv.push({ call: 100 * (0.97 - 0.42 * Math.pow((i + 0.3 + 0.4 * r()) / N, 1.6)), x: rj(), y0: rj() });
+    let price, hist, round, liqN, running, acc, fall;
+    function reset() { price = 100; hist = [100]; round = 0; liqN = 0; running = false; acc = 0; inv.forEach((v) => { v.liq = -1; v.t = 0; }); }
+    reset();
+    const S = MB.range("dm-s", (v) => "−" + v + "%", () => { reset(); cv.redraw(); });
+    const C = MB.range("dm-c", (v) => v + "%", () => { reset(); cv.redraw(); });
+    function step() {
+      const hit = inv.filter((v) => v.liq < 0 && v.call >= price);
+      if (!hit.length) { running = false; return false; }
+      round++; hit.forEach((v) => { v.liq = round; v.t = 0; }); liqN += hit.length;
+      const d = Math.min(0.3, LAMBDA * (hit.length / N) * (C() / 100));
+      price *= 1 - d; hist.push(price);
+      return true;
+    }
+    const cv = MB.canvas("#dm-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("dm-cv");
+      const box = { x: 54, y: 14, w: w - 72 - (nar ? 0 : 120), h: h - 40 };
+      const Y = (p) => box.y + box.h - ((p - 45) / (102 - 45)) * box.h;
+      ctx.font = MB.font(11, true); ctx.textAlign = "right"; ctx.textBaseline = "middle";
+      for (let p = 50; p <= 100; p += 10) { ctx.strokeStyle = P.grid; ctx.beginPath(); ctx.moveTo(box.x, Y(p)); ctx.lineTo(box.x + box.w, Y(p)); ctx.stroke(); ctx.fillStyle = P.dim; ctx.fillText(p, box.x - 6, Y(p)); }
+      ctx.save(); ctx.translate(14, box.y + box.h / 2); ctx.rotate(-Math.PI / 2); text(ctx, "주가 (처음 = 100)", 0, 0, { color: P.dim, size: 11.5, align: "center", base: "middle" }); ctx.restore();
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(box.x, box.y); ctx.lineTo(box.x, box.y + box.h); ctx.stroke();
+      const pileX = nar ? box.x + box.w - 70 : box.x + box.w + 20, pileW = nar ? 66 : 100;
+      // 투자자 점
+      let pileK = 0;
+      inv.forEach((v) => {
+        const x = box.x + 10 + v.x * (box.w - (nar ? 90 : 20)), y = Y(v.call);
+        if (v.liq < 0) { ctx.fillStyle = P.accent; ctx.globalAlpha = 0.75; ctx.beginPath(); ctx.arc(x, y, 4, 0, TAU); ctx.fill(); ctx.globalAlpha = 1; return; }
+        const k = pileK++, cols = Math.max(4, Math.floor(pileW / 9)), tx = pileX + (k % cols) * 9 + 4, ty = box.y + box.h - 5 - Math.floor(k / cols) * 9;
+        const e = Math.min(1, v.t), ee = e * e;
+        ctx.fillStyle = P.bad; ctx.beginPath(); ctx.arc(MB.lerp(x, tx, ee), MB.lerp(y, ty, ee), 4, 0, TAU); ctx.fill();
+      });
+      text(ctx, "매도 물량", pileX + pileW / 2, box.y + box.h + 16, { color: P.bad, size: 11, align: "center" });
+      // 주가 선
+      ctx.strokeStyle = P.text; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(box.x, Y(price)); ctx.lineTo(box.x + box.w, Y(price)); ctx.stroke(); ctx.lineWidth = 1;
+      tag(ctx, "주가 " + price.toFixed(1), box.x + 6, Y(price) - 12, P, { color: P.text, weight: 700 });
+      hist.forEach((p, i) => { if (i) { ctx.strokeStyle = P.faint; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(box.x, Y(p)); ctx.lineTo(box.x + 8, Y(p)); ctx.stroke(); ctx.setLineDash([]); } });
+      text(ctx, nar ? "점 = 투자자, 높이 = 반대매매 주가" : "점 하나 = 신용 투자자, 높이 = 그 사람의 반대매매 주가", box.x + 6, box.y + box.h + 16, { color: P.dim, size: 11 });
+      MB.stat("dm-o-n", round ? round + "" : "—");
+      MB.stat("dm-o-q", liqN + " / " + N + "명");
+      MB.stat("dm-o-s", round ? tone(-1, "−" + S() + "%") : "—");
+      MB.stat("dm-o-f", round ? (price < 80 ? cls("bad-t", spct(price / 100 - 1)) : tone(-1, spct(price / 100 - 1))) : "—");
+    }, { get height() { return narrow("dm-cv") ? 360 : 340; } });
+    document.getElementById("dm-go").addEventListener("click", () => {
+      reset();
+      price = 100 * (1 - S() / 100); hist.push(price); round = 0; running = true; acc = 0.6;
+      cv.redraw();
+    });
+    document.getElementById("dm-re").addEventListener("click", () => { reset(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      let dirty = false;
+      inv.forEach((v) => { if (v.liq >= 0 && v.t < 1) { v.t = Math.min(1, v.t + dt * 1.6); dirty = true; } });
+      if (running) { acc += dt; if (acc > 0.7) { acc = 0; step(); dirty = true; } }
+      if (dirty) cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 9. 장기 성장률 곡선 */
+  (function () {
+    let Lsel = 2, geo = null;
+    const sg = MB.range("gr-s", (v) => v + "%", () => cv.redraw());
+    const mu = MB.range("gr-m", (v) => v + "%", () => cv.redraw());
+    const rr = MB.range("gr-r", (v) => v + "%", () => cv.redraw());
+    const cv = MB.canvas("#gr-cv", (ctx, w, h) => {
+      const P = MB.palette(), s = sg() / 100, m = mu() / 100, r = rr() / 100;
+      const g = (L) => r + L * (m - r) - 0.5 * L * L * s * s;
+      const Ls = (m - r) / (s * s), Lz = ((m - r) + Math.sqrt((m - r) * (m - r) + 2 * s * s * r)) / (s * s);
+      const gmax = g(MB.clamp(Ls, 0, 5));
+      const yHi = Math.max(0.15, Math.ceil(gmax * 1.25 * 20) / 20), yLo = -0.3;
+      const data = []; for (let L = 0; L <= 5.0001; L += 0.02) data.push([L, g(L)]);
+      const box = { x: 58, y: 14, w: w - 76, h: h - 60 };
+      const c = MB.chart(ctx, box, { x: [0, 5], y: [yLo, yHi], xTicks: [0, 1, 2, 3, 4, 5], xFmt: (v) => v + "배", yFmt: (v) => spct(v, 0),
+        xLabel: "레버리지 배수 L", yLabel: "장기 성장률(연)",
+        hlines: [{ y: 0, color: P.axis, dash: [] }], vlines: [{ x: 1, color: P.faint, label: "1배" }],
+        series: [{ data, color: P.accent, width: 3 }] });
+      ctx.save(); ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+      alphaRect(ctx, P.bad, 0.08, box.x, c.Y(0), box.w, box.y + box.h - c.Y(0));
+      ctx.restore();
+      if (Ls > 0 && Ls <= 5) {
+        knob(ctx, c.X(Ls), c.Y(g(Ls)), P, P.accent2, 5);
+        tag(ctx, "L* " + Ls.toFixed(2) + "배", c.X(Ls), c.Y(g(Ls)) - 16, P, { color: P.accent2, align: "center" });
+      }
+      if (Lz <= 5) tag(ctx, "성장률 0", c.X(Lz) + 6, c.Y(0) + 14, P, { color: P.bad, clampW: w });
+      const gy = g(Lsel);
+      knob(ctx, c.X(Lsel), c.Y(MB.clamp(gy, yLo, yHi)), P, gy < 0 ? P.bad : P.accent);
+      geo = c;
+      MB.stat("gr-o-L", Lsel.toFixed(2) + "배");
+      MB.stat("gr-o-g", gy < 0 ? cls("bad-t", spct(gy)) : spct(gy));
+      MB.stat("gr-o-s", Ls <= 0 ? cls("bad-t", "0배 (빌리면 손해)") : Ls < 1 ? Ls.toFixed(2) + "배 " + cls("warn-t", "1배 미만") : Ls.toFixed(2) + "배");
+      MB.stat("gr-o-z", Lz.toFixed(2) + "배");
+    }, { get height() { return narrow("gr-cv") ? 300 : 330; } });
+    MB.drag(cv.canvas, { move(px) { if (!geo) return; Lsel = MB.clamp(Math.round(invX(geo, px, 0, 5) * 20) / 20, 0, 5); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 10. 몬테카를로 100개 경로 */
+  (function () {
+    let seed = 7, data = null, reveal = 1;
+    const mode = MB.seg("mc-mode", () => { reveal = 0; cv.redraw(); });
+    const sg = MB.range("mc-s", (v) => v + "%", () => { gen(); cv.redraw(); });
+    const yr = MB.range("mc-y", (v) => v + "년", () => { gen(); cv.redraw(); });
+    function gen() {
+      const paths = ST.gbm({ s0: 1, mu: 0.08, sigma: sg() / 100, days: 252 * yr(), seed, n: 100 });
+      const out = { "1": [], credit: [], daily: [], liq: [] };
+      paths.forEach((p) => {
+        out["1"].push(p);
+        const m = ST.marginPath(p, { own: 1, loanRatio: 1 });
+        out.credit.push(m.equity); out.liq.push(m.liquidatedAt);
+        out.daily.push(ST.leveraged(ST.returns(p), 2, 0, MR.rate));
+      });
+      data = out; reveal = 0;
+    }
+    gen(); reveal = 1;
+    const cv = MB.canvas("#mc-cv", (ctx, w, h) => {
+      const P = MB.palette(), md = mode(), arr = data[md], len = arr[0].length - 1;
+      const finals = arr.map((a) => a[len]).sort((a, b) => a - b);
+      const yHi = Math.min(8, Math.max(2.5, ST.percentile(finals, 0.95) * 1.1));
+      const box = { x: 50, y: 14, w: w - 66, h: h - 58 };
+      const c = MB.chart(ctx, box, { x: [0, len], y: [0, yHi], xTicks: Array.from({ length: yr() + 1 }, (_, i) => i * 252), xFmt: (v) => Math.round(v / 252) + "년",
+        yFmt: (v) => MB.fmt(v, 2), xLabel: "시간", yLabel: "내 돈 (처음 = 1)", hlines: [{ y: 1, color: P.faint }] });
+      const upto = Math.floor(len * reveal), step = Math.max(1, Math.floor(len / 260));
+      ctx.save(); ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+      arr.forEach((a, k) => {
+        const li = md === "credit" ? data.liq[k] : -1, end = li >= 0 ? Math.min(upto, li) : upto;
+        ctx.strokeStyle = li >= 0 ? P.bad : P.accent; ctx.globalAlpha = li >= 0 ? 0.55 : 0.28; ctx.lineWidth = 1.2;
+        ctx.beginPath();
+        for (let i = 0; i <= end; i += step) { const x = c.X(i), y = c.Y(Math.max(0, a[i])); i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+        ctx.lineTo(c.X(end), c.Y(Math.max(0, a[end]))); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      if (md === "credit") data.liq.forEach((li, k) => {
+        if (li < 0 || li > upto) return;
+        const x = c.X(li), y = c.Y(Math.max(0, data.credit[k][li]));
+        ctx.strokeStyle = P.bad; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - 4, y - 4); ctx.lineTo(x + 4, y + 4); ctx.moveTo(x + 4, y - 4); ctx.lineTo(x - 4, y + 4); ctx.stroke();
+      });
+      ctx.restore(); ctx.lineWidth = 1;
+      if (reveal >= 1) {
+        const med = ST.percentile(finals, 0.5);
+        ctx.strokeStyle = P.accent2; ctx.lineWidth = 2; ctx.setLineDash([6, 4]); ctx.beginPath(); ctx.moveTo(box.x, c.Y(med)); ctx.lineTo(box.x + box.w, c.Y(med)); ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth = 1;
+        tag(ctx, "중앙값 " + MB.fmt(med, 3), box.x + box.w - 4, c.Y(med) - 11, P, { color: P.accent2, align: "right" });
+      }
+      const nl = md === "credit" ? data.liq.filter((x) => x >= 0).length : md === "daily" ? finals.filter((x) => x < 0.1).length : 0;
+      MB.stat("mc-o-l", md === "credit" ? cls(nl ? "bad-t" : "", nl + " / 100") : md === "daily" ? "없음 <small>(−90% 이하 " + nl + ")</small>" : "없음");
+      MB.stat("mc-o-n", finals.filter((x) => x < 1).length + " / 100");
+      const med = ST.percentile(finals, 0.5), avg = ST.mean(finals);
+      MB.stat("mc-o-m", tone(med - 1, spct(med - 1, 0)));
+      MB.stat("mc-o-a", tone(avg - 1, spct(avg - 1, 0)));
+    }, { get height() { return narrow("mc-cv") ? 300 : 330; } });
+    document.getElementById("mc-re").addEventListener("click", () => { seed++; gen(); cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (reveal < 1) { reveal = Math.min(1, reveal + dt / 1.2); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 11. 공매도 손익 비대칭 */
+  (function () {
+    const P0 = 15000, XM = 60000;
+    let S = 30000, geo = null;
+    const cv = MB.canvas("#as-cv", (ctx, w, h) => {
+      const P = MB.palette();
+      const box = { x: 58, y: 14, w: w - 92, h: h - 60 };
+      const c = MB.chart(ctx, box, { x: [0, XM], y: [-3.2, 3.2], xTicks: [0, 15000, 30000, 45000, 60000], yTicks: [-3, -2, -1, 0, 1, 2, 3],
+        xFmt: (v) => MB.price(v, { short: true }), yFmt: (v) => spct(v, 0), xLabel: "미래 주가", yLabel: "손익(판 금액 대비)",
+        hlines: [{ y: 0, color: P.axis, dash: [] }] });
+      const Y0 = c.Y(0), xEq = c.X(P0);
+      // 공매도 손익 면
+      ctx.save(); ctx.beginPath(); ctx.rect(box.x, box.y, box.w, box.h); ctx.clip();
+      ctx.fillStyle = P.upSoft; ctx.beginPath(); ctx.moveTo(c.X(0), c.Y(1)); ctx.lineTo(xEq, Y0); ctx.lineTo(c.X(0), Y0); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = P.downSoft; ctx.beginPath(); ctx.moveTo(xEq, Y0); ctx.lineTo(c.X(XM), c.Y(-(XM - P0) / P0)); ctx.lineTo(c.X(XM), Y0); ctx.closePath(); ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = P.accent2; ctx.setLineDash([6, 4]);
+      ctx.beginPath(); ctx.moveTo(c.X(0), c.Y(-1)); ctx.lineTo(c.X(XM), c.Y((XM - P0) / P0)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.lineWidth = 3; ctx.strokeStyle = P.accent;
+      ctx.beginPath(); ctx.moveTo(c.X(0), c.Y(1)); ctx.lineTo(c.X(XM), c.Y(-(XM - P0) / P0)); ctx.stroke(); ctx.lineWidth = 1;
+      ctx.strokeStyle = P.up; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(box.x, c.Y(1)); ctx.lineTo(box.x + box.w, c.Y(1)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.restore();
+      tag(ctx, "공매도 최대 이익 +100%", box.x + box.w - 4, c.Y(1) - 11, P, { color: P.up, align: "right" });
+      tag(ctx, "매수", c.X(52000), c.Y((52000 - P0) / P0) + 14, P, { color: P.accent2, weight: 700 });
+      tag(ctx, "공매도", c.X(50000), c.Y(-(50000 - P0) / P0) - 14, P, { color: P.accent, weight: 700, align: "right" });
+      tag(ctx, "손실은 계속 →", box.x + box.w - 4, box.y + box.h - 12, P, { color: P.down, align: "right" });
+      const lp = (S - P0) / P0;
+      ctx.strokeStyle = P.faint; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(S), box.y); ctx.lineTo(c.X(S), box.y + box.h); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, c.X(S), c.Y(lp), P, P.accent2, 6);
+      knob(ctx, c.X(S), c.Y(-lp), P, P.accent, 7);
+      geo = c;
+      MB.stat("as-o-p", MB.price(S));
+      MB.stat("as-o-l", tone(lp, spct(lp, 0)));
+      MB.stat("as-o-s", lp <= -1 + 1e-9 ? tone(1, "+100%") : -lp < -1 ? cls("bad-t", spct(-lp, 0)) : tone(-lp, spct(-lp, 0)));
+    }, { get height() { return narrow("as-cv") ? 300 : 340; } });
+    MB.drag(cv.canvas, { move(px) { if (!geo) return; S = MB.clamp(Math.round(invX(geo, px, 0, XM) / 500) * 500, 0, XM); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 12. 공매도 비용 */
+  (function () {
+    const co = ST.CO.hanbit, P0 = co.price, Q = 100;
+    const X = MB.range("sc-x", (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v) + "%", () => cv.redraw());
+    const F = MB.range("sc-f", (v) => v + "%", () => cv.redraw());
+    const Dd = MB.range("sc-d", (v) => v + "일", () => cv.redraw());
+    const dv = document.getElementById("sc-div");
+    dv.addEventListener("change", () => cv.redraw());
+    const cv = MB.canvas("#sc-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("sc-cv");
+      const P1 = ST.roundTick(P0 * (1 + X() / 100)), sell = ST.cost({ side: "sell", price: P0, qty: Q }), buy = ST.cost({ side: "buy", price: P1, qty: Q });
+      const borrow = P0 * Q * (F() / 100) * (Dd() / 365), divi = dv.checked ? co.dps * Q : 0;
+      const rows = [["가격 손익", (P0 - P1) * Q], ["매도 거래세·수수료", -(sell.tax + sell.fee)], ["매수 수수료", -buy.fee], ["대차 수수료", -borrow], ["배당 상당액", -divi]];
+      const net = rows.reduce((s, r) => s + r[1], 0);
+      rows.push(["순손익", net]);
+      const lw = nar ? 108 : 132, x0 = lw + 8, x1 = w - 16, mid = (x0 + x1) / 2, half = (x1 - x0) / 2, scale = half / 3.2e6;
+      const rh = (h - 40) / rows.length;
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(mid, 10); ctx.lineTo(mid, h - 26); ctx.stroke();
+      ctx.font = MB.font(10.5, true); ctx.fillStyle = P.dim; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      [-3e6, -1.5e6, 0, 1.5e6, 3e6].forEach((v) => { ctx.fillText(MB.wonAxis(v), mid + v * scale, h - 20); });
+      rows.forEach(([k, v], i) => {
+        const y = 12 + i * rh, bh = Math.min(26, rh - 10), last = i === rows.length - 1;
+        text(ctx, k, 10, y + bh / 2 + 4, { color: last ? P.text : P.dim, size: 12.5, weight: last ? 700 : 400 });
+        const bw = Math.max(1, Math.min(half, Math.abs(v) * scale));
+        ctx.fillStyle = MB.toneColor(v); ctx.globalAlpha = last ? 0.95 : 0.7;
+        ctx.fillRect(v >= 0 ? mid : mid - bw, y, bw, bh); ctx.globalAlpha = 1;
+        if (last) { ctx.strokeStyle = P.text; ctx.lineWidth = 1.5; ctx.strokeRect(v >= 0 ? mid : mid - bw, y, bw, bh); ctx.lineWidth = 1; }
+        const s = swon(Math.round(v)), tx = v >= 0 ? mid + bw + 6 : mid - bw - 6;
+        ctx.font = MB.font(11.5, false, 600); const tw = ctx.measureText(s).width;
+        const inside = v >= 0 ? tx + tw > x1 + 12 : tx - tw < x0 - 4;
+        text(ctx, s, inside ? (v >= 0 ? mid - 6 : mid + 6) : tx, y + bh / 2 + 4, { color: MB.toneColor(v), size: 11.5, weight: 600, align: (v >= 0) !== inside ? "left" : "right" });
+      });
+      const cost = rows.slice(1, 5).reduce((s, r) => s - r[1], 0) + 0;
+      const P1b = (P0 * Q - (sell.tax + sell.fee) - borrow - divi) / (Q * (1 + ST.KR.fee));
+      MB.stat("sc-o-g", tone((P0 - P1), swon((P0 - P1) * Q)));
+      MB.stat("sc-o-c", tone(-1, "−" + MB.won(cost)));
+      MB.stat("sc-o-n", tone(net, swon(Math.round(net))));
+      MB.stat("sc-o-b", "주가 " + spct(P1b / P0 - 1, 2));
+    }, { get height() { return narrow("sc-cv") ? 290 : 300; } });
+  })();
+  /* ---------------------------------------------------------- 13. 숏스퀴즈 게임 */
+  (function () {
+    const P0 = 15000, Q = 100, COLL = 1.5e6, NH = 50, LAM = 4, MAXD = 30, FAIR = P0 * 1.15;
+    let seed = 2, g, hold, days, pending, newsDay, over;
+    const msg = (s) => { document.getElementById("sq-msg").innerHTML = s; };
+    const SI = MB.range("sq-si", (v) => v + "%", () => { reset(); cv.redraw(); });
+    function reset() {
+      seed++;
+      const rr = ST.rng(seed * 13 + 1); g = ST.gauss(seed * 7 + 3);
+      hold = []; for (let i = 0; i < NH; i++) hold.push({ th: 0.06 + 0.55 * Math.pow(rr(), 1.3), cov: false });
+      newsDay = 3 + Math.floor(rr() * 4);
+      days = [{ p: P0, si: SI() / 100, lock: false, news: false }];
+      pending = 0; over = null;
+      msg("15,000원에 100주를 공매도했다. ‘다음 날’을 눌러 시작한다.");
+    }
+    reset();
+    const siLeft = () => (SI() / 100) * hold.filter((h) => !h.cov).length / NH;
+    const pnlAt = (p) => (P0 - p) * Q - ST.cost({ side: "sell", price: P0, qty: Q }).fee - P0 * Q * ST.KR.sellTax.KOSPI - ST.cost({ side: "buy", price: p, qty: Q }).fee;
+    function nextDay() {
+      const t = days.length;
+      if (t > MAXD) { msg("30일이 지났다. ‘새 게임’으로 다시 해 본다."); return; }
+      const prev = days[t - 1].p, news = t === newsDay;
+      let base = 0.022 * g();
+      if (news) base += 0.15;
+      if (t > newsDay) base -= 0.2 * Math.log(prev / FAIR);
+      const unit = SI() / 100 / NH;
+      let demand = pending;
+      for (let it = 0; it < 40; it++) {
+        const p1 = prev * (1 + MB.clamp(base + LAM * demand, -0.3, 0.3));
+        let add = 0;
+        hold.forEach((h) => { if (!h.cov && p1 / P0 - 1 >= h.th) { h.cov = true; add += unit; } });
+        if (!add) break;
+        demand += add;
+      }
+      const raw = base + LAM * demand, lim = ST.limits(prev);
+      let p, lock = false;
+      if (raw >= 0.3) { p = lim.upper; lock = true; pending = (raw - 0.3) / LAM; }
+      else { p = MB.clamp(ST.roundTick(prev * (1 + Math.max(-0.3, raw))), lim.lower, lim.upper); pending = 0; }
+      days.push({ p, si: siLeft(), lock, news });
+      let m = news ? "D+" + t + ": 호재 공시(가상)! " : "D+" + t + ": ";
+      if (lock) m += '<span class="up-t">상한가 잠김.</span> 환매수 주문이 쌓여 사고 싶어도 못 산다. ';
+      else if (demand > 0.0001) m += "공매도자들의 환매수가 주가를 밀어 올렸다. ";
+      if (!over && (p - P0) * Q >= COLL) {
+        over = { type: "forced", t, p, pnl: pnlAt(p) };
+        m += '<span class="bad-t">손실이 담보 150만원을 넘어 강제 환매수: ' + MB.won(over.pnl) + ".</span> 계속 ‘다음 날’로 그 뒤를 볼 수 있다.";
+      } else if (!over) m += "버틸지, 지금 환매수할지 정한다.";
+      msg(m);
+    }
+    const cv = MB.canvas("#sq-cv", (ctx, w, h) => {
+      const P = MB.palette(), ps = days.map((d) => d.p);
+      const hA = Math.round((h - 30) * 0.66);
+      const A = { x: 60, y: 14, w: w - 76, h: hA - 14 }, B = { x: 60, y: hA + 26, w: w - 76, h: h - hA - 26 - 28 };
+      const yLo = Math.min(P0 * 0.8, Math.min.apply(null, ps) * 0.95), yHi = Math.max(P0 * 2.2, Math.max.apply(null, ps) * 1.08);
+      const c = MB.chart(ctx, A, { x: [0, MAXD], y: [yLo, yHi], xTicks: [], yFmt: (v) => MB.price(v, { short: true }),
+        hlines: [{ y: P0, color: P.accent, label: "판 가격" }, { y: P0 + COLL / Q, color: P.bad, label: "강제 환매수선" }] });
+      days.forEach((d, i) => {
+        if (d.news) { ctx.strokeStyle = P.up; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(i), A.y); ctx.lineTo(c.X(i), A.y + A.h); ctx.stroke(); ctx.setLineDash([]); tag(ctx, "호재", c.X(i) + 3, A.y + 10, P, { color: P.up }); }
+      });
+      ctx.strokeStyle = P.text; ctx.lineWidth = 2; ctx.beginPath(); ps.forEach((p, i) => (i ? ctx.lineTo(c.X(i), c.Y(p)) : ctx.moveTo(c.X(i), c.Y(p)))); ctx.stroke(); ctx.lineWidth = 1;
+      days.forEach((d, i) => {
+        if (!i) return;
+        ctx.fillStyle = d.lock ? P.up : MB.toneColor(d.p - days[i - 1].p);
+        ctx.beginPath(); ctx.arc(c.X(i), c.Y(d.p), d.lock ? 5 : 3, 0, TAU); ctx.fill();
+        if (d.lock) text(ctx, "상", c.X(i), c.Y(d.p) - 9, { color: P.up, size: 10.5, weight: 700, align: "center" });
+      });
+      if (over && over.t != null) {
+        knob(ctx, c.X(over.t), c.Y(over.p), P, over.type === "forced" ? P.bad : P.accent2, 6);
+        tag(ctx, over.type === "forced" ? "강제 환매수" : "내 환매수", c.X(over.t) + 10, c.Y(over.p) + 12, P, { color: over.type === "forced" ? P.bad : P.accent2, clampW: w });
+      }
+      // 공매도 잔고 막대
+      const siMax = Math.max(0.05, SI() / 100);
+      const bw = B.w / (MAXD + 1);
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(B.x, B.y + B.h); ctx.lineTo(B.x + B.w, B.y + B.h); ctx.stroke();
+      days.forEach((d, i) => { const bh = (d.si / siMax) * B.h; ctx.fillStyle = P.accent; ctx.globalAlpha = 0.6; ctx.fillRect(c.X(i) - bw * 0.35, B.y + B.h - bh, bw * 0.7, bh); ctx.globalAlpha = 1; });
+      text(ctx, "남은 공매도 잔고", B.x + 4, B.y - 4, { color: P.dim, size: 11 });
+      ctx.font = MB.font(10.5, true); ctx.fillStyle = P.dim; ctx.textAlign = "center"; ctx.textBaseline = "top";
+      for (let i = 0; i <= MAXD; i += 5) ctx.fillText("D+" + i, c.X(i), B.y + B.h + 6);
+      const last = days[days.length - 1];
+      MB.stat("sq-o-d", "D+" + (days.length - 1));
+      MB.stat("sq-o-p", MB.price(last.p) + " " + tone(last.p - P0, spct(last.p / P0 - 1, 0)));
+      MB.stat("sq-o-s", pct(last.si, 1));
+      const pnl = over ? over.pnl : pnlAt(last.p);
+      MB.stat("sq-o-g", (pnl < -COLL * 0.66 ? cls("bad-t", swon(Math.round(pnl))) : tone(pnl, swon(Math.round(pnl)))) + (over ? " <small>확정</small>" : ""));
+    }, { get height() { return narrow("sq-cv") ? 360 : 360; } });
+    document.getElementById("sq-next").addEventListener("click", () => { nextDay(); cv.redraw(); });
+    document.getElementById("sq-cover").addEventListener("click", () => {
+      if (over) { msg("이미 포지션을 닫았다. 손익은 " + MB.won(over.pnl) + "으로 확정됐다."); return; }
+      const t = days.length - 1, d = days[t];
+      if (d.lock) { msg('<span class="up-t">상한가에 매수 주문이 쌓여 체결되지 않았다.</span> 내일 다시 시도해야 한다.'); return; }
+      over = { type: "cover", t, p: d.p, pnl: pnlAt(d.p) };
+      msg("D+" + t + "에 " + MB.price(d.p) + "으로 환매수했다. 손익 " + swon(Math.round(over.pnl)) + ". 계속 ‘다음 날’로 그 뒤를 볼 수 있다.");
+      cv.redraw();
+    });
+    document.getElementById("sq-re").addEventListener("click", () => { reset(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 14. 종합: 시작일을 끄는 세 계좌 */
+  (function () {
+    let s = 860, arr, W, strip, geo = null;
+    const yearTicks = [];
+    MK.dates.forEach((d, i) => { if (i && d.slice(0, 4) !== MK.dates[i - 1].slice(0, 4)) yearTicks.push(i); });
+    function recompute() {
+      arr = seriesOf(key()); W = 252 * Yr();
+      const last = arr.length - 1 - W; s = Math.min(s, last);
+      strip = [];
+      for (let t = 0; t <= last; t += 5) strip.push([t, ST.marginPath(arr.slice(t, t + W + 1), { own: 1, loanRatio: Lr() - 1 }).liquidatedAt >= 0]);
+    }
+    const key = MB.seg("lb-k", () => { recompute(); cv.redraw(); });
+    const Lr = MB.range("lb-L", (v) => v.toFixed(1) + "배", () => { recompute(); cv.redraw(); });
+    const Yr = MB.range("lb-y", (v) => v + "년", () => { recompute(); cv.redraw(); });
+    recompute();
+    const cv = MB.canvas("#lb-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("lb-cv"), N = arr.length - 1, L = Lr();
+      const hA = Math.round(h * 0.34);
+      const A = { x: 62, y: 14, w: w - 78, h: hA - 14 };
+      const sy = A.y + A.h + 24, B = { x: 62, y: sy + 34, w: w - 78, h: h - sy - 34 - (nar ? 58 : 40) };
+      const lo = Math.min.apply(null, arr), hi = Math.max.apply(null, arr);
+      const cA = MB.chart(ctx, A, { x: [0, N], y: [lo * 0.9, hi * 1.05], xTicks: yearTicks.filter((_, i) => !nar || i % 2 === 0),
+        xFmt: (i) => (nar ? "'" + MK.dates[i].slice(2, 4) : MK.dates[i].slice(0, 4)), yFmt: lvlFmt(key()), yTicks: [lo, (lo + hi) / 2, hi],
+        series: [{ data: arr.map((v, i) => [i, v]).filter((_, i) => i % 2 === 0), color: P.dim, width: 1.2 }] });
+      alphaRect(ctx, P.accent, 0.12, cA.X(s), A.y, cA.X(s + W) - cA.X(s), A.h);
+      ctx.strokeStyle = P.text; ctx.lineWidth = 2; ctx.beginPath();
+      for (let i = s; i <= s + W; i++) { const x = cA.X(i), y = cA.Y(arr[i]); i === s ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+      ctx.stroke(); ctx.lineWidth = 1;
+      knob(ctx, cA.X(s), cA.Y(arr[s]), P, P.accent);
+      // 시작일별 반대매매 띠
+      const dx = Math.max(1, cA.X(5) - cA.X(0) + 0.6);
+      strip.forEach(([t, liq]) => { ctx.fillStyle = liq ? P.bad : P.ok; ctx.globalAlpha = liq ? 0.9 : 0.3; ctx.fillRect(cA.X(t), sy, dx, 10); });
+      ctx.globalAlpha = 1;
+      const liqShare = strip.filter((x) => x[1]).length / strip.length;
+      text(ctx, "시작일별 신용 반대매매 여부 (빨강 = 기간 안에 반대매매)", A.x, sy + 24, { color: P.dim, size: 11 });
+      // 세 계좌
+      const path = arr.slice(s, s + W + 1);
+      const one = path.map((p) => (1e7 * p) / path[0]);
+      const mp = ST.marginPath(path, { own: 1e7, loanRatio: L - 1 });
+      const dl = ST.leveraged(ST.returns(path), L, 0.0065, 0.03, 1e7);
+      const yMax = Math.max(2e7, Math.max.apply(null, one), Math.max.apply(null, dl), Math.max.apply(null, mp.equity)) * 1.05;
+      const li = mp.liquidatedAt;
+      const cB = MB.chart(ctx, B, { x: [0, W], y: [0, yMax], yFmt: MB.wonAxis, xTicks: Array.from({ length: Yr() }, (_, i) => i * 252), xFmt: (v) => Math.round(v / 252) + "년",
+        hlines: [{ y: 1e7, color: P.faint }],
+        series: [
+          { data: one.map((v, i) => [i, v]), color: P.dim, width: 2 },
+          { data: dl.map((v, i) => [i, v]), color: P.accent2, width: 2 },
+          { data: mp.equity.map((v, i) => [i, Math.max(0, v)]), color: li >= 0 ? P.bad : P.accent, width: 2.6 },
+        ] });
+      if (li >= 0) {
+        const x = cB.X(li), y = cB.Y(Math.max(0, mp.equity[li]));
+        ctx.strokeStyle = P.bad; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x - 6, y - 6); ctx.lineTo(x + 6, y + 6); ctx.moveTo(x + 6, y - 6); ctx.lineTo(x - 6, y + 6); ctx.stroke(); ctx.lineWidth = 1;
+        tag(ctx, "반대매매 " + MK.dates[s + li].slice(0, 7), x + 9, y - 12, P, { color: P.bad, clampW: w });
+      }
+      let lx = B.x + 6;
+      [["1배", P.dim], ["신용 " + L.toFixed(1) + "배", li >= 0 ? P.bad : P.accent], ["매일 " + L.toFixed(1) + "배", P.accent2]].forEach(([t, c]) => {
+        ctx.font = MB.font(11.5, false, 700); const tw = ctx.measureText(t).width;
+        tag(ctx, t, lx, B.y + 10, P, { color: c, weight: 700 }); lx += tw + 16;
+      });
+      geo = { cA, A };
+      const f = (v) => tone(v - 1e7, MB.won(v));
+      MB.stat("lb-o-1", f(one[W]));
+      MB.stat("lb-o-c", li >= 0 ? cls("bad-t", MB.won(mp.final) + " <small>반대매매</small>") : f(mp.final));
+      MB.stat("lb-o-d", f(dl[W]));
+      MB.stat("lb-o-p", liqShare > 0 ? cls("bad-t", pct(liqShare, 0)) : "0%");
+    }, { get height() { return narrow("lb-cv") ? 470 : 460; } });
+    MB.drag(cv.canvas, {
+      move(px, py) {
+        if (!geo || py > geo.A.y + geo.A.h + 40) return;
+        s = MB.clamp(Math.round(invX(geo.cA, px, 0, arr.length - 1)), 0, arr.length - 1 - W); cv.redraw();
+      },
+    });
+  })();
+})();
+</script>
+</body>
+</html>

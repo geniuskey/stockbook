@@ -1,0 +1,1506 @@
+<!doctype html>
+<!-- Copyright (c) 2026 geniuskey and StockBook contributors.
+     Executable code: MIT (see ../LICENSE-MIT).
+     Text, illustrations, questions and explanations: CC-BY-4.0 (see ../LICENSE.md). -->
+<html lang="ko">
+<head>
+<!--head:start {"desc": "한국 주식은 세계 주식의 약 1~2%다. 미국 시장의 구조와 거래 시간, 원화 수익률 = 현지 수익률 × 환율, 위기 때 원화 약세가 주는 완충, 환헤지와 헤지 비용, 환전 스프레드, 국가 분산, 해외 주식 양도세 250만원 공제와 손익 통산을 시뮬레이터로 익힌다."}-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>해외 주식과 환율 · StockBook</title>
+<meta name="description" content="한국 주식은 세계 주식의 약 1~2%다. 미국 시장의 구조와 거래 시간, 원화 수익률 = 현지 수익률 × 환율, 위기 때 원화 약세가 주는 완충, 환헤지와 헤지 비용, 환전 스프레드, 국가 분산, 해외 주식 양도세 250만원 공제와 손익 통산을 시뮬레이터로 익힌다.">
+<link rel="canonical" href="https://stockbook.euiyun.com/chapters/global.html">
+<link rel="icon" type="image/svg+xml" href="../favicon.svg">
+<meta name="theme-color" content="#6741d9">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="StockBook">
+<meta property="og:locale" content="ko_KR">
+<meta property="og:title" content="해외 주식과 환율 · StockBook">
+<meta property="og:description" content="한국 주식은 세계 주식의 약 1~2%다. 미국 시장의 구조와 거래 시간, 원화 수익률 = 현지 수익률 × 환율, 위기 때 원화 약세가 주는 완충, 환헤지와 헤지 비용, 환전 스프레드, 국가 분산, 해외 주식 양도세 250만원 공제와 손익 통산을 시뮬레이터로 익힌다.">
+<meta property="og:url" content="https://stockbook.euiyun.com/chapters/global.html">
+<meta property="og:image" content="https://stockbook.euiyun.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":["Chapter","LearningResource"],"@id":"https://stockbook.euiyun.com/chapters/global.html#chapter","name":"해외 주식과 환율","headline":"해외 주식과 환율 · StockBook","description":"한국 주식은 세계 주식의 약 1~2%다. 미국 시장의 구조와 거래 시간, 원화 수익률 = 현지 수익률 × 환율, 위기 때 원화 약세가 주는 완충, 환헤지와 헤지 비용, 환전 스프레드, 국가 분산, 해외 주식 양도세 250만원 공제와 손익 통산을 시뮬레이터로 익힌다.","url":"https://stockbook.euiyun.com/chapters/global.html","position":22,"inLanguage":"ko","isAccessibleForFree":true,"learningResourceType":"인터랙티브 교재","educationalLevel":"일반 성인","image":"https://stockbook.euiyun.com/og.png","dateModified":"2026-10-04","isPartOf":{"@type":"Book","@id":"https://stockbook.euiyun.com/#book","name":"StockBook · 만져 보며 배우는 주식 교과서","url":"https://stockbook.euiyun.com/"}},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"StockBook","item":"https://stockbook.euiyun.com/"},{"@type":"ListItem","position":2,"name":"22. 해외 주식과 환율","item":"https://stockbook.euiyun.com/chapters/global.html"}]}]}</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<link rel="stylesheet" href="../css/style.css">
+<script src="../js/common.js"></script>
+<script src="../js/stock.js"></script>
+<!--head:end-->
+<style>
+  figure.diagram svg { max-width: 520px; margin: 0 auto; }
+  .fx-grid { display: grid; grid-template-columns: auto 1fr 1fr; gap: 1px; background: var(--border); border-top: 1px solid var(--border); font-size: 14px; }
+  .fx-grid > div { background: var(--bg-elev); padding: 9px 12px; }
+  .fx-grid .h { background: var(--surface); color: var(--text-dim); font-size: 12.5px; }
+  .fx-grid .c { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  .fx-grid .c small { display: block; font-family: var(--font); color: var(--text-dim); font-size: 12px; }
+  .nw-head { padding: 10px 18px; border-top: 1px solid var(--border); font-size: 14.5px; min-height: 44px; }
+</style>
+</head>
+<body data-chapter="global">
+<main class="chapter">
+  <header class="chapter-hero">
+    <div class="eyebrow">Chapter 22</div>
+    <h1>해외 주식과 환율</h1>
+    <p class="lead">한국 주식시장은 세계 주식시장의 약 1~2%다. 나머지 98%를 사려면 국경을 넘어야 하고, 국경을 넘는 순간 수익률에 숫자가 하나 더 곱해진다. 환율이다. 미국 지수가 10% 올라도 원화로는 20% 넘게 벌 수도 있고, 거의 못 벌 수도 있다. 이 장은 해외 주식을 살 때 달라지는 것들, 즉 거래 시간과 시장 규칙, 환율이 수익률에 섞이는 방식, 환헤지와 그 비용, 환전 수수료, 세금을 하나씩 손으로 만져 본다.</p>
+    <ul class="objectives">
+      <li>세계 시가총액에서 한국이 차지하는 비중과 홈 바이어스를 알고, 나라를 섞으면 변동성이 줄어드는 원리를 상관관계로 설명한다.</li>
+      <li>미국 시장의 규칙(가격제한폭 없음, 소수점 거래, 프리·애프터마켓, 서머타임에 따라 바뀌는 한국 시각 거래 시간)을 한국 시장과 비교한다.</li>
+      <li>원화 수익률을 (1 + 현지 수익률) × (1 + 환율 변화) − 1로 분해하고, 위기 때 원화 약세가 해외 자산의 손실을 줄여 주는 이유를 설명한다.</li>
+      <li>환헤지(H)와 환노출(UH) 상품의 차이, 헤지 비용이 두 나라 금리차에서 나온다는 점, 환전 스프레드의 크기를 계산한다.</li>
+      <li>해외 주식 양도세(22%, 연 250만원 기본공제, 손익 통산)와 배당 원천징수를 계산하고, 국내 상장 해외 ETF와 과세 방식이 다르다는 것을 안다.</li>
+    </ul>
+  </header>
+
+  <section id="why">
+    <h2>왜 해외에 투자하는가</h2>
+    <p>한국에서 주식을 시작하면 자연스럽게 한국 주식부터 산다. 이름을 아는 회사, 뉴스로 매일 듣는 회사, 낮 시간에 거래되는 시장이다. 그런데 세계 전체로 보면 한국 시장은 얼마나 클까? 세계의 모든 상장 회사 <span class="term">시가총액</span><span class="en">(Market cap)</span>, 즉 주가 × 주식 수를 더한 금액에서 각 나라가 차지하는 몫을 먼저 맞혀 보자. 막대를 위아래로 끌어 내 추측을 놓고 "정답 보기"를 누른다.</p>
+
+    <div class="sim" id="sim-hb">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>세계 주식시장에서 각 나라의 몫 맞히기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="hb-cv"></canvas><span class="hint">막대를 끌어 추측을 놓는다</span></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="hb-show">정답 보기</button><button class="btn" id="hb-re">다시</button></div>
+          <p class="sim-msg" id="hb-msg" style="margin:0;font-size:14px;color:var(--text-dim)">네 막대를 끌어 세계 주식시장 시가총액에서 각 지역이 차지하는 비율을 추측한다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">내가 고른 한국 몫</span><span class="v" id="hb-o-kr">—</span></div>
+        <div class="stat"><span class="k">실제 한국 몫(약)</span><span class="v" id="hb-o-true">?</span></div>
+        <div class="stat"><span class="k">평균 오차</span><span class="v" id="hb-o-err">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 직감대로 놓고 정답을 본다. ② 한국 막대를 실제 값까지 내려 보면 막대가 거의 보이지 않는다. ③ 미국 막대를 실제 값까지 올리면 나머지를 다 합친 것보다 크다. (비중은 2025~2026년 전후 대략값이며, 지수 회사·기준일에 따라 몇 %p씩 다르다. 유럽은 영국 포함)</div>
+    </div>
+
+    <p>대부분 한국 막대를 실제보다 훨씬 높게 놓는다. 세계 시가총액에서 한국은 <b>약 1~2%</b>, 미국은 <b>약 60%</b>다. 한국 주식만 가진 사람은 세계 주식시장의 1~2% 조각에 재산을 모두 건 셈이다. 사람들이 자기 나라 주식을 세계 비중보다 훨씬 많이 들고 있는 경향을 <span class="term">홈 바이어스</span><span class="en">(Home bias)</span>라 한다. 익숙함, 정보 접근성, 환전과 세금의 번거로움이 이유로 꼽힌다. 아래 지도는 같은 100을 넓이로 나눈 것이다. 위쪽 버튼으로 세계 비중과 "국내 80%" 계좌(가정한 예)를 바꿔 보고, 칸을 눌러 비중을 읽어 보자.</p>
+
+    <div class="sim" id="sim-tm">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>넓이로 보는 세계 주식시장</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="tm-cv"></canvas><span class="hint">칸을 누르면 비중을 읽는다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>보기</span>
+            <div class="seg" id="tm-mode"><button data-value="world" class="on">세계 시가총액</button><button data-value="home">국내 80% 계좌</button></div>
+          </div>
+          <p style="margin:0;font-size:14px;color:var(--text-dim)">"국내 80% 계좌"는 한국 80, 미국 12, 기타 8로 나눈 가상의 예다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">고른 칸</span><span class="v" id="tm-o-name">—</span></div>
+        <div class="stat"><span class="k">비중</span><span class="v" id="tm-o-share">—</span></div>
+        <div class="stat"><span class="k">한국 비중의 세계 대비</span><span class="v" id="tm-o-ratio">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 세계 지도에서 한국 칸을 찾는다. ② "국내 80% 계좌"로 바꾸면 한국 칸이 세계 비중의 몇 배로 커지는지 본다. ③ 세계 지도에서 미국 칸이 차지하는 넓이를 보며, "세계 분산"도 결국 미국 비중이 크다는 점을 확인한다. (나라별 비중은 대략값)</div>
+    </div>
+
+    <p>홈 바이어스가 꼭 틀린 것은 아니다. 생활비가 원화로 나가니 원화 자산이 편하고, 한국 회사들도 매출의 상당 부분을 해외에서 번다. 그래도 한 나라 시장은 그 나라의 몇몇 업종에 크게 쏠려 있고, 그 나라 경제가 오래 부진하면 함께 부진하다. 반대로 세계 시가총액을 그대로 따라가면 미국 한 나라가 60% 가까이 된다는 점도 알아 두자. 어느 쪽이든 "얼마나 섞을지"는 숫자로 따져 볼 문제다. 그 숫자는 <a href="#diversify">국가 분산</a>에서 계산한다. 먼저 바다 건너 시장이 어떻게 다른지부터 본다.</p>
+  </section>
+
+  <section id="us-market">
+    <h2>미국 시장은 어떻게 다른가</h2>
+    <p>해외 주식이라고 하면 한국 투자자 대부분은 미국 주식을 산다. 세계 시가총액의 절반 이상이 그곳에 있고, 국내 증권사 앱에서 바로 주문할 수 있다. 주문 버튼은 같아 보여도 규칙은 꽤 다르다.</p>
+    <div class="table-wrap"><table>
+      <tr><th></th><th>한국(KOSPI·KOSDAQ)</th><th>미국(뉴욕·나스닥 거래소)</th></tr>
+      <tr><td>가격제한폭</td><td>전일 종가 ±30%</td><td>없음. 대신 종목별 일시 정지(LULD)와 시장 전체 서킷브레이커(S&amp;P 500 −7%, −13%, −20%)</td></tr>
+      <tr><td>정규장(한국 시각)</td><td>09:00–15:30</td><td>현지 09:30–16:00 → 서머타임 22:30–05:00, 그 밖 23:30–06:00</td></tr>
+      <tr><td>시간외</td><td>대체거래소 08:00–20:00(약)</td><td>프리마켓 현지 04:00–09:30, 애프터마켓 16:00–20:00</td></tr>
+      <tr><td>최소 단위</td><td>1주</td><td>1주(증권사 소수점 거래 서비스로 0.01주 단위 등 가능)</td></tr>
+      <tr><td>결제</td><td>T+2</td><td>T+1(현지 기준)</td></tr>
+      <tr><td>매도 시 세금</td><td>증권거래세 0.20%</td><td>거래세 없음(아주 작은 SEC 수수료 약 0.003%)</td></tr>
+      <tr><td>온라인 수수료(약)</td><td class="num">0.015%</td><td class="num">0.25%(우대 전, 우대 시 훨씬 낮다)</td></tr>
+    </table></div>
+    <p>가장 눈에 띄는 차이는 <span class="term">가격제한폭</span><span class="en">(Price limit)</span>이 없다는 점이다. 한국에서는 하루에 ±30%까지만 움직인다(<a href="market.html">2장</a>). 미국에서는 실적 발표 하나에 하루 −60%나 +150%도 나올 수 있다. 어느 쪽이 더 안전할까? 회사의 가치를 바꾸는 뉴스가 터졌다고 하고, 그 뉴스로 공정한 가격이 얼마나 바뀌는지를 슬라이더로 정한 뒤 재생해 보자.</p>
+
+    <div class="sim" id="sim-lm">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>가격제한폭이 있을 때와 없을 때</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="lm-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>뉴스가 바꾼 공정 가격 <output id="lm-s-out"></output></span><input type="range" id="lm-s" min="-0.85" max="2" step="0.05" value="-0.6"></label>
+          <div class="btn-row"><button class="btn primary" id="lm-go">재생</button><button class="btn" id="lm-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">새 공정 가격</span><span class="v" id="lm-o-t">—</span></div>
+        <div class="stat"><span class="k">한국식(±30%) 도달</span><span class="v" id="lm-o-kr">—</span></div>
+        <div class="stat"><span class="k">미국식 도달</span><span class="v" id="lm-o-us">—</span></div>
+        <div class="stat"><span class="k">팔 수 없던 날</span><span class="v" id="lm-o-lock">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① −60% 뉴스를 재생해 한국식이 며칠 동안 하한가에 묶이는지 센다. ② +200%로 바꿔 상한가가 며칠 이어지는지 본다. ③ −25%처럼 30% 안쪽이면 두 방식이 같아진다. (가정: 공정 가격은 뉴스 직후 바로 정해지고, 하한가 동안에는 사려는 사람이 없어 팔 수 없다)</div>
+    </div>
+
+    <p>가격제한폭은 가격이 가야 할 곳에 가는 것을 막지 못한다. 늦출 뿐이다. 그 사이 한국식 시장에서는 하한가에 팔자는 주문만 쌓이고 사자는 주문이 없어 며칠씩 팔 수가 없다. 미국식은 하루 만에 새 가격에 도달하므로 그날의 충격은 크지만, 원하면 그 가격에 팔고 나올 수는 있다. 대신 미국에서는 "하루에 이 이상은 안 빠진다"는 바닥이 없다는 점을 기억해야 한다. 시장 전체가 급락하면 S&amp;P 500 기준 −7%, −13%에서 15분씩, −20%에서 그날 거래를 멈추는 서킷브레이커가 있다.</p>
+
+    <p>두 번째 차이는 주가의 크기다. 미국에는 1주에 수십만 원에서 수백만 원 하는 주식과 ETF가 흔하다. 매달 70만원을 넣는 사람에게 1주가 80만원이면 어떤 달은 한 주도 못 산다. 그래서 국내 증권사들은 1주를 쪼개 사는 <span class="term">소수점 거래</span><span class="en">(Fractional shares)</span>를 제공한다. 매달 같은 돈을 넣을 때 정수 주로만 사면 현금이 얼마나 놀게 되는지 보자.</p>
+
+    <div class="sim" id="sim-fr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>1주씩 살 때와 쪼개 살 때: 12개월 적립</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="fr-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>매달 넣는 돈 <output id="fr-a-out"></output></span><input type="range" id="fr-a" min="100000" max="2000000" step="10000" value="700000"></label>
+          <label class="ctrl"><span>1주 가격(달러) <output id="fr-p-out"></output></span><input type="range" id="fr-p" min="50" max="1000" step="10" value="600"></label>
+          <label class="ctrl"><span>환율(원/달러) <output id="fr-x-out"></output></span><input type="range" id="fr-x" min="1100" max="1600" step="10" value="1380"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">1주 원화 가격</span><span class="v" id="fr-o-px">—</span></div>
+        <div class="stat"><span class="k">정수 주: 12개월 보유</span><span class="v" id="fr-o-int">—</span></div>
+        <div class="stat"><span class="k">소수점: 12개월 보유</span><span class="v" id="fr-o-frac">—</span></div>
+        <div class="stat"><span class="k">정수 주: 평균 놀던 현금</span><span class="v" id="fr-o-idle">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 1주 가격을 원화로 70만원보다 비싸게(달러 600, 환율 1,380 이상) 놓고 막대가 어떻게 들쭉날쭉한지 본다. ② 1주를 50달러로 내리면 두 방식 차이가 거의 사라진다. ③ 환율을 올리면 같은 달러 가격도 원화로 비싸져 놀던 현금이 늘어난다. (가정: 가격과 환율은 12개월 동안 그대로, 수수료 생략)</div>
+    </div>
+
+    <p>1주 가격이 매달 넣는 돈보다 비쌀수록 정수 주 방식은 현금을 오래 놀린다. 소수점 거래는 이 문제를 없애 준다. 다만 소수점으로 산 주식은 증권사가 묶어서 주문을 처리하므로 원하는 순간에 정확한 가격으로 체결되지 않을 수 있고, 다른 증권사로 옮기기 어렵다는 제약이 있다(증권사마다 다르다).</p>
+
+    <p>세 번째 차이는 시간이다. 뉴욕은 서울보다 13시간(서머타임) 또는 14시간 늦다. 그래서 미국 정규장은 한국의 밤에 열린다. 미국에는 정규장 앞뒤로 <span class="term">프리마켓</span><span class="en">(Pre-market)</span>과 <span class="term">애프터마켓</span><span class="en">(After-hours)</span>이 있어 거래 가능한 시간이 길지만, 이 시간에는 거래량이 적어 호가 간격이 넓고 가격이 크게 튀기 쉽다. 아래 시계의 바늘을 끌어 한국 시각을 바꿔 보고, 서머타임을 켜고 꺼 보자.</p>
+
+    <div class="sim" id="sim-ck">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>한국 시각으로 보는 두 시장의 하루</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="ck-cv"></canvas><span class="hint">바늘을 끌어 시각을 바꾼다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>미국 서머타임</span>
+            <div class="seg" id="ck-dst"><button data-value="on" class="on">적용(3월~11월)</button><button data-value="off">해제(11월~3월)</button></div>
+          </div>
+          <div class="btn-row"><button class="btn primary" id="ck-play">시간 흘리기</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">한국 시각</span><span class="v" id="ck-o-kst">—</span></div>
+        <div class="stat"><span class="k">뉴욕 시각</span><span class="v" id="ck-o-ny">—</span></div>
+        <div class="stat"><span class="k">지금 열린 곳</span><span class="v" id="ck-o-open" style="font-size:15px">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 바늘을 밤 11시에 놓고 서머타임을 켜고 끄면 미국 정규장이 열렸다 닫혔다 한다. ② 한국 정규장(바깥 띠)과 미국 정규장(안쪽 띠)이 겹치는 시간이 있는지 찾아본다. ③ 출근 시간인 오전 8시에 열려 있는 미국 시장은 무엇인지 본다. (2026년 기준 대표 시간. 휴장일과 조기 폐장은 생략. 일부 증권사는 한국 낮 시간에 미국 주식을 사고파는 '주간 거래'도 제공한다)</div>
+    </div>
+
+    <p>미국 정규장은 서머타임 동안 밤 10시 30분에 열려 새벽 5시에 닫힌다. 한국 정규장과는 한 시간도 겹치지 않는다. 미국 시장의 하루가 한국 투자자에게는 자는 동안 일어나고, 아침에는 이미 끝난 결과를 받아 보게 된다. 이 시차가 뉴스를 읽는 방식에 어떤 차이를 만드는지는 <a href="#time-news">시차와 뉴스</a>에서 게임으로 확인한다.</p>
+  </section>
+
+  <section id="fx-return">
+    <h2>원화 수익률 = 현지 수익률 × 환율</h2>
+    <p>미국 지수에 투자해 1년 뒤 10% 벌었다는 말은 달러로 10%라는 뜻이다. 한국 투자자의 돈은 원화로 시작해 원화로 끝난다. 그 사이에 원화를 달러로 바꾸고(환전), 달러로 주식을 사고, 판 달러를 다시 원화로 바꾼다. 아래 그림이 그 경로다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 250" role="img" aria-label="원화 100만원이 환전, 미국 지수 투자, 재환전을 거쳐 122.7만원이 되는 흐름">
+        <defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <rect x="10" y="30" width="96" height="58" rx="8" class="f-elev s-line"/>
+        <text x="58" y="54" text-anchor="middle" class="lbl-b">원화</text>
+        <text x="58" y="74" text-anchor="middle" class="t-mono lbl">100만원</text>
+        <rect x="182" y="30" width="96" height="58" rx="8" class="f-acc2-soft s-acc2"/>
+        <text x="230" y="54" text-anchor="middle" class="lbl-b">달러</text>
+        <text x="230" y="74" text-anchor="middle" class="t-mono lbl">$769</text>
+        <rect x="354" y="30" width="96" height="58" rx="8" class="f-acc2-soft s-acc2"/>
+        <text x="402" y="54" text-anchor="middle" class="lbl-b">달러</text>
+        <text x="402" y="74" text-anchor="middle" class="t-mono lbl">$846</text>
+        <path d="M108 59 H178" class="s-acc" marker-end="url(#ar1)"/>
+        <text x="143" y="22" text-anchor="middle" class="lbl-dim">환전</text>
+        <text x="143" y="110" text-anchor="middle" class="t-mono lbl-dim">1,300원/$</text>
+        <path d="M280 59 H350" class="s-acc" marker-end="url(#ar1)"/>
+        <text x="315" y="22" text-anchor="middle" class="lbl-dim">미국 지수</text>
+        <text x="315" y="110" text-anchor="middle" class="t-mono lbl-up">+10%</text>
+        <path d="M402 90 V150 H290" class="s-acc" marker-end="url(#ar1)"/>
+        <text x="394" y="118" text-anchor="end" class="lbl-dim">재환전</text>
+        <text x="394" y="138" text-anchor="end" class="t-mono lbl-dim">1,450원/$</text>
+        <rect x="170" y="126" width="118" height="58" rx="8" class="f-acc-soft s-acc"/>
+        <text x="229" y="150" text-anchor="middle" class="lbl-b">원화</text>
+        <text x="229" y="170" text-anchor="middle" class="t-mono lbl-acc">122.7만원</text>
+        <text x="10" y="214" class="lbl">현지 수익 <tspan class="t-mono lbl-up">+10%</tspan> × 환율 변화 <tspan class="t-mono lbl-up">+11.5%</tspan></text>
+        <text x="10" y="238" class="lbl">→ 원화 수익 <tspan class="t-mono lbl-up">+22.7%</tspan> <tspan class="lbl-dim">(10 + 11.5 + 교차 1.2)</tspan></text>
+      </svg>
+      <figcaption><b>원화 → 달러 → 원화.</b> 해외 주식의 원화 수익은 두 번의 곱셈으로 정해진다. 달러 기준 주가 변화(현지 수익률)와, 살 때와 팔 때의 환율 변화다. 환전 수수료는 이 그림에서 뺐다.</figcaption>
+    </figure>
+
+    <p>1달러를 사는 데 드는 원화, 즉 <span class="term">원/달러 환율</span><span class="en">(KRW/USD)</span>이 1,300원에서 1,450원으로 오르면 원화의 값이 떨어진 것(원화 약세)이고, 달러를 들고 있던 사람은 같은 달러로 원화를 더 받는다. 두 효과를 식으로 쓰면 이렇다.</p>
+    <div class="formula">$$1 + R_{\text{원화}} = (1 + R_{\text{현지}}) \times (1 + R_{\text{환율}})$$
+      <div class="where">\(R_{\text{현지}}\): 달러 기준 수익률, \(R_{\text{환율}}\): 원/달러 환율 변화율, \(R_{\text{원화}}\): 내 원화 수익률. 두 값이 작으면 \(R_{\text{원화}} \approx R_{\text{현지}} + R_{\text{환율}}\)이고, 차이는 교차항 \(R_{\text{현지}} \times R_{\text{환율}}\)이다.</div>
+    </div>
+    <p>곱셈은 넓이로 보면 잘 보인다. 가로를 (1 + 현지 수익률), 세로를 (1 + 환율 변화)로 하는 직사각형의 넓이가 원화로 돌아온 돈이다. 점선 정사각형(넓이 1)이 처음 원금이다. 오른쪽 위 모서리의 손잡이를 끌어 보자.</p>
+
+    <div class="sim" id="sim-dc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>원화 수익률을 넓이로 나누기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dc-cv"></canvas><span class="hint">모서리를 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>현지(달러) 수익률 <output id="dc-r-out"></output></span><input type="range" id="dc-r" min="-0.5" max="0.7" step="0.01" value="0.1"></label>
+          <label class="ctrl"><span>환율 변화 <output id="dc-f-out"></output></span><input type="range" id="dc-f" min="-0.4" max="0.5" step="0.005" value="0.115"></label>
+          <div class="ctrl"><span>예시</span>
+            <div class="seg" id="dc-pre"><button data-value="a" class="on">둘 다 상승</button><button data-value="b">2020년 3월(약)</button><button data-value="c">지수↑ 환율↓</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">현지 수익</span><span class="v" id="dc-o-r">—</span></div>
+        <div class="stat"><span class="k">환율 효과</span><span class="v" id="dc-o-f">—</span></div>
+        <div class="stat"><span class="k">교차항</span><span class="v" id="dc-o-x">—</span></div>
+        <div class="stat"><span class="k">원화 수익률</span><span class="v" id="dc-o-krw">—</span></div>
+      </div>
+      <div class="fx-grid" id="dc-grid"></div>
+      <div class="sim-note">해볼 것: ① "2020년 3월"을 눌러 지수 −34%에 환율 +11%가 겹치면 원화 손실이 몇 %로 줄어드는지 본다. ② 지수 +20%에 환율 −10%면 원화로는 얼마나 남는가. ③ 두 값을 크게 키우면 교차항(금색 칸)이 무시하지 못할 만큼 커진다. 아래 표는 지금 크기 그대로 두 부호를 바꾼 네 가지 경우다.</div>
+    </div>
+
+    <p>네 칸의 표가 핵심을 요약한다. 지수와 환율이 같은 방향으로 움직이면 수익과 손실이 모두 커지고, 반대로 움직이면 서로 깎아 먹는다. 그리고 환율 변화는 생각보다 크다. 원/달러 환율이 1년에 10% 넘게 움직이는 일은 드물지 않다. 미국 지수의 1년 변동성이 약 15~20%라면 환율의 변동성은 약 8~12%로, 해외 주식 수익률의 두 번째 큰 재료다.</p>
+  </section>
+
+  <section id="crisis">
+    <h2>위기 때 환율은 오른다</h2>
+    <p>그렇다면 환율은 해외 투자의 위험을 키우기만 할까? 그렇지 않을 때가 많다. 세계 경제가 흔들리면 사람들은 안전하다고 여기는 달러로 몰리고, 외국인 투자자는 한국 같은 작은 시장에서 돈을 빼 간다. 그래서 원/달러 환율은 <b>위기 때 오르는 경향</b>이 있었다. 2008년 금융위기 때는 약 900원대에서 2009년 3월 약 1,570원까지, 2020년 3월 급락 때는 약 1,150원에서 약 1,280원까지 올랐다. 미국 주식이 빠지는 바로 그때 달러 값이 올라 원화 손실을 줄여 준 것이다.</p>
+    <p>아래는 가상의 위기 구간이다. 미국 지수가 40거래일 동안 약 35% 빠지고, 그동안 환율이 오른다. 1,000만원을 넣은 세 사람(달러로만 보는 사람, 환노출, 환헤지)의 계좌를 재생해 보자. 환율 반응 크기를 0으로 하면 환율이 위기에 반응하지 않는 경우다.</p>
+
+    <div class="sim" id="sim-cr">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>급락장에서 원화 약세가 주는 완충</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="cr-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>환율 반응 크기 <output id="cr-k-out"></output></span><input type="range" id="cr-k" min="0" max="2" step="0.1" value="1"></label>
+          <div class="btn-row"><button class="btn primary" id="cr-go">재생</button><button class="btn" id="cr-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="legend"><span><i style="background:var(--text-dim)"></i>달러 기준</span><span><i style="background:var(--accent)"></i>환노출(원화)</span><span><i style="background:var(--accent-2)"></i>환헤지(원화)</span><span><i style="background:var(--warn)"></i>환율</span></div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">달러 기준 최대 낙폭</span><span class="v" id="cr-o-l">—</span></div>
+        <div class="stat"><span class="k">환노출 최대 낙폭</span><span class="v" id="cr-o-u">—</span></div>
+        <div class="stat"><span class="k">환헤지 최대 낙폭</span><span class="v" id="cr-o-h">—</span></div>
+        <div class="stat"><span class="k">환율 고점</span><span class="v" id="cr-o-fx">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값으로 재생해 환노출 선(보라)이 달러 선보다 덜 빠지는 것을 본다. ② 반응 크기를 0으로 하면 세 선이 거의 겹친다. ③ 2로 키우면 완충이 커지지만, 회복기에 환율이 내려가면서 환노출 쪽의 반등도 작아진다. (가상의 경로. 시작 환율 1,150원, 헤지 비용 연 1.5% 가정)</div>
+    </div>
+
+    <p>급락 구간에서 환노출 계좌는 달러 기준보다 덜 빠졌다. 원화 약세가 쿠션 역할을 한 것이다. 하지만 공짜는 아니다. 회복기에 환율이 내려오면 그 쿠션이 반대로 수익을 깎는다. 그리고 이 관계는 법칙이 아니라 경향이다. 미국 주식과 원화가 함께 약해지지 않는 위기, 예를 들어 한국만의 위기나 미국 금리 급등기에는 다르게 움직일 수 있다. 과거의 상관관계가 앞으로도 같다는 보장은 없다.</p>
+  </section>
+
+  <section id="hedge">
+    <h2>환헤지(H)와 환노출(UH)</h2>
+    <p>국내에 상장된 해외 ETF 이름 끝에 붙은 (H)는 <span class="term">환헤지</span><span class="en">(Currency hedge)</span>, 즉 환율 변동을 없앤 상품이라는 뜻이다. 아무 표시가 없거나 (UH)가 붙은 것은 환율을 그대로 받는 <span class="term">환노출</span><span class="en">(Unhedged)</span> 상품이다. 헤지는 보통 <span class="term">선물환</span><span class="en">(FX forward)</span>으로 한다. 지금 정한 환율로 미래에 달러를 팔기로 약속해 두는 계약이다.</p>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 270" role="img" aria-label="환노출은 달러 주가와 환율 두 흔들림을 모두 받고, 환헤지는 선물환으로 환율을 고정하는 대신 금리차만큼 비용을 낸다">
+        <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <text x="10" y="22" class="lbl-acc">환노출(UH)</text>
+        <rect x="10" y="32" width="120" height="50" rx="8" class="f-elev s-line"/>
+        <text x="70" y="53" text-anchor="middle" class="lbl-b">달러 주식</text>
+        <text x="70" y="71" text-anchor="middle" class="lbl-dim">주가가 흔들린다</text>
+        <text x="160" y="62" text-anchor="middle" class="lbl-b">×</text>
+        <rect x="190" y="32" width="120" height="50" rx="8" class="f-warn-soft s-line"/>
+        <text x="250" y="53" text-anchor="middle" class="lbl-b">환율</text>
+        <text x="250" y="71" text-anchor="middle" class="lbl-dim">환율도 흔들린다</text>
+        <path d="M312 57 H346" class="s-acc" marker-end="url(#ar2)"/>
+        <rect x="350" y="32" width="100" height="50" rx="8" class="f-acc-soft s-acc"/>
+        <text x="400" y="53" text-anchor="middle" class="lbl-b">원화 가치</text>
+        <text x="400" y="71" text-anchor="middle" class="lbl-dim">두 겹 흔들림</text>
+        <line x1="10" y1="104" x2="450" y2="104" class="s-dash"/>
+        <text x="10" y="130" class="lbl-acc2">환헤지(H)</text>
+        <rect x="10" y="140" width="120" height="50" rx="8" class="f-elev s-line"/>
+        <text x="70" y="161" text-anchor="middle" class="lbl-b">달러 주식</text>
+        <text x="70" y="179" text-anchor="middle" class="lbl-dim">주가가 흔들린다</text>
+        <text x="160" y="170" text-anchor="middle" class="lbl-b">+</text>
+        <rect x="190" y="140" width="120" height="50" rx="8" class="f-acc2-soft s-acc2"/>
+        <text x="250" y="161" text-anchor="middle" class="lbl-b">선물환 매도</text>
+        <text x="250" y="179" text-anchor="middle" class="lbl-dim">미래 환율을 고정</text>
+        <path d="M312 165 H346" class="s-acc2" marker-end="url(#ar2)"/>
+        <rect x="350" y="140" width="100" height="50" rx="8" class="f-acc2-soft s-acc2"/>
+        <text x="400" y="161" text-anchor="middle" class="lbl-b">원화 가치</text>
+        <text x="400" y="179" text-anchor="middle" class="lbl-dim">주가만 흔들림</text>
+        <rect x="140" y="212" width="220" height="44" rx="8" class="f-bad-soft s-line"/>
+        <text x="250" y="231" text-anchor="middle" class="lbl-b">대가: 해마다 금리차</text>
+        <text x="250" y="248" text-anchor="middle" class="lbl-dim">≈ 미국 금리 − 한국 금리</text>
+        <path d="M250 192 V208" class="s-dash" marker-end="url(#ar2)"/>
+      </svg>
+      <figcaption><b>헤지는 환율을 없애고 금리차를 낸다.</b> 선물환 환율은 오늘 환율에 두 나라 금리 차이를 반영해 정해진다. 미국 금리가 한국보다 높으면 달러를 미래에 파는 값이 오늘보다 낮게 정해지므로, 그 차이가 해마다 헤지 비용이 된다. 한국 금리가 더 높으면 거꾸로 헤지로 이득을 본다.</figcaption>
+    </figure>
+
+    <div class="formula">$$R_{\text{헤지}} \approx R_{\text{현지}} - (i_{\text{미국}} - i_{\text{한국}})$$
+      <div class="where">\(i_{\text{미국}}, i_{\text{한국}}\): 두 나라의 단기 금리. 실제 헤지는 100%가 아니고 운용 비용이 더해지므로 대략적인 식이다.</div>
+    </div>
+    <p>먼저 1년짜리 장면을 보자. 미국 지수에 100만원을 넣고 1년 뒤를 본다. 위 칸은 달러 기준 지수, 가운데 칸은 환율이다. 각 칸 오른쪽 끝의 손잡이를 끌어 1년 뒤 지수와 환율을 정하면, 아래 칸에 환노출과 환헤지 계좌가 그려진다.</p>
+
+    <div class="sim" id="sim-hp">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>1년 뒤 지수와 환율을 끌어 정하기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="hp-cv"></canvas><span class="hint">오른쪽 끝 손잡이를 끈다</span></div>
+        <div class="sim-controls">
+          <div class="ctrl"><span>환율 시나리오</span>
+            <div class="seg" id="hp-pre"><button data-value="a" class="on">1,300→1,450</button><button data-value="b">1,450→1,300</button><button data-value="c">1,300→1,300</button></div>
+          </div>
+          <p style="margin:0;font-size:14px;color:var(--text-dim)">시작 환율은 시나리오로, 끝 환율과 지수는 손잡이로 정한다. 헤지 비용은 연 1.5%로 가정한다.</p>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">달러 기준 지수</span><span class="v" id="hp-o-l">—</span></div>
+        <div class="stat"><span class="k">환율 변화</span><span class="v" id="hp-o-f">—</span></div>
+        <div class="stat"><span class="k">환노출 100만원 →</span><span class="v" id="hp-o-u">—</span></div>
+        <div class="stat"><span class="k">환헤지 100만원 →</span><span class="v" id="hp-o-h">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값(지수 +10%, 1,300→1,450)에서 두 계좌의 차이를 읽는다. ② "1,450→1,300"으로 바꾸면 같은 +10%가 원화로는 손실이 된다. ③ 환율 손잡이를 시작 환율보다 약 1.5% 낮게(1,300원이면 1,280원) 놓으면 두 계좌가 거의 같아진다. 환율 하락으로 잃은 몫과 헤지 비용이 비긴 것이다. (경로 모양은 가상, 끝값만 손잡이로 정한다)</div>
+    </div>
+
+    <p>환헤지는 환율이 어디로 가든 결과를 지수 하나로 줄여 준다. 대가는 해마다 내는 금리차다. 2020년대 중반처럼 미국 금리가 한국보다 높으면 비용이고, 금리차는 수시로 바뀐다. 1년이면 1.5%가 작아 보여도, 오래 들고 있으면 복리로 쌓인다.</p>
+
+    <div class="sim" id="sim-hc">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>헤지 비용의 복리: 금리차와 기간</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="hc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>한미 금리차(미국 − 한국) <output id="hc-d-out"></output></span><input type="range" id="hc-d" min="-0.02" max="0.04" step="0.0025" value="0.015"></label>
+          <label class="ctrl"><span>기간 <output id="hc-y-out"></output></span><input type="range" id="hc-y" min="1" max="30" step="1" value="20"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">환노출(환율 제자리)</span><span class="v" id="hc-o-u">—</span></div>
+        <div class="stat"><span class="k">환헤지</span><span class="v" id="hc-o-h">—</span></div>
+        <div class="stat"><span class="k">차이</span><span class="v" id="hc-o-d">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 금리차 1.5%p로 20년이면 헤지 쪽이 얼마나 뒤처지는지 본다. ② 금리차를 음수(한국 금리가 더 높음)로 바꾸면 헤지가 오히려 더해 준다. ③ 4%p로 밀면 헤지 비용이 수익의 절반 이상을 먹는다. (가정: 1,000만원, 달러 기준 연 7%, 환율은 평균적으로 제자리. 헤지 상품의 운용 비용은 생략)</div>
+    </div>
+
+    <p>환율이 결국 제자리로 돌아온다면 오래 둘수록 헤지 비용만 남는다. 그렇다고 환노출이 늘 낫다는 말은 아니다. 환율은 제자리로 돌아온다는 보장이 없고, 10년 동안 원화가 강해지는 쪽으로 움직이면 환노출 쪽이 진다. 그래서 질문을 "어느 쪽이 더 버나"에서 "결과가 얼마나 흩어지나"로 바꿔 보자. 미국 지수와 환율을 함께 수백 번 무작위로 굴려 두 방식의 원화 연수익률 분포를 겹쳐 본다.</p>
+
+    <div class="sim" id="sim-mc">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>환노출 vs 환헤지: 600번 굴린 결과의 분포</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="mc-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>지수와 환율의 상관 <output id="mc-rho-out"></output></span><input type="range" id="mc-rho" min="-0.8" max="0.6" step="0.05" value="-0.3"></label>
+          <label class="ctrl"><span>기간 <output id="mc-y-out"></output></span><input type="range" id="mc-y" min="1" max="20" step="1" value="10"></label>
+          <label class="ctrl"><span>헤지 비용(연) <output id="mc-h-out"></output></span><input type="range" id="mc-h" min="0" max="0.03" step="0.0025" value="0.015"></label>
+          <div class="btn-row"><button class="btn" id="mc-re">다시 뽑기</button></div>
+        </div>
+      </div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>환노출</span><span><i style="background:var(--accent-2)"></i>환헤지</span></div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">연 변동성 UH / H</span><span class="v" id="mc-o-v">—</span></div>
+        <div class="stat"><span class="k">중앙값 UH / H</span><span class="v" id="mc-o-m">—</span></div>
+        <div class="stat"><span class="k">하위 5% UH / H</span><span class="v" id="mc-o-q">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 상관 −0.3에서 환노출 분포가 헤지보다 넓은지 좁은지 본다. ② 상관을 +0.5로 올리면(지수와 원화 약세가 같이 오는 세상) 환노출 분포가 확 넓어진다. ③ 헤지 비용을 0으로 두면 두 분포의 가운데가 같아진다. (가정: 달러 기준 지수 연 7%·변동성 16%, 환율 연 변동성 9%·평균 제자리, 정규분포. 가상의 실험)</div>
+    </div>
+
+    <p>상관이 음수일 때는 환율이 위험을 더하는 게 아니라 일부를 상쇄한다. 지수 변동성 16%와 환율 변동성 9%를 더했는데, 상관이 −0.3이면 합친 변동성은 약 15.8%로 지수 혼자보다 오히려 조금 작다. 상관이 양수로 바뀌면 이 계산은 뒤집힌다. 정답은 하나가 아니고, 고르는 기준은 이렇다. 환율을 예측할 수 없다고 인정한다면, 헤지 비용이 크고 오래 들고 갈수록 환노출 쪽 근거가 강해지고, 몇 년 안에 원화로 써야 할 돈일수록 환헤지 쪽 근거가 강해진다.</p>
+  </section>
+
+  <section id="fx-cost">
+    <h2>환전에도 값이 있다</h2>
+    <p>은행이나 증권사가 고시하는 기준 환율을 <span class="term">매매기준율</span><span class="en">(Base rate)</span>이라 한다. 실제로 달러를 살 때는 이보다 조금 비싸게, 팔 때는 조금 싸게 거래된다. 이 차이가 <span class="term">환전 스프레드</span><span class="en">(FX spread)</span>로, 증권사 기준 우대 전 약 1% 안팎이다(2026년 기준, 회사마다 다르다). "환율 우대 90%"는 이 스프레드의 90%를 깎아 준다는 뜻이다. 1%가 작아 보이지만 살 때와 팔 때 두 번 낸다.</p>
+
+    <div class="sim" id="sim-fx">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>환전 비용 계산기: 우대율과 환전 횟수</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="fx-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>환전 금액 <output id="fx-a-out"></output></span><input type="range" id="fx-a" min="1000000" max="50000000" step="1000000" value="10000000"></label>
+          <label class="ctrl"><span>환율 우대율 <output id="fx-u-out"></output></span><input type="range" id="fx-u" min="0" max="1" step="0.05" value="0.5"></label>
+          <label class="ctrl"><span>1년 왕복 환전 횟수 <output id="fx-n-out"></output></span><input type="range" id="fx-n" min="0" max="24" step="1" value="2"></label>
+        </div>
+      </div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>지금 우대율</span><span><i style="background:var(--text-dim)"></i>우대 0%</span><span><i style="background:var(--accent-2)"></i>우대 90%</span></div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">한 번 환전 비용</span><span class="v" id="fx-o-1">—</span></div>
+        <div class="stat"><span class="k">1년 비용</span><span class="v" id="fx-o-y">—</span></div>
+        <div class="stat"><span class="k">1년 비용률</span><span class="v" id="fx-o-r">—</span></div>
+        <div class="stat"><span class="k">10년 동안 깎인 몫</span><span class="v" id="fx-o-10">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 우대 0%, 1년 1번 왕복이면 비용률이 2%다. 지수의 1년 기대수익 몇 분의 일인지 생각해 본다. ② 미국 주식을 사고팔 때마다 원화로 바꾼다고 왕복 24번을 놓으면 계좌가 어떻게 되는가. ③ 우대 90%에 왕복 1번이면 거의 사라진다. (가정: 우대 전 스프레드 1%를 살 때와 팔 때 각각 낸다. 매매 수수료는 별도)</div>
+    </div>
+
+    <p>환전 비용을 줄이는 방법은 단순하다. 우대율이 높을 때 바꾸고, 자주 바꾸지 않는다. 미국 주식을 팔아 받은 달러를 바로 원화로 바꾸지 않고 달러로 두었다가 다시 미국 주식을 사면 왕복 비용이 들지 않는다. 증권사가 원화 주문을 받아 자동으로 환전해 주는 서비스는 편하지만 매번 환전이 일어나니 적용 환율을 확인해야 한다. 매매 수수료(우대 전 약 0.25%)도 국내 주식(약 0.015%)보다 훨씬 비싸다는 점까지 합치면, 해외 주식은 <b>자주 사고팔수록 불리한</b> 구조다.</p>
+  </section>
+
+  <section id="diversify">
+    <h2>국가 분산</h2>
+    <p>해외 주식을 섞는 가장 큰 이유는 분산이다. <a href="risk.html">13장</a>에서 본 것처럼 두 자산의 상관관계가 1보다 작으면, 섞은 포트폴리오의 변동성은 두 변동성의 평균보다 작다. 한국 주식(원화 기준 변동성 약 20%, 가정)과 세계 주식(원화 기준 약 15%, 가정)을 섞어 보자. 곡선 위 점을 끌어 해외 비중을 바꾸고, 슬라이더로 두 시장의 상관을 바꾼다.</p>
+
+    <div class="sim" id="sim-dv">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>한국만 vs 세계와 섞기: 변동성 곡선</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="dv-cv"></canvas><span class="hint">곡선 위 점을 끈다</span></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>한국과 세계의 상관 <output id="dv-rho-out"></output></span><input type="range" id="dv-rho" min="-0.2" max="1" step="0.05" value="0.6"></label>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">해외 비중</span><span class="v" id="dv-o-w">—</span></div>
+        <div class="stat"><span class="k">포트폴리오 변동성</span><span class="v" id="dv-o-v">—</span></div>
+        <div class="stat"><span class="k">단순 평균보다 낮아진 몫</span><span class="v" id="dv-o-s">—</span></div>
+        <div class="stat"><span class="k">변동성이 가장 낮은 비중</span><span class="v" id="dv-o-min">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 해외 0%(한국만)에서 50%로 끌며 변동성이 얼마나 내려가는지 본다. ② 상관을 1로 올리면 곡선이 직선(점선)이 되어 분산 효과가 사라진다. ③ 상관을 0 근처로 내리면 변동성이 가장 낮은 지점이 어디로 옮기는지 본다. (가정: 변동성 한국 20%, 세계 15%. 기대수익은 다루지 않는다)</div>
+    </div>
+
+    <p>상관이 0.6 정도만 되어도 섞는 것만으로 변동성이 눈에 띄게 줄어든다. 다만 위기 때는 세계 주식시장이 함께 빠지면서 상관이 1에 가까워지는 경향이 있어, 가장 필요할 때 분산 효과가 약해진다. 그 빈자리를 앞에서 본 환율이 일부 채워 준다. 원화로 본 세계 주식이 한국 주식과 덜 함께 움직이는 이유 중 하나가 바로 환율이다.</p>
+  </section>
+
+  <section id="tax">
+    <h2>해외 주식의 세금</h2>
+    <p>국내 상장 주식은 대주주가 아니면 매매차익에 세금이 없고 팔 때 증권거래세만 낸다(<a href="tax.html">23장</a>). 해외 주식은 반대다. 거래세는 없지만 1년 동안 번 매매차익에 <span class="term">양도소득세</span><span class="en">(Capital gains tax)</span>를 낸다. 2026년 기준 규칙은 이렇다.</p>
+    <div class="table-wrap"><table>
+      <tr><th>항목</th><th>해외 주식 직접 투자(2026년 기준, 약)</th></tr>
+      <tr><td>세율</td><td>22%(양도소득세 20% + 지방소득세 2%)</td></tr>
+      <tr><td>기본공제</td><td>1년에 250만원(나라 구분 없이 해외 주식 전체 합산)</td></tr>
+      <tr><td>손익 통산</td><td>1월 1일~12월 31일에 판 모든 해외 주식의 이익과 손실을 합친다</td></tr>
+      <tr><td>환율</td><td>살 때와 팔 때 각각의 결제일 기준 환율로 원화 환산. 환차익도 과세 대상에 들어간다</td></tr>
+      <tr><td>신고</td><td>다음 해 5월 직접 신고·납부(증권사 대행 서비스가 흔하다). 다른 소득과 합치지 않는 분리과세</td></tr>
+      <tr><td>배당</td><td>미국에서 15% 원천징수, 국내 추가 세금은 대개 없다. 금융소득 2,000만원 한도 계산에는 들어간다</td></tr>
+    </table></div>
+
+    <figure class="diagram">
+      <svg viewBox="0 0 460 200" role="img" aria-label="한 해 동안 판 종목들의 손익을 합치고 250만원을 뺀 뒤 22%를 곱해 다음 해 5월에 신고한다">
+        <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <rect x="10" y="20" width="96" height="30" rx="6" class="f-up-soft s-line"/><text x="58" y="40" text-anchor="middle" class="t-mono lbl-up">+700만</text>
+        <rect x="10" y="58" width="96" height="30" rx="6" class="f-up-soft s-line"/><text x="58" y="78" text-anchor="middle" class="t-mono lbl-up">+300만</text>
+        <rect x="10" y="96" width="96" height="30" rx="6" class="f-down-soft s-line"/><text x="58" y="116" text-anchor="middle" class="t-mono lbl-down">−350만</text>
+        <text x="58" y="148" text-anchor="middle" class="lbl-dim">올해 판 종목</text>
+        <path d="M108 73 H136" class="s-acc" marker-end="url(#ar3)"/>
+        <rect x="140" y="50" width="88" height="46" rx="8" class="f-acc-soft s-acc"/>
+        <text x="184" y="69" text-anchor="middle" class="lbl-b">손익 통산</text>
+        <text x="184" y="87" text-anchor="middle" class="t-mono lbl">650만</text>
+        <path d="M230 73 H254" class="s-acc" marker-end="url(#ar3)"/>
+        <rect x="258" y="50" width="86" height="46" rx="8" class="f-elev s-line"/>
+        <text x="301" y="69" text-anchor="middle" class="lbl-b">−250만</text>
+        <text x="301" y="87" text-anchor="middle" class="lbl-dim">기본공제</text>
+        <path d="M346 73 H366" class="s-acc" marker-end="url(#ar3)"/>
+        <rect x="370" y="50" width="80" height="46" rx="8" class="f-bad-soft s-line"/>
+        <text x="410" y="69" text-anchor="middle" class="lbl-b">× 22%</text>
+        <text x="410" y="87" text-anchor="middle" class="t-mono lbl">88만</text>
+        <path d="M410 98 V130" class="s-dash" marker-end="url(#ar3)"/>
+        <text x="410" y="150" text-anchor="middle" class="lbl">다음 해 5월 신고</text>
+        <text x="10" y="186" class="lbl-dim">아직 팔지 않은 종목의 평가손익은 계산에 들어가지 않는다</text>
+      </svg>
+      <figcaption><b>해외 주식 양도세의 흐름.</b> 종목마다 따로 세금을 매기지 않는다. 한 해 동안 판 것을 모두 합친 순이익에서 250만원을 빼고 22%를 곱한다.</figcaption>
+    </figure>
+
+    <p>그림의 핵심은 <b>"판 것만" 합친다</b>는 점이다. 같은 해에 이익 난 종목을 팔았다면, 손실 중인 종목을 연말 전에 팔아 손실을 확정하면 세금이 줄어든다. 아래에서 다섯 종목의 손익 막대를 끌어 바꾸고, 막대 아래 이름을 눌러 "팔았음"과 "보유 중"을 바꿔 보자.</p>
+
+    <div class="sim" id="sim-tx">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>해외 주식 양도세 계산기: 손익 통산과 250만원 공제</h3></div>
+      <div class="sim-body">
+        <div class="sim-view"><canvas id="tx-cv"></canvas><span class="hint">막대를 끌고, 이름을 눌러 팔기/보유</span></div>
+        <div class="sim-controls">
+          <label class="check"><input type="checkbox" id="tx-nonet"> 손익 통산이 없다면(이익 난 종목에만 과세)</label>
+          <div class="btn-row"><button class="btn" id="tx-harvest">손실 종목 모두 연말에 팔기</button><button class="btn" id="tx-re">처음 값</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">실현 순손익</span><span class="v" id="tx-o-net">—</span></div>
+        <div class="stat"><span class="k">과세표준</span><span class="v" id="tx-o-base">—</span></div>
+        <div class="stat"><span class="k">양도세(22%)</span><span class="v" id="tx-o-tax">—</span></div>
+        <div class="stat"><span class="k">손실을 확정하면</span><span class="v" id="tx-o-save">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 처음 값에서 세금을 읽고, 손실 종목 C와 D의 이름을 눌러 팔면 세금이 얼마나 줄어드는지 본다. ② 순손익을 250만원 아래로 맞추면 세금이 0이 된다. ③ "손익 통산이 없다면"을 켜 손실이 세금을 줄여 주지 못하는 세상과 비교한다. (단위: 원화 환산 손익, 수수료 등 필요경비는 생략)</div>
+    </div>
+
+    <p>연말에 손실 종목을 팔아 손실을 확정하는 것을 흔히 "손실 확정 매도"라고 한다. 팔고 나서 같은 종목을 다시 사면 보유는 그대로 이어지고 세금만 줄어든다. 2026년 기준 한국 세법에는 미국식 "되사기 제한(워시 세일)" 규정이 없는 것으로 알려져 있지만, 제도는 바뀔 수 있으니 실행 전에 확인해야 한다. 또 연말 거래는 <b>결제일</b> 기준으로 해가 나뉘므로, 12월 마지막 며칠의 매도는 다음 해 손익으로 잡힐 수 있다.</p>
+    <p>같은 원리를 거꾸로 쓰면 이익 쪽에도 쓸 수 있다. 250만원 공제는 해마다 새로 생기고, 쓰지 않으면 사라진다. 오래 들고 있다가 한 번에 팔면 공제는 한 번만 쓴다. 해마다 이익 일부를 실현하고 같은 종목을 다시 사면(취득가가 올라간다) 공제를 해마다 쓸 수 있다. "다음 해"를 눌러 10년을 진행해 보자.</p>
+
+    <div class="sim" id="sim-yd">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>공제는 해마다 생긴다: 한 번에 팔기 vs 해마다 이익 실현</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="yd-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="yd-next">다음 해</button><button class="btn" id="yd-all">10년 끝까지</button><button class="btn" id="yd-re">처음부터</button></div>
+          <label class="check"><input type="checkbox" id="yd-cheap"> 우대 수수료(약 0.07%) 적용</label>
+        </div>
+      </div>
+      <div class="legend"><span><i style="background:var(--text-dim)"></i>A: 10년 뒤 한 번에 팔기</span><span><i style="background:var(--accent)"></i>B: 해마다 이익 실현 후 재매수</span></div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">연차</span><span class="v" id="yd-o-y">—</span></div>
+        <div class="stat"><span class="k">A 세금</span><span class="v" id="yd-o-a">—</span></div>
+        <div class="stat"><span class="k">B 세금 + 매매 수수료</span><span class="v" id="yd-o-b">—</span></div>
+        <div class="stat"><span class="k">B가 아낀 돈</span><span class="v" id="yd-o-d">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 한 해씩 넘기며 A의 미실현 이익(회색)이 쌓이는 동안 B는 매년 0으로 돌아가는 것을 본다. ② 10년째에 두 방식의 세금을 비교한다. ③ B는 해마다 전량을 사고팔아 수수료를 낸다. 우대 수수료를 켜고 끄며 차이를 본다. (가정: 2,000만원, 달러 기준 연 7%, 환율 고정, 수수료 우대 전 0.25%, 다른 해외 주식 매매 없음)</div>
+    </div>
+
+    <p>해외 주식을 사는 방법은 직접 사는 것만 있는 게 아니다. 국내 증권시장에 상장된 해외 지수 ETF도 같은 미국 지수를 따라간다. 그런데 세금 방식이 완전히 다르다. 국내 상장 해외 ETF의 매매차익은 양도소득이 아니라 배당소득으로 보고 15.4%를 원천징수하며, 250만원 공제도 손익 통산도 없다. 대신 ISA나 연금저축 같은 절세 계좌에 담을 수 있다. 이 차이는 <a href="tax.html">23장</a>에서 자세히 다루고, 여기서는 이익 크기에 따라 어느 쪽 세금이 큰지만 보자.</p>
+
+    <div class="sim" id="sim-et">
+      <div class="sim-head"><span class="sim-tag">SIMULATOR</span><h3>직접 투자 vs 국내 상장 해외 ETF: 세금 곡선</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="et-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>올해 매매차익 <output id="et-g-out"></output></span><input type="range" id="et-g" min="0" max="50000000" step="500000" value="10000000"></label>
+          <label class="ctrl"><span>다른 이자·배당 소득 <output id="et-o-out"></output></span><input type="range" id="et-o" min="0" max="20000000" step="500000" value="3000000"></label>
+        </div>
+      </div>
+      <div class="legend"><span><i style="background:var(--accent)"></i>해외 주식 직접(양도세 22%, 250만 공제)</span><span><i style="background:var(--accent-2)"></i>국내 상장 해외 ETF(일반 계좌, 15.4%)</span></div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">직접 투자 세금</span><span class="v" id="et-o-d">—</span></div>
+        <div class="stat"><span class="k">국내 상장 ETF 세금</span><span class="v" id="et-o-e">—</span></div>
+        <div class="stat"><span class="k">ETF 쪽 금융소득 종합과세</span><span class="v" id="et-o-c">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 이익이 작을 때는 250만원 공제 덕에 직접 투자 세금이 0이다. ② 두 선이 만나는 지점(다른 금융소득이 적을 때 약 830만원)을 찾는다. ③ 다른 이자·배당을 늘리면 빨간 점선(금융소득 2,000만원)이 왼쪽으로 오고, 그 오른쪽 이익은 다른 소득과 합쳐 누진세율로 과세되어 선이 꺾여 오른다. (간이 계산: ETF의 과세 대상 이익을 매매차익으로 단순화, 다른 종합소득 과세표준 2,500만원 가정. 손실 상계·절세 계좌는 23장)</div>
+    </div>
+
+    <p>이익이 몇백만 원 수준이면 250만원 공제가 있는 직접 투자 쪽 세금이 작고, 이익이 커지면 15.4% 쪽이 작아진다. 그러나 국내 상장 ETF 이익은 금융소득에 더해져 종합과세 기준을 넘을 수 있다. 어느 쪽이 유리한지는 이익 크기, 다른 금융소득, 절세 계좌 사용 여부에 따라 달라진다.</p>
+    <div class="callout warn"><strong>세금 규칙은 바뀐다</strong>여기의 세율·공제·과세 방식은 2026년 기준 대표값이며 간이 계산이다. 해외 주식 과세, 금융소득 종합과세, 국내 상장 ETF 과세는 여러 번 개편이 논의되거나 바뀌어 왔다. 실제로 신고하거나 큰 금액을 움직이기 전에는 국세청 안내나 증권사의 세금 계산 서비스로 그해 기준을 확인한다.</div>
+  </section>
+
+  <section id="time-news">
+    <h2>시차와 뉴스</h2>
+    <p>미국 시장은 한국의 밤에 열린다. 그래서 한국 투자자는 아침에 "간밤 미국 지수 2% 상승" 같은 뉴스를 보며 하루를 시작한다. 이 뉴스로 돈을 벌 수 있을까? 한국 시장은 미국 시장의 영향을 많이 받으니, 간밤 미국이 오르면 한국 장도 오를 것 같다. 맞혀 보자. 간밤 미국 지수를 보고 오늘 아침 한국 지수가 전날보다 높게 시작할지(시초가 위) 낮게 시작할지(아래) 고른다.</p>
+
+    <div class="sim" id="sim-nw">
+      <div class="sim-head"><span class="sim-tag">GAME</span><h3>간밤 뉴스로 오늘 한국 장 맞히기</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="nw-cv"></canvas></div>
+        <div class="sim-controls">
+          <div class="btn-row"><button class="btn primary" id="nw-up">시초가 위로</button><button class="btn primary" id="nw-dn">시초가 아래로</button></div>
+          <div class="btn-row"><button class="btn" id="nw-next">다음 날</button><button class="btn" id="nw-re">처음부터</button></div>
+        </div>
+      </div>
+      <div class="nw-head" id="nw-head">—</div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">진행</span><span class="v" id="nw-o-n">—</span></div>
+        <div class="stat"><span class="k">시초가 방향 적중</span><span class="v" id="nw-o-hit">—</span></div>
+        <div class="stat"><span class="k">맞힌 방향으로 시초가 매매 누적</span><span class="v" id="nw-o-tr">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 10일을 진행하며 시초가 방향을 몇 번 맞히는지 센다. ② 그런데 시초가에 그 방향으로 사서(또는 팔아서) 종가에 정리했다면 누적 수익은 얼마인가. ③ 처음부터 다시 해도 결과가 비슷한지 본다. (가상의 모형: 한국 시초가 갭 ≈ 0.6 × 간밤 미국 수익률 + 잡음, 시초가 이후 움직임은 간밤 뉴스와 무관)</div>
+    </div>
+
+    <p>방향은 꽤 잘 맞힌다. 그런데 그 정보로 돈을 벌 수는 없다. 간밤 뉴스는 한국 장이 열리는 순간 시초가에 이미 반영되기 때문이다. 내가 주문을 넣을 수 있는 가장 빠른 가격이 이미 뉴스를 먹은 가격이다. 미국 주식을 직접 살 때도 마찬가지다. 한국 시각 아침에 본 미국 기업 실적 뉴스는 대개 애프터마켓에서 이미 가격에 반영되었다. 시차는 정보를 늦게 받는 쪽에 불리하다. 뉴스를 보고 사고파는 대신 정해 둔 규칙대로 사는 편이 시차의 영향을 덜 받는다(<a href="price.html">4장</a>의 효율적 시장 이야기와 같다).</p>
+  </section>
+
+  <section id="all">
+    <h2>종합: 해외 투자 한 번의 손익 계산서</h2>
+    <p>이 장에서 본 것을 한 장의 폭포 그림으로 모은다. 원화로 시작한 돈이 환전 비용, 달러 기준 수익, 환율 효과, 헤지 비용, 다시 환전 비용, 세금을 거쳐 원화로 돌아온다. 직접 투자와 국내 상장 ETF, 환노출과 환헤지를 바꿔 가며 어느 칸이 가장 큰지 보자.</p>
+
+    <div class="sim" id="sim-wf">
+      <div class="sim-head"><span class="sim-tag">LAB</span><h3>해외 투자 손익 폭포: 원화에서 원화까지</h3></div>
+      <div class="sim-body side">
+        <div class="sim-view"><canvas id="wf-cv"></canvas></div>
+        <div class="sim-controls">
+          <label class="ctrl"><span>투자금 <output id="wf-a-out"></output></span><input type="range" id="wf-a" min="1000000" max="100000000" step="1000000" value="10000000"></label>
+          <label class="ctrl"><span>기간 <output id="wf-y-out"></output></span><input type="range" id="wf-y" min="1" max="20" step="1" value="5"></label>
+          <label class="ctrl"><span>달러 기준 연수익률 <output id="wf-r-out"></output></span><input type="range" id="wf-r" min="-0.05" max="0.12" step="0.005" value="0.07"></label>
+          <label class="ctrl"><span>환율 연 변화 <output id="wf-f-out"></output></span><input type="range" id="wf-f" min="-0.05" max="0.05" step="0.005" value="0.01"></label>
+          <label class="ctrl"><span>환율 우대율 <output id="wf-u-out"></output></span><input type="range" id="wf-u" min="0" max="1" step="0.05" value="0.9"></label>
+          <div class="seg" id="wf-h"><button data-value="uh" class="on">환노출</button><button data-value="h">환헤지</button></div>
+          <div class="seg" id="wf-acc"><button data-value="direct" class="on">해외 직접</button><button data-value="etf">국내 상장 ETF</button></div>
+        </div>
+      </div>
+      <div class="sim-readout">
+        <div class="stat"><span class="k">최종 원화</span><span class="v" id="wf-o-v">—</span></div>
+        <div class="stat"><span class="k">총 수익률</span><span class="v" id="wf-o-r">—</span></div>
+        <div class="stat"><span class="k">연평균(원화, 세후)</span><span class="v" id="wf-o-c">—</span></div>
+        <div class="stat"><span class="k">비용·세금 합계</span><span class="v" id="wf-o-k">—</span></div>
+      </div>
+      <div class="sim-note">해볼 것: ① 기본값에서 가장 큰 칸이 현지 수익인지 환율 효과인지 본다. ② 환율 연 변화를 −3%로 바꿔 5년이면 환율 칸이 얼마나 커지는지 본다. ③ 투자금 1,000만원과 1억원에서 직접 투자와 국내 상장 ETF의 세금 칸을 비교한다. ④ 기간을 20년으로 늘리면 환헤지 칸이 어떻게 자라는가. (간이 모형: 마지막 해에 한 번에 판다. 헤지 비용 연 1.5%, 우대 전 스프레드 1%, 매매 수수료·ETF 보수는 생략. ETF는 15.4% 단순 적용)</div>
+    </div>
+
+    <p>대부분의 설정에서 가장 큰 칸은 달러 기준 수익이고, 그다음이 환율이다. 환전 비용과 세금은 작아 보이지만 투자자가 직접 고를 수 있는 칸이다. 환율 칸은 고를 수 없다. 환헤지로 없앨 수는 있지만 그 대가로 헤지 칸이 생긴다. 해외 투자에서 할 수 있는 일은 환율을 맞히는 것이 아니라, 환율이 결과에 얼마나 섞이도록 할지를 정하고 비용과 세금 칸을 작게 만드는 것이다.</p>
+  </section>
+
+  <div class="casefile">
+    <div class="tag"><b>NOTE 한결</b><span>한결의 투자 노트 · 22장</span></div>
+    <h4>위성 일부를 미국 지수로: 환율 1,300원 → 1,450원</h4>
+    <p>한결은 위성 몫(1,000만원의 20%, 200만원) 가운데 100만원을 미국 지수(S&amp;P 500)를 따르는 상품에 넣어 보기로 했다. 환율 1,300원에 바꾸면 약 769달러다. 1년 동안 지수가 달러로 +10%, 환율이 1,450원(+11.5%)이 되었다면, 환노출로는 100만원 × 1.10 × 1,450/1,300 = <b>약 122.7만원(+22.7%)</b>이 된다. 같은 지수를 환헤지(헤지 비용 연 1.5% 가정)로 샀다면 약 108.4만원(+8.4%)이다. 거꾸로 1,450원에 사서 1,300원이 되었다면 같은 +10%가 환노출로는 약 98.6만원(−1.4%)으로 손실이다. 이익 22.7만원은 1년 250만원 기본공제보다 작으니 해외 직접 투자라면 양도세는 0원이다.</p>
+    <p>한결은 환율을 맞힐 수 없다고 인정했다. 그리고 이 돈은 30년 넘게 둘 돈이고, 위기 때 원화 약세가 완충이 되는 경향이 있으며, 오래 들고 갈수록 헤지 비용이 복리로 쌓인다는 점에서 환노출을 골랐다. 환전은 우대율 90% 이상일 때 한 번에 하고(100만원 기준 약 1,000원), 판 달러는 원화로 바로 바꾸지 않기로 했다.</p>
+    <div class="clue">
+      <div><b>이 장에서 정한 것</b>위성 중 100만원을 미국 지수에, 환노출로. 환전은 우대 받아 한 번에, 자주 사고팔지 않는다.</div>
+      <div><b>아직 남은 문제</b>해외 직접 투자, 국내 상장 해외 ETF, ISA·연금저축 가운데 어디에 담아야 세금이 가장 적은가.</div>
+      <div><b>다음 단계</b>23장에서 1년 동안 낸 세금과 비용을 결산하고, 절세 계좌로 했을 때와 비교한다.</div>
+    </div>
+  </div>
+
+  <section class="keypoints" id="summary">
+    <h2>핵심 정리</h2>
+    <ol>
+      <li>한국 주식시장은 세계 시가총액의 약 1~2%, 미국은 약 60%다. 자기 나라 주식을 세계 비중보다 훨씬 많이 들고 있는 경향을 홈 바이어스라 한다.</li>
+      <li>미국 시장은 가격제한폭이 없고(대신 시장 전체 서킷브레이커), 소수점 거래가 가능하며, 정규장은 한국 시각 22:30–05:00(서머타임) 또는 23:30–06:00이다.</li>
+      <li>원화 수익률 = (1 + 현지 수익률) × (1 + 환율 변화) − 1. 두 값이 작으면 대략 더하기와 같고, 환율 변화는 해외 주식 수익률의 두 번째 큰 재료다.</li>
+      <li>원/달러 환율은 위기 때 오르는 경향이 있어, 환노출 해외 자산의 원화 손실을 줄여 주곤 했다. 법칙이 아니라 경향이다.</li>
+      <li>환헤지(H)는 환율 변동을 없애는 대신 대략 두 나라 금리차만큼의 비용을 해마다 낸다. 오래 둘수록 복리로 쌓인다.</li>
+      <li>환전 스프레드(우대 전 약 1%)는 살 때와 팔 때 두 번 낸다. 우대율을 챙기고 자주 바꾸지 않는다.</li>
+      <li>해외 주식 매매차익은 1년 동안 판 것의 손익을 통산해 250만원을 빼고 22%를 낸다(2026년 기준). 연말 손실 확정과 해마다의 공제 활용이 세금을 줄인다. 국내 상장 해외 ETF는 15.4% 배당소득으로 과세 방식이 다르다(23장).</li>
+    </ol>
+  </section>
+
+  <section class="quiz-sec" id="quiz">
+    <h2>확인 퀴즈</h2>
+    <div class="quiz">
+      <div class="quiz-q">
+        <p>1. 미국 지수에 투자했다. 1년 동안 달러 기준으로 +10%, 원/달러 환율은 1,300원에서 1,170원(−10%)이 되었다. 환노출로 투자했다면 원화 수익률은?</p>
+        <div class="opts"><button class="opt">0%</button><button class="opt" data-correct>−1%</button><button class="opt">+20%</button><button class="opt">+1%</button></div>
+        <div class="quiz-exp">1.10 × 0.90 − 1 = −0.01, 즉 −1%다. 단순히 더하면 0%지만 곱셈이므로 교차항 0.10 × (−0.10) = −1%가 남는다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>2. 원/달러 환율이 위기 때 오르는 경향이 있다는 것은 환노출 해외 주식에 어떤 의미인가?</p>
+        <div class="opts"><button class="opt">위기 때 해외 주식의 원화 손실이 더 커진다.</button><button class="opt">환율과 주가는 관계가 없으므로 아무 의미가 없다.</button><button class="opt">환헤지 상품만 위기 때 손실이 줄어든다.</button><button class="opt" data-correct>주가가 빠질 때 달러 값이 올라 원화 손실을 일부 줄여 준다.</button></div>
+        <div class="quiz-exp">미국 주가가 빠질 때 원화가 약해지면(환율 상승) 같은 달러를 원화로 더 많이 받는다. 2020년 3월 미국 지수 약 −34%에 환율 약 +11%가 겹쳐 원화 손실은 약 −27%였다. 다만 언제나 그런 것은 아니다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>3. 한 해에 해외 주식 A를 팔아 600만원 이익, B를 팔아 200만원 손실을 확정했다. 다른 해외 주식 매매는 없다. 양도세는 약 얼마인가?(2026년 기준, 22%·250만원 공제)</p>
+        <div class="opts"><button class="opt">132만원</button><button class="opt">77만원</button><button class="opt" data-correct>33만원</button><button class="opt">0원</button></div>
+        <div class="quiz-exp">손익 통산: 600 − 200 = 400만원. 기본공제 250만원을 빼면 150만원, × 22% = 33만원이다. 통산이 없다면 (600 − 250) × 22% = 77만원이었을 것이다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>4. 환헤지(H) 상품의 헤지 비용은 주로 무엇에서 나오는가?</p>
+        <div class="opts"><button class="opt" data-correct>두 나라의 금리 차이</button><button class="opt">환전 스프레드</button><button class="opt">미국 주식의 배당 원천징수</button><button class="opt">증권거래세</button></div>
+        <div class="quiz-exp">선물환 환율은 오늘 환율에 두 나라 금리 차이를 반영해 정해진다. 미국 금리가 한국보다 높으면 달러를 미래에 파는 값이 낮게 정해져, 대략 그 금리차가 해마다 비용이 된다.</div>
+      </div>
+      <div class="quiz-q">
+        <p>5. 미국 서머타임 기간에 미국 정규장(현지 09:30–16:00)은 한국 시각으로 언제 열리는가?</p>
+        <div class="opts"><button class="opt">23:30–06:00</button><button class="opt">09:30–16:00</button><button class="opt" data-correct>22:30–05:00</button><button class="opt">17:00–22:30</button></div>
+        <div class="quiz-exp">서머타임 동안 뉴욕은 한국보다 13시간 늦으므로 09:30 + 13시간 = 22:30에 열린다. 서머타임이 아닐 때는 14시간 차이라 23:30–06:00이다. 17:00–22:30은 서머타임 기간의 프리마켓이다.</div>
+      </div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  const TAU = Math.PI * 2;
+  const $ = (id) => document.getElementById(id);
+  const narrow = (id) => $(id).parentElement.clientWidth < 560;
+  const sp = (x, d) => (x > 0 ? "+" : x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%";
+  const pc = (x, d) => (x < 0 ? "−" : "") + Math.abs(x * 100).toFixed(d == null ? 1 : d) + "%";
+  const tone = (x, s) => '<span class="' + MB.tone(x) + '">' + s + "</span>";
+  const sw = (x) => (x > 0 ? "+" : "") + MB.won(x);
+  const fxw = (v) => Math.round(v).toLocaleString("ko-KR") + "원";
+  const HEDGE = 0.015;
+  function text(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.font = MB.font(o.size || 12, o.mono, o.weight);
+    ctx.fillStyle = o.color; ctx.textAlign = o.align || "left"; ctx.textBaseline = o.base || "alphabetic";
+    ctx.fillText(s, x, y);
+  }
+  function knob(ctx, x, y, P, r, color) {
+    r = r || 7;
+    ctx.save();
+    ctx.beginPath(); ctx.arc(x, y, r + 3, 0, TAU); ctx.fillStyle = P.bg; ctx.globalAlpha = 0.85; ctx.fill(); ctx.globalAlpha = 1;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, TAU); ctx.fillStyle = color || P.accent; ctx.fill();
+    ctx.lineWidth = 2; ctx.strokeStyle = P.bg; ctx.stroke();
+    ctx.restore();
+  }
+  function rect(ctx, x0, y0, x1, y1, fill, a) {
+    ctx.save(); ctx.globalAlpha = a == null ? 1 : a; ctx.fillStyle = fill;
+    ctx.fillRect(Math.min(x0, x1), Math.min(y0, y1), Math.abs(x1 - x0), Math.abs(y1 - y0)); ctx.restore();
+  }
+  const invX = (c, px, a, b) => a + ((px - c.box.x) / c.box.w) * (b - a);
+  const invY = (c, py, a, b) => a + ((c.box.y + c.box.h - py) / c.box.h) * (b - a);
+
+  /* ---------------------------------------------------------- 1. 세계 비중 맞히기 */
+  (function () {
+    const REG = [{ k: "미국", t: 0.60 }, { k: "유럽", t: 0.15 }, { k: "일본", t: 0.05 }, { k: "한국", t: 0.015 }];
+    const INIT = [0.35, 0.25, 0.15, 0.10];
+    let guess = INIT.slice(), shown = false, lay = null, drag = -1;
+    const cv = MB.canvas("#hb-cv", (ctx, w, h) => {
+      const P = MB.palette();
+      const B = { x: 46, y: 26, w: w - 60, h: h - 96 };
+      const Y = (v) => B.y + B.h - (v / 0.8) * B.h;
+      ctx.lineWidth = 1;
+      [0, 0.2, 0.4, 0.6, 0.8].forEach((v) => {
+        ctx.strokeStyle = P.grid; ctx.beginPath(); ctx.moveTo(B.x, Y(v)); ctx.lineTo(B.x + B.w, Y(v)); ctx.stroke();
+        text(ctx, Math.round(v * 100) + "%", B.x - 6, Y(v), { color: P.dim, align: "right", base: "middle", size: 11, mono: true });
+      });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(B.x, B.y + B.h); ctx.lineTo(B.x + B.w, B.y + B.h); ctx.stroke();
+      const n = REG.length, slot = B.w / n, bw = Math.min(64, slot * 0.5);
+      lay = { B, Y, slot };
+      REG.forEach((r, i) => {
+        const cx = B.x + slot * (i + 0.5), g = guess[i];
+        rect(ctx, cx - bw / 2, Y(g), cx + bw / 2, Y(0), P.accent, 0.55);
+        knob(ctx, cx, Y(g), P);
+        text(ctx, Math.round(g * 100) + "%", cx, Y(g) - 13, { color: P.accent, align: "center", size: 12, mono: true, weight: 700 });
+        text(ctx, r.k, cx, B.y + B.h + 18, { color: P.text, align: "center", size: 13, weight: 600 });
+        if (shown) {
+          const ty = Y(r.t);
+          ctx.strokeStyle = P.accent2; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(cx - bw / 2 - 6, ty); ctx.lineTo(cx + bw / 2 + 6, ty); ctx.stroke(); ctx.lineWidth = 1;
+          text(ctx, "실제 약 " + (r.t * 100).toFixed(r.t < 0.05 ? 1 : 0) + "%", cx, B.y + B.h + 36, { color: P.accent2, align: "center", size: 11, weight: 700 });
+        }
+      });
+      if (shown) text(ctx, "금색 선: 실제(약)", B.x + B.w, 14, { color: P.accent2, align: "right", size: 11 });
+      MB.stat("hb-o-kr", Math.round(guess[3] * 100) + "%");
+      MB.stat("hb-o-true", shown ? "약 1~2%" : "?");
+      if (shown) {
+        const err = ST.mean(REG.map((r, i) => Math.abs(guess[i] - r.t)));
+        MB.stat("hb-o-err", (err * 100).toFixed(1) + "<small>%p</small>");
+      } else MB.stat("hb-o-err", "—");
+    }, { get height() { return narrow("hb-cv") ? 300 : 330; } });
+    const msg = $("hb-msg");
+    MB.drag(cv.canvas, {
+      start(x) { if (!lay) return; drag = MB.clamp(Math.floor((x - lay.B.x) / lay.slot), 0, REG.length - 1); },
+      move(x, y) { if (drag < 0) return; guess[drag] = MB.clamp(((lay.B.y + lay.B.h - y) / lay.B.h) * 0.8, 0, 0.8); cv.redraw(); },
+      end() { drag = -1; },
+    });
+    $("hb-show").addEventListener("click", () => {
+      shown = true;
+      const kr = guess[3], ratio = kr / REG[3].t;
+      msg.textContent = ratio > 2 ? "한국 몫을 실제의 약 " + Math.round(ratio) + "배로 놓았다. 대부분이 그렇다. 익숙한 시장은 실제보다 크게 느껴진다." : "한국 몫을 실제와 가깝게 놓았다. 미국이 나머지를 모두 합친 것보다 크다는 점도 확인하자.";
+      cv.redraw();
+    });
+    $("hb-re").addEventListener("click", () => { guess = INIT.slice(); shown = false; msg.textContent = "네 막대를 끌어 세계 주식시장 시가총액에서 각 지역이 차지하는 비율을 추측한다."; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 2. 트리맵 */
+  (function () {
+    const DATA = {
+      world: [["미국", 60], ["일본", 5], ["영국", 3.3], ["중국", 3], ["캐나다", 2.8], ["프랑스", 2.4], ["대만", 2.2], ["독일", 2.2], ["인도", 2], ["스위스", 2], ["호주", 1.6], ["한국", 1.3], ["기타", 12.2]],
+      home: [["한국", 80], ["미국", 12], ["기타", 8]],
+    };
+    let sel = "한국", cells = [];
+    function squarify(items, x, y, w, h) {
+      const total = ST.sum(items.map((d) => d[1])), scale = (w * h) / total, out = [];
+      let rest = items.slice().sort((a, b) => b[1] - a[1]).map((d) => ({ name: d[0], v: d[1], a: d[1] * scale }));
+      const worst = (row, s) => { const sum = ST.sum(row.map((r) => r.a)), mx = Math.max(...row.map((r) => r.a)), mn = Math.min(...row.map((r) => r.a)); return Math.max((s * s * mx) / (sum * sum), (sum * sum) / (s * s * mn)); };
+      while (rest.length) {
+        const s = Math.min(w, h); let i = 1;
+        while (i < rest.length && worst(rest.slice(0, i + 1), s) <= worst(rest.slice(0, i), s)) i++;
+        const row = rest.slice(0, i), sum = ST.sum(row.map((r) => r.a)), th = sum / s;
+        if (w >= h) { let yy = y; row.forEach((r) => { const hh = r.a / th; out.push({ ...r, x, y: yy, w: th, h: hh }); yy += hh; }); x += th; w -= th; }
+        else { let xx = x; row.forEach((r) => { const ww = r.a / th; out.push({ ...r, x: xx, y, w: ww, h: th }); xx += ww; }); y += th; h -= th; }
+        rest = rest.slice(i);
+      }
+      return out;
+    }
+    const mode = MB.seg("tm-mode", () => cv.redraw());
+    const cv = MB.canvas("#tm-cv", (ctx, w, h) => {
+      const P = MB.palette(), items = DATA[mode()];
+      cells = squarify(items, 8, 8, w - 16, h - 38);
+      cells.forEach((c) => {
+        const kr = c.name === "한국", us = c.name === "미국";
+        const fill = kr ? P.accent2 : us ? P.accent : c.name === "기타" ? P.dim : P.accent;
+        const a = kr ? 0.85 : us ? 0.7 : c.name === "기타" ? 0.18 : 0.22 + 0.25 * Math.min(1, c.v / 5);
+        rect(ctx, c.x + 1, c.y + 1, c.x + c.w - 1, c.y + c.h - 1, fill, a);
+        if (c.name === sel) { ctx.strokeStyle = P.text; ctx.lineWidth = 2.5; ctx.strokeRect(c.x + 2, c.y + 2, c.w - 4, c.h - 4); ctx.lineWidth = 1; }
+        const col = (kr || us) && !MB.isDark() ? P.bg : P.text, fs = c.w > 120 ? 15 : 12;
+        ctx.font = MB.font(fs, false, 700); const nw = ctx.measureText(c.name).width;
+        ctx.font = MB.font(11, true); const vw = ctx.measureText(c.v + "%").width;
+        if (c.w > Math.max(nw, vw) + 12 && c.h > 34) {
+          text(ctx, c.name, c.x + 6, c.y + 17, { color: col, size: fs, weight: 700 });
+          text(ctx, c.v + "%", c.x + 6, c.y + (fs > 12 ? 36 : 31), { color: col, size: 11, mono: true });
+        } else {
+          ctx.font = MB.font(10); const sw2 = ctx.measureText(c.name).width;
+          if (c.w > sw2 + 4 && c.h > 16) text(ctx, c.name, c.x + c.w / 2, c.y + c.h / 2, { color: col, size: 10, align: "center", base: "middle" });
+        }
+      });
+      const c = cells.find((d) => d.name === sel);
+      MB.stat("tm-o-name", c ? c.name : "—");
+      MB.stat("tm-o-share", c ? "약 " + c.v + "%" : "—");
+      const k = DATA[mode()].find((d) => d[0] === "한국")[1];
+      MB.stat("tm-o-ratio", mode() === "world" ? "1배" : "약 " + Math.round(k / 1.3) + "배");
+    }, { get height() { return narrow("tm-cv") ? 300 : 340; } });
+    cv.canvas.addEventListener("click", (e) => {
+      const r = cv.canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      const c = cells.find((d) => x >= d.x && x <= d.x + d.w && y >= d.y && y <= d.y + d.h);
+      if (c) { sel = c.name; cv.redraw(); }
+    });
+  })();
+
+  /* ---------------------------------------------------------- 3. 가격제한폭 */
+  (function () {
+    let t = 0, playing = false, kr = [], us = [], lock = [];
+    function build(s) {
+      const T = 100 * (1 + s); kr = [100]; us = [100, T]; lock = [false];
+      let p = 100;
+      while (Math.abs(p - T) > 1e-6 && kr.length < 30) {
+        const np = T > p ? Math.min(T, p * 1.3) : Math.max(T, p * 0.7);
+        lock.push(np !== T); p = np; kr.push(p);
+      }
+    }
+    const S = MB.range("lm-s", (v) => sp(v, 0), (v) => { build(v); t = kr.length + 1; cv.redraw(); });
+    build(S());
+    t = kr.length + 1;
+    const cv = MB.canvas("#lm-cv", (ctx, w, h) => {
+      const P = MB.palette(), s = S(), T = 100 * (1 + s), D = Math.max(6, kr.length + 1);
+      const lo = Math.min(100, T), hi = Math.max(100, T), pad = (hi - lo) * 0.12 + 4;
+      const shownK = kr.slice(0, Math.min(kr.length, Math.floor(t) + 1)), shownU = t >= 1 ? us : [100];
+      const ext = (arr) => { const a = arr.map((v, i) => [i, v]); for (let i = arr.length; i <= Math.min(D, Math.floor(t)); i++) a.push([i, arr[arr.length - 1]]); return a; };
+      const c = MB.chart(ctx, { x: 52, y: 18, w: w - 70, h: h - 62 }, {
+        x: [0, D], y: [lo - pad, hi + pad], xLabel: "뉴스 뒤 거래일", yFmt: (v) => Math.round(v),
+        xTicks: Array.from({ length: D + 1 }, (_, i) => i).filter((i) => D <= 8 || i % 2 === 0),
+        series: [{ data: ext(shownU), color: P.accent2, width: 2.5 }, { data: ext(shownK), color: P.accent, width: 2.5 }],
+        hlines: [{ y: T, color: P.dim, label: "새 공정 가격 " + Math.round(T) }],
+      });
+      shownK.forEach((v, i) => {
+        if (!i) return;
+        ctx.fillStyle = lock[i] ? (s < 0 ? P.down : P.up) : P.accent;
+        ctx.beginPath(); ctx.arc(c.X(i), c.Y(v), 4.5, 0, TAU); ctx.fill();
+        if (lock[i]) text(ctx, s < 0 ? "하한가" : "상한가", c.X(i), c.Y(v) + (s < 0 ? 16 : -9), { color: s < 0 ? P.down : P.up, align: "center", size: 10, weight: 700 });
+      });
+      if (t >= 1) { ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.arc(c.X(1), c.Y(T), 4.5, 0, TAU); ctx.fill(); }
+      text(ctx, "한국식(±30%)", c.box.x + 8, c.box.y + 14, { color: P.accent, size: 12, weight: 700 });
+      text(ctx, "미국식(제한 없음)", c.box.x + 8, c.box.y + 30, { color: P.accent2, size: 12, weight: 700 });
+      const days = kr.length - 1, locked = lock.filter(Boolean).length;
+      MB.stat("lm-o-t", Math.round(T) + "<small>(" + sp(s, 0) + ")</small>");
+      MB.stat("lm-o-kr", days + "<small>일</small>");
+      MB.stat("lm-o-us", (s === 0 ? 0 : 1) + "<small>일</small>");
+      MB.stat("lm-o-lock", s < 0 ? '<span class="bad-t">' + locked + "</span><small>일</small>" : "0<small>일</small>");
+    }, { get height() { return narrow("lm-cv") ? 280 : 300; } });
+    const go = $("lm-go");
+    $("lm-go").addEventListener("click", () => { if (t >= kr.length + 1) t = 0; playing = !playing; go.textContent = playing ? "멈춤" : "재생"; });
+    $("lm-re").addEventListener("click", () => { t = 0; playing = false; go.textContent = "재생"; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return;
+      t += dt * 1.6;
+      if (t >= kr.length + 1) { t = kr.length + 1; playing = false; go.textContent = "재생"; }
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 4. 소수점 거래 */
+  (function () {
+    const redraw = () => cv.redraw();
+    const A = MB.range("fr-a", (v) => MB.won(v), redraw);
+    const PX = MB.range("fr-p", (v) => "$" + v, redraw);
+    const FX = MB.range("fr-x", (v) => v.toLocaleString("ko-KR") + "원", redraw);
+    const cv = MB.canvas("#fr-cv", (ctx, w, h) => {
+      const P = MB.palette(), a = A(), krw = PX() * FX();
+      let cash = 0, sh = 0, frac = 0, idleSum = 0;
+      const inv = [], idle = [];
+      for (let m = 1; m <= 12; m++) {
+        cash += a; const k = Math.floor(cash / krw); sh += k; cash -= k * krw; frac += a / krw;
+        inv.push(sh * krw); idle.push(cash); idleSum += cash;
+      }
+      const b = MB.bars(ctx, { x: 58, y: 34, w: w - 72, h: h - 76 }, {
+        labels: inv.map((_, i) => (narrow("fr-cv") && (i + 1) % 3 ? "" : i + 1 + "월")),
+        stacks: [{ label: "주식", color: P.accent, data: inv }, { label: "현금", color: P.warn, data: idle }],
+        y: [0, a * 12 * 1.08], yFmt: MB.wonAxis,
+      });
+      ctx.strokeStyle = P.text; ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5; ctx.beginPath();
+      for (let m = 0; m < 12; m++) { const x0 = b.X(m) - b.bw / 2, x1 = b.X(m) + b.bw / 2, y = b.Y(a * (m + 1)); m ? ctx.lineTo(x0, y) : ctx.moveTo(x0, y); ctx.lineTo(x1, y); }
+      ctx.stroke(); ctx.setLineDash([]);
+      text(ctx, "보라: 정수 주로 산 주식", 58, 14, { color: P.accent, size: 11, weight: 700 });
+      text(ctx, "주황: 못 쓰고 놀던 현금", 58, 28, { color: P.warn, size: 11, weight: 700 });
+      text(ctx, "점선: 소수점이면 전액 투자", w - 12, 14, { color: P.text, size: 11, align: "right" });
+      MB.stat("fr-o-px", MB.won(krw));
+      MB.stat("fr-o-int", sh + "<small>주</small>");
+      MB.stat("fr-o-frac", frac.toFixed(3) + "<small>주</small>");
+      MB.stat("fr-o-idle", MB.won(idleSum / 12));
+    }, { get height() { return narrow("fr-cv") ? 280 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 5. 거래 시간 시계 */
+  (function () {
+    let hour = 23, playing = false, geo = null;
+    const hm = (h) => { h = ((h % 24) + 24) % 24; const H = Math.floor(h), M = Math.round((h - H) * 60); return String(M === 60 ? H + 1 : H).padStart(2, "0") + ":" + String(M === 60 ? 0 : M).padStart(2, "0"); };
+    const inS = (h, s, e) => ((h - s + 48) % 24) < ((e - s + 48) % 24);
+    const dst = MB.seg("ck-dst", () => cv.redraw());
+    const cv = MB.canvas("#ck-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("ck-cv"), off = dst() === "on" ? 13 : 14;
+      const R = nar ? Math.min(w / 2 - 34, 130) : Math.min(h / 2 - 30, w * 0.25);
+      const cx = nar ? w / 2 : R + 44, cy = nar ? R + 30 : h / 2;
+      geo = { cx, cy, R };
+      const ang = (t) => -Math.PI / 2 + (t / 24) * TAU;
+      const band = (r, s, e, col, a, wd) => { ctx.save(); ctx.globalAlpha = a; ctx.strokeStyle = col; ctx.lineWidth = wd; ctx.beginPath(); let ee = e; if (ee <= s) ee += 24; ctx.arc(cx, cy, r, ang(s), ang(ee)); ctx.stroke(); ctx.restore(); };
+      const k = (x) => (x + off) % 24;
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(cx, cy, R, 0, TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, R * 0.72, 0, TAU); ctx.stroke();
+      // 낮 반원 표시
+      ctx.save(); ctx.globalAlpha = 0.07; ctx.fillStyle = P.accent2; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R * 0.55, ang(6), ang(18)); ctx.closePath(); ctx.fill(); ctx.restore();
+      band(R, 8, 20, P.accent, 0.25, 12);
+      band(R, 9, 15.5, P.accent, 1, 12);
+      band(R * 0.72, k(4), k(9.5), P.accent2, 0.35, 12);
+      band(R * 0.72, k(9.5), k(16), P.accent2, 1, 12);
+      band(R * 0.72, k(16), k(20), P.accent2, 0.35, 12);
+      for (let i = 0; i < 24; i++) {
+        const a = ang(i), r1 = R + 9, r2 = R + (i % 3 ? 13 : 16);
+        ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * r1, cy + Math.sin(a) * r1); ctx.lineTo(cx + Math.cos(a) * r2, cy + Math.sin(a) * r2); ctx.stroke();
+        if (i % 3 === 0) text(ctx, String(i), cx + Math.cos(a) * (R + 26), cy + Math.sin(a) * (R + 26), { color: P.dim, size: 11, mono: true, align: "center", base: "middle" });
+      }
+      text(ctx, "낮", cx, cy + R * 0.32, { color: P.accent2, size: 11, align: "center", base: "middle" });
+      text(ctx, "밤", cx, cy - R * 0.32, { color: P.dim, size: 11, align: "center", base: "middle" });
+      const a = ang(hour);
+      ctx.strokeStyle = P.text; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * (R + 2), cy + Math.sin(a) * (R + 2)); ctx.stroke(); ctx.lineWidth = 1;
+      ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, TAU); ctx.fill();
+      knob(ctx, cx + Math.cos(a) * (R + 2), cy + Math.sin(a) * (R + 2), P, 8);
+      const ny = (hour - off + 24) % 24;
+      const st = [
+        ["한국 정규장", inS(hour, 9, 15.5), "09:00–15:30", P.accent],
+        ["한국 대체거래소", inS(hour, 8, 20), "08:00–20:00", P.accent],
+        ["미국 프리마켓", inS(ny, 4, 9.5), hm(k(4)) + "–" + hm(k(9.5)), P.accent2],
+        ["미국 정규장", inS(ny, 9.5, 16), hm(k(9.5)) + "–" + hm(k(16)), P.accent2],
+        ["미국 애프터마켓", inS(ny, 16, 20), hm(k(16)) + "–" + hm(k(20)), P.accent2],
+      ];
+      const lx = nar ? 14 : cx + R + 54, ly = nar ? cy + R + 46 : Math.max(26, cy - 70);
+      st.forEach((s, i) => {
+        const y = ly + i * 26;
+        ctx.globalAlpha = s[1] ? 1 : 0.35; ctx.fillStyle = s[3]; ctx.beginPath(); ctx.arc(lx + 5, y - 4, 5, 0, TAU); ctx.fill(); ctx.globalAlpha = 1;
+        text(ctx, s[0], lx + 16, y, { color: s[1] ? P.text : P.dim, size: 13, weight: s[1] ? 700 : 400 });
+        text(ctx, s[2], w - 14, y, { color: P.dim, size: 11, mono: true, align: "right" });
+      });
+      text(ctx, "바깥 띠: 한국  안쪽 띠: 미국(한국 시각)", lx, ly + st.length * 26 + 4, { color: P.faint, size: 11 });
+      MB.stat("ck-o-kst", hm(hour));
+      MB.stat("ck-o-ny", hm(ny) + "<small>" + (off === 13 ? "EDT" : "EST") + "</small>");
+      const open = st.filter((s) => s[1]).map((s) => s[0]);
+      MB.stat("ck-o-open", open.length ? open.join(", ") : "모두 닫힘");
+    }, { get height() { return narrow("ck-cv") ? Math.min(560, cvW() + 190) : 330; } });
+    function cvW() { return $("ck-cv").parentElement.clientWidth; }
+    MB.drag(cv.canvas, {
+      move(x, y) { if (!geo) return; const a = Math.atan2(y - geo.cy, x - geo.cx) + Math.PI / 2; hour = Math.round((((a / TAU) * 24 + 24) % 24) * 4) / 4; cv.redraw(); },
+    });
+    const btn = $("ck-play");
+    btn.addEventListener("click", () => { playing = !playing; btn.textContent = playing ? "멈춤" : "시간 흘리기"; });
+    MB.loop(cv.canvas, (dt) => { if (!playing) return; hour = (hour + dt * 1.5) % 24; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 6. 넓이로 나누기 */
+  (function () {
+    let geo = null;
+    const upd = () => { cv.redraw(); grid(); };
+    const R = MB.range("dc-r", (v) => sp(v, 0), upd);
+    const F = MB.range("dc-f", (v) => sp(v, 1), upd);
+    const PRE = { a: [0.1, 0.115], b: [-0.34, 0.113], c: [0.2, -0.1] };
+    MB.seg("dc-pre", (k) => { R.set(PRE[k][0]); F.set(PRE[k][1]); });
+    function grid() {
+      const r = Math.abs(R()) || 0.1, f = Math.abs(F()) || 0.1;
+      const cell = (a, b) => { const v = ST.fxReturn(a, b); return '<div class="c">' + tone(v, sp(v)) + "<small>" + sp(a, 0) + " × " + sp(b, 1) + "</small></div>"; };
+      $("dc-grid").innerHTML = '<div class="h"></div><div class="h">지수 ' + sp(r, 0) + '</div><div class="h">지수 ' + sp(-r, 0) + "</div>" +
+        '<div class="h">환율 ' + sp(f, 1) + "</div>" + cell(r, f) + cell(-r, f) +
+        '<div class="h">환율 ' + sp(-f, 1) + "</div>" + cell(r, -f) + cell(-r, -f);
+    }
+    const cv = MB.canvas("#dc-cv", (ctx, w, h) => {
+      const P = MB.palette(), r = R(), f = F();
+      const S = Math.min((w - 70) / 1.75, (h - 60) / 1.55), ox = 52, oy = h - 40;
+      const X = (v) => ox + v * S, Y = (v) => oy - v * S;
+      geo = { X, Y, S, ox, oy };
+      ctx.strokeStyle = P.grid; ctx.lineWidth = 1;
+      [0.5, 1, 1.5].forEach((v) => {
+        ctx.beginPath(); ctx.moveTo(X(v), Y(0)); ctx.lineTo(X(v), Y(1.5)); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(X(0), Y(v)); ctx.lineTo(X(1.7), Y(v)); ctx.stroke();
+      });
+      [0, 0.5, 1, 1.5].forEach((v) => {
+        text(ctx, String(v), X(v), Y(0) + 14, { color: P.dim, size: 11, mono: true, align: "center" });
+        if (v) text(ctx, String(v), X(0) - 6, Y(v), { color: P.dim, size: 11, mono: true, align: "right", base: "middle" });
+      });
+      text(ctx, "1 + 현지 수익률", X(0.85), Y(0) + 30, { color: P.dim, size: 11, align: "center" });
+      ctx.save(); ctx.translate(14, Y(0.75)); ctx.rotate(-Math.PI / 2); text(ctx, "1 + 환율 변화", 0, 0, { color: P.dim, size: 11, align: "center", base: "middle" }); ctx.restore();
+      rect(ctx, X(0), Y(0), X(1 + r), Y(1 + f), P.accent, 0.1);
+      rect(ctx, X(1), Y(0), X(1 + r), Y(Math.min(1, 1 + f)), MB.toneColor(r), 0.35);
+      rect(ctx, X(0), Y(1), X(Math.min(1, 1 + r)), Y(1 + f), MB.toneColor(f), 0.35);
+      rect(ctx, X(1), Y(1), X(1 + r), Y(1 + f), P.accent2, 0.55);
+      ctx.strokeStyle = P.dim; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.5; ctx.strokeRect(X(0), Y(1), S, S); ctx.setLineDash([]);
+      ctx.strokeStyle = P.accent; ctx.lineWidth = 2; ctx.strokeRect(X(0), Y(1 + f), (1 + r) * S, (1 + f) * S); ctx.lineWidth = 1;
+      text(ctx, "원금 1", X(0.5), Y(0.5), { color: P.dim, size: 13, align: "center", base: "middle", weight: 600 });
+      const lab = (s, x, y, col, ok) => { if (ok) text(ctx, s, x, y, { color: col, size: 11, align: "center", base: "middle", weight: 700, mono: true }); };
+      lab(sp(r, 0), X(1 + r / 2), Y(Math.min(1, 1 + f) / 2), MB.toneColor(r), Math.abs(r) * S > 30);
+      lab(sp(f, 1), X(Math.min(1, 1 + r) / 2), Y(1 + f / 2), MB.toneColor(f), Math.abs(f) * S > 14);
+      lab(sp(r * f, 1), X(1 + r / 2), Y(1 + f / 2), P.text, Math.abs(r) * S > 36 && Math.abs(f) * S > 14);
+      knob(ctx, X(1 + r), Y(1 + f), P);
+      const v = ST.fxReturn(r, f);
+      text(ctx, "넓이 " + (1 + v).toFixed(3), X(1 + r) + 12, Y(1 + f) - 10, { color: P.accent, size: 12, mono: true, weight: 700, align: X(1 + r) + 90 > w ? "right" : "left" });
+      MB.stat("dc-o-r", tone(r, sp(r, 1)));
+      MB.stat("dc-o-f", tone(f, sp(f, 1)));
+      MB.stat("dc-o-x", tone(r * f, sp(r * f, 2)));
+      MB.stat("dc-o-krw", tone(v, sp(v, 1)));
+    }, { get height() { return narrow("dc-cv") ? 300 : 360; } });
+    MB.drag(cv.canvas, {
+      move(x, y) {
+        if (!geo) return;
+        R.set(MB.clamp(Math.round(((x - geo.ox) / geo.S - 1) * 100) / 100, -0.5, 0.7));
+        F.set(MB.clamp(Math.round(((geo.oy - y) / geo.S - 1) * 200) / 200, -0.4, 0.5));
+      },
+    });
+    grid();
+  })();
+
+  /* ---------------------------------------------------------- 7. 위기 완충 */
+  (function () {
+    const D = 180, FX0 = 1150;
+    const g1 = ST.gauss(2208), g2 = ST.gauss(3311);
+    const zi = [], zf = [];
+    for (let i = 0; i < D; i++) { const a = g1(); zi.push(a); zf.push(-0.35 * a + Math.sqrt(1 - 0.35 * 0.35) * g2()); }
+    let idx, fx, uh, hd, t = D, playing = false;
+    function build(k) {
+      idx = [100]; fx = [FX0];
+      for (let i = 1; i <= D; i++) {
+        const crash = i > 40 && i <= 80, rec = i > 80;
+        const mi = crash ? Math.log(0.66) / 40 : rec ? Math.log(1.28) / 100 : 0.0004;
+        const si = crash ? 0.022 : 0.009;
+        const mf = k * (crash ? Math.log(1.13) / 40 : rec ? Math.log(0.93) / 100 : 0);
+        idx.push(idx[i - 1] * Math.exp(mi + si * zi[i - 1] * 0.6));
+        fx.push(fx[i - 1] * Math.exp(mf + 0.0025 * zf[i - 1]));
+      }
+      uh = idx.map((v, i) => 1e7 * (v / 100) * (fx[i] / FX0));
+      hd = idx.map((v, i) => 1e7 * (v / 100) * Math.exp(-HEDGE * i / 252));
+    }
+    const K = MB.range("cr-k", (v) => "×" + v.toFixed(1), (v) => { build(v); cv.redraw(); });
+    build(K());
+    const cv = MB.canvas("#cr-cv", (ctx, w, h) => {
+      const P = MB.palette(), n = Math.max(1, Math.floor(t));
+      const loc = idx.map((v) => 1e7 * v / 100);
+      const all = loc.concat(uh, hd), lo = Math.min(...all) * 0.95, hi = Math.max(...all) * 1.04;
+      const top = { x: 58, y: 14, w: w - 74, h: (h - 50) * 0.66 }, bot = { x: 58, y: top.y + top.h + 16, w: w - 74, h: (h - 50) * 0.34 - 16 };
+      const ser = (arr) => arr.slice(0, n + 1).map((v, i) => [i, v]);
+      MB.chart(ctx, top, {
+        x: [0, D], y: [lo, hi], yFmt: MB.wonAxis, xTicks: [],
+        bands: [{ x0: 40, x1: 80, color: P.downSoft }],
+        series: [{ data: ser(loc), color: P.dim, width: 1.8 }, { data: ser(hd), color: P.accent2, width: 2, dash: [5, 3] }, { data: ser(uh), color: P.accent, width: 2.5 }],
+        hlines: [{ y: 1e7, color: P.faint }],
+      });
+      text(ctx, "급락 구간", (58 + (top.w * 60) / D), top.y + 14, { color: P.down, size: 11, align: "center", weight: 700 });
+      const fl = Math.min(...fx) * 0.98, fh = Math.max(...fx) * 1.02;
+      MB.chart(ctx, bot, {
+        x: [0, D], y: [Math.min(fl, FX0 - 20), Math.max(fh, FX0 + 20)], yFmt: (v) => Math.round(v).toLocaleString("ko-KR"), xLabel: "", xFmt: (v) => v + "일",
+        xTicks: [0, 40, 80, 120, 160], bands: [{ x0: 40, x1: 80, color: P.downSoft }],
+        series: [{ data: ser(fx), color: P.warn, width: 2 }],
+      });
+      text(ctx, "원/달러 환율", bot.x + 6, bot.y + 12, { color: P.warn, size: 11, weight: 700 });
+      const mdd = (a) => ST.maxDrawdown(a.slice(0, n + 1)).mdd;
+      MB.stat("cr-o-l", tone(mdd(loc), pc(mdd(loc))));
+      MB.stat("cr-o-u", tone(mdd(uh), pc(mdd(uh))));
+      MB.stat("cr-o-h", tone(mdd(hd), pc(mdd(hd))));
+      MB.stat("cr-o-fx", fxw(Math.max(...fx.slice(0, n + 1))));
+    }, { get height() { return narrow("cr-cv") ? 360 : 380; } });
+    const go = $("cr-go");
+    go.addEventListener("click", () => { if (t >= D) t = 0; playing = !playing; go.textContent = playing ? "멈춤" : "재생"; });
+    $("cr-re").addEventListener("click", () => { t = 0; playing = false; go.textContent = "재생"; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => {
+      if (!playing) return;
+      t += dt * 32;
+      if (t >= D) { t = D; playing = false; go.textContent = "재생"; }
+      cv.redraw();
+    });
+  })();
+
+  /* ---------------------------------------------------------- 8. 1년 경로 끌기 */
+  (function () {
+    const D = 252;
+    const bi = ST.gbm({ s0: 1, mu: 0, sigma: 0.16, days: D, seed: 71 }), bf = ST.gbm({ s0: 1, mu: 0, sigma: 0.09, days: D, seed: 72 });
+    let r = 0.1, F0 = 1300, F1 = 1450, geo = null, drag = null;
+    const PRE = { a: [1300, 1450], b: [1450, 1300], c: [1300, 1300] };
+    MB.seg("hp-pre", (k) => { F0 = PRE[k][0]; F1 = PRE[k][1]; cv.redraw(); });
+    const cv = MB.canvas("#hp-cv", (ctx, w, h) => {
+      const P = MB.palette();
+      const idx = bi.map((v, i) => 100 * v * Math.pow((1 + r) / bi[D], i / D));
+      const fx = bf.map((v, i) => F0 * v * Math.pow(F1 / F0 / bf[D], i / D));
+      const uh = idx.map((v, i) => 1e6 * (v / 100) * (fx[i] / F0)), hd = idx.map((v, i) => 1e6 * (v / 100) * Math.exp(-HEDGE * i / D));
+      const ph = (h - 40) / 3, bx = 62, bw = w - 92;
+      const b1 = { x: bx, y: 12, w: bw, h: ph - 18 }, b2 = { x: bx, y: 12 + ph, w: bw, h: ph - 18 }, b3 = { x: bx, y: 12 + ph * 2, w: bw, h: ph - 18 };
+      const xs = (a) => a.map((v, i) => [i, v]).filter((d, i) => i % 2 === 0 || i === D);
+      const c1 = MB.chart(ctx, b1, { x: [0, D], y: [60, 150], xTicks: [], yTicks: [60, 100, 140], yFmt: (v) => v, series: [{ data: xs(idx), color: P.dim, width: 2 }], hlines: [{ y: 100, color: P.faint }] });
+      const c2 = MB.chart(ctx, b2, { x: [0, D], y: [1050, 1750], xTicks: [], yTicks: [1100, 1300, 1500, 1700], yFmt: (v) => v.toLocaleString("ko-KR"), series: [{ data: xs(fx), color: P.warn, width: 2 }], hlines: [{ y: F0, color: P.faint }] });
+      const vals = uh.concat(hd), lo = Math.min(7e5, ...vals) * 0.98, hi = Math.max(1.3e6, ...vals) * 1.02;
+      MB.chart(ctx, b3, { x: [0, D], y: [lo, hi], xTicks: [0, 63, 126, 189, 252], xFmt: (v) => (v ? Math.round(v / 21) + "개월" : "시작"), yFmt: MB.wonAxis,
+        series: [{ data: xs(hd), color: P.accent2, width: 2, dash: [5, 3] }, { data: xs(uh), color: P.accent, width: 2.5 }], hlines: [{ y: 1e6, color: P.faint }] });
+      text(ctx, "미국 지수(달러, 시작 100)", b1.x + 6, b1.y + 12, { color: P.dim, size: 11, weight: 700 });
+      text(ctx, "원/달러 환율", b2.x + 6, b2.y + 12, { color: P.warn, size: 11, weight: 700 });
+      text(ctx, "원화 계좌: 환노출", b3.x + 6, b3.y + 12, { color: P.accent, size: 11, weight: 700 });
+      text(ctx, "환헤지", b3.x + 112, b3.y + 12, { color: P.accent2, size: 11, weight: 700 });
+      geo = { c1, c2 };
+      knob(ctx, c1.X(D), c1.Y(idx[D]), P, 7, P.text);
+      knob(ctx, c2.X(D), c2.Y(F1), P, 7, P.warn);
+      text(ctx, sp(r, 0), c1.X(D) + 2, c1.Y(idx[D]) - 12, { color: MB.toneColor(r), size: 11, mono: true, align: "right", weight: 700 });
+      text(ctx, F1.toLocaleString("ko-KR"), c2.X(D) + 2, c2.Y(F1) - 12, { color: P.warn, size: 11, mono: true, align: "right", weight: 700 });
+      const fr = F1 / F0 - 1, u = uh[D], hh = hd[D];
+      MB.stat("hp-o-l", tone(r, sp(r, 0)));
+      MB.stat("hp-o-f", tone(fr, sp(fr, 1)));
+      MB.stat("hp-o-u", MB.won(u, { digits: 1 }) + " " + tone(u / 1e6 - 1, "<small>" + sp(u / 1e6 - 1) + "</small>"));
+      MB.stat("hp-o-h", MB.won(hh, { digits: 1 }) + " " + tone(hh / 1e6 - 1, "<small>" + sp(hh / 1e6 - 1) + "</small>"));
+    }, { get height() { return narrow("hp-cv") ? 420 : 440; } });
+    MB.drag(cv.canvas, {
+      start(x, y) { if (!geo) return; const b2 = geo.c2.box; drag = y < b2.y - 6 ? "i" : y < b2.y + b2.h + 12 ? "f" : null; },
+      move(x, y) {
+        if (!geo || !drag) return;
+        if (drag === "i") r = MB.clamp(Math.round(invY(geo.c1, y, 60, 150) - 100) / 100, -0.35, 0.45);
+        else F1 = MB.clamp(Math.round(invY(geo.c2, y, 1050, 1750) / 10) * 10, 1080, 1720);
+        cv.redraw();
+      },
+      end() { drag = null; },
+    });
+  })();
+
+  /* ---------------------------------------------------------- 9. 헤지 비용 복리 */
+  (function () {
+    const redraw = () => cv.redraw();
+    const Dd = MB.range("hc-d", (v) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v * 100).toFixed(2).replace(/0$/, "") + "%p", redraw);
+    const Yy = MB.range("hc-y", (v) => v + "년", redraw);
+    const cv = MB.canvas("#hc-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = Dd(), Y = Yy(), r = 0.07;
+      const u = [], hd = [];
+      for (let t = 0; t <= Y; t++) { u.push([t, 1e7 * Math.pow(1 + r, t)]); hd.push([t, 1e7 * Math.pow(1 + r - d, t)]); }
+      const hi = Math.max(u[Y][1], hd[Y][1]) * 1.08;
+      const c = MB.chart(ctx, null, { x: [0, Y], y: [0, hi], yFmt: MB.wonAxis, xLabel: "년", xFmt: (v) => Math.round(v),
+        series: [{ data: u, color: P.accent, width: 2.5 }, { data: hd, color: P.accent2, width: 2.5, dash: [6, 3] }] });
+      ctx.save(); ctx.globalAlpha = 0.18; ctx.fillStyle = d >= 0 ? P.down : P.up; ctx.beginPath();
+      u.forEach(([x, y], i) => (i ? ctx.lineTo(c.X(x), c.Y(y)) : ctx.moveTo(c.X(x), c.Y(y))));
+      for (let i = hd.length - 1; i >= 0; i--) ctx.lineTo(c.X(hd[i][0]), c.Y(hd[i][1]));
+      ctx.closePath(); ctx.fill(); ctx.restore();
+      text(ctx, "환노출(환율 제자리)", c.box.x + 8, c.box.y + 14, { color: P.accent, size: 12, weight: 700 });
+      text(ctx, "환헤지", c.box.x + 8, c.box.y + 30, { color: P.accent2, size: 12, weight: 700 });
+      const diff = hd[Y][1] - u[Y][1];
+      MB.stat("hc-o-u", MB.won(u[Y][1]));
+      MB.stat("hc-o-h", MB.won(hd[Y][1]));
+      MB.stat("hc-o-d", tone(diff, sw(diff)) + "<small>" + sp(hd[Y][1] / u[Y][1] - 1) + "</small>");
+    }, { get height() { return narrow("hc-cv") ? 260 : 290; } });
+  })();
+
+  /* ---------------------------------------------------------- 10. 몬테카를로 */
+  (function () {
+    const N = 600, MS = 0.07, SS = 0.16, SF = 0.09;
+    let seed = 22;
+    const redraw = () => cv.redraw();
+    const RHO = MB.range("mc-rho", (v) => (v < 0 ? "−" : v > 0 ? "+" : "") + Math.abs(v).toFixed(2), redraw);
+    const YR = MB.range("mc-y", (v) => v + "년", redraw);
+    const HC = MB.range("mc-h", (v) => (v * 100).toFixed(2).replace(/0$/, "") + "%", redraw);
+    $("mc-re").addEventListener("click", () => { seed++; redraw(); });
+    const cv = MB.canvas("#mc-cv", (ctx, w, h) => {
+      const P = MB.palette(), rho = RHO(), Y = YR(), hc = HC();
+      const g1 = ST.gauss(seed * 97 + 1), g2 = ST.gauss(seed * 97 + 2);
+      const U = [], H = [];
+      for (let k = 0; k < N; k++) {
+        let ls = 0, lf = 0;
+        for (let y = 0; y < Y; y++) {
+          const a = g1(), e = g2(), b = rho * a + Math.sqrt(1 - rho * rho) * e;
+          ls += Math.log(1 + MS) - SS * SS / 2 + SS * a; lf += SF * b;
+        }
+        U.push(Math.exp((ls + lf) / Y) - 1); H.push(Math.exp((ls - hc * Y) / Y) - 1);
+      }
+      const lo = -0.2, hi = 0.35, bins = 44;
+      const hu = ST.hist(U, bins, lo, hi), hh = ST.hist(H, bins, lo, hi);
+      const ym = Math.max(...hu.counts, ...hh.counts) * 1.12;
+      const c = MB.chart(ctx, null, { x: [lo, hi], y: [0, ym], xLabel: "원화 연평균 수익률(" + Y + "년)", xFmt: (v) => Math.round(v * 100) + "%", yFmt: (v) => Math.round(v), xTicks: [-0.2, -0.1, 0, 0.1, 0.2, 0.3] });
+      const draw = (hs, col, a, stroke) => {
+        hs.counts.forEach((n, i) => {
+          if (!n) return;
+          const x0 = c.X(hs.edges[i]) + 0.5, x1 = c.X(hs.edges[i + 1]) - 0.5;
+          if (stroke) { ctx.strokeStyle = col; ctx.lineWidth = 1.6; ctx.strokeRect(x0, c.Y(n), x1 - x0, c.Y(0) - c.Y(n)); }
+          else rect(ctx, x0, c.Y(n), x1, c.Y(0), col, a);
+        });
+      };
+      draw(hu, P.accent, 0.45);
+      draw(hh, P.accent2, 1, true);
+      const su = U.slice().sort((a, b) => a - b), sh = H.slice().sort((a, b) => a - b);
+      const mu = ST.percentile(su, 0.5), mh = ST.percentile(sh, 0.5);
+      ctx.setLineDash([4, 3]); ctx.lineWidth = 1.5;
+      ctx.strokeStyle = P.accent; ctx.beginPath(); ctx.moveTo(c.X(mu), c.box.y); ctx.lineTo(c.X(mu), c.box.y + c.box.h); ctx.stroke();
+      ctx.strokeStyle = P.accent2; ctx.beginPath(); ctx.moveTo(c.X(mh), c.box.y); ctx.lineTo(c.X(mh), c.box.y + c.box.h); ctx.stroke();
+      ctx.setLineDash([]); ctx.lineWidth = 1;
+      const vu = Math.sqrt(SS * SS + SF * SF + 2 * rho * SS * SF);
+      MB.stat("mc-o-v", pc(vu) + " / " + pc(SS));
+      MB.stat("mc-o-m", tone(mu, sp(mu)) + " / " + tone(mh, sp(mh)));
+      const qu = ST.percentile(su, 0.05), qh = ST.percentile(sh, 0.05);
+      MB.stat("mc-o-q", tone(qu, sp(qu)) + " / " + tone(qh, sp(qh)));
+    }, { get height() { return narrow("mc-cv") ? 260 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 11. 환전 비용 */
+  (function () {
+    const S = ST.KR.fxSpread;
+    const redraw = () => cv.redraw();
+    const A = MB.range("fx-a", (v) => MB.won(v), redraw);
+    const U = MB.range("fx-u", (v) => Math.round(v * 100) + "%", redraw);
+    const N = MB.range("fx-n", (v) => v + "번", redraw);
+    const cv = MB.canvas("#fx-cv", (ctx, w, h) => {
+      const P = MB.palette(), a = A(), u = U(), n = N();
+      const rate = (uu, k) => 2 * S * (1 - uu) * k;
+      const line = (uu) => Array.from({ length: 25 }, (_, k) => [k, rate(uu, k)]);
+      const c = MB.chart(ctx, null, { x: [0, 24], y: [0, 0.5], xLabel: "1년 왕복 환전 횟수", xFmt: (v) => Math.round(v), yFmt: (v) => Math.round(v * 100) + "%", xTicks: [0, 4, 8, 12, 16, 20, 24],
+        series: [{ data: line(0), color: P.dim, width: 1.5, dash: [5, 3] }, { data: line(0.9), color: P.accent2, width: 1.5, dash: [5, 3] }, { data: line(u), color: P.accent, width: 2.5 }],
+        points: [{ x: n, y: rate(u, n), color: P.accent, r: 6 }] });
+      const v = rate(u, n);
+      text(ctx, "연 " + pc(v), c.X(n) + (n > 18 ? -10 : 10), c.Y(v) - 10, { color: P.accent, size: 12, mono: true, weight: 700, align: n > 18 ? "right" : "left" });
+      MB.stat("fx-o-1", MB.won(a * S * (1 - u)));
+      MB.stat("fx-o-y", MB.won(a * v));
+      MB.stat("fx-o-r", pc(v, 2));
+      MB.stat("fx-o-10", '<span class="' + (v > 0.05 ? "bad-t" : "") + '">' + pc(1 - Math.pow(1 - Math.min(1, v), 10)) + "</span>");
+    }, { get height() { return narrow("fx-cv") ? 260 : 290; } });
+  })();
+
+  /* ---------------------------------------------------------- 12. 국가 분산 */
+  (function () {
+    const SK = 0.2, SW = 0.15;
+    let wgt = 0.3, geo = null;
+    const RHO = MB.range("dv-rho", (v) => v.toFixed(2), () => cv.redraw());
+    const vol = (x, rho) => ST.port([1 - x, x], [0, 0], ST.covMatrix([SK, SW], rho)).sigma;
+    const cv = MB.canvas("#dv-cv", (ctx, w, h) => {
+      const P = MB.palette(), rho = RHO();
+      const curve = Array.from({ length: 101 }, (_, i) => [i / 100, vol(i / 100, rho)]);
+      const mv = ST.minVar(ST.covMatrix([SK, SW], rho)), wm = mv ? MB.clamp(mv[1], 0, 1) : 1;
+      const c = MB.chart(ctx, null, { x: [0, 1], y: [0, 0.22], xLabel: "해외(세계) 비중", xFmt: (v) => Math.round(v * 100) + "%", yFmt: (v) => Math.round(v * 100) + "%", yLabel: "변동성",
+        series: [{ data: [[0, SK], [1, SW]], color: P.dim, width: 1.5, dash: [5, 4] }, { data: curve, color: P.accent, width: 2.5 }],
+        points: [{ x: wm, y: vol(wm, rho), color: P.ok, r: 4.5 }] });
+      geo = c;
+      text(ctx, "한국만", c.X(0) + 6, c.Y(SK) - 8, { color: P.dim, size: 11 });
+      text(ctx, "세계만", c.X(1) - 6, c.Y(SW) - 8, { color: P.dim, size: 11, align: "right" });
+      text(ctx, "최저", c.X(wm), c.Y(vol(wm, rho)) + 18, { color: P.ok, size: 11, align: "center", weight: 700 });
+      const v = vol(wgt, rho), lin = (1 - wgt) * SK + wgt * SW;
+      ctx.strokeStyle = P.faint; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(c.X(wgt), c.Y(lin)); ctx.lineTo(c.X(wgt), c.Y(v)); ctx.stroke(); ctx.setLineDash([]);
+      knob(ctx, c.X(wgt), c.Y(v), P);
+      MB.stat("dv-o-w", Math.round(wgt * 100) + "%");
+      MB.stat("dv-o-v", pc(v));
+      MB.stat("dv-o-s", (lin - v > 0.0005 ? "−" : "") + ((lin - v) * 100).toFixed(1) + "<small>%p</small>");
+      MB.stat("dv-o-min", Math.round(wm * 100) + "%<small>(" + pc(vol(wm, rho)) + ")</small>");
+    }, { get height() { return narrow("dv-cv") ? 260 : 300; } });
+    MB.drag(cv.canvas, { move(x) { if (!geo) return; wgt = MB.clamp(Math.round(invX(geo, x, 0, 1) * 100) / 100, 0, 1); cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 13. 양도세 계산기 */
+  (function () {
+    const INIT = [[7e6, true], [3e6, true], [-3.5e6, false], [-1.5e6, false], [2e6, false]];
+    const NAMES = ["A", "B", "C", "D", "E"];
+    let pos = INIT.map((d) => ({ g: d[0], real: d[1] })), lay = null, drag = -1;
+    const NONET = $("tx-nonet");
+    const taxOf = (list, nonet) => {
+      const r = list.filter((p) => p.real), gain = ST.sum(r.filter((p) => p.g > 0).map((p) => p.g)), loss = ST.sum(r.filter((p) => p.g < 0).map((p) => p.g));
+      const net = nonet ? gain : gain + loss, t = ST.overseasTax(net);
+      return { gain, loss, net, base: t.base, tax: t.tax };
+    };
+    NONET.addEventListener("change", () => cv.redraw());
+    const cv = MB.canvas("#tx-cv", (ctx, w, h) => {
+      const P = MB.palette(), nar = narrow("tx-cv"), LIM = 1.5e7;
+      const L = nar ? { x: 54, y: 16, w: w - 66, h: 200 } : { x: 60, y: 18, w: w * 0.52 - 70, h: h - 64 };
+      const c = MB.chart(ctx, L, { x: [0, 5], y: [-LIM, LIM], xTicks: [], yTicks: [-1e7, -5e6, 0, 5e6, 1e7], yFmt: MB.wonAxis });
+      ctx.strokeStyle = P.axis; ctx.beginPath(); ctx.moveTo(L.x, c.Y(0)); ctx.lineTo(L.x + L.w, c.Y(0)); ctx.stroke();
+      const slot = L.w / 5, bw = Math.min(46, slot * 0.6);
+      lay = { L, c, slot, LIM };
+      pos.forEach((p, i) => {
+        const cx = L.x + slot * (i + 0.5), col = MB.toneColor(p.g);
+        if (p.real) rect(ctx, cx - bw / 2, c.Y(0), cx + bw / 2, c.Y(p.g), col, 0.8);
+        else { rect(ctx, cx - bw / 2, c.Y(0), cx + bw / 2, c.Y(p.g), col, 0.15); ctx.strokeStyle = col; ctx.setLineDash([4, 3]); ctx.strokeRect(cx - bw / 2, Math.min(c.Y(0), c.Y(p.g)), bw, Math.abs(c.Y(p.g) - c.Y(0))); ctx.setLineDash([]); }
+        knob(ctx, cx, c.Y(p.g), P, 6, col);
+        text(ctx, MB.wonAxis(p.g), cx, c.Y(p.g) + (p.g >= 0 ? -12 : 20), { color: col, size: 11, mono: true, align: "center", weight: 700 });
+        const by = L.y + L.h + 6;
+        ctx.save(); ctx.fillStyle = p.real ? P.accent : P.surface; ctx.strokeStyle = P.accent; ctx.lineWidth = 1;
+        ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(cx - slot * 0.44, by, slot * 0.88, 34, 6); else ctx.rect(cx - slot * 0.44, by, slot * 0.88, 34); ctx.fill(); ctx.stroke(); ctx.restore();
+        text(ctx, NAMES[i], cx, by + 14, { color: p.real ? P.bg : P.text, size: 12, align: "center", weight: 700 });
+        text(ctx, p.real ? "팔았음" : "보유 중", cx, by + 28, { color: p.real ? P.bg : P.dim, size: 10, align: "center" });
+      });
+      // 오른쪽: 계산 과정
+      const t = taxOf(pos, NONET.checked);
+      const R = nar ? { x: 14, y: L.y + L.h + 58, w: w - 28 } : { x: w * 0.52 + 14, y: 22, w: w * 0.48 - 30 };
+      const rows = [
+        ["실현 이익 합", t.gain, P.up],
+        ["실현 손실 합", NONET.checked ? 0 : t.loss, P.down],
+        [NONET.checked ? "과세 대상(통산 없음)" : "순손익(통산)", t.net, P.text],
+        ["기본공제", -Math.min(Math.max(0, t.net), ST.KR.overseasDeduction), P.dim],
+        ["과세표준", t.base, P.accent],
+        ["양도세 22%", t.tax, P.bad],
+      ];
+      const M = Math.max(1, ...rows.map((r) => Math.abs(r[1]))), rh = nar ? 36 : (h - 40) / rows.length;
+      rows.forEach((r, i) => {
+        const y = R.y + i * rh;
+        text(ctx, r[0], R.x, y + 12, { color: P.dim, size: 12 });
+        text(ctx, (r[1] < 0 ? "−" : "") + MB.won(Math.abs(r[1])), R.x + R.w, y + 12, { color: r[2], size: 12, mono: true, align: "right", weight: 700 });
+        rect(ctx, R.x, y + 18, R.x + Math.max(2, (Math.abs(r[1]) / M) * R.w), y + 26, r[2], i === 5 ? 0.9 : 0.6);
+      });
+      const best = taxOf(pos.map((p) => ({ g: p.g, real: p.real || p.g < 0 })), NONET.checked);
+      MB.stat("tx-o-net", tone(t.net, sw(t.net)));
+      MB.stat("tx-o-base", MB.won(t.base));
+      MB.stat("tx-o-tax", '<span class="bad-t">' + MB.won(t.tax) + "</span>");
+      MB.stat("tx-o-save", t.tax - best.tax > 0 ? MB.won(t.tax - best.tax) + "<small>절약</small>" : "0원");
+    }, { get height() { return narrow("tx-cv") ? 540 : 330; } });
+    MB.drag(cv.canvas, {
+      start(x, y) {
+        drag = -1; if (!lay) return;
+        const i = MB.clamp(Math.floor((x - lay.L.x) / lay.slot), 0, 4);
+        if (x < lay.L.x || x > lay.L.x + lay.L.w) return;
+        if (y > lay.L.y + lay.L.h + 2 && y < lay.L.y + lay.L.h + 44) { pos[i].real = !pos[i].real; cv.redraw(); return; }
+        if (y <= lay.L.y + lay.L.h) drag = i;
+      },
+      move(x, y) { if (drag < 0) return; pos[drag].g = MB.clamp(Math.round(invY(lay.c, y, -lay.LIM, lay.LIM) / 5e5) * 5e5, -lay.LIM, lay.LIM); cv.redraw(); },
+      end() { drag = -1; },
+    });
+    $("tx-harvest").addEventListener("click", () => { pos.forEach((p) => { if (p.g < 0) p.real = true; }); cv.redraw(); });
+    $("tx-re").addEventListener("click", () => { pos = INIT.map((d) => ({ g: d[0], real: d[1] })); NONET.checked = false; cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 14. 해마다 공제 쓰기 */
+  (function () {
+    const P0 = 2e7, R = 0.07, Y = 10;
+    let year = 0, timer = 0, auto = false;
+    const CHEAP = $("yd-cheap");
+    function plan(fee) {
+      const A = [], B = [];
+      let v = P0, basisB = P0, taxB = 0, feeB = 0;
+      for (let y = 1; y <= Y; y++) {
+        v *= 1 + R;
+        const ua = v - P0;
+        let ub = v - basisB, taxY = 0, feeY = 0;
+        if (y < Y) {
+          if (ub > 0) { const realize = Math.min(ub, ST.KR.overseasDeduction); taxY = ST.overseasTax(realize).tax; feeY = 2 * fee * v * Math.min(1, realize / ub); basisB += realize; ub -= realize; }
+        } else { taxY = ST.overseasTax(ub).tax; feeY = 0; ub = 0; basisB = v; }
+        taxB += taxY; feeB += feeY;
+        A.push({ ua, v }); B.push({ taxB, feeB });
+      }
+      const taxA = ST.overseasTax(v - P0).tax;
+      return { A, B, taxA, taxB, feeB, end: v };
+    }
+    const cv = MB.canvas("#yd-cv", (ctx, w, h) => {
+      const P = MB.palette(), fee = CHEAP.checked ? 0.0007 : ST.KR.usFee, pl = plan(fee);
+      const c = MB.chart(ctx, { x: 62, y: 16, w: w - 78, h: h - 62 }, { x: [0.4, Y + 0.6], y: [0, 2.2e7], xTicks: Array.from({ length: Y }, (_, i) => i + 1), xFmt: (v) => (narrow("yd-cv") ? String(v) : v + "년"), xLabel: narrow("yd-cv") ? "년차" : "", yFmt: MB.wonAxis,
+        hlines: [{ y: ST.KR.overseasDeduction, color: P.ok, label: "연 공제 250만" }] });
+      const bw = Math.min(26, (c.box.w / Y) * 0.32);
+      for (let y = 1; y <= Math.min(year, Y); y++) {
+        const a = pl.A[y - 1], x = c.X(y);
+        rect(ctx, x - bw - 1, c.Y(0), x - 1, c.Y(y === Y ? a.ua : a.ua), P.dim, 0.5);
+        const realizedB = y < Y ? Math.min(ST.KR.overseasDeduction, a.v - (y === 1 ? P0 : pl.A[y - 2].v)) : 0;
+        if (y < Y) rect(ctx, x + 1, c.Y(0), x + bw + 1, c.Y(realizedB), P.accent, 0.75);
+        else rect(ctx, x + 1, c.Y(0), x + bw + 1, c.Y(a.v - pl.A[y - 2].v), P.accent, 0.75);
+      }
+      if (year >= Y) {
+        text(ctx, "A: 한 번에 실현 " + MB.wonAxis(pl.A[Y - 1].ua), c.X(Y) - bw - 6, c.Y(pl.A[Y - 1].ua) - 6, { color: P.dim, size: 11, align: "right", weight: 700 });
+      }
+      text(ctx, "막대: 그해 실현하는(또는 쌓인) 이익", c.box.x + 8, c.box.y + 12, { color: P.dim, size: 11 });
+      MB.stat("yd-o-y", year + "<small>/ " + Y + "년</small>");
+      if (year >= Y) {
+        MB.stat("yd-o-a", '<span class="bad-t">' + MB.won(pl.taxA) + "</span>");
+        MB.stat("yd-o-b", MB.won(pl.taxB) + " + " + MB.won(pl.feeB));
+        const d = pl.taxA - pl.taxB - pl.feeB;
+        MB.stat("yd-o-d", tone(d, sw(d)));
+      } else {
+        MB.stat("yd-o-a", "아직 0원");
+        MB.stat("yd-o-b", year ? MB.won(pl.B[year - 1].taxB) + " + " + MB.won(pl.B[year - 1].feeB) : "—");
+        MB.stat("yd-o-d", "—");
+      }
+    }, { get height() { return narrow("yd-cv") ? 270 : 300; } });
+    CHEAP.addEventListener("change", () => cv.redraw());
+    $("yd-next").addEventListener("click", () => { auto = false; if (year < Y) year++; cv.redraw(); });
+    $("yd-all").addEventListener("click", () => { auto = true; if (year >= Y) year = 0; });
+    $("yd-re").addEventListener("click", () => { auto = false; year = 0; cv.redraw(); });
+    MB.loop(cv.canvas, (dt) => { if (!auto) return; timer += dt; if (timer > 0.3) { timer = 0; year++; if (year >= Y) { year = Y; auto = false; } cv.redraw(); } });
+  })();
+
+  /* ---------------------------------------------------------- 15. 직접 vs 국내 상장 ETF */
+  (function () {
+    const OTHER = 2.5e7, MAX = 5e7;
+    const redraw = () => cv.redraw();
+    const G = MB.range("et-g", (v) => MB.won(v), redraw);
+    const O = MB.range("et-o", (v) => MB.won(v), redraw);
+    const dTax = (g) => ST.overseasTax(g).tax;
+    const eTax = (g, o) => ST.finIncomeTax(o + g, OTHER).tax - ST.finIncomeTax(o, OTHER).tax;
+    const cv = MB.canvas("#et-cv", (ctx, w, h) => {
+      const P = MB.palette(), g = G(), o = O();
+      const xs = Array.from({ length: 101 }, (_, i) => (i / 100) * MAX);
+      const dl = xs.map((x) => [x, dTax(x)]), el = xs.map((x) => [x, eTax(x, o)]);
+      const hi = Math.max(dTax(MAX), eTax(MAX, o)) * 1.08;
+      const c = MB.chart(ctx, { x: 58, y: 16, w: w - 86, h: h - 62 }, { x: [0, MAX], y: [0, hi], xFmt: MB.wonAxis, yFmt: MB.wonAxis, xLabel: "올해 매매차익", xTicks: [0, 1e7, 2e7, 3e7, 4e7, 5e7],
+        series: [{ data: dl, color: P.accent, width: 2.5 }, { data: el, color: P.accent2, width: 2.5 }],
+        vlines: [{ x: g, color: P.faint }],
+        points: [{ x: g, y: dTax(g), color: P.accent, r: 5 }, { x: g, y: eTax(g, o), color: P.accent2, r: 5 }] });
+      const lim = Math.max(0, ST.KR.finIncomeLimit - o);
+      if (lim < MAX) { ctx.strokeStyle = P.bad; ctx.setLineDash([3, 3]); ctx.beginPath(); ctx.moveTo(c.X(lim), c.box.y); ctx.lineTo(c.X(lim), c.box.y + c.box.h); ctx.stroke(); ctx.setLineDash([]);
+        text(ctx, "종합과세 시작", c.X(lim) + 4, c.box.y + 12, { color: P.bad, size: 11, align: c.X(lim) > w - 100 ? "right" : "left" }); }
+      const d = dTax(g), e = eTax(g, o);
+      MB.stat("et-o-d", MB.won(d));
+      MB.stat("et-o-e", MB.won(e));
+      MB.stat("et-o-c", o + g > ST.KR.finIncomeLimit ? '<span class="warn-t">대상</span>' : "아님");
+    }, { get height() { return narrow("et-cv") ? 260 : 300; } });
+  })();
+
+  /* ---------------------------------------------------------- 16. 뉴스 게임 */
+  (function () {
+    const ROUNDS = 10;
+    const UPH = ["미국 지수, 물가 둔화 소식에 상승", "미국 기술주 강세, 지수 상승 마감", "고용 지표 호조에 미국 증시 상승", "금리 인하 기대 커지며 미국 증시 오름"];
+    const DNH = ["미국 지수, 금리 인상 우려에 하락", "미국 기술주 약세, 지수 하락 마감", "경기 둔화 우려에 미국 증시 하락", "국채 금리 급등에 미국 증시 내림"];
+    let seed = 5, days, round, guess, hits, trade;
+    function reset() {
+      const g = ST.gauss(seed * 13 + 7), r = ST.rng(seed * 31 + 1);
+      days = [];
+      for (let i = 0; i < ROUNDS; i++) {
+        let us = 0.012 * g(); if (Math.abs(us) < 0.002) us = us < 0 ? -0.004 : 0.004;
+        const gap = 0.6 * us + 0.003 * g(), intra = 0.009 * g();
+        const path = [0]; for (let k = 1; k <= 20; k++) path.push(path[k - 1] + 0.002 * g());
+        const shift = (intra - path[20]); const ip = path.map((v, k) => v + shift * k / 20);
+        days.push({ us, gap, intra, ip, head: (us > 0 ? UPH : DNH)[Math.floor(r() * 4)] });
+      }
+      round = 0; guess = null; hits = 0; trade = 0;
+    }
+    reset();
+    const cv = MB.canvas("#nw-cv", (ctx, w, h) => {
+      const P = MB.palette(), d = days[round], rev = guess != null;
+      const B = { x: 52, y: 28, w: w - 70, h: h - 98 };
+      const sc = 0.035, Y = (v) => B.y + B.h / 2 - (v / sc) * (B.h / 2);
+      const X0 = B.x, X1 = B.x + B.w * 0.18, X2 = B.x + B.w * 0.42, X3 = B.x + B.w;
+      rect(ctx, X1, B.y, X2, B.y + B.h, P.accent2, 0.08);
+      rect(ctx, X2, B.y, X3, B.y + B.h, P.accent, 0.06);
+      text(ctx, narrow("nw-cv") ? "어제" : "어제 한국 종가", X0, B.y - 10, { color: P.dim, size: 11 });
+      text(ctx, "미국의 밤", (X1 + X2) / 2, B.y - 10, { color: P.accent2, size: 11, align: "center", weight: 700 });
+      text(ctx, "오늘 한국 장", (X2 + X3) / 2, B.y - 10, { color: P.accent, size: 11, align: "center", weight: 700 });
+      [-0.03, -0.015, 0, 0.015, 0.03].forEach((v) => {
+        ctx.strokeStyle = v ? P.grid : P.axis; ctx.beginPath(); ctx.moveTo(B.x, Y(v)); ctx.lineTo(B.x + B.w, Y(v)); ctx.stroke();
+        text(ctx, sp(v, 1), B.x - 6, Y(v), { color: P.dim, size: 10, mono: true, align: "right", base: "middle" });
+      });
+      ctx.fillStyle = P.text; ctx.beginPath(); ctx.arc(X0 + 8, Y(0), 4, 0, TAU); ctx.fill();
+      ctx.strokeStyle = P.accent2; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(X1, Y(0)); ctx.lineTo(X2 - 6, Y(d.us)); ctx.stroke();
+      text(ctx, "미국 " + sp(d.us), X2 - 8, Y(d.us) + (d.us > 0 ? -8 : 16), { color: MB.toneColor(d.us), size: 12, mono: true, align: "right", weight: 700 });
+      if (rev) {
+        ctx.strokeStyle = P.dim; ctx.setLineDash([3, 3]); ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(X0 + 8, Y(0)); ctx.lineTo(X2, Y(0)); ctx.lineTo(X2, Y(d.gap)); ctx.stroke(); ctx.setLineDash([]);
+        ctx.fillStyle = MB.toneColor(d.gap); ctx.beginPath(); ctx.arc(X2, Y(d.gap), 5, 0, TAU); ctx.fill();
+        ctx.strokeStyle = P.accent; ctx.lineWidth = 2.5; ctx.beginPath();
+        d.ip.forEach((v, k) => { const x = X2 + ((X3 - X2) * k) / 20, y = Y(d.gap + v); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); });
+        ctx.stroke(); ctx.lineWidth = 1;
+        text(ctx, "시초가 " + sp(d.gap), X2 + 8, Y(d.gap) + (d.gap > 0 ? -10 : 18), { color: MB.toneColor(d.gap), size: 12, mono: true, weight: 700 });
+        text(ctx, "종가 " + sp(d.gap + d.intra), X3 - 2, Y(d.gap + d.intra) + (d.intra > 0 ? -10 : 18), { color: MB.toneColor(d.gap + d.intra), size: 12, mono: true, align: "right", weight: 700 });
+      } else text(ctx, "?", (X2 + X3) / 2, Y(0), { color: P.dim, size: 28, align: "center", base: "middle", weight: 700 });
+      // 지난 결과 점
+      const by = h - 30;
+      text(ctx, "지난 날", B.x, by - 14, { color: P.dim, size: 11 });
+      for (let i = 0; i < ROUNDS; i++) {
+        const x = B.x + 6 + i * Math.min(26, (B.w - 12) / ROUNDS), done = i < round || (i === round && rev);
+        ctx.beginPath(); ctx.arc(x, by + 4, 7, 0, TAU);
+        if (done) { ctx.fillStyle = days[i].hit ? P.ok : P.bad; ctx.fill(); } else { ctx.strokeStyle = P.border; ctx.stroke(); }
+      }
+      const played = round + (rev ? 1 : 0);
+      MB.stat("nw-o-n", played + "<small>/ " + ROUNDS + "일</small>");
+      MB.stat("nw-o-hit", played ? hits + "<small>/ " + played + "</small>" : "—");
+      MB.stat("nw-o-tr", played ? tone(trade, sp(trade, 2)) : "—");
+      $("nw-head").innerHTML = "<b>" + (round + 1) + "일째 아침 뉴스</b> · " + d.head + (rev ? (d.hit ? ' <span class="ok-t">적중</span>' : ' <span class="bad-t">빗나감</span>') + " · 시초가 이후 " + tone(d.intra, sp(d.intra, 2)) : "");
+    }, { get height() { return narrow("nw-cv") ? 300 : 320; } });
+    function pick(up) {
+      if (guess != null) return;
+      const d = days[round]; guess = up;
+      d.hit = up === d.gap > 0; if (d.hit) hits++;
+      trade += up ? d.intra : -d.intra;
+      cv.redraw();
+    }
+    $("nw-up").addEventListener("click", () => pick(true));
+    $("nw-dn").addEventListener("click", () => pick(false));
+    $("nw-next").addEventListener("click", () => { if (guess == null || round >= ROUNDS - 1) return; round++; guess = null; cv.redraw(); });
+    $("nw-re").addEventListener("click", () => { seed++; reset(); cv.redraw(); });
+  })();
+
+  /* ---------------------------------------------------------- 17. 손익 폭포 */
+  (function () {
+    const redraw = () => cv.redraw();
+    const A = MB.range("wf-a", (v) => MB.won(v), redraw);
+    const Yr = MB.range("wf-y", (v) => v + "년", redraw);
+    const Rr = MB.range("wf-r", (v) => sp(v, 1), redraw);
+    const Ff = MB.range("wf-f", (v) => sp(v, 1), redraw);
+    const Uu = MB.range("wf-u", (v) => Math.round(v * 100) + "%", redraw);
+    const HH = MB.seg("wf-h", redraw), ACC = MB.seg("wf-acc", redraw);
+    function calc() {
+      const a = A(), T = Yr(), r = Rr(), f = Ff(), etf = ACC() === "etf", hedged = HH() === "h";
+      const s = etf ? 0 : ST.KR.fxSpread * (1 - Uu());
+      const v1 = a / (1 + s);
+      const v2 = v1 * Math.pow(1 + r, T);
+      const v3 = hedged ? v2 : v2 * Math.pow(1 + f, T);
+      const v4 = hedged ? v3 * Math.pow((1 + r - HEDGE) / (1 + r), T) : v3;
+      const v5 = v4 * (1 - s);
+      const gain = v5 - a, tax = gain <= 0 ? 0 : etf ? gain * ST.KR.divTax : ST.overseasTax(gain).tax;
+      const v6 = v5 - tax;
+      return { a, T, steps: [["투자금", a, "base"], ["환전", v1 - a], ["현지", v2 - v1], ["환율", v3 - v2], ["헤지", v4 - v3], ["환전", v5 - v4], ["세금", -tax], ["최종", v6, "base"]], final: v6 };
+    }
+    const cv = MB.canvas("#wf-cv", (ctx, w, h) => {
+      const P = MB.palette(), k = calc(), nar = narrow("wf-cv");
+      let run = 0; const bars = [];
+      k.steps.forEach((s) => { if (s[2]) { bars.push([0, s[1]]); run = s[1]; } else { bars.push([run, run + s[1]]); run += s[1]; } });
+      const hi = Math.max(...bars.map((b) => Math.max(b[0], b[1]))) * 1.12, lo = Math.min(0, ...bars.map((b) => Math.min(b[0], b[1])));
+      const c = MB.chart(ctx, { x: 58, y: 24, w: w - 70, h: h - 64 }, { x: [0, 8], y: [lo, hi], xTicks: [], yFmt: MB.wonAxis });
+      const slot = c.box.w / 8, bw = slot * 0.66;
+      k.steps.forEach((s, i) => {
+        const cx = c.box.x + slot * (i + 0.5), b = bars[i];
+        const col = s[2] ? P.accent : s[1] >= 0 ? P.up : P.down;
+        rect(ctx, cx - bw / 2, c.Y(b[0]), cx + bw / 2, c.Y(b[1]), col, s[2] ? 0.8 : Math.abs(s[1]) < 1 ? 0.2 : 0.75);
+        if (i < 7) { ctx.strokeStyle = P.faint; ctx.setLineDash([2, 2]); ctx.beginPath(); ctx.moveTo(cx + bw / 2, c.Y(b[1])); ctx.lineTo(cx + slot - bw / 2, c.Y(b[1])); ctx.stroke(); ctx.setLineDash([]); }
+        text(ctx, s[0], cx, c.box.y + c.box.h + 15, { color: P.dim, size: nar ? 10 : 12, align: "center" });
+        const lab = s[2] ? MB.wonAxis(s[1]) : Math.abs(s[1]) < 5000 ? "0" : (s[1] > 0 ? "+" : "") + (Math.abs(s[1]) < 1e5 ? MB.won(s[1], { short: true }) : MB.wonAxis(s[1]));
+        if (!s[2] && nar && Math.abs(s[1]) < 1e5) return;
+        text(ctx, lab, cx, Math.min(c.Y(b[0]), c.Y(b[1])) - 5, { color: s[2] ? P.text : MB.toneColor(s[1]), size: nar ? 9 : 11, mono: true, align: "center", weight: 700 });
+      });
+      const tot = k.final / k.a - 1, cagr = Math.pow(k.final / k.a, 1 / k.T) - 1;
+      const costs = -(k.steps[1][1] + k.steps[4][1] + k.steps[5][1] + k.steps[6][1]);
+      MB.stat("wf-o-v", MB.won(k.final));
+      MB.stat("wf-o-r", tone(tot, sp(tot)));
+      MB.stat("wf-o-c", tone(cagr, sp(cagr, 2)));
+      MB.stat("wf-o-k", MB.won(costs));
+    }, { get height() { return narrow("wf-cv") ? 300 : 360; } });
+  })();
+})();
+</script>
+</body>
+</html>

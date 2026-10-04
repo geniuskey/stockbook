@@ -1,0 +1,10 @@
+{
+  "id": "stockbook",
+  "title": "StockBook",
+  "description": "호가창에 주문을 넣는 것부터 차트, 재무제표, 가치평가, 배당, 위험과 분산, ETF, 팩터, 백테스트, 레버리지, 선물·옵션, 세금과 투자 심리까지. 10년치 가상 시장에서 직접 사고팔며 주식의 원리를 배웁니다.",
+  "url": "https://stockbook.euiyun.com/",
+  "repo": "https://github.com/geniuskey/stockbook",
+  "field": "money",
+  "status": "published",
+  "domain": "stockbook.euiyun.com"
+}

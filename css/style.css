@@ -150,6 +150,11 @@ hr { border: 0; border-top: 1px solid var(--border); margin: 48px 0; }
 }
 .mb-btn:hover { border-color: var(--accent); }
 .mb-btn.icon { width: 36px; padding: 0; }
+.mb-topbar .series-link { white-space: nowrap; text-decoration: none; }
+@media (max-width: 560px) {
+  .mb-topbar .series-link { width: 36px; padding: 0; }
+  .mb-topbar .series-link span { display: none; }
+}
 .mb-progress { position: absolute; left: 0; bottom: -1px; height: 2px; background: linear-gradient(90deg, var(--accent), var(--accent-2)); width: 0; }
 
 /* Drawer (chapter list) */

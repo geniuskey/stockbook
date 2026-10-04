@@ -575,6 +575,7 @@
     const root = body.dataset.root != null ? body.dataset.root : body.dataset.chapter ? "../" : "";
     const curSlug = body.dataset.chapter || "";
     const href = (slug) => (slug ? `${root}chapters/${slug}.html` : `${root}index.html`);
+    const feedbackUrl = "https://books.euiyun.com/feedback.html?book=stockbook&page=" + encodeURIComponent(location.href);
 
     // favicon
     if (!document.querySelector('link[rel="icon"]')) { const fi = document.createElement("link"); fi.rel = "icon"; fi.type = "image/svg+xml"; fi.href = root + "favicon.svg"; document.head.appendChild(fi); }
@@ -589,6 +590,13 @@
       <a class="mb-btn series-link" href="https://books.euiyun.com/" aria-label="전체 책 보기" title="전체 책 보기"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5h6v14H4zM10 5.5h6v14h-6zM17 7l3-1 2 13-3 1z"/></svg><span>전체 책</span></a>
       <button class="mb-btn icon" id="mb-theme" aria-label="테마 전환"></button>
       <div class="mb-progress" id="mb-progress"></div>`;
+    const feedbackButton = document.createElement("a");
+    feedbackButton.className = bar.className.replace("-topbar", "-btn") + " icon feedback-button";
+    feedbackButton.href = feedbackUrl;
+    feedbackButton.setAttribute("aria-label", "독자 의견 보내기");
+    feedbackButton.title = "독자 의견 보내기";
+    feedbackButton.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-6 4V6a2 2 0 0 1 2-2z"/><path d="M8 9h8M8 13h5"/></svg>';
+    bar.querySelector("[id$='-theme']").before(feedbackButton);
     body.prepend(bar);
 
     // drawer
@@ -676,8 +684,8 @@
     foot.innerHTML = `StockBook — 주식과 시장을 만져 보며 배우는 인터랙티브 교과서 · 등장하는 회사와 가격은 가상이며, 수치는 교육용 근사 모델입니다. 투자 권유나 투자·세무 자문이 아닙니다.<br>
       © 2026 geniuskey 및 StockBook 기여자 · 콘텐츠 <a rel="license" href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> · 코드 <a href="${root}LICENSE-MIT">MIT</a> · <a href="${root}LICENSE.md">라이선스 안내</a>`;
     const feedbackLink = document.createElement("a");
-    feedbackLink.href = "https://books.euiyun.com/feedback.html?book=stockbook&page=" + encodeURIComponent(location.href);
-    feedbackLink.textContent = "오류·질문·제안";
+    feedbackLink.href = feedbackUrl;
+    feedbackLink.textContent = "독자 의견";
     foot.append(" · ", feedbackLink);
     body.appendChild(foot);
 

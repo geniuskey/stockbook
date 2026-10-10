@@ -154,11 +154,21 @@
   ST.fv = (r, n, pmt = 0, pv = 0) => (r === 0 ? pv + pmt * n : pv * Math.pow(1 + r, n) + pmt * ((Math.pow(1 + r, n) - 1) / r));
   ST.pv = (r, n, pmt = 0, fv = 0) => (r === 0 ? fv + pmt * n : fv / Math.pow(1 + r, n) + pmt * ((1 - Math.pow(1 + r, -n)) / r));
   ST.npv = (r, flows) => flows.reduce((s, c, t) => s + c / Math.pow(1 + r, t), 0);
-  /** 내부수익률(이분법) */
+  /** 내부수익률(이분법). 동일 간격 현금흐름; 구간 밖 해·미정의 입력은 NaN. */
   ST.irr = function (flows, lo = -0.99, hi = 10) {
-    const f = (r) => ST.npv(r, flows); let a = lo, b = hi, fa = f(a);
-    if (fa * f(b) > 0) return NaN;
-    for (let i = 0; i < 200; i++) { const m = (a + b) / 2, fm = f(m); if (Math.abs(fm) < 1e-9) return m; if (fa * fm < 0) b = m; else { a = m; fa = fm; } }
+    if (!(lo > -1 && hi > lo) || flows.length < 2 || flows.some(c => !Number.isFinite(c)) || !flows.some(c => c < 0) || !flows.some(c => c > 0)) return NaN;
+    // Scaling preserves the root while making convergence independent of the money unit.
+    const scale = Math.max(...flows.map(Math.abs)), normalized = flows.map(c => c / scale);
+    const f = r => ST.npv(r, normalized); let a = lo, b = hi, fa = f(a), fb = f(b);
+    const endpointTolerance = 8 * Number.EPSILON * normalized.length;
+    if (Math.abs(fa) <= endpointTolerance) return a;
+    if (Math.abs(fb) <= endpointTolerance) return b;
+    if (!Number.isFinite(fa) || !Number.isFinite(fb) || Math.sign(fa) === Math.sign(fb)) return NaN;
+    for (let i = 0; i < 200; i++) {
+      const m = (a + b) / 2, fm = f(m);
+      if (fm === 0 || b - a <= 1e-13 * Math.max(1, Math.abs(m))) return m;
+      if (Math.sign(fa) !== Math.sign(fm)) b = m; else { a = m; fa = fm; }
+    }
     return (a + b) / 2;
   };
 

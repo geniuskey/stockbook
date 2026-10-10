@@ -25,7 +25,7 @@
     sellTax: { KOSPI: 0.0020, KOSDAQ: 0.0020, KONEX: 0.0010, US: 0 }, // 증권거래세(농어촌특별세 포함), 매도 시
     fee: 0.00015,                 // 온라인 위탁 수수료(약, 증권사마다 다름)
     usFee: 0.0025,                // 해외 주식 수수료(약)
-    secFee: 0.0000278,            // 미국 SEC fee(매도, 약)
+    secFee: 0.0000206,            // 미국 SEC Section 31(매도): 2026-04-04 이후 $20.60/$1,000,000, 브로커 최소·반올림 별도
     fxSpread: 0.01,               // 환전 스프레드(우대 전, 약 1%)
     divTax: 0.154,                // 배당소득세(지방세 포함)
     finIncomeLimit: 20e6,         // 금융소득 종합과세 기준(이자+배당)
@@ -125,7 +125,7 @@
     return { amount, fee: f, tax, total: side === "buy" ? amount + f : amount - f - tax };
   };
   /** 사고팔기 한 번 왕복 비용률(수수료 2번 + 매도세) */
-  ST.roundTrip = (market = "KOSPI", fee) => 2 * (fee == null ? (market === "US" ? ST.KR.usFee : ST.KR.fee) : fee) + (ST.KR.sellTax[market] || 0);
+  ST.roundTrip = (market = "KOSPI", fee) => 2 * (fee == null ? (market === "US" ? ST.KR.usFee : ST.KR.fee) : fee) + (ST.KR.sellTax[market] || 0) + (market === "US" ? ST.KR.secFee : 0);
 
   /* ------------------------------------------------------------ 세금 */
   /** 배당·이자 원천징수: {gross, tax, net} */
@@ -135,11 +135,23 @@
     const base = Math.max(0, gain - ST.KR.overseasDeduction);
     return { gain, base, tax: base * ST.KR.overseasTax, net: gain - base * ST.KR.overseasTax };
   };
+  // 적격 고배당기업 현금배당 특례: 국가세율, 지방소득세 10% 가산.
+  ST.highDividendTax = function (dividend) {
+    const brackets = [[20e6,.14],[300e6,.20],[5e9,.25],[Infinity,.30]];
+    let tax = 0, low = 0;
+    for (const [high, rate] of brackets) { if (dividend > low) tax += (Math.min(dividend,high)-low)*rate; low=high; }
+    return tax * 1.1;
+  };
   /**
    * 금융소득 종합과세 간이 계산(교육용). fin: 연 이자+배당, other: 다른 종합소득 과세표준.
-   * 2,000만원까지 15.4% 분리과세, 넘는 부분은 다른 소득과 합쳐 누진세율(지방세 포함 ×1.1). 비교과세는 원천징수액을 하한으로 단순화.
+   * 특례 미적용 일반 금융소득의 2,000만원까지 15.4% 분리과세, 넘는 부분은 다른 소득과 합쳐 누진세율(지방세 포함 ×1.1). 비교과세는 원천징수액을 하한으로 단순화.
    */
-  ST.finIncomeTax = function (fin, other = 0) {
+  ST.finIncomeTax = function (fin, other = 0, { specialDividend = 0 } = {}) {
+    const special = Math.max(0, Math.min(fin, specialDividend));
+    if (special > 0) {
+      const ordinary = ST.finIncomeTax(fin-special, other), specialTax = ST.highDividendTax(special), tax = ordinary.tax + specialTax;
+      return { tax, rate: tax/fin, comprehensive: ordinary.comprehensive, specialDividend: special, specialTax };
+    }
     const lim = ST.KR.finIncomeLimit;
     if (fin <= lim) return { tax: fin * ST.KR.divTax, rate: ST.KR.divTax, comprehensive: false };
     const prog = (x) => { const B = [[14e6, 0.06], [50e6, 0.15], [88e6, 0.24], [150e6, 0.35], [300e6, 0.38], [500e6, 0.40], [1e9, 0.42], [Infinity, 0.45]]; let t = 0, lo = 0; for (const [hi, r] of B) { if (x > lo) t += (Math.min(x, hi) - lo) * r; lo = hi; } return t * 1.1; };
@@ -588,9 +600,18 @@
    * → {price, delta, gamma, vega(1%p당), theta(하루당), rho(1%p당), d1, d2}
    */
   ST.bs = function ({ S, K, T, r = 0.03, sigma = 0.2, q = 0, type = "call" }) {
-    if (T <= 0 || sigma <= 0) {
+    if (T <= 0) {
       const iv = type === "call" ? Math.max(0, S - K) : Math.max(0, K - S);
       return { price: iv, delta: type === "call" ? (S > K ? 1 : 0) : (S < K ? -1 : 0), gamma: 0, vega: 0, theta: 0, rho: 0, d1: NaN, d2: NaN };
+    }
+    if (sigma === 0) {
+      const stockPV = S*Math.exp(-q*T), strikePV = K*Math.exp(-r*T), call = type === "call";
+      const spread = stockPV-strikePV, active = call ? spread > 0 : spread < 0;
+      // At the forward strike, zero Greeks are a boundary convention (as in QuantLib),
+      // not differentiable payoff sensitivities or the sigma -> 0+ Greek limits.
+      return { price: Math.max(0,call ? spread : -spread), delta: active ? (call ? 1 : -1)*Math.exp(-q*T) : 0,
+        gamma: 0, vega: 0, theta: active ? (call ? q*stockPV-r*strikePV : r*strikePV-q*stockPV)/365 : 0,
+        rho: active ? (call ? 1 : -1)*T*strikePV/100 : 0, d1: NaN, d2: NaN };
     }
     const sq = sigma * Math.sqrt(T), d1 = (Math.log(S / K) + (r - q + (sigma * sigma) / 2) * T) / sq, d2 = d1 - sq;
     const eq = Math.exp(-q * T), er = Math.exp(-r * T), N = ST.ncdf, n = ST.npdf;

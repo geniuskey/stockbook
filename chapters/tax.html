@@ -139,7 +139,7 @@
       <tbody>
         <tr><td>위탁 수수료</td><td>살 때·팔 때</td><td class="num">약 0.015%</td><td class="num">약 0.015%</td><td class="num">약 0.25%</td></tr>
         <tr><td>환전 스프레드</td><td>원화↔외화</td><td class="num">—</td><td class="num">—</td><td class="num">약 0.1~1%</td></tr>
-        <tr><td>증권거래세</td><td>팔 때</td><td class="num">0.20%</td><td class="num">면제</td><td class="num">—(미국 SEC 수수료 아주 작음)</td></tr>
+        <tr><td>증권거래세</td><td>팔 때</td><td class="num">0.20%</td><td class="num">면제</td><td class="num">—(SEC 비용 0.00206%, 2026-04-04 이후)</td></tr>
         <tr><td>스프레드·시장 충격</td><td>살 때·팔 때</td><td class="num" colspan="3">호가와 주문 크기에 따라(3장)</td></tr>
         <tr><td>운용 보수</td><td>보유하는 동안</td><td class="num">—</td><td class="num">연 약 0.01~0.5%</td><td class="num">ETF면 연 약 0.03~0.5%</td></tr>
       </tbody>
@@ -249,8 +249,9 @@
 
   <section id="comprehensive">
     <h2>금융소득 종합과세: 2,000만원의 문턱</h2>
-    <p>이자와 배당을 합친 <span class="term">금융소득</span><span class="en">(Financial income)</span>이 1년에 2,000만원 이하라면 15.4% 원천징수로 끝난다. 다른 소득과 합치지 않아 <span class="term">분리과세</span><span class="en">(Separate taxation)</span>라고 한다. 2,000만원을 넘으면 넘는 부분을 근로소득 같은 다른 소득과 합쳐 누진세율(지방세 포함 6.6~49.5%)로 다시 계산한다. 이것이 <span class="term">금융소득 종합과세</span><span class="en">(Comprehensive taxation)</span>다. 다음 해 5월에 직접 신고하고, 미리 뗀 15.4%와의 차이를 더 낸다. 계산 결과가 15.4%보다 작아지지는 않는다(비교과세).</p>
-    <div class="formula">$$T \approx 2{,}000\text{만} \times 15.4\% + \big[\,t(O + F - 2{,}000\text{만}) - t(O)\,\big]$$<div class="where">\(F\): 금융소득, \(O\): 다른 종합소득의 과세표준, \(t(\cdot)\): 누진세 계산(지방세 포함). 2,000만원을 넘는 몫은 다른 소득 위에 쌓여 그 사람의 한계세율을 맞는다. 배당가산(Gross-up)과 배당세액공제는 생략한 근사다.</div></div>
+    <p>이자와 배당을 합친 <span class="term">금융소득</span><span class="en">(Financial income)</span> 가운데 아래 특례 등을 제외한 일반 과세 소득이 1년에 2,000만원 이하라면 15.4% 원천징수로 끝난다. 다른 소득과 합치지 않아 <span class="term">분리과세</span><span class="en">(Separate taxation)</span>라고 한다. 2,000만원을 넘으면 넘는 부분을 근로소득 같은 다른 소득과 합쳐 누진세율(지방세 포함 6.6~49.5%)로 다시 계산한다. 이것이 <span class="term">금융소득 종합과세</span><span class="en">(Comprehensive taxation)</span>다. 다음 해 5월에 직접 신고하고, 미리 뗀 15.4%와의 차이를 더 낸다. 계산 결과가 15.4%보다 작아지지는 않는다(비교과세).</p>
+    <div class="callout deep"><strong>2026년 고배당기업 현금배당 특례</strong>적격 고배당 상장법인의 현금배당은 분리과세를 신청하면 종합과세에서 제외하고 별도 누진세율로 계산한다. 2026년 지급분은 2027년 5월 신고에서 신청한다. 자동 적용되지 않으며, 소득상황에 따라 일반 종합과세가 유리할 수도 있다. 국가세율은 2,000만원 이하 14%, 2,000만원 초과~3억원 20%, 3억원 초과~50억원 25%, 50억원 초과 30%이며 지방소득세는 별도다. 2024년보다 현금배당이 감소하지 않고, 배당성향 40% 이상 또는 배당성향 25% 이상이면서 전년 대비 배당 10% 이상 증가 등의 요건을 확인해야 한다. 펀드·리츠는 제외하며 2026년 지급분부터 2028년 말이 속하는 사업연도 배당까지 적용된다. 아래 '특례 현금배당' 입력은 이 요건을 충족하고 특례를 적용받는 금액이라는 가정이다. 나머지 금융소득은 기존 일반 계산을 따른다. <a href="https://korea.nabo.go.kr/board/file/down.do?fid=33319156">국회예산정책처 2026 대한민국 조세 p.163</a> · <a href="https://www.nts.go.kr/nts/na/ntt/selectNttInfo.do?nttSn=1349597">국세청 신청·세율 안내</a></div>
+    <div class="formula">$$T \approx 2{,}000\text{만} \times 15.4\% + \big[\,t(O + F - 2{,}000\text{만}) - t(O)\,\big]$$<div class="where">\(F\): 특례를 제외한 일반 금융소득, \(O\): 다른 종합소득의 과세표준, \(t(\cdot)\): 누진세 계산(지방세 포함). 2,000만원을 넘는 몫은 다른 소득 위에 쌓여 그 사람의 한계세율을 맞는다. 일반 금융소득이 2,000만원을 넘을 때의 근사이며, 특례 현금배당이 있으면 그 별도 세액을 더한다. 배당가산(Gross-up)과 배당세액공제는 생략한다.</div></div>
     <p>배당수익률 5%로 배당만 2,000만원을 받으려면 약 4억원어치 주식이 필요하다. 사회초년생에게는 먼 이야기지만, 예금 이자와 해외 ETF 매매 차익(뒤에서 본다)까지 합치면 생각보다 빨리 가까워진다. 금융소득과 다른 소득을 바꿔 보며 문턱 위에서 무엇이 달라지는지 본다.</p>
 
     <div class="sim" id="sim-fin">
@@ -259,6 +260,7 @@
         <div class="sim-view"><canvas id="fin-cv"></canvas></div>
         <div class="sim-controls">
           <label class="ctrl"><span>이자 + 배당(연) <output id="fin-f-out"></output></span><input type="range" id="fin-f" min="0" max="100000000" step="1000000" value="30000000"></label>
+          <label class="ctrl"><span>위 금액 중 특례 현금배당 <output id="fin-special-out"></output></span><input type="range" id="fin-special" min="0" max="100000000" step="1000000" value="0"></label>
           <label class="ctrl"><span>다른 소득 과세표준 <output id="fin-o-out"></output></span><input type="range" id="fin-o" min="0" max="200000000" step="5000000" value="30000000"></label>
         </div>
       </div>
@@ -268,11 +270,11 @@
         <div class="stat"><span class="k">5월에 더 낼 세금</span><span class="v" id="fin-o3">—</span></div>
         <div class="stat"><span class="k">금융소득 실효세율</span><span class="v" id="fin-o4">—</span></div>
       </div>
-      <div class="sim-note">해볼 것: ① 금융소득을 2,000만원 아래로 내린다. 두 선이 겹친다. ② 3,000만원, 다른 소득 3,000만원에서 더 낼 세금은 약 11만원이다. 넘는 1,000만원에 붙는 세율(16.5%)이 15.4%와 비슷하기 때문이다. ③ 다른 소득을 1억 5,000만원으로 올린다. 넘는 몫이 41.8%(지방세 포함)를 맞아 추가 세금이 커진다. (교육용 근사. 배당가산, 각종 공제는 생략.)</div>
+      <div class="sim-note">해볼 것: ① 금융소득을 2,000만원 아래로 내린다. 두 선이 겹친다. ② 3,000만원, 다른 소득 3,000만원에서 더 낼 세금은 약 11만원이다. 넘는 1,000만원에 붙는 세율(16.5%)이 15.4%와 비슷하기 때문이다. ③ 다른 소득을 1억 5,000만원으로 올린다. 넘는 몫이 41.8%(지방세 포함)를 맞아 추가 세금이 커진다. (교육용 근사. 특례 입력 0이면 일반 금융소득 모형이다. 특례 입력은 총 금융소득까지 적용하며, 그래프의 일반 종합과세 문턱은 그만큼 오른쪽으로 이동한다. 예: 총 3,000만원을 모두 적격 특례배당으로 두면 국가세액 480만원, 지방세 포함 528만원이다. 배당가산, 각종 공제는 생략.)</div>
     </div>
 
-    <p>종합과세는 "2,000만원을 넘으면 전체에 세금 폭탄"이 아니다. 2,000만원까지는 그대로 15.4%이고, 넘는 몫만 내 다른 소득 위에 얹혀 계산된다. 그래서 다른 소득이 적은 사람에게는 추가 세금이 거의 없고, 고소득자일수록 커진다. 금융소득 3,000만원에 다른 과세표준 3,000만원이면 더 낼 세금은 약 11만원, 둘 다 5,000만원이면 약 330만원이다.</p>
-    <div class="callout deep"><strong>무엇이 금융소득에 들어가나</strong>들어가는 것: 예금·채권 이자, 국내외 주식 배당, ETF 분배금, 그리고 <b>국내 상장 해외 ETF를 팔아 남긴 차익</b>(배당소득으로 본다). 들어가지 않는 것: 해외 주식을 직접 사고판 양도차익(양도소득으로 따로 과세), 국내 상장 주식을 소액주주가 판 차익(비과세), ISA·연금계좌 안에서 생긴 소득. 금융소득은 건강보험료에도 영향을 준다. 직장인도 월급 외 소득이 연 2,000만원을 넘으면 보험료가 추가로 붙는다(약). 2026년부터 배당을 많이 하는 기업의 배당은 종합과세 대신 분리과세를 고를 수 있게 하는 제도가 생겼지만 요건과 세율이 복잡하니 해당되면 따로 확인한다(약).</div>
+    <p>특례를 적용하지 않는 일반 금융소득 모형에서 종합과세는 "2,000만원을 넘으면 전체에 세금 폭탄"이 아니다. 2,000만원까지는 그대로 15.4%이고, 넘는 몫만 내 다른 소득 위에 얹혀 계산된다. 그래서 다른 소득이 적은 사람에게는 추가 세금이 거의 없고, 고소득자일수록 커진다. 금융소득 3,000만원에 다른 과세표준 3,000만원이면 더 낼 세금은 약 11만원, 둘 다 5,000만원이면 약 330만원이다.</p>
+    <div class="callout deep"><strong>무엇이 금융소득에 들어가나</strong>들어가는 것: 예금·채권 이자, 국내외 주식 배당, ETF 분배금, 그리고 <b>국내 상장 해외 ETF를 팔아 남긴 차익</b>(배당소득으로 본다). 들어가지 않는 것: 해외 주식을 직접 사고판 양도차익(양도소득으로 따로 과세), 국내 상장 주식을 소액주주가 판 차익(비과세), ISA·연금계좌 안에서 생긴 소득. 금융소득은 건강보험료에도 영향을 준다. 직장인도 월급 외 소득이 연 2,000만원을 넘으면 보험료가 추가로 붙는다(약). 위의 고배당기업 분리과세 특례를 신청한 현금배당은 일반 금융소득의 2,000만원 문턱 판단에서 제외한다.</div>
   </section>
 
   <section id="capital-gains">
@@ -562,7 +564,7 @@
     <ol>
       <li>주식 투자의 비용은 매수(수수료·스프레드·환전), 보유(보수), 배당(15.4%), 매도(수수료·거래세·양도세)의 네 단계에서 샌다. 스프레드와 보수처럼 명세에 찍히지 않는 비용도 있다.</li>
       <li>증권거래세는 팔 때만, 손익과 상관없이 매도 금액의 0.20%(2026년 KOSPI·KOSDAQ, 약)를 낸다. 국내 상장 ETF는 면제다. 국내 주식 왕복 비용은 약 0.23%이고, 연 비용은 회전 횟수에 비례해 30년 복리로 커진다.</li>
-      <li>배당과 ETF 분배금은 15.4%를 원천징수한다. 이자와 배당이 연 2,000만원을 넘으면 넘는 몫만 다른 소득과 합쳐 누진세율로 다시 계산한다.</li>
+      <li>배당과 ETF 분배금은 15.4%를 원천징수한다. 특례 미적용 일반 이자와 배당이 연 2,000만원을 넘으면 넘는 몫만 다른 소득과 합쳐 누진세율로 다시 계산한다.</li>
       <li>국내 상장 주식의 양도세는 대주주(종목당 약 50억원 또는 지분율 기준)만 낸다. 금융투자소득세는 2024년 말 폐지가 결정됐다. 해외 주식은 1년 손익을 통산해 250만원을 공제하고 22%를 낸다.</li>
       <li>국내 상장 해외 ETF는 차익에 15.4%(금융소득 합산), 해외 직접 투자는 250만원 공제 후 22%다. 차익이 약 833만원 아래면 직접이, 위면 국내 상장 ETF가 대체로 유리하고, 절세 계좌에는 국내 상장 ETF만 담을 수 있다.</li>
       <li>ISA는 순이익 200만원 비과세·초과 9.9%, 연금저축은 세액공제와 55세 이후 3.3~5.5%다. 세금을 끝에 한 번 내는 과세이연은 세금 몫까지 복리로 굴린다. 상품과 전략은 세후 수익률로 비교한다.</li>
@@ -635,7 +637,7 @@
   const won0 = (v) => (v < 0 ? "−" : "") + Math.round(Math.abs(v)).toLocaleString("ko-KR") + "원";
   const fw = (v) => (Math.abs(v) < 1e6 ? won0(v) : MB.won(v));
   const sgn = (v) => '<span class="' + MB.tone(v) + '">' + (v > 0 ? "+" : "") + fw(v) + "</span>";
-  const finTax = (f, o) => (f <= 0 ? 0 : Math.max(ST.finIncomeTax(f, o).tax, f * K.divTax));
+  const finTax = (f, o, special = 0) => (f <= 0 ? 0 : ST.finIncomeTax(f, o, { specialDividend: special }).tax);
   function text(ctx, s, x, y, o) {
     o = o || {};
     ctx.font = MB.font(o.size || 12, !!o.mono, o.weight);
@@ -958,23 +960,24 @@
   (function () {
     const fT = MB.range("fin-f", (v) => MB.won(v), () => cv.redraw());
     const oT = MB.range("fin-o", (v) => MB.won(v), () => cv.redraw());
+    const sT = MB.range("fin-special", (v) => MB.won(v), () => cv.redraw());
     const cv = MB.canvas("#fin-cv", (ctx, w, h) => {
-      const P = MB.palette(), f = fT(), o = oT();
+      const P = MB.palette(), f = fT(), o = oT(), special = Math.min(f, sT()), threshold = K.finIncomeLimit + sT();
       const flat = [], real = [];
-      for (let i = 0; i <= 100; i++) { const x = i * 1e6; flat.push([x, x * K.divTax]); real.push([x, finTax(x, o)]); }
-      const ymax = Math.max(finTax(1e8, o), 1e8 * K.divTax) * 1.08;
+      for (let i = 0; i <= 100; i++) { const x = i * 1e6; flat.push([x, x * K.divTax]); real.push([x, finTax(x, o, sT())]); }
+      const ymax = Math.max(finTax(1e8, o, sT()), 1e8 * K.divTax) * 1.08;
       const box = { x: 58, y: 16, w: w - 58 - 14, h: h - 16 - 34 };
       const ch = MB.chart(ctx, box, { x: [0, 1e8], y: [0, ymax], xFmt: MB.wonAxis, yFmt: MB.wonAxis,
-        bands: [{ x0: K.finIncomeLimit, x1: 1e8, color: P.upSoft }],
-        vlines: [{ x: K.finIncomeLimit, color: P.warn, label: "2,000만원" }],
+        bands: threshold < 1e8 ? [{ x0: threshold, x1: 1e8, color: P.upSoft }] : [],
+        vlines: threshold <= 1e8 ? [{ x: threshold, color: P.warn, label: "일반 소득 문턱" }] : [],
         series: [{ data: flat, color: P.dim, dash: [5, 4], width: 2 }, { data: real, color: P.accent, width: 2.5 }],
-        points: [{ x: f, y: finTax(f, o), color: P.accent, r: 6 }] });
+        points: [{ x: f, y: finTax(f, o, special), color: P.accent, r: 6 }] });
       text(ctx, "15.4% 분리과세라면", ch.X(1e8) - 4, ch.Y(1e8 * K.divTax) + 14, { size: 11, align: "right", color: P.dim });
-      text(ctx, "실제(종합과세)", ch.X(1e8) - 4, ch.Y(finTax(1e8, o)) - 8, { size: 11, align: "right", color: P.accent, weight: 700 });
-      const tot = finTax(f, o), wh = f * K.divTax;
+      text(ctx, "최종 세액(일반 + 특례)", ch.X(1e8) - 4, ch.Y(finTax(1e8, o, sT())) + 18, { size: 11, align: "right", color: P.accent, weight: 700 });
+      const tot = finTax(f, o, special), wh = f * K.divTax;
       MB.stat("fin-o1", MB.won(wh));
       MB.stat("fin-o2", MB.won(tot));
-      MB.stat("fin-o3", f > K.finIncomeLimit ? '<span class="warn-t">' + fw(tot - wh) + "</span>" : "0원");
+      MB.stat("fin-o3", tot > wh ? '<span class="warn-t">' + fw(tot - wh) + "</span>" : "0원");
       MB.stat("fin-o4", f > 0 ? MB.pct(tot / f, 1) : "—");
     }, { get height() { return pw("fin-cv") < 480 ? 260 : 300; } });
   })();
